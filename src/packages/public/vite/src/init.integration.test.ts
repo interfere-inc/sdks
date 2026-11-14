@@ -711,12 +711,19 @@ test("navigating away from a bulky page after its first flush delivers the snaps
 
   await context.unrouteAll();
 
+  await page.clock.install();
+
   await open("/?bulk=1");
 
   await expect
-    .poll(() => replayText().includes("Customer application"), {
-      timeout: 4000,
-    })
+    .poll(
+      async () => {
+        await page.clock.fastForward(500);
+
+        return replayText().includes("Customer application");
+      },
+      { timeout: 4000 },
+    )
     .toBe(true);
 
   const flushed = replayRequests().length;

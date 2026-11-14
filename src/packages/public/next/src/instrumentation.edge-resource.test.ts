@@ -12,9 +12,13 @@ import { trace } from "@opentelemetry/api";
 import { BasicTracerProvider } from "@opentelemetry/sdk-trace-base";
 import type { MockInstance } from "vitest";
 import { PRODUCER_VERSION } from "./internal/version.js";
-import { afterEach, beforeEach, expect, test, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, expect, test, vi } from "vitest";
 
 let registration: MockInstance<typeof trace.setGlobalTracerProvider>;
+
+beforeAll(async () => {
+  await import("./instrumentation.edge.js");
+});
 
 beforeEach(() => {
   vi.resetModules();
