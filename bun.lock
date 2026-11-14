@@ -32,7 +32,7 @@
     },
     "src/packages/public/cli": {
       "name": "@interfere/cli",
-      "version": "1.15.0",
+      "version": "1.16.0",
       "bin": {
         "interfere": "dist/interfere.mjs",
       },
@@ -52,23 +52,23 @@
     },
     "src/packages/public/cli/platforms/darwin-arm64": {
       "name": "@interfere/cli-darwin-arm64",
-      "version": "1.15.0",
+      "version": "1.16.0",
     },
     "src/packages/public/cli/platforms/darwin-x64": {
       "name": "@interfere/cli-darwin-x64",
-      "version": "1.15.0",
+      "version": "1.16.0",
     },
     "src/packages/public/cli/platforms/linux-arm64": {
       "name": "@interfere/cli-linux-arm64",
-      "version": "1.15.0",
+      "version": "1.16.0",
     },
     "src/packages/public/cli/platforms/linux-x64": {
       "name": "@interfere/cli-linux-x64",
-      "version": "1.15.0",
+      "version": "1.16.0",
     },
     "src/packages/public/cli/platforms/win32-x64": {
       "name": "@interfere/cli-win32-x64",
-      "version": "1.15.0",
+      "version": "1.16.0",
     },
     "src/packages/public/constants": {
       "name": "@interfere/constants",

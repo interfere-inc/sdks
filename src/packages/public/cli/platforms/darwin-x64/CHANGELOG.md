@@ -1,5 +1,9 @@
 # @interfere/cli-darwin-x64
 
+## 1.16.0
+
+No changes in this release.
+
 ## 1.15.0
 
 No changes in this release.
