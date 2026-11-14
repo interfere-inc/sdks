@@ -2931,7 +2931,7 @@
       "requiresAuth": true,
       "response": {
         "status": 200,
-        "body": "{\n  \"outdatedSurfaceIds\": [\n    \"outdatedSurfaceIds\"\n  ]\n}"
+        "body": "{\n  \"outdatedSurfaceIds\": [\n    \"outdatedSurfaceIds\"\n  ],\n  \"unanalysedSurfaceIds\": [\n    \"unanalysedSurfaceIds\"\n  ]\n}"
       }
     },
     {

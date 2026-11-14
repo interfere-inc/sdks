@@ -683,7 +683,7 @@ impl SurfacesClient {
             .await
     }
 
-    /// Returns apps (surfaces) with outdated SDKs in the workspace.
+    /// Returns apps (surfaces) with outdated SDKs in the workspace, and those whose SDK is too old for problem and finding generation.
     ///
     /// # Arguments
     ///

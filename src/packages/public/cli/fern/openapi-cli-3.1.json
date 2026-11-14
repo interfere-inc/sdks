@@ -59127,10 +59127,18 @@
               "type": "string",
               "format": "uuid"
             }
+          },
+          "unanalysedSurfaceIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         },
         "required": [
-          "outdatedSurfaceIds"
+          "outdatedSurfaceIds",
+          "unanalysedSurfaceIds"
         ]
       },
       "CreateSurfaceResponse": {
@@ -82240,7 +82248,7 @@
       "get": {
         "operationId": "surfaceSdkStatus",
         "summary": "Get app SDK status",
-        "description": "Returns apps (surfaces) with outdated SDKs in the workspace.",
+        "description": "Returns apps (surfaces) with outdated SDKs in the workspace, and those whose SDK is too old for problem and finding generation.",
         "tags": [
           "Surfaces"
         ],

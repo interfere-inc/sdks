@@ -1849,7 +1849,7 @@ Returns event counts grouped into time buckets for the app (surface).
 
 #### `interfere surfaces surface-sdk-status`
 
-Returns apps (surfaces) with outdated SDKs in the workspace.
+Returns apps (surfaces) with outdated SDKs in the workspace, and those whose SDK is too old for problem and finding generation.
 
 `GET /v3/workspaces/{workspaceSlug}/surfaces/activity/sdk-status`
 
