@@ -51,7 +51,7 @@ describe.each([false, true])(
         "src/packages/internal/database/src/schema/tables/example.ts",
         "src/packages/internal/observability/lib/workers/observe.ts",
         "src/packages/internal/flags/src/vite.tsx",
-        "src/apps/website/src/components/article/shadow-contract/diagrams.tsx",
+        "src/sites/docs/src/components/article/nested/diagrams.tsx",
         "src/packages/public/test-utils/src/helper.ts",
       ];
 

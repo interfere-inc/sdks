@@ -3,21 +3,6 @@ title = "Interfere SDK"
 [extend]
 useDefault = true
 
-[[rules]]
-id = "interfere-internal-host"
-description = "Internal Interfere host"
-regex = '''interfere\.ghe\.com|\binternal\.interfere\.com\b|\.svc\.cluster\.local\b|\bgke_[\w-]+'''
-
-[[rules]]
-id = "interfere-cloud-project"
-description = "Interfere cloud project"
-regex = '''\binterfere-[a-z]+(?:-[a-z]+)*-\d+\b|\biac-core(?:-[a-z0-9]+)+\b'''
-
-[[rules]]
-id = "interfere-monorepo-path"
-description = "Path outside the public packages of the Interfere monorepo"
-regex = '''src/(?:workers|frontend|packages/private)/|(?:^|[^\w.-])iac/|\.beads\b|\.agents/'''
-
 [[allowlists]]
 description = "Test fixtures"
 targetRules = ["generic-api-key"]

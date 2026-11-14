@@ -3,6 +3,6 @@
   "compilerOptions": {
     "types": ["node", "vitest/globals"]
   },
-  "include": ["src/**/*", "../../private/internal-schemas/src/facts.ts"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

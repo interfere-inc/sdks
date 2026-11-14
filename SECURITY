@@ -1,0 +1,23 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Expires: 2031-01-01T04:59:00.000Z
+Canonical: https://interfere.com/.well-known/security.txt
+Encryption: dns:5d2d3ceb7abe552344276d47d36a8175b7aeb250a9bf0bf00e850cd2._openpgpkey.interfere.com?type=OPENPGPKEY
+
+Contact: mailto:security@interfere.com
+
+Policy: https://interfere.com/security/policy
+Acknowledgments: https://interfere.com/security/disclosures
+Hiring: https://interfere.com/careers
+
+Preferred-Languages: en
+CSAF: https://interfere.com/.well-known/csaf/provider-metadata.json
+-----BEGIN PGP SIGNATURE-----
+
+iJEEARYKADkWIQSOXEoKdguYMdBheUqOaYTY9FeEZgUCaqcNrhsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMiwwLDMACgkQjmmE2PRXhGaizAD/R3EfgAg9t7WjykfJwJ6q
+5u4ujPSzapO2h6asQeNRI1oA/0tsdo7SdTQy+ANc6BpiH4UrtB2gQctUO+GXIANG
+LpUN
+=x/xn
+-----END PGP SIGNATURE-----
