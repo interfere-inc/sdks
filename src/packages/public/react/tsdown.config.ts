@@ -1,6 +1,9 @@
 import type { UserConfig } from "tsdown";
 import babel from "@rolldown/plugin-babel";
 import reactCompiler from "babel-plugin-react-compiler";
+import { z } from "zod";
+
+const entryMap = z.record(z.string(), z.string());
 
 const isWatch = process.argv.includes("--watch") || process.argv.includes("-w");
 
@@ -15,6 +18,15 @@ export default {
   dts: { sourcemap: false },
   entry: ["src/**/*.{ts,tsx}", "!**/*.{test,spec,fixture,test-utils}.{ts,tsx}"],
   failOnWarn: "ci-only",
+  // WARNING: tsdown passes glob entries in filesystem-race order, and rolldown derives chunk import order and hashes from entry order.
+  inputOptions: (options) => ({
+    ...options,
+    input: Object.fromEntries(
+      Object.entries(entryMap.parse(options.input)).toSorted(([a], [b]) =>
+        a < b ? -1 : 1,
+      ),
+    ),
+  }),
   logLevel: "warn",
   minify: { codegen: true, compress: true, mangle: false },
   plugins: [
