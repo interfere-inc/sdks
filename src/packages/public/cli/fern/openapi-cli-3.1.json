@@ -62761,6 +62761,45 @@
           "403": {
             "$ref": "#/components/responses/ErrorResponse_d8af65c0c470b099b469fd50598c7936eda3e7f2498c1f6725ec78bb22a021eb"
           },
+          "409": {
+            "description": "The Worker deploy tool named a Cloudflare Worker that is not linked to this App",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "RELEASE_DESTINATION_UNLINKED"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "service": {
+                      "type": "string",
+                      "enum": [
+                        "collector",
+                        "gateway",
+                        "operation",
+                        "intelligence",
+                        "frontier-auth",
+                        "frontier-drain",
+                        "frontier-runtime",
+                        "frontier-buildtime",
+                        "api-findings",
+                        "api-updates"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ]
+                }
+              }
+            }
+          },
           "503": {
             "$ref": "#/components/responses/ErrorResponse_fc6fa6a74b066a685b8964dacf618ec9cde5c02e82318f16f9e050864df9b213"
           }

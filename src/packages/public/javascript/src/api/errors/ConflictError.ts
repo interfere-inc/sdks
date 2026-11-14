@@ -2,12 +2,9 @@
 
 import type * as core from "../../core/index.js";
 import * as errors from "../../errors/index.js";
-import type * as Interfere from "../index.js";
 
 export class ConflictError extends errors.InterfereError {
-    public declare readonly body: Interfere.ConflictErrorBody;
-
-    constructor(body: Interfere.ConflictErrorBody, rawResponse?: core.RawResponse) {
+    constructor(body?: unknown, rawResponse?: core.RawResponse) {
         super({
             message: "ConflictError",
             statusCode: 409,

@@ -111,10 +111,7 @@ export class ReleasesClient {
                 case 403:
                     throw new Interfere.ForbiddenError(_response.error.body as unknown, _response.rawResponse);
                 case 409:
-                    throw new Interfere.ConflictError(
-                        _response.error.body as Interfere.ConflictErrorBody,
-                        _response.rawResponse,
-                    );
+                    throw new Interfere.ConflictError(_response.error.body as unknown, _response.rawResponse);
                 case 422:
                     throw new Interfere.UnprocessableEntityError(
                         _response.error.body as unknown,
@@ -321,10 +318,7 @@ export class ReleasesClient {
                 case 403:
                     throw new Interfere.ForbiddenError(_response.error.body as unknown, _response.rawResponse);
                 case 409:
-                    throw new Interfere.ConflictError(
-                        _response.error.body as Interfere.ConflictErrorBody,
-                        _response.rawResponse,
-                    );
+                    throw new Interfere.ConflictError(_response.error.body as unknown, _response.rawResponse);
                 case 422:
                     throw new Interfere.UnprocessableEntityError(
                         _response.error.body as unknown,
@@ -431,6 +425,7 @@ export class ReleasesClient {
      *
      * @throws {@link Interfere.UnauthorizedError}
      * @throws {@link Interfere.ForbiddenError}
+     * @throws {@link Interfere.ConflictError}
      * @throws {@link Interfere.ServiceUnavailableError}
      * @throws {@link errors.InterfereError}
      * @throws {@link errors.InterfereTimeoutError}
@@ -496,6 +491,8 @@ export class ReleasesClient {
                     throw new Interfere.UnauthorizedError(_response.error.body as unknown, _response.rawResponse);
                 case 403:
                     throw new Interfere.ForbiddenError(_response.error.body as unknown, _response.rawResponse);
+                case 409:
+                    throw new Interfere.ConflictError(_response.error.body as unknown, _response.rawResponse);
                 case 503:
                     throw new Interfere.ServiceUnavailableError(_response.error.body as unknown, _response.rawResponse);
                 default:
@@ -601,10 +598,7 @@ export class ReleasesClient {
                 case 403:
                     throw new Interfere.ForbiddenError(_response.error.body as unknown, _response.rawResponse);
                 case 409:
-                    throw new Interfere.ConflictError(
-                        _response.error.body as Interfere.ConflictErrorBody,
-                        _response.rawResponse,
-                    );
+                    throw new Interfere.ConflictError(_response.error.body as unknown, _response.rawResponse);
                 case 413:
                     throw new Interfere.ContentTooLargeError(_response.error.body as unknown, _response.rawResponse);
                 case 422:
@@ -720,10 +714,7 @@ export class ReleasesClient {
                 case 403:
                     throw new Interfere.ForbiddenError(_response.error.body as unknown, _response.rawResponse);
                 case 409:
-                    throw new Interfere.ConflictError(
-                        _response.error.body as Interfere.ConflictErrorBody,
-                        _response.rawResponse,
-                    );
+                    throw new Interfere.ConflictError(_response.error.body as unknown, _response.rawResponse);
                 case 422:
                     throw new Interfere.UnprocessableEntityError(
                         _response.error.body as unknown,
