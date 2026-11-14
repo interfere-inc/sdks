@@ -11,6 +11,7 @@ pub enum CreateSurfaceResponseSurfaceType {
     Nextjs,
     Python,
     React,
+    Generic,
     /// This variant is used for forward compatibility.
     /// If the server sends a value not recognized by the current SDK version,
     /// it will be captured here with the raw string value.
@@ -24,6 +25,7 @@ impl Serialize for CreateSurfaceResponseSurfaceType {
             Self::Nextjs => serializer.serialize_str("nextjs"),
             Self::Python => serializer.serialize_str("python"),
             Self::React => serializer.serialize_str("react"),
+            Self::Generic => serializer.serialize_str("generic"),
             Self::__Unknown(val) => serializer.serialize_str(val),
         }
     }
@@ -38,6 +40,7 @@ impl<'de> Deserialize<'de> for CreateSurfaceResponseSurfaceType {
             "nextjs" => Ok(Self::Nextjs),
             "python" => Ok(Self::Python),
             "react" => Ok(Self::React),
+            "generic" => Ok(Self::Generic),
             _ => Ok(Self::__Unknown(value)),
         }
     }
@@ -51,6 +54,7 @@ impl fmt::Display for CreateSurfaceResponseSurfaceType {
             Self::Nextjs => write!(f, "nextjs"),
             Self::Python => write!(f, "python"),
             Self::React => write!(f, "react"),
+            Self::Generic => write!(f, "generic"),
             Self::__Unknown(val) => write!(f, "{}", val),
         }
     }

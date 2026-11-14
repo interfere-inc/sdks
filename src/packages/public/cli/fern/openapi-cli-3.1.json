@@ -13650,7 +13650,8 @@
                         "nest",
                         "nextjs",
                         "python",
-                        "react"
+                        "react",
+                        "generic"
                       ],
                       "type": "string"
                     }
@@ -17374,7 +17375,8 @@
                         "nest",
                         "nextjs",
                         "python",
-                        "react"
+                        "react",
+                        "generic"
                       ],
                       "type": "string"
                     }
@@ -40195,7 +40197,8 @@
                           "nest",
                           "nextjs",
                           "python",
-                          "react"
+                          "react",
+                          "generic"
                         ],
                         "type": "string"
                       }
@@ -52632,7 +52635,8 @@
                   "nest",
                   "nextjs",
                   "python",
-                  "react"
+                  "react",
+                  "generic"
                 ],
                 "type": "string"
               }
@@ -52997,7 +53001,8 @@
               "nest",
               "nextjs",
               "python",
-              "react"
+              "react",
+              "generic"
             ],
             "type": "string"
           }
@@ -53359,7 +53364,8 @@
                 "nest",
                 "nextjs",
                 "python",
-                "react"
+                "react",
+                "generic"
               ],
               "type": "string"
             }
@@ -59176,7 +59182,8 @@
                   "nest",
                   "nextjs",
                   "python",
-                  "react"
+                  "react",
+                  "generic"
                 ],
                 "type": "string",
                 "description": "Application framework used by the surface."
@@ -82698,7 +82705,8 @@
                       "nest",
                       "nextjs",
                       "python",
-                      "react"
+                      "react",
+                      "generic"
                     ],
                     "type": "string",
                     "description": "Application framework used by the surface."
