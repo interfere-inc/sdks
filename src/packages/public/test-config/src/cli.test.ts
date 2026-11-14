@@ -41,6 +41,29 @@ beforeAll(() => {
 
 afterAll(() => rmSync(directory, { recursive: true, force: true }));
 
+describe("disabled container cleanup", () => {
+  let result: ReturnType<typeof spawnSync>;
+
+  beforeAll(() => {
+    result = spawnSync(process.execPath, [cli, "run"], {
+      cwd: directory,
+      env: {
+        ...process.env,
+        TESTCONTAINERS_RYUK_DISABLED: "true",
+        VITEST_ARGS: "not-json",
+      },
+      encoding: "utf8",
+      timeout: 30_000,
+    });
+  });
+
+  test("rejects it before starting Vitest", () => {
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain("Unset TESTCONTAINERS_RYUK_DISABLED");
+    expect(result.stdout).toBe("");
+  });
+});
+
 test.each([
   { environment: undefined, script: [], appended: [] },
   {
