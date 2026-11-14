@@ -43,7 +43,10 @@ jobs:
       - run: bunx --no-install playwright install --with-deps chromium
       - run: bun run build
       - run: bun run typecheck
-      - run: bun run test
+      # WARNING: ubuntu-latest has 4 vCPUs; turbo --concurrency times --maxWorkers above that times out wall-clock tests.
+      - run: bun run test --concurrency=2
+        env:
+          VITEST_ARGS: '["--maxWorkers=2"]'
 
   cli:
     permissions:
