@@ -77,6 +77,9 @@ jobs:
     permissions:
       contents: write
       id-token: write
+    outputs:
+      published: ${{ steps.publish.outputs.published }}
+      published-packages: ${{ steps.publish.outputs.published-packages }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
@@ -100,9 +103,40 @@ jobs:
         run: printf '11.5.1\n%s\n' "$(npm --version)" | sort --version-sort --check=quiet
       - name: Install the Changesets CLI outside the workspace
         run: npm install --prefix "$GITHUB_WORKSPACE" --no-save --no-package-lock --ignore-scripts --no-audit --no-fund --before "$(git -C sdk log -1 --format=%cI)" "@changesets/cli@$(jq -er '.workspaces.catalog["@changesets/cli"]' sdk/package.json)" # zizmor: ignore[adhoc-packages]
-      - uses: changesets/action/publish@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+      - id: publish
+        uses: changesets/action/publish@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
         with:
           cwd: sdk
           pack-dir-artifact-id: ${{ needs.pack.outputs.pack-dir-artifact-id }}
         env:
           NPM_CONFIG_IGNORE_SCRIPTS: "true"
+
+  verify-published:
+    needs: publish
+    if: vars.NPM_PUBLISH_ENABLED == 'true' && needs.publish.outputs.published == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions: {}
+    steps:
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - name: Verify registry signatures and provenance of the published versions
+        env:
+          PUBLISHED: ${{ needs.publish.outputs.published-packages }}
+        run: | # zizmor: ignore[adhoc-packages]
+          mapfile -t specs < <(jq -r '.[] | "\(.name)@\(.version)"' <<<"$PUBLISHED")
+          project="$RUNNER_TEMP/published"
+          mkdir -p "$project"
+          echo '{"private":true}' > "$project/package.json"
+          for attempt in 1 2 3 4 5 6; do
+            npm install --prefix "$project" --force --ignore-scripts --no-audit --no-fund "${specs[@]}" && break
+            [ "$attempt" -lt 6 ] || exit 1
+            sleep $((attempt * 20))
+          done
+          for spec in "${specs[@]}"; do
+            predicate=$(npm view "$spec" dist.attestations.provenance.predicateType)
+            [ "$predicate" = "https://slsa.dev/provenance/v1" ] || { echo "::error::$spec has no SLSA provenance"; exit 1; }
+          done
+          npm audit signatures --prefix "$project"
