@@ -1,0 +1,24 @@
+{
+  "fixed": [["@interfere/react", "@interfere/next", "@interfere/vite"]],
+  "$schema": "https://unpkg.com/@changesets/config@4.0.0/schema.json",
+  "changelog": false,
+  "access": "public",
+  "baseBranch": "main",
+  "commit": false,
+  "privatePackages": {
+    "version": false,
+    "tag": false
+  },
+  "linked": [],
+  "ignore": [],
+  "updateInternalDependencies": "patch",
+  "bumpVersionsWithWorkspaceProtocolOnly": true,
+  "snapshot": {
+    "useCalculatedVersion": false,
+    "prereleaseTemplate": "{tag}-{datetime}"
+  },
+  "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
+    "onlyUpdatePeerDependentsWhenOutOfRange": true,
+    "updateInternalDependents": "always"
+  }
+}

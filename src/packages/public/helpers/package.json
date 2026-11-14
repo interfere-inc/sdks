@@ -1,0 +1,120 @@
+{
+  "name": "@interfere/helpers",
+  "version": "9.3.4",
+  "description": "Small, framework-agnostic helpers shared across Interfere packages.",
+  "keywords": [
+    "deep-merge",
+    "deep-partial",
+    "typescript",
+    "utilities"
+  ],
+  "homepage": "https://interfere.com",
+  "bugs": "mailto:support@interfere.com",
+  "license": "MIT",
+  "author": "Interfere <support@interfere.com> (https://interfere.com)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/interfere-inc/sdks.git",
+    "directory": "src/packages/public/helpers"
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./compact": {
+      "monorepo": "./src/compact.ts",
+      "types": "./dist/compact.d.mts",
+      "default": "./dist/compact.mjs"
+    },
+    "./deep-merge": {
+      "monorepo": "./src/deep-merge.ts",
+      "types": "./dist/deep-merge.d.mts",
+      "default": "./dist/deep-merge.mjs"
+    },
+    "./deep-partial": {
+      "monorepo": "./src/deep-partial.ts",
+      "types": "./dist/deep-partial.d.mts",
+      "default": "./dist/deep-partial.mjs"
+    },
+    "./get-initials": {
+      "monorepo": "./src/get-initials.ts",
+      "types": "./dist/get-initials.d.mts",
+      "default": "./dist/get-initials.mjs"
+    },
+    "./hex": {
+      "monorepo": "./src/hex.ts",
+      "types": "./dist/hex.d.mts",
+      "default": "./dist/hex.mjs"
+    },
+    "./map-with-concurrency": {
+      "monorepo": "./src/map-with-concurrency.ts",
+      "types": "./dist/map-with-concurrency.d.mts",
+      "default": "./dist/map-with-concurrency.mjs"
+    },
+    "./omit-undefined": {
+      "monorepo": "./src/omit-undefined.ts",
+      "types": "./dist/omit-undefined.d.mts",
+      "default": "./dist/omit-undefined.mjs"
+    },
+    "./package.json": "./package.json",
+    "./retry-after": {
+      "monorepo": "./src/retry-after.ts",
+      "types": "./dist/retry-after.d.mts",
+      "default": "./dist/retry-after.mjs"
+    },
+    "./retry": {
+      "monorepo": "./src/retry.ts",
+      "types": "./dist/retry.d.mts",
+      "default": "./dist/retry.mjs"
+    },
+    "./retry-request": {
+      "monorepo": "./src/retry-request.ts",
+      "types": "./dist/retry-request.d.mts",
+      "default": "./dist/retry-request.mjs"
+    },
+    "./set-required": {
+      "monorepo": "./src/set-required.ts",
+      "types": "./dist/set-required.d.mts",
+      "default": "./dist/set-required.mjs"
+    },
+    "./retry-telemetry": {
+      "monorepo": "./src/retry-telemetry.ts",
+      "types": "./dist/retry-telemetry.d.mts",
+      "default": "./dist/retry-telemetry.mjs"
+    },
+    "./chunk": {
+      "monorepo": "./src/chunk.ts",
+      "types": "./dist/chunk.d.mts",
+      "default": "./dist/chunk.mjs"
+    },
+    "./with-deadline": {
+      "monorepo": "./src/with-deadline.ts",
+      "types": "./dist/with-deadline.d.mts",
+      "default": "./dist/with-deadline.mjs"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "lint:oxlint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/helpers",
+    "test": "node ../test-config/src/cli.ts run --config ../../../../vitest.config.ts",
+    "typecheck": "bun check"
+  },
+  "devDependencies": {
+    "@interfere/test-config": "workspace:*",
+    "@interfere/typescript-config": "workspace:^",
+    "@types/node": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": "24.x"
+  }
+}

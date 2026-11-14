@@ -1,0 +1,63 @@
+# @interfere/server-core
+
+## 0.1.3
+
+### Patch Changes
+
+- 13e0639: Capture the `x-forwarded-for` client IP header with server request errors by default, including Next.js Node and Edge request errors and Vite request middleware failures. A client IP address is personal data in many jurisdictions; if your privacy notice or data processing terms do not cover it, set `privacy: { clientIp: false }` in server `register()` to omit this header from captured exception events. Authorization and cookie headers remain excluded.
+- 13e0639: Include MIT licenses and package documentation, declare tree-shaking behavior, and document the supported Node.js and framework versions. Complete server adapter package metadata and link license badges to the included license.
+- 13e0639: Remove workspace-only resolution conditions from stable and canary packages so consumers using custom conditions resolve shipped runtime and type files. Qualification tests now use the same sanitized package manifests while development source resolution stays unchanged.
+- Updated dependencies [13e0639]
+- Updated dependencies [13e0639]
+- Updated dependencies [13e0639]
+- Updated dependencies [13e0639]
+- Updated dependencies [13e0639]
+  - @interfere/types@11.0.2
+  - @interfere/constants@9.3.3
+  - @interfere/helpers@9.3.4
+
+## 0.1.2
+
+### Patch Changes
+
+- 76a8c1e: Server `register()` now prints one warning when it adopts a tracer provider another tool registered first, such as Sentry or dd-trace with its OpenTelemetry bridge. Server errors still reach Interfere, but request traces arrive only if that provider exports them over OTLP; pass `register({ tracing: "application" })` to confirm the setup and silence the message. When dd-trace traces the process without its OpenTelemetry bridge, `register()` also warns once that Datadog and Interfere record separate traces and that dd-trace owns outbound trace headers.
+- 76a8c1e: Server error handling now follows the host's lifecycle instead of overriding it.
+
+  - After an uncaught exception, the SDK captures the error, flushes telemetry, and exits with code 1 only when no other `uncaughtException` listener exists, which is when Node itself would have exited. Under `next start`, which keeps its own listener, the server keeps serving instead of being shut down by the SDK in production.
+  - `@interfere/vite/server` now captures uncaught exceptions and unhandled rejections in the server process. The `captureUncaughtException` and `captureUnhandledRejection` options turn this off.
+  - Telemetry is flushed on `SIGTERM`, `SIGINT` and when the event loop drains, for at most 2 seconds. If your app handles the signal itself, shutdown stays yours. Otherwise the SDK flushes and then lets the signal terminate the process as it would have.
+  - `register()` from `@interfere/next` does nothing during `next build`: it installs no process handlers and makes no network calls.
+  - Registering again, for example after a dev-server module reload, replaces the SDK's process listeners rather than adding more.
+
+- 76a8c1e: Server errors are now delivered even when the incoming request arrived with an unsampled trace parent (for example from a browser SDK sampling below 100%) or when `OTEL_TRACES_SAMPLER` drops the trace. Other spans still follow the configured sampling. Span attribute values and error status messages are capped at 64 KiB so one very large error cannot push an export batch past the ingestion size limit; `OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT` and `OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT` still take precedence.
+- Updated dependencies [30a48a6]
+- Updated dependencies [76a8c1e]
+- Updated dependencies [76a8c1e]
+- Updated dependencies [76a8c1e]
+- Updated dependencies [76a8c1e]
+- Updated dependencies [76a8c1e]
+- Updated dependencies [76a8c1e]
+  - @interfere/types@11.0.1
+  - @interfere/helpers@9.3.3
+
+## 0.1.1
+
+### Patch Changes
+
+- 38bc8fc: Move the server telemetry runtime into `@interfere/server-core`, a new runtime dependency of `@interfere/next` and `@interfere/vite`. It owns registration, provider ownership, exception normalization and delivery, URL privacy, console bridging and bounded provider flushing, so concurrent server initialization emits each log once and captured exceptions export once. Next keeps its framework error hooks and Vercel drain integration; Vite keeps Undici request instrumentation and metrics.
+
+  Vite redacts sensitive URL query values, applies the outbound propagation policy when it injects headers, and exposes `flush()` with the shared privacy options. React initialization and close have explicit lifecycle states, clean up after a failed startup, keep consent when the provider omits the consent prop, and dispose page-wide Web Vitals observers with their kernel.
+
+- Updated dependencies [f584c2f]
+- Updated dependencies [68a9ee0]
+- Updated dependencies [2938037]
+- Updated dependencies [3dfaefa]
+- Updated dependencies [8f92d43]
+- Updated dependencies [c76563f]
+- Updated dependencies [3ff22ac]
+- Updated dependencies [3226d63]
+- Updated dependencies [ec97a9c]
+- Updated dependencies [7c8441a]
+  - @interfere/types@11.0.0
+  - @interfere/constants@9.3.2
+  - @interfere/helpers@9.3.2

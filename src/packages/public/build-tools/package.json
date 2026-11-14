@@ -1,0 +1,136 @@
+{
+  "name": "@interfere/build",
+  "version": "0.5.2",
+  "description": "Release preparation for Interfere build integrations.",
+  "keywords": [
+    "build",
+    "observability",
+    "sourcemaps"
+  ],
+  "homepage": "https://interfere.com",
+  "bugs": "mailto:support@interfere.com",
+  "license": "MIT",
+  "author": "Interfere <support@interfere.com> (https://interfere.com)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/interfere-inc/sdks.git",
+    "directory": "src/packages/public/build-tools"
+  },
+  "files": [
+    "dist/**/*.cjs",
+    "dist/**/*.mjs",
+    "dist/**/*.d.cts",
+    "dist/**/*.d.mts",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./service-name": {
+      "monorepo": "./src/service-name.ts",
+      "import": {
+        "types": "./dist/service-name.d.mts",
+        "default": "./dist/service-name.mjs"
+      },
+      "require": {
+        "types": "./dist/service-name.d.cts",
+        "default": "./dist/service-name.cjs"
+      }
+    },
+    "./config": {
+      "monorepo": "./src/config.ts",
+      "import": {
+        "types": "./dist/config.d.mts",
+        "default": "./dist/config.mjs"
+      },
+      "require": {
+        "types": "./dist/config.d.cts",
+        "default": "./dist/config.cjs"
+      }
+    },
+    "./release-request": {
+      "monorepo": "./src/release-request.ts",
+      "import": {
+        "types": "./dist/release-request.d.mts",
+        "default": "./dist/release-request.mjs"
+      },
+      "require": {
+        "types": "./dist/release-request.d.cts",
+        "default": "./dist/release-request.cjs"
+      }
+    },
+    "./package.json": "./package.json",
+    "./cleanup-source-maps": {
+      "monorepo": "./src/source-maps/cleanup-source-maps.ts",
+      "import": {
+        "types": "./dist/source-maps/cleanup-source-maps.d.mts",
+        "default": "./dist/source-maps/cleanup-source-maps.mjs"
+      },
+      "require": {
+        "types": "./dist/source-maps/cleanup-source-maps.d.cts",
+        "default": "./dist/source-maps/cleanup-source-maps.cjs"
+      }
+    },
+    "./upload-source-map-chunks": {
+      "monorepo": "./src/source-maps/upload-source-map-chunks.ts",
+      "import": {
+        "types": "./dist/source-maps/upload-source-map-chunks.d.mts",
+        "default": "./dist/source-maps/upload-source-map-chunks.mjs"
+      },
+      "require": {
+        "types": "./dist/source-maps/upload-source-map-chunks.d.cts",
+        "default": "./dist/source-maps/upload-source-map-chunks.cjs"
+      }
+    },
+    "./source-map-upload-fetch": {
+      "monorepo": "./src/source-maps/source-map-upload-fetch.ts",
+      "import": {
+        "types": "./dist/source-maps/source-map-upload-fetch.d.mts",
+        "default": "./dist/source-maps/source-map-upload-fetch.mjs"
+      },
+      "require": {
+        "types": "./dist/source-maps/source-map-upload-fetch.d.cts",
+        "default": "./dist/source-maps/source-map-upload-fetch.cjs"
+      }
+    },
+    "./release-slug": {
+      "monorepo": "./src/release-slug.ts",
+      "import": {
+        "types": "./dist/release-slug.d.mts",
+        "default": "./dist/release-slug.mjs"
+      },
+      "require": {
+        "types": "./dist/release-slug.d.cts",
+        "default": "./dist/release-slug.cjs"
+      }
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "lint:oxlint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/build-tools",
+    "test": "node ../test-config/src/cli.ts run --config ../../../../vitest.config.ts",
+    "typecheck": "bun check"
+  },
+  "dependencies": {
+    "@interfere/javascript": "workspace:^",
+    "@interfere/types": "workspace:^",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@interfere/test-config": "workspace:*",
+    "@interfere/typescript-config": "workspace:^",
+    "@types/node": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "msw": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": "24.x"
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "name": "@interfere/vite",
+  "version": "13.0.3",
+  "description": "Vite build plugin and client + server initialization for Interfere.",
+  "keywords": [
+    "error-tracking",
+    "nitro",
+    "observability",
+    "session-replay",
+    "tanstack-start",
+    "typescript",
+    "vite"
+  ],
+  "homepage": "https://interfere.com",
+  "bugs": "mailto:support@interfere.com",
+  "license": "MIT",
+  "author": "Interfere <support@interfere.com> (https://interfere.com)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/interfere-inc/sdks.git",
+    "directory": "src/packages/public/vite"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md",
+    "CHANGELOG.md"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./plugin": {
+      "monorepo": "./src/plugin.ts",
+      "types": "./dist/plugin.d.mts",
+      "default": "./dist/plugin.mjs"
+    },
+    "./init": {
+      "monorepo": "./src/init.ts",
+      "types": "./dist/init.d.mts",
+      "default": "./dist/init.mjs"
+    },
+    "./provider": {
+      "monorepo": "./src/provider.tsx",
+      "types": "./dist/provider.d.mts",
+      "default": "./dist/provider.mjs"
+    },
+    "./server": {
+      "monorepo": "./src/server.ts",
+      "types": "./dist/server.d.mts",
+      "default": "./dist/server.mjs"
+    },
+    "./tanstack-start": {
+      "monorepo": "./src/tanstack-start.ts",
+      "types": "./dist/tanstack-start.d.mts",
+      "default": "./dist/tanstack-start.mjs"
+    },
+    "./release": {
+      "monorepo": "./src/release.ts",
+      "types": "./dist/release.d.mts",
+      "default": "./dist/release.mjs"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "lint:oxlint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/vite",
+    "test": "node ../test-config/src/cli.ts run --config ../../../../vitest.config.ts",
+    "typecheck": "bun check"
+  },
+  "dependencies": {
+    "@interfere/build": "workspace:^",
+    "@interfere/constants": "workspace:^",
+    "@interfere/helpers": "workspace:^",
+    "@interfere/javascript": "workspace:^",
+    "@interfere/react": "workspace:^",
+    "@interfere/server-core": "workspace:^",
+    "@interfere/types": "workspace:^",
+    "@opentelemetry/api": "catalog:",
+    "@opentelemetry/api-logs": "catalog:",
+    "@opentelemetry/context-async-hooks": "catalog:",
+    "@opentelemetry/core": "catalog:",
+    "@opentelemetry/exporter-metrics-otlp-http": "catalog:",
+    "@opentelemetry/instrumentation": "catalog:",
+    "@opentelemetry/instrumentation-undici": "catalog:",
+    "@opentelemetry/resources": "catalog:",
+    "@opentelemetry/sdk-logs": "catalog:",
+    "@opentelemetry/sdk-metrics": "catalog:",
+    "@opentelemetry/sdk-trace-base": "catalog:",
+    "@opentelemetry/sdk-trace-node": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@interfere/test-config": "workspace:*",
+    "@interfere/test-utils": "workspace:^",
+    "@interfere/typescript-config": "workspace:^",
+    "@jridgewell/trace-mapping": "catalog:",
+    "@playwright/test": "catalog:",
+    "@tanstack/react-start": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "msw": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:",
+    "vitest-browser-react": "catalog:"
+  },
+  "peerDependencies": {
+    "@tanstack/react-start": "^1.168.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "vite": "^8.2.4"
+  },
+  "peerDependenciesMeta": {
+    "@tanstack/react-start": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
+    "vite": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": "24.x"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "extends": "./react.json",
+  "compilerOptions": {
+    "types": ["vite/client"],
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
+    "erasableSyntaxOnly": true
+  },
+  "include": ["src"]
+}

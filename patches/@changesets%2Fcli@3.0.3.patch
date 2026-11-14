@@ -1,0 +1,22 @@
+diff --git a/dist/getPublishPlan.mjs b/dist/getPublishPlan.mjs
+index dc6ca95c3c26de55b3355d1f339b97ab79ba3d20..42d9ab069ed2b1bda9803860604e1201cc74da48 100644
+--- a/dist/getPublishPlan.mjs
++++ b/dist/getPublishPlan.mjs
+@@ -573,6 +573,17 @@ async function getPublishTool(packages) {
+ 		"pnpm",
+ 		"yarn"
+ 	].includes(packageManager)) packageManager = (await detect({ cwd: packages.rootDir }))?.name ?? "npm";
++	if (packageManager === "bun") return {
++		...npm_exports,
++		pack: async ({ packDir, tarballPath }) => {
++			const { exitCode, stdout, stderr } = await exec("bun", ["pm", "pack", "--filename", tarballPath], {
++				nodePath: false,
++				nodeOptions: { cwd: packDir }
++			});
++			if (exitCode !== 0) return { error: { message: stderr || stdout } };
++			return { tarballPath };
++		}
++	};
+ 	if (packageManager === "pnpm") {
+ 		const major = await getPnpmMajor(packages);
+ 		return {

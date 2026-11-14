@@ -1,0 +1,13 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": ["//"],
+  "tags": ["public"],
+  "tasks": {
+    "typecheck": {
+      "dependsOn": ["$TURBO_EXTENDS$", "build"]
+    },
+    "test": {
+      "dependsOn": ["$TURBO_EXTENDS$", "build"]
+    }
+  }
+}

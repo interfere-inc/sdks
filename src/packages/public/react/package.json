@@ -1,0 +1,177 @@
+{
+  "name": "@interfere/react",
+  "version": "13.0.3",
+  "description": "Client-side React SDK for Interfere. Error tracking, session replay, and analytics.",
+  "keywords": [
+    "error-tracking",
+    "observability",
+    "react",
+    "session-replay",
+    "typescript"
+  ],
+  "homepage": "https://interfere.com",
+  "bugs": "mailto:support@interfere.com",
+  "license": "MIT",
+  "author": "Interfere <support@interfere.com> (https://interfere.com)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/interfere-inc/sdks.git",
+    "directory": "src/packages/public/react"
+  },
+  "files": [
+    "dist",
+    "!dist/internal/test",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md",
+    "CHANGELOG.md"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./provider": {
+      "monorepo": "./src/provider.tsx",
+      "types": "./dist/provider.d.mts",
+      "default": "./dist/provider.mjs"
+    },
+    "./error-boundary": {
+      "monorepo": "./src/error-boundary.tsx",
+      "types": "./dist/error-boundary.d.mts",
+      "default": "./dist/error-boundary.mjs"
+    },
+    "./react-error-handler": {
+      "monorepo": "./src/react-error-handler.ts",
+      "types": "./dist/react-error-handler.d.mts",
+      "default": "./dist/react-error-handler.mjs"
+    },
+    "./api": {
+      "monorepo": "./src/api.ts",
+      "types": "./dist/api.d.mts",
+      "default": "./dist/api.mjs"
+    },
+    "./internal/kernel": {
+      "monorepo": "./src/internal/kernel.ts",
+      "types": "./dist/internal/kernel.d.mts",
+      "default": "./dist/internal/kernel.mjs"
+    },
+    "./internal/kernel-registry": {
+      "monorepo": "./src/internal/kernel-registry.ts",
+      "types": "./dist/internal/kernel-registry.d.mts",
+      "default": "./dist/internal/kernel-registry.mjs"
+    },
+    "./internal/version": {
+      "monorepo": "./src/internal/version.ts",
+      "types": "./dist/internal/version.d.mts",
+      "default": "./dist/internal/version.mjs"
+    },
+    "./internal/wrapper-singleton": {
+      "monorepo": "./src/internal/wrapper-singleton.ts",
+      "types": "./dist/internal/wrapper-singleton.d.mts",
+      "default": "./dist/internal/wrapper-singleton.mjs"
+    },
+    "./sw-runtime": {
+      "monorepo": "./src/internal/sw-queue.ts",
+      "types": "./dist/internal/sw-queue.d.mts",
+      "default": "./dist/internal/sw-queue.mjs"
+    },
+    "./util/global": {
+      "monorepo": "./src/util/global.ts",
+      "types": "./dist/util/global.d.mts",
+      "default": "./dist/util/global.mjs"
+    },
+    "./util/log": {
+      "monorepo": "./src/util/log.ts",
+      "types": "./dist/util/log.d.mts",
+      "default": "./dist/util/log.mjs"
+    },
+    "./request-trace": {
+      "monorepo": "./src/request-trace.ts",
+      "types": "./dist/request-trace.d.mts",
+      "default": "./dist/request-trace.mjs"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "lint:oxlint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/react",
+    "test": "node ../test-config/src/cli.ts run --config ../../../../vitest.config.ts",
+    "test:artifact": "bun run build && node --test --test-timeout=30000 test/recorder-artifact.test.mts test/react-key-deopt-artifact.test.mts",
+    "typecheck": "bun check"
+  },
+  "dependencies": {
+    "@fingerprintjs/fingerprintjs": "catalog:",
+    "@interfere/constants": "workspace:^",
+    "@interfere/helpers": "workspace:^",
+    "@interfere/javascript": "workspace:^",
+    "@interfere/types": "workspace:^",
+    "@opentelemetry/api": "catalog:",
+    "@opentelemetry/api-logs": "catalog:",
+    "@opentelemetry/core": "catalog:",
+    "@opentelemetry/instrumentation": "catalog:",
+    "@opentelemetry/instrumentation-document-load": "catalog:",
+    "@opentelemetry/instrumentation-long-task": "catalog:",
+    "@opentelemetry/opentelemetry-browser-detector": "catalog:",
+    "@opentelemetry/otlp-transformer": "catalog:",
+    "@opentelemetry/resources": "catalog:",
+    "@opentelemetry/sdk-logs": "catalog:",
+    "@opentelemetry/sdk-metrics": "catalog:",
+    "@opentelemetry/sdk-trace-base": "catalog:",
+    "@opentelemetry/sdk-trace-web": "catalog:",
+    "@ua-parser-js/pro-enterprise": "catalog:",
+    "fflate": "catalog:",
+    "uuid": "catalog:",
+    "web-vitals": "catalog:",
+    "workbox-background-sync": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@babel/core": "catalog:",
+    "@datadog/browser-rum": "catalog:",
+    "@interfere/test-config": "workspace:*",
+    "@interfere/typescript-config": "workspace:^",
+    "@rolldown/plugin-babel": "catalog:",
+    "@rrweb/types": "catalog:",
+    "@sentry/browser": "catalog:",
+    "@types/babel__core": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "@vitest/browser": "catalog:",
+    "@vitest/browser-playwright": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "babel-plugin-react-compiler": "catalog:",
+    "minimatch": "catalog:",
+    "msw": "catalog:",
+    "playwright": "catalog:",
+    "posthog-js": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "rrweb": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "vitest-browser-react": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": "24.x"
+  },
+  "msw": {
+    "workerDirectory": [
+      "test/public"
+    ]
+  }
+}

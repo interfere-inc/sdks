@@ -1,0 +1,15 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tags": ["public"],
+  "extends": ["//"],
+  "tasks": {
+    "test:e2e": {
+      "outputs": ["playwright-report/**", "test-results/e2e/**"],
+      "tags": ["test-other-browsers"]
+    },
+    "test": {
+      "dependsOn": ["$TURBO_EXTENDS$", "build"],
+      "tags": ["$TURBO_EXTENDS$", "test-other-browsers"]
+    }
+  }
+}

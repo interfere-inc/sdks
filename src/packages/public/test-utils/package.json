@@ -1,0 +1,58 @@
+{
+  "name": "@interfere/test-utils",
+  "version": "10.1.3",
+  "description": "Shared test utilities used across Interfere packages.",
+  "homepage": "https://interfere.com",
+  "bugs": "mailto:support@interfere.com",
+  "license": "MIT",
+  "author": "Interfere <support@interfere.com> (https://interfere.com)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/interfere-inc/sdks.git",
+    "directory": "src/packages/public/test-utils"
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./playwright/*": {
+      "monorepo": "./src/playwright/*.ts",
+      "types": "./dist/playwright/*.d.mts",
+      "default": "./dist/playwright/*.mjs"
+    },
+    "./vitest/*": {
+      "monorepo": "./src/vitest/*.ts",
+      "types": "./dist/vitest/*.d.mts",
+      "default": "./dist/vitest/*.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "lint:oxlint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/test-utils",
+    "test": "node ../test-config/src/cli.ts run --config ../../../../vitest.config.ts",
+    "typecheck": "bun check"
+  },
+  "dependencies": {
+    "@interfere/helpers": "workspace:^",
+    "msw": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@interfere/test-config": "workspace:*",
+    "@interfere/typescript-config": "workspace:^",
+    "@types/node": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": "24.x"
+  }
+}

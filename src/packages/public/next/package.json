@@ -1,0 +1,174 @@
+{
+  "name": "@interfere/next",
+  "version": "13.0.3",
+  "description": "Build software that never breaks.",
+  "keywords": [
+    "error-tracking",
+    "nextjs",
+    "observability",
+    "react",
+    "typescript"
+  ],
+  "homepage": "https://interfere.com",
+  "bugs": "mailto:support@interfere.com",
+  "license": "MIT",
+  "author": "Interfere <support@interfere.com> (https://interfere.com)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/interfere-inc/sdks.git",
+    "directory": "src/packages/public/next"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md",
+    "CHANGELOG.md"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "./dist/instrumentation-client.mjs"
+  ],
+  "exports": {
+    "./config": {
+      "monorepo": "./src/config.ts",
+      "types": "./dist/config.d.mts",
+      "default": "./dist/config.mjs"
+    },
+    "./instrument-client": {
+      "monorepo": "./src/instrument-client.ts",
+      "types": "./dist/instrument-client.d.mts",
+      "default": "./dist/instrument-client.mjs"
+    },
+    "./instrumentation": {
+      "edge-light": {
+        "monorepo": "./src/instrumentation.edge.ts",
+        "types": "./dist/instrumentation.edge.d.mts",
+        "default": "./dist/instrumentation.edge.mjs"
+      },
+      "workerd": {
+        "monorepo": "./src/instrumentation.edge.ts",
+        "types": "./dist/instrumentation.edge.d.mts",
+        "default": "./dist/instrumentation.edge.mjs"
+      },
+      "worker": {
+        "monorepo": "./src/instrumentation.edge.ts",
+        "types": "./dist/instrumentation.edge.d.mts",
+        "default": "./dist/instrumentation.edge.mjs"
+      },
+      "types": "./dist/instrumentation.d.mts",
+      "node": {
+        "monorepo": "./src/instrumentation.ts",
+        "types": "./dist/instrumentation.d.mts",
+        "default": "./dist/instrumentation.mjs"
+      },
+      "import": {
+        "monorepo": "./src/instrumentation.ts",
+        "types": "./dist/instrumentation.d.mts",
+        "default": "./dist/instrumentation.mjs"
+      },
+      "default": {
+        "monorepo": "./src/instrumentation.edge.ts",
+        "types": "./dist/instrumentation.edge.d.mts",
+        "default": "./dist/instrumentation.edge.mjs"
+      }
+    },
+    "./instrumentation-client": {
+      "monorepo": "./src/instrumentation-client.ts",
+      "types": "./dist/instrumentation-client.d.mts",
+      "default": "./dist/instrumentation-client.mjs"
+    },
+    "./provider": {
+      "monorepo": "./src/provider.tsx",
+      "types": "./dist/provider.d.mts",
+      "default": "./dist/provider.mjs"
+    },
+    "./server": {
+      "monorepo": "./src/server.ts",
+      "types": "./dist/server.d.mts",
+      "default": "./dist/server.mjs"
+    },
+    "./request-trace": {
+      "monorepo": "./src/request-trace.ts",
+      "types": "./dist/request-trace.d.mts",
+      "default": "./dist/request-trace.mjs"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "lint:oxlint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/next",
+    "test": "node ../test-config/src/cli.ts run --config ../../../../vitest.config.ts",
+    "test:e2e": "playwright test",
+    "typecheck": "bun check"
+  },
+  "dependencies": {
+    "@interfere/build": "workspace:^",
+    "@interfere/constants": "workspace:^",
+    "@interfere/helpers": "workspace:^",
+    "@interfere/javascript": "workspace:^",
+    "@interfere/react": "workspace:^",
+    "@interfere/server-core": "workspace:^",
+    "@interfere/types": "workspace:^",
+    "@opentelemetry/api": "catalog:",
+    "@opentelemetry/api-logs": "catalog:",
+    "@opentelemetry/context-async-hooks": "catalog:",
+    "@opentelemetry/core": "catalog:",
+    "@opentelemetry/instrumentation": "catalog:",
+    "@opentelemetry/otlp-transformer": "catalog:",
+    "@opentelemetry/resources": "catalog:",
+    "@opentelemetry/sdk-logs": "catalog:",
+    "@opentelemetry/sdk-metrics": "catalog:",
+    "@opentelemetry/sdk-trace-base": "catalog:",
+    "@opentelemetry/sdk-trace-node": "catalog:",
+    "@vercel/otel": "catalog:",
+    "chalk": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@edge-runtime/vm": "catalog:",
+    "@interfere/test-config": "workspace:*",
+    "@interfere/test-utils": "workspace:^",
+    "@interfere/typescript-config": "workspace:^",
+    "@playwright/test": "catalog:",
+    "@sentry/nextjs": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "@vitest/browser": "catalog:",
+    "@vitest/browser-playwright": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "dd-trace": "catalog:",
+    "msw": "catalog:",
+    "next": "catalog:",
+    "playwright": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "vitest-browser-react": "catalog:",
+    "webpack": "catalog:"
+  },
+  "peerDependencies": {
+    "next": "^15.3.0 || ^16.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "next": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": "24.x"
+  }
+}

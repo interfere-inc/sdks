@@ -1,0 +1,13 @@
+diff --git a/dist/chunks/spy.DDMXghXv.js b/dist/chunks/spy.DDMXghXv.js
+index fd6bad520cd163f8cf2777d2d40b2f987c3629a5..0638a11c5504f37745af1f2a962fc01a3ac5088a 100644
+--- a/dist/chunks/spy.DDMXghXv.js
++++ b/dist/chunks/spy.DDMXghXv.js
+@@ -350,7 +350,7 @@ function createMock({ state, config, name: mockName, prototypeState, prototypeCo
+ 						keepMembersImplementation
+ 					});
+ 				}
+-			} else returnValue = implementation.apply(this, args);
++			} else returnValue = Reflect.apply(implementation, this, args);
+ 		} catch (error) {
+ 			thrownValue = error;
+ 			didThrow = true;

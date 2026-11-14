@@ -1,0 +1,44 @@
+{
+  "name": "@interfere/test-config",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/interfere-inc/sdks.git",
+    "directory": "src/packages/public/test-config"
+  },
+  "type": "module",
+  "exports": {
+    "./base": "./src/configs/base.ts",
+    "./browser": "./src/configs/browser.ts",
+    "./browser-network": "./src/browser/browser-network.ts",
+    "./browser-network-plugin": "./src/browser/browser-network-plugin.ts",
+    "./browser-platform": "./src/browser/browser-platform.ts",
+    "./browser-storage": "./src/browser/browser-storage.ts",
+    "./cli": "./src/cli.ts",
+    "./injected-configuration": "./src/injected-configuration.ts",
+    "./msw-server": "./src/msw-server.ts",
+    "./native-browser": "./src/configs/native-browser.ts",
+    "./node": "./src/configs/node.ts",
+    "./reporting": "./src/reporting/reporting.ts"
+  },
+  "scripts": {
+    "lint:oxlint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/test-config",
+    "test": "node src/cli.ts run --config ../../../../vitest.config.ts",
+    "typecheck": "bun check"
+  },
+  "dependencies": {
+    "@vitest/browser-playwright": "catalog:",
+    "@vitest/coverage-istanbul": "catalog:",
+    "msw": "catalog:",
+    "playwright": "catalog:",
+    "vitest": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@interfere/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  }
+}

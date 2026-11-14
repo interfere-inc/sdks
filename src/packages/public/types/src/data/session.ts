@@ -1,0 +1,23 @@
+import { z } from "zod";
+
+export const storedSessionIdSchema = z.string().min(1).brand<"SessionId">();
+
+/** Regex source for the wire session shape, kept in step with sessionIdSchema so SQL readers apply the same rule. */
+export const sessionIdWirePattern =
+  "^(server_)?[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-7[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$";
+
+const wireSessionIdSchema = z.union([
+  z.uuidv7(),
+  z.templateLiteral(["server_", z.uuidv7()]),
+]);
+
+export const sessionIdSchema = storedSessionIdSchema
+  .and(wireSessionIdSchema)
+  .meta({
+    description:
+      "UUIDv7 (from the client SDK) or server_<uuidv7> (server-side fallback).",
+    id: "SessionId",
+    title: "SessionId",
+  });
+
+export type SessionId = z.infer<typeof sessionIdSchema>;

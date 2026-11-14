@@ -1,0 +1,79 @@
+{
+  "name": "@interfere/javascript",
+  "version": "0.4.1",
+  "description": "JavaScript and TypeScript client for the Interfere API.",
+  "homepage": "https://interfere.com",
+  "license": "MIT",
+  "author": "Interfere <support@interfere.com> (https://interfere.com)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/interfere-inc/sdks.git",
+    "directory": "src/packages/public/javascript"
+  },
+  "files": [
+    "dist/node",
+    "dist/portable",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "browser": {
+    "fs": false
+  },
+  "exports": {
+    ".": {
+      "types": {
+        "import": "./dist/node/index.d.mts",
+        "require": "./dist/node/index.d.cts"
+      },
+      "browser": {
+        "import": "./dist/portable/index.mjs",
+        "require": "./dist/portable/index.cjs"
+      },
+      "edge-light": {
+        "import": "./dist/portable/index.mjs",
+        "require": "./dist/portable/index.cjs"
+      },
+      "workerd": {
+        "import": "./dist/portable/index.mjs",
+        "require": "./dist/portable/index.cjs"
+      },
+      "worker": {
+        "import": "./dist/portable/index.mjs",
+        "require": "./dist/portable/index.cjs"
+      },
+      "node": {
+        "import": "./dist/node/index.mjs",
+        "require": "./dist/node/index.cjs"
+      },
+      "default": {
+        "import": "./dist/portable/index.mjs",
+        "require": "./dist/portable/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "generate": "bun scripts/typegen.ts && fern generate --local --force",
+    "lint:oxlint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/javascript",
+    "test": "node ../test-config/src/cli.ts run --config ../../../../vitest.config.ts",
+    "typecheck": "bun check"
+  },
+  "devDependencies": {
+    "@interfere/test-config": "workspace:*",
+    "@types/node": "catalog:",
+    "fern-api": "catalog:",
+    "msw": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": "24.x"
+  }
+}

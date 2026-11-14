@@ -1,0 +1,115 @@
+{
+  "name": "@interfere/constants",
+  "version": "9.3.3",
+  "description": "Build apps that never break.",
+  "keywords": [
+    "error-tracking",
+    "logging",
+    "observability",
+    "react",
+    "session-replay",
+    "typescript"
+  ],
+  "homepage": "https://interfere.com",
+  "bugs": "mailto:support@interfere.com",
+  "license": "MIT",
+  "author": "Interfere <support@interfere.com> (https://interfere.com)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/interfere-inc/sdks.git",
+    "directory": "src/packages/public/constants"
+  },
+  "files": [
+    "dist/**/*.cjs",
+    "dist/**/*.mjs",
+    "dist/**/*.d.cts",
+    "dist/**/*.d.mts",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./api": {
+      "monorepo": "./src/api.ts",
+      "import": {
+        "types": "./dist/api.d.mts",
+        "default": "./dist/api.mjs"
+      },
+      "require": {
+        "types": "./dist/api.d.cts",
+        "default": "./dist/api.cjs"
+      }
+    },
+    "./http": {
+      "monorepo": "./src/http.ts",
+      "import": {
+        "types": "./dist/http.d.mts",
+        "default": "./dist/http.mjs"
+      },
+      "require": {
+        "types": "./dist/http.d.cts",
+        "default": "./dist/http.cjs"
+      }
+    },
+    "./route-prefix": {
+      "monorepo": "./src/route-prefix.ts",
+      "import": {
+        "types": "./dist/route-prefix.d.mts",
+        "default": "./dist/route-prefix.mjs"
+      },
+      "require": {
+        "types": "./dist/route-prefix.d.cts",
+        "default": "./dist/route-prefix.cjs"
+      }
+    },
+    "./service-names": {
+      "monorepo": "./src/service-names.ts",
+      "import": {
+        "types": "./dist/service-names.d.mts",
+        "default": "./dist/service-names.mjs"
+      },
+      "require": {
+        "types": "./dist/service-names.d.cts",
+        "default": "./dist/service-names.cjs"
+      }
+    },
+    "./package.json": "./package.json",
+    "./staff": {
+      "monorepo": "./src/staff.ts",
+      "import": {
+        "types": "./dist/staff.d.mts",
+        "default": "./dist/staff.mjs"
+      },
+      "require": {
+        "types": "./dist/staff.d.cts",
+        "default": "./dist/staff.cjs"
+      }
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "lint:oxlint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/constants",
+    "test": "node ../test-config/src/cli.ts run --config ../../../../vitest.config.ts",
+    "typecheck": "bun check"
+  },
+  "dependencies": {
+    "better-status-codes": "catalog:"
+  },
+  "devDependencies": {
+    "@interfere/test-config": "workspace:*",
+    "@interfere/test-utils": "workspace:^",
+    "@interfere/typescript-config": "workspace:^",
+    "@types/node": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": "24.x"
+  }
+}

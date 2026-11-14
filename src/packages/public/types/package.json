@@ -1,0 +1,171 @@
+{
+  "name": "@interfere/types",
+  "version": "11.0.2",
+  "description": "TypeScript & Zod types for Interfere",
+  "keywords": [
+    "logging",
+    "observability",
+    "typescript"
+  ],
+  "homepage": "https://interfere.com",
+  "bugs": "mailto:support@interfere.com",
+  "license": "MIT",
+  "author": "Interfere <support@interfere.com> (https://interfere.com)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/interfere-inc/sdks.git",
+    "directory": "src/packages/public/types"
+  },
+  "files": [
+    "dist/**/*.cjs",
+    "dist/**/*.mjs",
+    "dist/**/*.d.cts",
+    "dist/**/*.d.mts",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "imports": {
+    "#data/*": {
+      "monorepo": "./src/data/*.ts",
+      "import": {
+        "types": "./dist/data/*.d.mts",
+        "default": "./dist/data/*.mjs"
+      },
+      "require": {
+        "types": "./dist/data/*.d.cts",
+        "default": "./dist/data/*.cjs"
+      }
+    },
+    "#sdk/*": {
+      "monorepo": "./src/sdk/*.ts",
+      "import": {
+        "types": "./dist/sdk/*.d.mts",
+        "default": "./dist/sdk/*.mjs"
+      },
+      "require": {
+        "types": "./dist/sdk/*.d.cts",
+        "default": "./dist/sdk/*.cjs"
+      }
+    },
+    "#events/*": {
+      "monorepo": "./src/events/*.ts",
+      "import": {
+        "types": "./dist/events/*.d.mts",
+        "default": "./dist/events/*.mjs"
+      },
+      "require": {
+        "types": "./dist/events/*.d.cts",
+        "default": "./dist/events/*.cjs"
+      }
+    }
+  },
+  "exports": {
+    "./data/*": {
+      "monorepo": "./src/data/*.ts",
+      "import": {
+        "types": "./dist/data/*.d.mts",
+        "default": "./dist/data/*.mjs"
+      },
+      "require": {
+        "types": "./dist/data/*.d.cts",
+        "default": "./dist/data/*.cjs"
+      }
+    },
+    "./sdk/plugins/*": {
+      "monorepo": "./src/sdk/plugins/*.ts",
+      "import": {
+        "types": "./dist/sdk/plugins/*.d.mts",
+        "default": "./dist/sdk/plugins/*.mjs"
+      },
+      "require": {
+        "types": "./dist/sdk/plugins/*.d.cts",
+        "default": "./dist/sdk/plugins/*.cjs"
+      }
+    },
+    "./sdk/*": {
+      "monorepo": "./src/sdk/*.ts",
+      "import": {
+        "types": "./dist/sdk/*.d.mts",
+        "default": "./dist/sdk/*.mjs"
+      },
+      "require": {
+        "types": "./dist/sdk/*.d.cts",
+        "default": "./dist/sdk/*.cjs"
+      }
+    },
+    "./releases/*": {
+      "monorepo": "./src/releases/*.ts",
+      "import": {
+        "types": "./dist/releases/*.d.mts",
+        "default": "./dist/releases/*.mjs"
+      },
+      "require": {
+        "types": "./dist/releases/*.d.cts",
+        "default": "./dist/releases/*.cjs"
+      }
+    },
+    "./events/*": {
+      "monorepo": "./src/events/*.ts",
+      "import": {
+        "types": "./dist/events/*.d.mts",
+        "default": "./dist/events/*.mjs"
+      },
+      "require": {
+        "types": "./dist/events/*.d.cts",
+        "default": "./dist/events/*.cjs"
+      }
+    },
+    "./integrations": {
+      "monorepo": "./src/integrations/index.ts",
+      "import": {
+        "types": "./dist/integrations/index.d.mts",
+        "default": "./dist/integrations/index.mjs"
+      },
+      "require": {
+        "types": "./dist/integrations/index.d.cts",
+        "default": "./dist/integrations/index.cjs"
+      }
+    },
+    "./integrations/platforms/*": {
+      "monorepo": "./src/integrations/platforms/*.ts",
+      "import": {
+        "types": "./dist/integrations/platforms/*.d.mts",
+        "default": "./dist/integrations/platforms/*.mjs"
+      },
+      "require": {
+        "types": "./dist/integrations/platforms/*.d.cts",
+        "default": "./dist/integrations/platforms/*.cjs"
+      }
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "lint:oxlint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/types",
+    "test": "node ../test-config/src/cli.ts run --config ../../../../vitest.config.ts",
+    "typecheck": "bun check"
+  },
+  "dependencies": {
+    "@interfere/helpers": "workspace:^",
+    "@opentelemetry/api": "catalog:",
+    "@opentelemetry/sdk-trace-base": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@interfere/test-config": "workspace:*",
+    "@interfere/test-utils": "workspace:^",
+    "@interfere/typescript-config": "workspace:^",
+    "@types/node": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": "24.x"
+  }
+}

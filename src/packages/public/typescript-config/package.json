@@ -1,0 +1,35 @@
+{
+  "name": "@interfere/typescript-config",
+  "version": "9.0.4",
+  "description": "Shared TypeScript configurations used across Interfere packages.",
+  "keywords": [
+    "config",
+    "tsconfig",
+    "typescript"
+  ],
+  "homepage": "https://interfere.com",
+  "bugs": "mailto:support@interfere.com",
+  "license": "MIT",
+  "author": "Interfere <support@interfere.com> (https://interfere.com)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/interfere-inc/sdks.git",
+    "directory": "src/packages/public/typescript-config"
+  },
+  "files": [
+    "base.json",
+    "nextjs.json",
+    "react.json",
+    "CHANGELOG.md"
+  ],
+  "type": "module",
+  "exports": {
+    "./*.json": "./*.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "lint:oxlint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/typescript-config"
+  }
+}

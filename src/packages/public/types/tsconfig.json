@@ -1,0 +1,8 @@
+{
+  "extends": "@interfere/typescript-config/react.json",
+  "compilerOptions": {
+    "types": ["node", "vitest/globals"]
+  },
+  "include": ["src/**/*", "../../private/internal-schemas/src/facts.ts"],
+  "exclude": ["node_modules", "dist"]
+}

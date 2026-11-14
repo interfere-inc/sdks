@@ -1,0 +1,36 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalEnv": ["NODE_ENV"],
+  "globalPassThroughEnv": [
+    "CHROMIUM_EXECUTABLE_PATH",
+    "PLAYWRIGHT_BROWSERS_PATH"
+  ],
+  "ui": "stream",
+  "tasks": {
+    "build": {
+      "dependsOn": ["typegen", "^build"],
+      "outputs": ["dist/**"]
+    },
+    "typecheck": {
+      "dependsOn": ["typegen", "^typegen", "^typecheck"]
+    },
+    "typegen": {
+      "dependsOn": ["^typegen"]
+    },
+    "test": {
+      "dependsOn": ["typegen", "^build"],
+      "env": ["CI", "RUNNER_ARCH", "RUNNER_OS", "VITEST_ARGS"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/vitest.config.ts",
+        "$TURBO_ROOT$/src/packages/public/test-config/src/**"
+      ],
+      "outputs": ["coverage/**", "node_modules/.vitest-cache/**"]
+    },
+    "test:e2e": {
+      "dependsOn": ["build"],
+      "outputs": ["playwright-report/**", "test-results/**"],
+      "env": ["CI", "RUNNER_ARCH", "RUNNER_OS"]
+    }
+  }
+}
