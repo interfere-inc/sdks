@@ -48568,6 +48568,120 @@
                   "type": "null"
                 }
               ]
+            },
+            "deployments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "organizationId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "surfaceId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "releaseId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "environment": {
+                    "anyOf": [
+                      {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "provider": {
+                    "type": "string"
+                  },
+                  "surfaceChangeId": {
+                    "anyOf": [
+                      {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "status": {
+                    "enum": [
+                      "pending",
+                      "building",
+                      "ready",
+                      "errored",
+                      "canceled",
+                      "unknown"
+                    ],
+                    "type": "string"
+                  },
+                  "deployedAt": {
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "createdAt": {
+                    "type": "number"
+                  },
+                  "deletedAt": {
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "updatedAt": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "id",
+                  "organizationId",
+                  "surfaceId",
+                  "releaseId",
+                  "environment",
+                  "provider",
+                  "surfaceChangeId",
+                  "status",
+                  "deployedAt",
+                  "createdAt",
+                  "deletedAt",
+                  "updatedAt"
+                ],
+                "additionalProperties": false
+              }
             }
           },
           "required": [
@@ -48588,7 +48702,8 @@
             "deployedAt",
             "createdAt",
             "deletedAt",
-            "updatedAt"
+            "updatedAt",
+            "deployments"
           ],
           "additionalProperties": false
         }
@@ -49707,6 +49822,120 @@
                     "type": "null"
                   }
                 ]
+              },
+              "deployments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "organizationId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "surfaceId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "releaseId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "environment": {
+                      "anyOf": [
+                        {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "provider": {
+                      "type": "string"
+                    },
+                    "surfaceChangeId": {
+                      "anyOf": [
+                        {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "uuid"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "status": {
+                      "enum": [
+                        "pending",
+                        "building",
+                        "ready",
+                        "errored",
+                        "canceled",
+                        "unknown"
+                      ],
+                      "type": "string"
+                    },
+                    "deployedAt": {
+                      "anyOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "createdAt": {
+                      "type": "number"
+                    },
+                    "deletedAt": {
+                      "anyOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "updatedAt": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "organizationId",
+                    "surfaceId",
+                    "releaseId",
+                    "environment",
+                    "provider",
+                    "surfaceChangeId",
+                    "status",
+                    "deployedAt",
+                    "createdAt",
+                    "deletedAt",
+                    "updatedAt"
+                  ],
+                  "additionalProperties": false
+                }
               }
             },
             "required": [
@@ -49727,7 +49956,8 @@
               "deployedAt",
               "createdAt",
               "deletedAt",
-              "updatedAt"
+              "updatedAt",
+              "deployments"
             ],
             "additionalProperties": false
           },
@@ -50850,6 +51080,120 @@
                   "type": "null"
                 }
               ]
+            },
+            "deployments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "organizationId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "surfaceId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "releaseId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "environment": {
+                    "anyOf": [
+                      {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "provider": {
+                    "type": "string"
+                  },
+                  "surfaceChangeId": {
+                    "anyOf": [
+                      {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "status": {
+                    "enum": [
+                      "pending",
+                      "building",
+                      "ready",
+                      "errored",
+                      "canceled",
+                      "unknown"
+                    ],
+                    "type": "string"
+                  },
+                  "deployedAt": {
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "createdAt": {
+                    "type": "number"
+                  },
+                  "deletedAt": {
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "updatedAt": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "id",
+                  "organizationId",
+                  "surfaceId",
+                  "releaseId",
+                  "environment",
+                  "provider",
+                  "surfaceChangeId",
+                  "status",
+                  "deployedAt",
+                  "createdAt",
+                  "deletedAt",
+                  "updatedAt"
+                ],
+                "additionalProperties": false
+              }
             }
           },
           "required": [
@@ -50870,7 +51214,8 @@
             "deployedAt",
             "createdAt",
             "deletedAt",
-            "updatedAt"
+            "updatedAt",
+            "deployments"
           ],
           "additionalProperties": false
         }

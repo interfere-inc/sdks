@@ -65,6 +65,8 @@ pub struct QueryReleasesForSurfaceResponseItem {
     #[serde(rename = "destinationChange")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub destination_change: Option<QueryReleasesForSurfaceResponseItemDestinationChange>,
+    #[serde(default)]
+    pub deployments: Vec<QueryReleasesForSurfaceResponseItemDeploymentsItem>,
 }
 
 impl QueryReleasesForSurfaceResponseItem {
@@ -96,6 +98,7 @@ pub struct QueryReleasesForSurfaceResponseItemBuilder {
     updated_at: Option<f64>,
     source_change: Option<QueryReleasesForSurfaceResponseItemSourceChange>,
     destination_change: Option<QueryReleasesForSurfaceResponseItemDestinationChange>,
+    deployments: Option<Vec<QueryReleasesForSurfaceResponseItemDeploymentsItem>>,
 }
 
 impl QueryReleasesForSurfaceResponseItemBuilder {
@@ -199,6 +202,11 @@ impl QueryReleasesForSurfaceResponseItemBuilder {
         self
     }
 
+    pub fn deployments(mut self, value: Vec<QueryReleasesForSurfaceResponseItemDeploymentsItem>) -> Self {
+        self.deployments = Some(value);
+        self
+    }
+
     /// Consumes the builder and constructs a [`QueryReleasesForSurfaceResponseItem`].
     /// This method will fail if any of the following fields are not set:
     /// - [`id`](QueryReleasesForSurfaceResponseItemBuilder::id)
@@ -208,6 +216,7 @@ impl QueryReleasesForSurfaceResponseItemBuilder {
     /// - [`status`](QueryReleasesForSurfaceResponseItemBuilder::status)
     /// - [`created_at`](QueryReleasesForSurfaceResponseItemBuilder::created_at)
     /// - [`updated_at`](QueryReleasesForSurfaceResponseItemBuilder::updated_at)
+    /// - [`deployments`](QueryReleasesForSurfaceResponseItemBuilder::deployments)
     pub fn build(self) -> Result<QueryReleasesForSurfaceResponseItem, BuildError> {
         Ok(QueryReleasesForSurfaceResponseItem {
             id: self.id.ok_or_else(|| BuildError::missing_field("id"))?,
@@ -230,6 +239,7 @@ impl QueryReleasesForSurfaceResponseItemBuilder {
             updated_at: self.updated_at.ok_or_else(|| BuildError::missing_field("updated_at"))?,
             source_change: self.source_change,
             destination_change: self.destination_change,
+            deployments: self.deployments.ok_or_else(|| BuildError::missing_field("deployments"))?,
         })
     }
 }

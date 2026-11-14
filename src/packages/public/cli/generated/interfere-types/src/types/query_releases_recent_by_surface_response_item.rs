@@ -65,6 +65,8 @@ pub struct QueryReleasesRecentBySurfaceResponseItem {
     #[serde(rename = "destinationChange")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub destination_change: Option<QueryReleasesRecentBySurfaceResponseItemDestinationChange>,
+    #[serde(default)]
+    pub deployments: Vec<QueryReleasesRecentBySurfaceResponseItemDeploymentsItem>,
 }
 
 impl QueryReleasesRecentBySurfaceResponseItem {
@@ -96,6 +98,7 @@ pub struct QueryReleasesRecentBySurfaceResponseItemBuilder {
     updated_at: Option<f64>,
     source_change: Option<QueryReleasesRecentBySurfaceResponseItemSourceChange>,
     destination_change: Option<QueryReleasesRecentBySurfaceResponseItemDestinationChange>,
+    deployments: Option<Vec<QueryReleasesRecentBySurfaceResponseItemDeploymentsItem>>,
 }
 
 impl QueryReleasesRecentBySurfaceResponseItemBuilder {
@@ -199,6 +202,11 @@ impl QueryReleasesRecentBySurfaceResponseItemBuilder {
         self
     }
 
+    pub fn deployments(mut self, value: Vec<QueryReleasesRecentBySurfaceResponseItemDeploymentsItem>) -> Self {
+        self.deployments = Some(value);
+        self
+    }
+
     /// Consumes the builder and constructs a [`QueryReleasesRecentBySurfaceResponseItem`].
     /// This method will fail if any of the following fields are not set:
     /// - [`id`](QueryReleasesRecentBySurfaceResponseItemBuilder::id)
@@ -208,6 +216,7 @@ impl QueryReleasesRecentBySurfaceResponseItemBuilder {
     /// - [`status`](QueryReleasesRecentBySurfaceResponseItemBuilder::status)
     /// - [`created_at`](QueryReleasesRecentBySurfaceResponseItemBuilder::created_at)
     /// - [`updated_at`](QueryReleasesRecentBySurfaceResponseItemBuilder::updated_at)
+    /// - [`deployments`](QueryReleasesRecentBySurfaceResponseItemBuilder::deployments)
     pub fn build(self) -> Result<QueryReleasesRecentBySurfaceResponseItem, BuildError> {
         Ok(QueryReleasesRecentBySurfaceResponseItem {
             id: self.id.ok_or_else(|| BuildError::missing_field("id"))?,
@@ -230,6 +239,7 @@ impl QueryReleasesRecentBySurfaceResponseItemBuilder {
             updated_at: self.updated_at.ok_or_else(|| BuildError::missing_field("updated_at"))?,
             source_change: self.source_change,
             destination_change: self.destination_change,
+            deployments: self.deployments.ok_or_else(|| BuildError::missing_field("deployments"))?,
         })
     }
 }
