@@ -33,7 +33,7 @@ export async function receiver(
     { status: number; remaining: number; body: string }
   >();
 
-  const stalls = new Map<string, number>();
+  const stalls = new Map<string, () => Promise<void>>();
 
   let assets: string | undefined;
   let upstream: ((request: Request) => Promise<Response>) | undefined;
@@ -94,7 +94,7 @@ export async function receiver(
       if (stall !== undefined) {
         incoming.pause();
 
-        await setTimeout(stall);
+        await stall();
 
         incoming.resume();
       }
@@ -293,7 +293,12 @@ export async function receiver(
       failures.set(path, { status, remaining: attempts, body });
     },
     stall(path: string, ms: number) {
-      stalls.set(path, ms);
+      stalls.set(path, async () => setTimeout(ms));
+    },
+    hold(path: string, until: Promise<unknown>) {
+      stalls.set(path, async () => {
+        await until;
+      });
     },
     async close() {
       server.closeAllConnections();

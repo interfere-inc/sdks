@@ -15,7 +15,10 @@ export default defineConfig({
   root: import.meta.dirname,
   test: {
     projects: [
-      node({ test: { name: "node", exclude: edgeTests } }),
+      // WARNING: The edge group runs first because browser project transforms block Vite's main thread and stall cold edge module fetches for seconds on 4 vCPU runners.
+      node({
+        test: { name: "node", exclude: edgeTests, sequence: { groupOrder: 1 } },
+      }),
       mergeConfig(base, {
         resolve: { conditions: ["edge-light"] },
         ssr: { resolve: { conditions: ["edge-light"] } },
@@ -36,7 +39,11 @@ export default defineConfig({
           include: ["@opentelemetry/api"],
         },
         plugins: [react()],
-        test: { name: "browser", setupFiles: ["./test/setup-browser.ts"] },
+        test: {
+          name: "browser",
+          setupFiles: ["./test/setup-browser.ts"],
+          sequence: { groupOrder: 1 },
+        },
       }),
     ],
   },

@@ -326,3 +326,44 @@ test("injected failures prevent custom publication until the retry is accepted",
     503, 202,
   ]);
 });
+
+test("holds a matching request body until its release settles and stalls another for a fixed time", async () => {
+  const release = Promise.withResolvers<undefined>();
+
+  collector.hold("/v3/replay/", release.promise);
+
+  collector.stall("/drain", 1);
+
+  const settled: string[] = [];
+
+  const held = (async () => {
+    const response = await fetch(`${collector.url}/v3/replay/session`, {
+      method: "POST",
+      body: "recorded tail",
+    });
+
+    settled.push("replay");
+
+    return response;
+  })();
+
+  const stalled = await fetch(`${collector.url}/drain`, {
+    method: "POST",
+    body: "trace",
+  });
+
+  expect(stalled.status).toBe(200);
+
+  expect(settled).toStrictEqual([]);
+
+  expect(collector.requests.map(({ body }) => body)).toStrictEqual(["trace"]);
+
+  release.resolve(undefined);
+
+  expect((await held).status).toBe(200);
+
+  expect(collector.requests.map(({ body }) => body)).toStrictEqual([
+    "trace",
+    "recorded tail",
+  ]);
+});

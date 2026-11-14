@@ -683,7 +683,9 @@ test("navigating away right after a small page renders delivers its buffered rep
 
   await context.unrouteAll();
 
-  collector.stall("/v3/replay/", 1500);
+  const teardown = Promise.withResolvers<undefined>();
+
+  collector.hold("/v3/replay/", teardown.promise);
 
   await open();
 
@@ -696,6 +698,8 @@ test("navigating away right after a small page renders delivers its buffered rep
   expect(replayRequests()).toHaveLength(0);
 
   await page.goto("about:blank");
+
+  teardown.resolve(undefined);
 
   await expect
     .poll(() => replayRequests().length, { timeout: 4000 })
@@ -728,7 +732,9 @@ test("navigating away from a bulky page after its first flush delivers the snaps
 
   const flushed = replayRequests().length;
 
-  collector.stall("/v3/replay/", 1500);
+  const teardown = Promise.withResolvers<undefined>();
+
+  collector.hold("/v3/replay/", teardown.promise);
 
   await click("Navigate");
 
@@ -737,6 +743,8 @@ test("navigating away from a bulky page after its first flush delivers the snaps
     .toBe("navigated");
 
   await page.goto("about:blank");
+
+  teardown.resolve(undefined);
 
   await expect
     .poll(() => replayRequests().length, { timeout: 4000 })
