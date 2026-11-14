@@ -1,0 +1,148 @@
+pub use crate::prelude::*;
+#[allow(unused_imports)]
+use super::*;
+
+#[non_exhaustive]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum CreatePrivateRequestScopesItem {
+    OrgTelemetryWrite,
+    OrgSurfacesRead,
+    OrgSurfacesWrite,
+    OrgSurfacesDelete,
+    OrgTiersRead,
+    OrgTiersWrite,
+    OrgProblemsRead,
+    OrgProblemsWrite,
+    OrgSupportRead,
+    OrgSupportWrite,
+    OrgReplaysRead,
+    OrgSourceContextRead,
+    OrgIntegrationSettingsRead,
+    OrgIntegrationSettingsWrite,
+    OrgWorkspaceMembersRead,
+    OrgWorkspaceMembersWrite,
+    OrgWorkspaceBillingRead,
+    OrgWorkspaceBillingWrite,
+    OrgWorkspaceBasicsRead,
+    OrgWorkspaceBasicsWrite,
+    OrgWorkspaceDomainsRead,
+    OrgWorkspaceDomainsWrite,
+    OrgWorkspaceAuthRead,
+    OrgWorkspaceAuthWrite,
+    OrgWorkspaceDestroy,
+    OrgWorkspaceTransferOwnership,
+    ReleaseWrite,
+    IngestWrite,
+    /// This variant is used for forward compatibility.
+    /// If the server sends a value not recognized by the current SDK version,
+    /// it will be captured here with the raw string value.
+    __Unknown(String),
+}
+impl Serialize for CreatePrivateRequestScopesItem {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        match self {
+            Self::OrgTelemetryWrite => serializer.serialize_str("org:telemetry:write"),
+            Self::OrgSurfacesRead => serializer.serialize_str("org:surfaces:read"),
+            Self::OrgSurfacesWrite => serializer.serialize_str("org:surfaces:write"),
+            Self::OrgSurfacesDelete => serializer.serialize_str("org:surfaces:delete"),
+            Self::OrgTiersRead => serializer.serialize_str("org:tiers:read"),
+            Self::OrgTiersWrite => serializer.serialize_str("org:tiers:write"),
+            Self::OrgProblemsRead => serializer.serialize_str("org:problems:read"),
+            Self::OrgProblemsWrite => serializer.serialize_str("org:problems:write"),
+            Self::OrgSupportRead => serializer.serialize_str("org:support:read"),
+            Self::OrgSupportWrite => serializer.serialize_str("org:support:write"),
+            Self::OrgReplaysRead => serializer.serialize_str("org:replays:read"),
+            Self::OrgSourceContextRead => serializer.serialize_str("org:source_context:read"),
+            Self::OrgIntegrationSettingsRead => serializer.serialize_str("org:integration_settings:read"),
+            Self::OrgIntegrationSettingsWrite => serializer.serialize_str("org:integration_settings:write"),
+            Self::OrgWorkspaceMembersRead => serializer.serialize_str("org:workspace_members:read"),
+            Self::OrgWorkspaceMembersWrite => serializer.serialize_str("org:workspace_members:write"),
+            Self::OrgWorkspaceBillingRead => serializer.serialize_str("org:workspace_billing:read"),
+            Self::OrgWorkspaceBillingWrite => serializer.serialize_str("org:workspace_billing:write"),
+            Self::OrgWorkspaceBasicsRead => serializer.serialize_str("org:workspace_basics:read"),
+            Self::OrgWorkspaceBasicsWrite => serializer.serialize_str("org:workspace_basics:write"),
+            Self::OrgWorkspaceDomainsRead => serializer.serialize_str("org:workspace_domains:read"),
+            Self::OrgWorkspaceDomainsWrite => serializer.serialize_str("org:workspace_domains:write"),
+            Self::OrgWorkspaceAuthRead => serializer.serialize_str("org:workspace_auth:read"),
+            Self::OrgWorkspaceAuthWrite => serializer.serialize_str("org:workspace_auth:write"),
+            Self::OrgWorkspaceDestroy => serializer.serialize_str("org:workspace:destroy"),
+            Self::OrgWorkspaceTransferOwnership => serializer.serialize_str("org:workspace:transfer_ownership"),
+            Self::ReleaseWrite => serializer.serialize_str("release:write"),
+            Self::IngestWrite => serializer.serialize_str("ingest:write"),
+            Self::__Unknown(val) => serializer.serialize_str(val),
+        }
+    }
+}
+
+impl<'de> Deserialize<'de> for CreatePrivateRequestScopesItem {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let value = String::deserialize(deserializer)?;
+        match value.as_str() {
+            "org:telemetry:write" => Ok(Self::OrgTelemetryWrite),
+            "org:surfaces:read" => Ok(Self::OrgSurfacesRead),
+            "org:surfaces:write" => Ok(Self::OrgSurfacesWrite),
+            "org:surfaces:delete" => Ok(Self::OrgSurfacesDelete),
+            "org:tiers:read" => Ok(Self::OrgTiersRead),
+            "org:tiers:write" => Ok(Self::OrgTiersWrite),
+            "org:problems:read" => Ok(Self::OrgProblemsRead),
+            "org:problems:write" => Ok(Self::OrgProblemsWrite),
+            "org:support:read" => Ok(Self::OrgSupportRead),
+            "org:support:write" => Ok(Self::OrgSupportWrite),
+            "org:replays:read" => Ok(Self::OrgReplaysRead),
+            "org:source_context:read" => Ok(Self::OrgSourceContextRead),
+            "org:integration_settings:read" => Ok(Self::OrgIntegrationSettingsRead),
+            "org:integration_settings:write" => Ok(Self::OrgIntegrationSettingsWrite),
+            "org:workspace_members:read" => Ok(Self::OrgWorkspaceMembersRead),
+            "org:workspace_members:write" => Ok(Self::OrgWorkspaceMembersWrite),
+            "org:workspace_billing:read" => Ok(Self::OrgWorkspaceBillingRead),
+            "org:workspace_billing:write" => Ok(Self::OrgWorkspaceBillingWrite),
+            "org:workspace_basics:read" => Ok(Self::OrgWorkspaceBasicsRead),
+            "org:workspace_basics:write" => Ok(Self::OrgWorkspaceBasicsWrite),
+            "org:workspace_domains:read" => Ok(Self::OrgWorkspaceDomainsRead),
+            "org:workspace_domains:write" => Ok(Self::OrgWorkspaceDomainsWrite),
+            "org:workspace_auth:read" => Ok(Self::OrgWorkspaceAuthRead),
+            "org:workspace_auth:write" => Ok(Self::OrgWorkspaceAuthWrite),
+            "org:workspace:destroy" => Ok(Self::OrgWorkspaceDestroy),
+            "org:workspace:transfer_ownership" => Ok(Self::OrgWorkspaceTransferOwnership),
+            "release:write" => Ok(Self::ReleaseWrite),
+            "ingest:write" => Ok(Self::IngestWrite),
+            _ => Ok(Self::__Unknown(value)),
+        }
+    }
+}
+
+impl fmt::Display for CreatePrivateRequestScopesItem {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::OrgTelemetryWrite => write!(f, "org:telemetry:write"),
+            Self::OrgSurfacesRead => write!(f, "org:surfaces:read"),
+            Self::OrgSurfacesWrite => write!(f, "org:surfaces:write"),
+            Self::OrgSurfacesDelete => write!(f, "org:surfaces:delete"),
+            Self::OrgTiersRead => write!(f, "org:tiers:read"),
+            Self::OrgTiersWrite => write!(f, "org:tiers:write"),
+            Self::OrgProblemsRead => write!(f, "org:problems:read"),
+            Self::OrgProblemsWrite => write!(f, "org:problems:write"),
+            Self::OrgSupportRead => write!(f, "org:support:read"),
+            Self::OrgSupportWrite => write!(f, "org:support:write"),
+            Self::OrgReplaysRead => write!(f, "org:replays:read"),
+            Self::OrgSourceContextRead => write!(f, "org:source_context:read"),
+            Self::OrgIntegrationSettingsRead => write!(f, "org:integration_settings:read"),
+            Self::OrgIntegrationSettingsWrite => write!(f, "org:integration_settings:write"),
+            Self::OrgWorkspaceMembersRead => write!(f, "org:workspace_members:read"),
+            Self::OrgWorkspaceMembersWrite => write!(f, "org:workspace_members:write"),
+            Self::OrgWorkspaceBillingRead => write!(f, "org:workspace_billing:read"),
+            Self::OrgWorkspaceBillingWrite => write!(f, "org:workspace_billing:write"),
+            Self::OrgWorkspaceBasicsRead => write!(f, "org:workspace_basics:read"),
+            Self::OrgWorkspaceBasicsWrite => write!(f, "org:workspace_basics:write"),
+            Self::OrgWorkspaceDomainsRead => write!(f, "org:workspace_domains:read"),
+            Self::OrgWorkspaceDomainsWrite => write!(f, "org:workspace_domains:write"),
+            Self::OrgWorkspaceAuthRead => write!(f, "org:workspace_auth:read"),
+            Self::OrgWorkspaceAuthWrite => write!(f, "org:workspace_auth:write"),
+            Self::OrgWorkspaceDestroy => write!(f, "org:workspace:destroy"),
+            Self::OrgWorkspaceTransferOwnership => write!(f, "org:workspace:transfer_ownership"),
+            Self::ReleaseWrite => write!(f, "release:write"),
+            Self::IngestWrite => write!(f, "ingest:write"),
+            Self::__Unknown(val) => write!(f, "{}", val),
+        }
+    }
+}

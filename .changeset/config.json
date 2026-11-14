@@ -1,5 +1,15 @@
 {
-  "fixed": [["@interfere/react", "@interfere/next", "@interfere/vite"]],
+  "fixed": [
+    ["@interfere/react", "@interfere/next", "@interfere/vite"],
+    [
+      "@interfere/cli",
+      "@interfere/cli-darwin-arm64",
+      "@interfere/cli-darwin-x64",
+      "@interfere/cli-linux-arm64",
+      "@interfere/cli-linux-x64",
+      "@interfere/cli-win32-x64"
+    ]
+  ],
   "$schema": "https://unpkg.com/@changesets/config@4.0.0/schema.json",
   "changelog": false,
   "access": "public",

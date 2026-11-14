@@ -1,0 +1,126 @@
+{
+  "tasks": {
+    "typegen": {
+      "inputs": [
+        "fern/**",
+        "package.json",
+        "Cargo.toml",
+        "Cargo.lock",
+        "generated/.fernignore",
+        "generated/**/Cargo.toml",
+        "generated/cli/interfere/main.rs"
+      ],
+      "outputs": [
+        "generated/**",
+        "Cargo.toml",
+        "Cargo.lock"
+      ],
+      "env": [
+        "RUSTUP_TOOLCHAIN"
+      ],
+      "passThroughEnv": [
+        "CARGO_HOME",
+        "RUSTUP_HOME",
+        "CARGO_HTTP_MULTIPLEXING",
+        "CARGO_NET_RETRY"
+      ]
+    },
+    "build": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "generated/**"
+      ],
+      "env": [
+        "CARGO_BUILD_TARGET",
+        "RUNNER_OS",
+        "RUNNER_ARCH",
+        "RUSTUP_TOOLCHAIN",
+        "CARGO_PROFILE_DEV_DEBUG",
+        "CARGO_PROFILE_TEST_DEBUG",
+        "CARGO_INCREMENTAL"
+      ],
+      "outputs": [
+        "dist/**",
+        "target/release/interfere",
+        "target/release/interfere.exe",
+        "target/*/release/interfere",
+        "target/*/release/interfere.exe"
+      ],
+      "passThroughEnv": [
+        "CARGO_HOME",
+        "RUSTUP_HOME"
+      ]
+    },
+    "typecheck": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "generated/**"
+      ],
+      "env": [
+        "CARGO_BUILD_TARGET",
+        "RUNNER_OS",
+        "RUNNER_ARCH",
+        "RUSTUP_TOOLCHAIN",
+        "CARGO_PROFILE_DEV_DEBUG",
+        "CARGO_PROFILE_TEST_DEBUG",
+        "CARGO_INCREMENTAL"
+      ],
+      "outputs": [],
+      "passThroughEnv": [
+        "CARGO_HOME",
+        "RUSTUP_HOME"
+      ]
+    },
+    "test": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "generated/**"
+      ],
+      "env": [
+        "CARGO_BUILD_TARGET",
+        "RUNNER_OS",
+        "RUNNER_ARCH",
+        "RUSTUP_TOOLCHAIN",
+        "CARGO_PROFILE_DEV_DEBUG",
+        "CARGO_PROFILE_TEST_DEBUG",
+        "CARGO_INCREMENTAL"
+      ],
+      "outputs": [],
+      "passThroughEnv": [
+        "CARGO_HOME",
+        "RUSTUP_HOME"
+      ],
+      "tags": []
+    },
+    "test:wire": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "generated/**"
+      ],
+      "env": [
+        "CARGO_BUILD_TARGET",
+        "RUNNER_OS",
+        "RUNNER_ARCH",
+        "RUSTUP_TOOLCHAIN",
+        "CARGO_PROFILE_DEV_DEBUG",
+        "CARGO_PROFILE_TEST_DEBUG",
+        "CARGO_INCREMENTAL"
+      ],
+      "outputs": [],
+      "passThroughEnv": [
+        "CARGO_HOME",
+        "RUSTUP_HOME"
+      ],
+      "dependsOn": [
+        "typegen"
+      ]
+    }
+  },
+  "$schema": "https://turbo.build/schema.json",
+  "extends": [
+    "//"
+  ],
+  "tags": [
+    "public"
+  ]
+}

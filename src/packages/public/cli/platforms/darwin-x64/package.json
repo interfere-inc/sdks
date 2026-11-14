@@ -1,0 +1,25 @@
+{
+  "name": "@interfere/cli-darwin-x64",
+  "version": "1.14.0",
+  "description": "Interfere CLI native binary for darwin-x64.",
+  "homepage": "https://interfere.com",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/interfere-inc/sdks.git",
+    "directory": "src/packages/public/cli/platforms/darwin-x64"
+  },
+  "files": [
+    "bin/interfere",
+    "CHANGELOG.md"
+  ],
+  "os": [
+    "darwin"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

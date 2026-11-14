@@ -1,0 +1,39 @@
+auth-schemes:
+  clerkSession:
+    scheme: bearer
+    token:
+      name: accessToken
+      env: INTERFERE_ACCESS_TOKEN
+  apiKey:
+    scheme: bearer
+    token:
+      name: secretKey
+      env: INTERFERE_SECRET_KEY
+  publicKeyHeader:
+    header: x-interfere-public-key
+    name: publicKey
+    env: INTERFERE_PUBLIC_KEY
+api:
+  auth: endpoint-security
+  specs:
+    - openapi: openapi-cli-3.1.json
+default-group: cli
+groups:
+  cli:
+    generators:
+      - name: fern-cli-generator
+        version: 0.47.0
+        output:
+          location: local-file-system
+          path: ../generated
+        config:
+          binaryName: interfere
+          customCommands: true
+          generateWireTests: true
+          profiles:
+            enabled: true
+          packageIdentity:
+            name: interfere-cli-runtime
+            description: Command-line interface for Interfere.
+            license: MIT
+            homepage: https://interfere.com

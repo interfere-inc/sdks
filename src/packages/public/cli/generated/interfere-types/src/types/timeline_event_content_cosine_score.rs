@@ -1,0 +1,84 @@
+pub use crate::prelude::*;
+#[allow(unused_imports)]
+use super::*;
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
+pub struct TimelineEventContentCosineScore {
+    #[serde(rename = "cosineScore")]
+    #[serde(default)]
+    #[serde(with = "crate::core::number_serializers")]
+    pub cosine_score: f64,
+    #[serde(rename = "findingId")]
+    #[serde(default)]
+    pub finding_id: String,
+    #[serde(rename = "fingerprintMatchExact")]
+    #[serde(default)]
+    pub fingerprint_match_exact: bool,
+    #[serde(rename = "regressionProbability")]
+    #[serde(default)]
+    #[serde(with = "crate::core::number_serializers")]
+    pub regression_probability: f64,
+    #[serde(rename = "resolvedProblemId")]
+    #[serde(default)]
+    pub resolved_problem_id: String,
+}
+
+impl TimelineEventContentCosineScore {
+    pub fn builder() -> TimelineEventContentCosineScoreBuilder {
+        <TimelineEventContentCosineScoreBuilder as Default>::default()
+    }
+}
+
+#[derive(Clone, PartialEq, Default, Debug)]
+#[non_exhaustive]
+pub struct TimelineEventContentCosineScoreBuilder {
+    cosine_score: Option<f64>,
+    finding_id: Option<String>,
+    fingerprint_match_exact: Option<bool>,
+    regression_probability: Option<f64>,
+    resolved_problem_id: Option<String>,
+}
+
+impl TimelineEventContentCosineScoreBuilder {
+    pub fn cosine_score(mut self, value: f64) -> Self {
+        self.cosine_score = Some(value);
+        self
+    }
+
+    pub fn finding_id(mut self, value: impl Into<String>) -> Self {
+        self.finding_id = Some(value.into());
+        self
+    }
+
+    pub fn fingerprint_match_exact(mut self, value: bool) -> Self {
+        self.fingerprint_match_exact = Some(value);
+        self
+    }
+
+    pub fn regression_probability(mut self, value: f64) -> Self {
+        self.regression_probability = Some(value);
+        self
+    }
+
+    pub fn resolved_problem_id(mut self, value: impl Into<String>) -> Self {
+        self.resolved_problem_id = Some(value.into());
+        self
+    }
+
+    /// Consumes the builder and constructs a [`TimelineEventContentCosineScore`].
+    /// This method will fail if any of the following fields are not set:
+    /// - [`cosine_score`](TimelineEventContentCosineScoreBuilder::cosine_score)
+    /// - [`finding_id`](TimelineEventContentCosineScoreBuilder::finding_id)
+    /// - [`fingerprint_match_exact`](TimelineEventContentCosineScoreBuilder::fingerprint_match_exact)
+    /// - [`regression_probability`](TimelineEventContentCosineScoreBuilder::regression_probability)
+    /// - [`resolved_problem_id`](TimelineEventContentCosineScoreBuilder::resolved_problem_id)
+    pub fn build(self) -> Result<TimelineEventContentCosineScore, BuildError> {
+        Ok(TimelineEventContentCosineScore {
+            cosine_score: self.cosine_score.ok_or_else(|| BuildError::missing_field("cosine_score"))?,
+            finding_id: self.finding_id.ok_or_else(|| BuildError::missing_field("finding_id"))?,
+            fingerprint_match_exact: self.fingerprint_match_exact.ok_or_else(|| BuildError::missing_field("fingerprint_match_exact"))?,
+            regression_probability: self.regression_probability.ok_or_else(|| BuildError::missing_field("regression_probability"))?,
+            resolved_problem_id: self.resolved_problem_id.ok_or_else(|| BuildError::missing_field("resolved_problem_id"))?,
+        })
+    }
+}

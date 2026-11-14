@@ -1,0 +1,25 @@
+{
+  "name": "@interfere/cli-linux-arm64",
+  "version": "1.14.0",
+  "description": "Interfere CLI native binary for linux-arm64.",
+  "homepage": "https://interfere.com",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/interfere-inc/sdks.git",
+    "directory": "src/packages/public/cli/platforms/linux-arm64"
+  },
+  "files": [
+    "bin/interfere",
+    "CHANGELOG.md"
+  ],
+  "os": [
+    "linux"
+  ],
+  "cpu": [
+    "arm64"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

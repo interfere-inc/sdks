@@ -1,0 +1,49 @@
+pub use crate::prelude::*;
+#[allow(unused_imports)]
+use super::*;
+
+/// ConfiguredSourceProvider
+#[non_exhaustive]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum ConfiguredSourceProvider {
+    Github,
+    GheCloud,
+    GheServer,
+    /// This variant is used for forward compatibility.
+    /// If the server sends a value not recognized by the current SDK version,
+    /// it will be captured here with the raw string value.
+    __Unknown(String),
+}
+impl Serialize for ConfiguredSourceProvider {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        match self {
+            Self::Github => serializer.serialize_str("github"),
+            Self::GheCloud => serializer.serialize_str("ghe_cloud"),
+            Self::GheServer => serializer.serialize_str("ghe_server"),
+            Self::__Unknown(val) => serializer.serialize_str(val),
+        }
+    }
+}
+
+impl<'de> Deserialize<'de> for ConfiguredSourceProvider {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let value = String::deserialize(deserializer)?;
+        match value.as_str() {
+            "github" => Ok(Self::Github),
+            "ghe_cloud" => Ok(Self::GheCloud),
+            "ghe_server" => Ok(Self::GheServer),
+            _ => Ok(Self::__Unknown(value)),
+        }
+    }
+}
+
+impl fmt::Display for ConfiguredSourceProvider {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Github => write!(f, "github"),
+            Self::GheCloud => write!(f, "ghe_cloud"),
+            Self::GheServer => write!(f, "ghe_server"),
+            Self::__Unknown(val) => write!(f, "{}", val),
+        }
+    }
+}

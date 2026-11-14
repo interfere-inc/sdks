@@ -28,6 +28,7 @@ jobs:
     timeout-minutes: 30
     permissions:
       contents: read
+      actions: read
     outputs:
       pack-dir-artifact-id: ${{ steps.pack.outputs.pack-dir-artifact-id }}
     steps:
@@ -46,6 +47,18 @@ jobs:
         uses: changesets/action/select-mode@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
       - if: steps.mode.outputs.mode == 'publish'
         run: bun run build
+      - if: steps.mode.outputs.mode == 'publish'
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: cli-*
+          path: ${{ runner.temp }}/cli-artifacts
+          merge-multiple: true
+      - name: Restore the CLI bundle and native binaries
+        if: steps.mode.outputs.mode == 'publish'
+        run: |
+          for platform in $(jq -r '.[].platform' src/packages/public/cli/platforms.json); do
+            tar -xzf "$RUNNER_TEMP/cli-artifacts/cli-$platform.tar.gz" -C src/packages/public/cli
+          done
       - name: Strip workspace-only package conditions
         if: steps.mode.outputs.mode == 'publish'
         run: bun scripts/strip-package-conditions.ts .

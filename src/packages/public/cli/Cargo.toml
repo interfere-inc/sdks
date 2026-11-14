@@ -1,0 +1,30 @@
+[package]
+name = "interfere-cli"
+version = "1.14.0"
+edition = "2021"
+description = "Command-line access to the Interfere API for developers and coding agents."
+license = "MIT"
+homepage = "https://interfere.com"
+publish = false
+
+[[bin]]
+name = "interfere"
+path = "native/main.rs"
+
+[dependencies]
+fern_cli_sdk = { package = "interfere-cli-runtime", path = "generated" }
+interfere_sdk = { path = "generated/interfere-sdk" }
+clap = { version = "4", features = ["derive", "string", "env"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync"] }
+wiremock = "0.6"
+
+[profile.release]
+lto = "thin"
+strip = true
+
+[workspace]
+exclude = ["generated"]

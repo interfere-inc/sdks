@@ -30,6 +30,46 @@
         "vitest": "catalog:",
       },
     },
+    "src/packages/public/cli": {
+      "name": "@interfere/cli",
+      "version": "1.14.0",
+      "bin": {
+        "interfere": "dist/interfere.mjs",
+      },
+      "devDependencies": {
+        "@types/node": "catalog:",
+        "fern-api": "catalog:",
+        "tsdown": "catalog:",
+        "typescript": "catalog:",
+      },
+      "optionalDependencies": {
+        "@interfere/cli-darwin-arm64": "workspace:*",
+        "@interfere/cli-darwin-x64": "workspace:*",
+        "@interfere/cli-linux-arm64": "workspace:*",
+        "@interfere/cli-linux-x64": "workspace:*",
+        "@interfere/cli-win32-x64": "workspace:*",
+      },
+    },
+    "src/packages/public/cli/platforms/darwin-arm64": {
+      "name": "@interfere/cli-darwin-arm64",
+      "version": "1.14.0",
+    },
+    "src/packages/public/cli/platforms/darwin-x64": {
+      "name": "@interfere/cli-darwin-x64",
+      "version": "1.14.0",
+    },
+    "src/packages/public/cli/platforms/linux-arm64": {
+      "name": "@interfere/cli-linux-arm64",
+      "version": "1.14.0",
+    },
+    "src/packages/public/cli/platforms/linux-x64": {
+      "name": "@interfere/cli-linux-x64",
+      "version": "1.14.0",
+    },
+    "src/packages/public/cli/platforms/win32-x64": {
+      "name": "@interfere/cli-win32-x64",
+      "version": "1.14.0",
+    },
     "src/packages/public/constants": {
       "name": "@interfere/constants",
       "version": "9.3.3",
@@ -615,6 +655,18 @@
     "@inquirer/type": ["@inquirer/type@4.1.1", "", { "peerDependencies": { "@types/node": ">=18" }, "optionalPeers": ["@types/node"] }, "sha512-yJoHYrMnxIsJZCY+0Vb66Dy3he3kL3e2wOBKhoSwWWAzZAY82emlxwgprCtp6yRixvNRNq9ztfRWQYPNr3Go7A=="],
 
     "@interfere/build": ["@interfere/build@workspace:src/packages/public/build-tools"],
+
+    "@interfere/cli": ["@interfere/cli@workspace:src/packages/public/cli"],
+
+    "@interfere/cli-darwin-arm64": ["@interfere/cli-darwin-arm64@workspace:src/packages/public/cli/platforms/darwin-arm64"],
+
+    "@interfere/cli-darwin-x64": ["@interfere/cli-darwin-x64@workspace:src/packages/public/cli/platforms/darwin-x64"],
+
+    "@interfere/cli-linux-arm64": ["@interfere/cli-linux-arm64@workspace:src/packages/public/cli/platforms/linux-arm64"],
+
+    "@interfere/cli-linux-x64": ["@interfere/cli-linux-x64@workspace:src/packages/public/cli/platforms/linux-x64"],
+
+    "@interfere/cli-win32-x64": ["@interfere/cli-win32-x64@workspace:src/packages/public/cli/platforms/win32-x64"],
 
     "@interfere/constants": ["@interfere/constants@workspace:src/packages/public/constants"],
 

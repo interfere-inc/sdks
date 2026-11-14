@@ -1,0 +1,25 @@
+{
+  "name": "@interfere/cli-win32-x64",
+  "version": "1.14.0",
+  "description": "Interfere CLI native binary for win32-x64.",
+  "homepage": "https://interfere.com",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/interfere-inc/sdks.git",
+    "directory": "src/packages/public/cli/platforms/win32-x64"
+  },
+  "files": [
+    "bin/interfere.exe",
+    "CHANGELOG.md"
+  ],
+  "os": [
+    "win32"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

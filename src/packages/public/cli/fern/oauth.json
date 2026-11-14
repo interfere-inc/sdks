@@ -1,0 +1,16 @@
+{
+  "production": {
+    "clientId": "zATKlQpc4dYB68CY",
+    "issuer": "https://clerk.interfere.com",
+    "resource": "https://mcp.interfere.com/mcp",
+    "apiUrl": "https://api.interfere.com",
+    "appUrl": "https://interfere.com"
+  },
+  "preview": {
+    "clientId": "R48trNcMZLLtLTgn",
+    "issuer": "https://optimum-pug-21.clerk.accounts.dev",
+    "resource": "https://mcp.preview.interfere.com/mcp",
+    "apiUrl": "https://api.preview.interfere.com",
+    "appUrl": "https://preview.interfere.com"
+  }
+}

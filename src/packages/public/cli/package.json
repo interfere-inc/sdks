@@ -1,0 +1,52 @@
+{
+  "scripts": {
+    "build": "tsdown && cargo build --locked --release",
+    "lint:oxlint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/cli",
+    "test": "cargo test --locked",
+    "test:wire": "cargo test --locked --manifest-path generated/Cargo.toml --target-dir target --test wire_test",
+    "typecheck": "bun check && cargo fmt --check && cargo clippy --locked --bin interfere --tests -- -D warnings",
+    "typegen": "fern generate --local --force && yq -i '.package.version = strenv(npm_package_version)' Cargo.toml && yq -i '.package.version = strenv(npm_package_version)' generated/Cargo.toml && yq -i '.lib.path = (.lib.path // \"src/lib.rs\") | ... comments = \"\"' generated/Cargo.toml && yq -i '.lib.path = (.lib.path // \"src/lib.rs\") | ... comments = \"\"' generated/interfere-sdk/Cargo.toml && yq -i '.lib.path = (.lib.path // \"src/lib.rs\") | ... comments = \"\"' generated/interfere-types/Cargo.toml && oxfmt generated/Cargo.toml generated/interfere-sdk/Cargo.toml generated/interfere-types/Cargo.toml && cargo update --workspace && cargo update --manifest-path generated/Cargo.toml --workspace && grep -rlF '<CLI>' generated/src | xargs -r perl -pi -e 's/<CLI>/interfere/g'"
+  },
+  "name": "@interfere/cli",
+  "version": "1.14.0",
+  "description": "Command-line access to the Interfere API for developers and coding agents.",
+  "homepage": "https://interfere.com",
+  "license": "MIT",
+  "author": "Interfere <support@interfere.com> (https://interfere.com)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/interfere-inc/sdks.git",
+    "directory": "src/packages/public/cli"
+  },
+  "bin": {
+    "interfere": "dist/interfere.mjs"
+  },
+  "files": [
+    "dist/interfere.mjs",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "fern-api": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
+  },
+  "optionalDependencies": {
+    "@interfere/cli-darwin-arm64": "workspace:*",
+    "@interfere/cli-darwin-x64": "workspace:*",
+    "@interfere/cli-linux-arm64": "workspace:*",
+    "@interfere/cli-linux-x64": "workspace:*",
+    "@interfere/cli-win32-x64": "workspace:*"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "interfere": {
+    "cliSchemaHash": "99fc6364cf5769030f8c37ae2bf342a8684e14756cf9c699cf324be78c7c8881"
+  }
+}
