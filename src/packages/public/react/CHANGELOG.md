@@ -1,5 +1,11 @@
 # @interfere/react
 
+## 13.0.4
+
+### Patch Changes
+
+- 6107ecf: The published build is now reproducible: rebuilding the same source gives a byte-identical tarball, so the package can be verified against its provenance attestation.
+
 ## 13.0.3
 
 ### Patch Changes

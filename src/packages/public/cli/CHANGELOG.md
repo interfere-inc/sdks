@@ -1,5 +1,15 @@
 # @interfere/cli
 
+## 1.15.0
+
+### Minor Changes
+
+- Regenerate CLI commands and API types from the current API schema.
+
+### Patch Changes
+
+- 91670c6: The `completion` and `man` help examples now name the `interfere` binary instead of a `<CLI>` placeholder, so `interfere completion zsh > "${fpath[1]}/_interfere"` can be copied as shown.
+
 ## 1.14.0
 
 ### Minor Changes

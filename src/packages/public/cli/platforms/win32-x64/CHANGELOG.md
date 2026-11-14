@@ -1,5 +1,9 @@
 # @interfere/cli-win32-x64
 
+## 1.15.0
+
+No changes in this release.
+
 ## 1.14.0
 
 No changes in this release.

@@ -1,5 +1,13 @@
 # @interfere/vite
 
+## 13.0.4
+
+### Patch Changes
+
+- 982a443: Release requests now allow enough time for the client's own retries, including the API's 30-second `Retry-After` on a temporarily unavailable response, so a release no longer aborts with "The user aborted a request" after 60 seconds. `releaseBuildOutput()` also retries a bundle once after a network error, 408, 429 or 5xx before reporting the release as failed.
+- Updated dependencies [6107ecf]
+  - @interfere/react@13.0.4
+
 ## 13.0.3
 
 ### Patch Changes

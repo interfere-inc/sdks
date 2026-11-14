@@ -1,4 +1,5 @@
 import {
+  existsSync,
   mkdirSync,
   mkdtempSync,
   readFileSync,
@@ -9,7 +10,9 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawn, spawnSync } from "node:child_process";
+import type { ChildProcess } from "node:child_process";
 import { randomUUID } from "node:crypto";
+import { once } from "node:events";
 import { text } from "node:stream/consumers";
 import { fileURLToPath } from "node:url";
 import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
@@ -174,6 +177,68 @@ describe("runs the package's own Vitest executable", () => {
       "local.test.ts",
       "--exclude=**/*.browser.test.*",
     ]);
+  });
+});
+
+describe("closes its output when a crashed Vitest leaves a descendant holding it", () => {
+  const local = join(directory, "crashing");
+  const descendant = join(local, "descendant.pid");
+
+  let child: ChildProcess | undefined;
+  let closed: unknown[];
+  let stderr: string;
+
+  beforeAll(async () => {
+    const installation = join(local, "node_modules/vitest");
+
+    mkdirSync(installation, { recursive: true });
+
+    writeFileSync(
+      join(installation, "package.json"),
+      JSON.stringify({
+        name: "vitest",
+        exports: { "./package.json": "./package.json" },
+      }),
+    );
+
+    writeFileSync(
+      join(installation, "vitest.mjs"),
+      `import { spawn } from "node:child_process";
+import { writeFileSync } from "node:fs";
+const child = spawn(process.execPath, ["-e", "require('node:net').createServer().listen(0)"], { stdio: "inherit" });
+writeFileSync(${JSON.stringify(descendant)}, String(child.pid));
+throw new Error("vitest crashed");`,
+    );
+
+    const cliProcess = spawn(process.execPath, [cli, "run"], {
+      cwd: local,
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+
+    child = cliProcess;
+
+    const exited = once(cliProcess, "close");
+
+    [, stderr] = await Promise.all([
+      text(cliProcess.stdout),
+      text(cliProcess.stderr),
+    ]);
+
+    closed = await exited;
+  });
+
+  afterAll(() => {
+    child?.kill("SIGKILL");
+
+    if (existsSync(descendant)) {
+      spawnSync("kill", ["-9", readFileSync(descendant, "utf8")]);
+    }
+  });
+
+  test("ends with the crashed Vitest exit status", () => {
+    expect(closed).toStrictEqual([1, null]);
+
+    expect(stderr).toContain("vitest crashed");
   });
 });
 
