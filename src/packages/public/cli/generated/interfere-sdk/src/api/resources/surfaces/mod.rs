@@ -775,7 +775,7 @@ impl SurfacesClient {
     ///                 },
     ///                 idempotency_key: "idempotencyKey".to_string(),
     ///                 name: "name".to_string(),
-    ///                 r#type: CreateSurfaceRequestType::Elysia,
+    ///                 r#type: CreateSurfaceRequestType::Nextjs,
     ///                 anonymous_replay_policy: None,
     ///                 anonymous_user_tracking: None,
     ///             },

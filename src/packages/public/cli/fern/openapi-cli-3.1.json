@@ -13646,10 +13646,7 @@
                     },
                     "type": {
                       "enum": [
-                        "elysia",
-                        "nest",
                         "nextjs",
-                        "python",
                         "react",
                         "generic"
                       ],
@@ -17371,10 +17368,7 @@
                     },
                     "type": {
                       "enum": [
-                        "elysia",
-                        "nest",
                         "nextjs",
-                        "python",
                         "react",
                         "generic"
                       ],
@@ -40193,10 +40187,7 @@
                       },
                       "type": {
                         "enum": [
-                          "elysia",
-                          "nest",
                           "nextjs",
-                          "python",
                           "react",
                           "generic"
                         ],
@@ -52631,10 +52622,7 @@
               },
               "type": {
                 "enum": [
-                  "elysia",
-                  "nest",
                   "nextjs",
-                  "python",
                   "react",
                   "generic"
                 ],
@@ -52997,10 +52985,7 @@
           },
           "type": {
             "enum": [
-              "elysia",
-              "nest",
               "nextjs",
-              "python",
               "react",
               "generic"
             ],
@@ -53360,10 +53345,7 @@
             },
             "type": {
               "enum": [
-                "elysia",
-                "nest",
                 "nextjs",
-                "python",
                 "react",
                 "generic"
               ],
@@ -59186,10 +59168,7 @@
               },
               "type": {
                 "enum": [
-                  "elysia",
-                  "nest",
                   "nextjs",
-                  "python",
                   "react",
                   "generic"
                 ],
@@ -82709,10 +82688,7 @@
                   },
                   "type": {
                     "enum": [
-                      "elysia",
-                      "nest",
                       "nextjs",
-                      "python",
                       "react",
                       "generic"
                     ],

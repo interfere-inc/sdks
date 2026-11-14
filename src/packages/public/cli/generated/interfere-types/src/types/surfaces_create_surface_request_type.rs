@@ -6,10 +6,7 @@ use super::*;
 #[non_exhaustive]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum CreateSurfaceRequestType {
-    Elysia,
-    Nest,
     Nextjs,
-    Python,
     React,
     Generic,
     /// This variant is used for forward compatibility.
@@ -20,10 +17,7 @@ pub enum CreateSurfaceRequestType {
 impl Serialize for CreateSurfaceRequestType {
     fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         match self {
-            Self::Elysia => serializer.serialize_str("elysia"),
-            Self::Nest => serializer.serialize_str("nest"),
             Self::Nextjs => serializer.serialize_str("nextjs"),
-            Self::Python => serializer.serialize_str("python"),
             Self::React => serializer.serialize_str("react"),
             Self::Generic => serializer.serialize_str("generic"),
             Self::__Unknown(val) => serializer.serialize_str(val),
@@ -35,10 +29,7 @@ impl<'de> Deserialize<'de> for CreateSurfaceRequestType {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         let value = String::deserialize(deserializer)?;
         match value.as_str() {
-            "elysia" => Ok(Self::Elysia),
-            "nest" => Ok(Self::Nest),
             "nextjs" => Ok(Self::Nextjs),
-            "python" => Ok(Self::Python),
             "react" => Ok(Self::React),
             "generic" => Ok(Self::Generic),
             _ => Ok(Self::__Unknown(value)),
@@ -49,10 +40,7 @@ impl<'de> Deserialize<'de> for CreateSurfaceRequestType {
 impl fmt::Display for CreateSurfaceRequestType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Elysia => write!(f, "elysia"),
-            Self::Nest => write!(f, "nest"),
             Self::Nextjs => write!(f, "nextjs"),
-            Self::Python => write!(f, "python"),
             Self::React => write!(f, "react"),
             Self::Generic => write!(f, "generic"),
             Self::__Unknown(val) => write!(f, "{}", val),
