@@ -4051,7 +4051,7 @@
       "requiresAuth": true,
       "response": {
         "status": 200,
-        "body": "[\n  {\n    \"displayName\": \"displayName\",\n    \"id\": \"id\",\n    \"reportable\": true,\n    \"surfaceId\": \"surfaceId\",\n    \"createdAt\": 1.1,\n    \"deletedAt\": 1.1,\n    \"updatedAt\": 1.1,\n    \"identifiers\": [\n      {\n        \"id\": \"id\",\n        \"identifier\": \"identifier\",\n        \"surfaceEnvironmentId\": \"surfaceEnvironmentId\",\n        \"surfaceId\": \"surfaceId\",\n        \"createdAt\": 1.1,\n        \"deletedAt\": null,\n        \"updatedAt\": 1.1\n      }\n    ]\n  }\n]"
+        "body": "[\n  {\n    \"displayName\": \"displayName\",\n    \"id\": \"id\",\n    \"isProduction\": true,\n    \"reportable\": true,\n    \"surfaceId\": \"surfaceId\",\n    \"createdAt\": 1.1,\n    \"deletedAt\": 1.1,\n    \"updatedAt\": 1.1,\n    \"identifiers\": [\n      {\n        \"id\": \"id\",\n        \"identifier\": \"identifier\",\n        \"surfaceEnvironmentId\": \"surfaceEnvironmentId\",\n        \"surfaceId\": \"surfaceId\",\n        \"createdAt\": 1.1,\n        \"deletedAt\": null,\n        \"updatedAt\": 1.1\n      }\n    ]\n  }\n]"
       }
     },
     {
@@ -4071,7 +4071,7 @@
       "requiresAuth": true,
       "response": {
         "status": 200,
-        "body": "[\n  {\n    \"displayName\": \"displayName\",\n    \"id\": \"id\",\n    \"reportable\": true,\n    \"surfaceId\": \"surfaceId\",\n    \"createdAt\": 1.1,\n    \"deletedAt\": 1.1,\n    \"updatedAt\": 1.1,\n    \"identifiers\": [\n      {\n        \"id\": \"id\",\n        \"identifier\": \"identifier\",\n        \"surfaceEnvironmentId\": \"surfaceEnvironmentId\",\n        \"surfaceId\": \"surfaceId\",\n        \"createdAt\": 1.1,\n        \"deletedAt\": null,\n        \"updatedAt\": 1.1\n      }\n    ]\n  }\n]"
+        "body": "[\n  {\n    \"displayName\": \"displayName\",\n    \"id\": \"id\",\n    \"isProduction\": true,\n    \"reportable\": true,\n    \"surfaceId\": \"surfaceId\",\n    \"createdAt\": 1.1,\n    \"deletedAt\": 1.1,\n    \"updatedAt\": 1.1,\n    \"identifiers\": [\n      {\n        \"id\": \"id\",\n        \"identifier\": \"identifier\",\n        \"surfaceEnvironmentId\": \"surfaceEnvironmentId\",\n        \"surfaceId\": \"surfaceId\",\n        \"createdAt\": 1.1,\n        \"deletedAt\": null,\n        \"updatedAt\": 1.1\n      }\n    ]\n  }\n]"
       }
     },
     {
@@ -4084,6 +4084,27 @@
       "body": {
         "args": {
           "id": "id"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true\n}"
+      }
+    },
+    {
+      "id": "set_production",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/surfaceEnvironments.setProduction",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "id": "id",
+          "isProduction": true
         }
       },
       "queryMatchers": [],
@@ -8589,6 +8610,28 @@
       "body": {
         "args": {
           "id": "id"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "set_production_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/surfaceEnvironments.setProduction",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "id": "id",
+          "isProduction": true
         }
       },
       "queryMatchers": [],

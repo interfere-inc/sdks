@@ -9,6 +9,9 @@ pub struct QuerySurfaceEnvironmentsForSurfaceResponseItem {
     pub display_name: String,
     #[serde(default)]
     pub id: String,
+    #[serde(rename = "isProduction")]
+    #[serde(default)]
+    pub is_production: bool,
     #[serde(default)]
     pub reportable: bool,
     #[serde(rename = "surfaceId")]
@@ -42,6 +45,7 @@ impl QuerySurfaceEnvironmentsForSurfaceResponseItem {
 pub struct QuerySurfaceEnvironmentsForSurfaceResponseItemBuilder {
     display_name: Option<String>,
     id: Option<String>,
+    is_production: Option<bool>,
     reportable: Option<bool>,
     surface_id: Option<String>,
     created_at: Option<f64>,
@@ -58,6 +62,11 @@ impl QuerySurfaceEnvironmentsForSurfaceResponseItemBuilder {
 
     pub fn id(mut self, value: impl Into<String>) -> Self {
         self.id = Some(value.into());
+        self
+    }
+
+    pub fn is_production(mut self, value: bool) -> Self {
+        self.is_production = Some(value);
         self
     }
 
@@ -95,6 +104,7 @@ impl QuerySurfaceEnvironmentsForSurfaceResponseItemBuilder {
     /// This method will fail if any of the following fields are not set:
     /// - [`display_name`](QuerySurfaceEnvironmentsForSurfaceResponseItemBuilder::display_name)
     /// - [`id`](QuerySurfaceEnvironmentsForSurfaceResponseItemBuilder::id)
+    /// - [`is_production`](QuerySurfaceEnvironmentsForSurfaceResponseItemBuilder::is_production)
     /// - [`reportable`](QuerySurfaceEnvironmentsForSurfaceResponseItemBuilder::reportable)
     /// - [`surface_id`](QuerySurfaceEnvironmentsForSurfaceResponseItemBuilder::surface_id)
     /// - [`created_at`](QuerySurfaceEnvironmentsForSurfaceResponseItemBuilder::created_at)
@@ -104,6 +114,7 @@ impl QuerySurfaceEnvironmentsForSurfaceResponseItemBuilder {
         Ok(QuerySurfaceEnvironmentsForSurfaceResponseItem {
             display_name: self.display_name.ok_or_else(|| BuildError::missing_field("display_name"))?,
             id: self.id.ok_or_else(|| BuildError::missing_field("id"))?,
+            is_production: self.is_production.ok_or_else(|| BuildError::missing_field("is_production"))?,
             reportable: self.reportable.ok_or_else(|| BuildError::missing_field("reportable"))?,
             surface_id: self.surface_id.ok_or_else(|| BuildError::missing_field("surface_id"))?,
             created_at: self.created_at.ok_or_else(|| BuildError::missing_field("created_at"))?,

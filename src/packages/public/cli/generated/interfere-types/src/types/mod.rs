@@ -5,7 +5,7 @@
 //!
 //! ## Type Categories
 //!
-//! - **Request/Response Types**: 2161 types for API operations
+//! - **Request/Response Types**: 2164 types for API operations
 //! - **Model Types**: 631 types for data representation
 
 pub mod drain_drain_otlp_export_request_signal;
@@ -141,6 +141,7 @@ pub mod support_threads_get_threads_request_args;
 pub mod support_threads_create_threads_request_priority;
 pub mod surfaces_environments_list_for_surface_environments_request_args;
 pub mod surfaces_environments_delete_environments_request_args;
+pub mod surfaces_environments_set_production_environments_request_args;
 pub mod surfaces_environments_set_reportable_environments_request_args;
 pub mod users_invitations_create_invitations_request_args_role;
 pub mod users_invitations_create_invitations_request_args;
@@ -2336,6 +2337,7 @@ pub mod mutation_public_keys_revoke_workspace_key_response;
 pub mod mutation_public_keys_update_name_response;
 pub mod mutation_replay_sessions_delete_response;
 pub mod mutation_surface_environments_delete_response;
+pub mod mutation_surface_environments_set_production_response;
 pub mod mutation_surface_environments_set_reportable_response;
 pub mod mutation_surfaces_delete_response;
 pub mod mutation_surfaces_set_anonymous_replay_policy_response;
@@ -2767,6 +2769,7 @@ pub mod create_threads_request;
 pub mod for_inbox_environments_request;
 pub mod list_for_surface_environments_request;
 pub mod delete_environments_request;
+pub mod set_production_environments_request;
 pub mod set_reportable_environments_request;
 pub mod list_tiers_request;
 pub mod list_invitations_request;
@@ -2934,6 +2937,7 @@ pub use support_threads_get_threads_request_args::GetThreadsRequestArgs;
 pub use support_threads_create_threads_request_priority::CreateThreadsRequestPriority;
 pub use surfaces_environments_list_for_surface_environments_request_args::ListForSurfaceEnvironmentsRequestArgs;
 pub use surfaces_environments_delete_environments_request_args::DeleteEnvironmentsRequestArgs;
+pub use surfaces_environments_set_production_environments_request_args::SetProductionEnvironmentsRequestArgs;
 pub use surfaces_environments_set_reportable_environments_request_args::SetReportableEnvironmentsRequestArgs;
 pub use users_invitations_create_invitations_request_args_role::CreateInvitationsRequestArgsRole;
 pub use users_invitations_create_invitations_request_args::CreateInvitationsRequestArgs;
@@ -5129,6 +5133,7 @@ pub use mutation_public_keys_revoke_workspace_key_response::MutationPublicKeysRe
 pub use mutation_public_keys_update_name_response::MutationPublicKeysUpdateNameResponse;
 pub use mutation_replay_sessions_delete_response::MutationReplaySessionsDeleteResponse;
 pub use mutation_surface_environments_delete_response::MutationSurfaceEnvironmentsDeleteResponse;
+pub use mutation_surface_environments_set_production_response::MutationSurfaceEnvironmentsSetProductionResponse;
 pub use mutation_surface_environments_set_reportable_response::MutationSurfaceEnvironmentsSetReportableResponse;
 pub use mutation_surfaces_delete_response::MutationSurfacesDeleteResponse;
 pub use mutation_surfaces_set_anonymous_replay_policy_response::MutationSurfacesSetAnonymousReplayPolicyResponse;
@@ -5560,6 +5565,7 @@ pub use create_threads_request::CreateThreadsRequest;
 pub use for_inbox_environments_request::ForInboxEnvironmentsRequest;
 pub use list_for_surface_environments_request::ListForSurfaceEnvironmentsRequest;
 pub use delete_environments_request::DeleteEnvironmentsRequest;
+pub use set_production_environments_request::SetProductionEnvironmentsRequest;
 pub use set_reportable_environments_request::SetReportableEnvironmentsRequest;
 pub use list_tiers_request::ListTiersRequest;
 pub use list_invitations_request::ListInvitationsRequest;

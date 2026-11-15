@@ -2101,6 +2101,11 @@ async fn wire_delete_5() {
 }
 
 #[tokio::test]
+async fn wire_set_production() {
+    run_case("set_production").await;
+}
+
+#[tokio::test]
 async fn wire_set_reportable() {
     run_case("set_reportable").await;
 }
@@ -3198,6 +3203,11 @@ async fn wire_list_for_surface_3_error() {
 #[tokio::test]
 async fn wire_delete_5_error() {
     run_case("delete_5_error").await;
+}
+
+#[tokio::test]
+async fn wire_set_production_error() {
+    run_case("set_production_error").await;
 }
 
 #[tokio::test]
