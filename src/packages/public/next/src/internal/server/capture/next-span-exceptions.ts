@@ -49,20 +49,28 @@ function wrapRecordException(span: Span) {
       return;
     }
 
-    if (claimed.has(exception) || controlFlowOutcome(exception)) {
+    const skip = contain(
+      SITE,
+      () =>
+        claimed.has(exception) || controlFlowOutcome(exception) !== undefined,
+    );
+
+    if (skip === true) {
       return;
     }
 
     record(exception, time);
 
-    const event = span.events.at(-1);
+    contain(SITE, () => {
+      const event = span.events.at(-1);
 
-    if (event?.name === "exception") {
-      recorded.set(exception, [
-        ...(recorded.get(exception) ?? []),
-        { event, events: span.events },
-      ]);
-    }
+      if (event?.name === "exception") {
+        recorded.set(exception, [
+          ...(recorded.get(exception) ?? []),
+          { event, events: span.events },
+        ]);
+      }
+    });
   };
 }
 

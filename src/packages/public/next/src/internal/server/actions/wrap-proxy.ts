@@ -3,10 +3,12 @@ import { MECHANISM_TYPE } from "@interfere/types/sdk/errors";
 
 import type { NextMiddleware, NextRequest } from "next/server";
 
-import { containAsync } from "@interfere/server-core/contain";
+import { contain, containAsync } from "@interfere/server-core/contain";
 
 import { captureError, rememberProxyThrow } from "../capture/capture.js";
 import { flushServerTelemetry } from "../exporters/server-flush.js";
+
+const SITE = "withInterfereProxy()";
 
 /**
  * Wraps a Next.js proxy (formerly `middleware`) so thrown errors are captured
@@ -51,16 +53,18 @@ export function withInterfereProxy(proxy: NextMiddleware) {
 
 // oxlint-disable-next-line anti-slop/no-unknown-parameters -- Middleware can throw any JavaScript value; capture normalizes it while the wrapper rethrows the original identity.
 function reportProxyError(error: unknown, request: NextRequest) {
-  rememberProxyThrow(error);
+  contain(SITE, () => {
+    rememberProxyThrow(error);
 
-  captureError(error, request, {
-    mechanism: { handled: false, type: MECHANISM_TYPE.nextjs.proxy },
-    nextjs: {
-      requestMethod: request.method,
-      requestPath: request.nextUrl.pathname,
-      routeType: "proxy",
-    },
+    captureError(error, request, {
+      mechanism: { handled: false, type: MECHANISM_TYPE.nextjs.proxy },
+      nextjs: {
+        requestMethod: request.method,
+        requestPath: request.nextUrl.pathname,
+        routeType: "proxy",
+      },
+    });
+
+    void containAsync(SITE, flushServerTelemetry);
   });
-
-  void containAsync("withInterfereProxy()", flushServerTelemetry);
 }

@@ -8,14 +8,18 @@ import { logs } from "@opentelemetry/api-logs";
 import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
 import { W3CTraceContextPropagator } from "@opentelemetry/core";
 import { NodeTracerProvider } from "@opentelemetry/sdk-trace-node";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http, passthrough } from "msw";
+import { once } from "node:events";
+import { createServer } from "node:http";
 import { setupServer } from "msw/node";
 import {
   afterAll,
   afterEach,
+  assert,
   beforeAll,
   beforeEach,
   expect,
+  onTestFinished,
   test,
   vi,
 } from "vitest";
@@ -188,6 +192,59 @@ test('register({ tracing: "application" }) writes no OpenTelemetry global and em
   expect(logs.getLoggerProvider()).toBe(loggerProvider);
 
   expect(warn).not.toHaveBeenCalled();
+
+  await expect(mod.flush()).resolves.toBeUndefined();
+});
+
+test("register(), capture and flush resolve beside a foreign provider whose tracer throws", async () => {
+  expect.hasAssertions();
+
+  trace.setGlobalTracerProvider({
+    getTracer() {
+      throw new Error("injected tracer failure");
+    },
+  });
+
+  const collector = createServer((_, response) => {
+    response.writeHead(204).end();
+  }).listen(0, "127.0.0.1");
+
+  onTestFinished(() => {
+    collector.close();
+  });
+
+  await once(collector, "listening");
+
+  const address = collector.address();
+
+  assert(address instanceof Object);
+
+  const url = `http://127.0.0.1:${address.port}`;
+
+  server.use(http.all(`${url}/*`, () => passthrough()));
+
+  vi.stubEnv("INTERFERE_API_URL", url);
+
+  const mod = await load();
+
+  await expect(
+    mod.register({
+      captureUncaughtException: false,
+      captureUnhandledRejection: false,
+      consoleBridge: false,
+    }),
+  ).resolves.toBeUndefined();
+
+  await expect(
+    mod.onRequestError(new Error("customer failure"), undefined, {
+      routerKind: "App Router",
+      routePath: "/broken",
+      routeType: "route",
+      renderSource: undefined,
+      revalidateReason: undefined,
+      renderType: undefined,
+    }),
+  ).resolves.toBeUndefined();
 
   await expect(mod.flush()).resolves.toBeUndefined();
 });
