@@ -25,6 +25,7 @@ const FP_LONG_TASK_SOURCES = [
   "domBlockers",
   "fontPreferences",
   "fonts",
+  "timezone",
   "webGlExtensions",
 ] as const;
 

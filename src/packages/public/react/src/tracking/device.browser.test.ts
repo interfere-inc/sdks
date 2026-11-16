@@ -250,8 +250,14 @@ describe(DeviceManager, () => {
       expect(hashB).toBe(hashA);
     });
 
-    test("skips the font, canvas and WebGL extension probes that each run as a long task", async () => {
+    test("skips the font, canvas, time zone and WebGL extension probes that each run as a long task", async () => {
       const createElement = vi.spyOn(document, "createElement");
+
+      const resolvedOptions = vi.spyOn(
+        Intl.DateTimeFormat.prototype,
+        "resolvedOptions",
+      );
+
       const toDataURL = vi.spyOn(HTMLCanvasElement.prototype, "toDataURL");
 
       const extensions = vi.spyOn(
@@ -268,6 +274,8 @@ describe(DeviceManager, () => {
       expect(
         createElement.mock.calls.filter(([tag]) => tag === "iframe"),
       ).toStrictEqual([]);
+
+      expect(resolvedOptions).toHaveBeenCalledTimes(1);
 
       expect(toDataURL).not.toHaveBeenCalled();
       expect(extensions).not.toHaveBeenCalled();
