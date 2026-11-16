@@ -86,3 +86,58 @@ test("next 15 preserves customer hooks and publishes from the client compiler wi
     ]);
   });
 });
+
+test("next 15.4 and later publish from the production compile hook so Turbopack builds upload", async () => {
+  expect.hasAssertions();
+
+  vi.stubEnv("INTERFERE_API_KEY", undefined);
+
+  vi.stubEnv("INTERFERE_PUBLIC_KEY", undefined);
+
+  vi.stubEnv("NEXT_PUBLIC_INTERFERE_PUBLIC_KEY", undefined);
+
+  await withTempProject("next15-turbopack-compile-", async (projectDir) => {
+    process.chdir(projectDir);
+
+    mkdirSync(join(projectDir, "node_modules/next"), { recursive: true });
+
+    writeFileSync(
+      join(projectDir, "node_modules/next/package.json"),
+      JSON.stringify({ version: "15.5.28" }),
+    );
+
+    const compiled: ProductionCompileContext[] = [];
+
+    const customerCompile = async (context: ProductionCompileContext) => {
+      await Promise.resolve();
+
+      compiled.push(context);
+    };
+
+    const config = await withInterfere({
+      distDir: "custom-output",
+      compiler: { runAfterProductionCompile: customerCompile },
+    })(PHASE_PRODUCTION_BUILD);
+
+    const clientConfig: Configuration = { mode: "none" };
+
+    config.webpack?.(clientConfig, {
+      ...(await webpackContext(projectDir)),
+      dev: false,
+    });
+
+    expect(clientConfig.plugins ?? []).toHaveLength(0);
+
+    await config.compiler?.runAfterProductionCompile?.({
+      projectDir,
+      distDir: "custom-output",
+    });
+
+    expect(compiled).toStrictEqual([
+      {
+        projectDir,
+        distDir: "custom-output",
+      },
+    ]);
+  });
+});

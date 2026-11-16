@@ -46,6 +46,25 @@ export function warnIfServerInstrumentationMissing(projectDir: string) {
  * in which case callers should skip version-conditional behaviour.
  */
 export function readNextMajorVersion(projectDir: string) {
+  return readNextVersion(projectDir)?.major ?? null;
+}
+
+const PRODUCTION_COMPILE_HOOK_MIN_VERSION = { major: 15, minor: 4 } as const;
+
+/** `compiler.runAfterProductionCompile` first shipped in Next 15.4.0 and runs after both Webpack and Turbopack builds. */
+export function supportsProductionCompileHook(projectDir: string) {
+  const version = readNextVersion(projectDir);
+
+  if (version === null) {
+    return true;
+  }
+
+  return version.major === PRODUCTION_COMPILE_HOOK_MIN_VERSION.major
+    ? version.minor >= PRODUCTION_COMPILE_HOOK_MIN_VERSION.minor
+    : version.major > PRODUCTION_COMPILE_HOOK_MIN_VERSION.major;
+}
+
+function readNextVersion(projectDir: string) {
   try {
     const require = createRequire(`${projectDir}/_`);
     const pkg: unknown = require("next/package.json");
@@ -60,9 +79,15 @@ export function readNextMajorVersion(projectDir: string) {
       return null;
     }
 
-    const major = Number.parseInt(pkg.version.split(".")[0] ?? "", 10);
+    const [majorPart, minorPart] = pkg.version.split(".");
+    const major = Number.parseInt(majorPart ?? "", 10);
+    const minor = Number.parseInt(minorPart ?? "", 10);
 
-    return (Number.isFinite(major) ? major : null) satisfies number | null;
+    if (!Number.isFinite(major)) {
+      return null;
+    }
+
+    return { major, minor: Number.isFinite(minor) ? minor : 0 };
   } catch {
     return null;
   }

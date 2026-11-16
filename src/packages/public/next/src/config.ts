@@ -39,6 +39,7 @@ import { log } from "./internal/logger.js";
 import { resolveReleaseSlug } from "./internal/release-slug.js";
 import {
   readNextMajorVersion,
+  supportsProductionCompileHook,
   warnIfServerInstrumentationMissing,
 } from "./internal/setup-warnings.js";
 
@@ -297,7 +298,7 @@ function buildResolvedInterfereConfig(
   const apiHost = resolveBrowserApiHost(interfere?.apiHost, config.apiUrl);
 
   const nextMajor = readNextMajorVersion(projectDir);
-  const legacyCompiler = nextMajor !== null && nextMajor < 16;
+  const legacyCompiler = !supportsProductionCompileHook(projectDir);
 
   const configuredCompiler = interfereCompilerConfig(
     compiler,

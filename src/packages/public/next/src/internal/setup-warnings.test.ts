@@ -2,7 +2,10 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { readNextMajorVersion } from "./setup-warnings.js";
+import {
+  readNextMajorVersion,
+  supportsProductionCompileHook,
+} from "./setup-warnings.js";
 import { expect, test } from "vitest";
 
 test.each([
@@ -45,6 +48,44 @@ test("returns null outside a Next installation", async () => {
 
   try {
     expect(readNextMajorVersion(project)).toBeNull();
+  } finally {
+    await rm(project, { recursive: true, force: true });
+  }
+});
+
+test.each([
+  { version: "14.2.30", expected: false },
+  { version: "15.3.9", expected: false },
+  { version: "15.4.0", expected: true },
+  { version: "15.5.28", expected: true },
+  { version: "16.0.0", expected: true },
+])(
+  "detects the production compile hook in Next $version",
+  async ({ version, expected }) => {
+    const project = await mkdtemp(join(tmpdir(), "next-hook-test-"));
+
+    const packageDirectory = join(project, "node_modules", "next");
+
+    try {
+      await mkdir(packageDirectory, { recursive: true });
+
+      await writeFile(
+        join(packageDirectory, "package.json"),
+        JSON.stringify({ version }),
+      );
+
+      expect(supportsProductionCompileHook(project)).toBe(expected);
+    } finally {
+      await rm(project, { recursive: true, force: true });
+    }
+  },
+);
+
+test("assumes the production compile hook outside a Next installation", async () => {
+  const project = await mkdtemp(join(tmpdir(), "next-hook-missing-test-"));
+
+  try {
+    expect(supportsProductionCompileHook(project)).toBe(true);
   } finally {
     await rm(project, { recursive: true, force: true });
   }
