@@ -49,8 +49,6 @@ describe("B01-B04 batch processor cadence", () => {
   afterEach(async () => {
     await handle?.shutdown();
 
-    handle?.contextManager.disable();
-
     handle = null;
   });
 

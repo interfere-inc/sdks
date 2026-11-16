@@ -18,14 +18,14 @@ beforeEach(() => {
   seen.length = 0;
 });
 
-test("close() releases the propagator Interfere registered (B10a)", async () => {
+test("interfere registers no global propagator before or after close() (B10a)", async () => {
   const runtime = driver((await createPage()).page);
 
   await expect(runtime.install()).resolves.toBe(1);
 
   const open = await runtime.state();
 
-  expect(open.fields).not.toHaveLength(0);
+  expect(open.fields).toStrictEqual([]);
 
   await runtime.close();
 
@@ -219,7 +219,7 @@ test.each([
     expect(fetchSpan?.parentSpanId).toBe(load?.spanId);
     expect(spans.every((span) => span.traceId !== TRACE_ID)).toBe(true);
 
-    expect((await runtime.state()).fields).not.toHaveLength(0);
+    expect((await runtime.state()).fields).toStrictEqual([]);
   },
 );
 

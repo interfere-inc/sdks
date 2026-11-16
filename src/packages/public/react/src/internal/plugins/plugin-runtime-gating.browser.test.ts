@@ -50,10 +50,7 @@ test("keeps analytics dark until provider configuration settles, then activates 
   expect(localStorage.getItem("interfere:device_id")).toBeNull();
   expect(requests).toStrictEqual([]);
 
-  runtime.applyProviderConfig(
-    { ...DISABLE_ALL_PLUGINS, device: true },
-    undefined,
-  );
+  runtime.applyProviderConfig({ ...DISABLE_ALL_PLUGINS, device: true });
 
   await expect
     .poll(() => kernel.device.getDeviceId())

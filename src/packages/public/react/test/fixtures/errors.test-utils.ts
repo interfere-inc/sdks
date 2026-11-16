@@ -1,3 +1,4 @@
+import { StackContextManager } from "@opentelemetry/sdk-trace-web";
 import { context, propagation } from "@opentelemetry/api";
 import {
   InMemorySpanExporter,
@@ -7,7 +8,6 @@ import { HttpResponse, http } from "msw";
 import { onTestFinished, vi } from "vitest";
 
 import { Kernel } from "../../src/internal/kernel.js";
-import { claimTracingOwnership } from "../../src/internal/otel/ownership.js";
 import { buildOtelProvider } from "../../src/internal/otel/provider.js";
 import errorsPlugin from "../../src/plugins/errors.js";
 import { SessionTracker } from "../../src/tracking/api.js";
@@ -43,14 +43,10 @@ export function createErrorsKernel() {
     sdkStack: [],
   });
 
-  const ownership = claimTracingOwnership({
-    contextManager: handle.contextManager,
-    mode: "managed",
-    propagator: handle.propagator,
-  });
+  context.setGlobalContextManager(new StackContextManager().enable());
 
   kernel.attachOtel(handle, () => {
-    ownership.release();
+    context.disable();
   });
 
   onTestFinished(async () => {

@@ -60,7 +60,7 @@ beforeEach(() => {
     sdkStack: [],
   });
 
-  kernel.attachOtel(otel, () => otel.contextManager.disable());
+  kernel.attachOtel(otel, () => undefined);
 });
 
 afterEach(async () => {

@@ -1,13 +1,21 @@
 import { TELEMETRY_EXPORT_TIMEOUT_MS } from "@interfere/helpers/retry-telemetry";
 import type { ExportResult } from "@opentelemetry/core";
 import { ExportResultCode } from "@opentelemetry/core";
-import { InterfereError } from "@interfere/javascript";
 import { z } from "zod";
 import { toError } from "@interfere/types/sdk/errors";
 
 import { isPageHidden, onPageShown } from "../page-lifecycle/page-lifecycle.js";
+import { isPageLeaving } from "../page-lifecycle/unloading.js";
 import { onKeepaliveBodyReleased } from "../page-lifecycle/keepalive-budget.js";
 import type { SignalSender } from "./exporter.js";
+import {
+  entrySchema,
+  isTerminal,
+  markDispatched,
+} from "./transport/carryover-entry.js";
+import type { RetainedSend } from "./transport/carryover-entry.js";
+
+export type { RetainedSend } from "./transport/carryover-entry.js";
 
 const PREFIX = "interfere:export:v1:";
 const RESET_KEY = "interfere:export-reset:v1";
@@ -15,13 +23,6 @@ const MAX_BYTES = 1024 * 1024;
 const MAX_ENTRIES = 64;
 const MAX_AGE_MS = 24 * 60 * 60 * 1000;
 const REPLAY_HOLD_MS = TELEMETRY_EXPORT_TIMEOUT_MS;
-
-const entrySchema = z.object({
-  body: z.string(),
-  created: z.number(),
-  dispatched: z.number().optional(),
-  scope: z.string(),
-});
 
 const encoder = new TextEncoder();
 let generation = 0;
@@ -35,38 +36,6 @@ const callbacks = new Map<
 
 const controllers = new Map<AbortController, string>();
 const inFlight = new Set<string>();
-
-function isTerminal(result: ExportResult) {
-  return (
-    result.error instanceof InterfereError &&
-    result.error.statusCode !== undefined &&
-    result.error.statusCode >= 400 &&
-    result.error.statusCode < 500 &&
-    result.error.statusCode !== 408 &&
-    result.error.statusCode !== 429
-  );
-}
-
-/** Identifies a retained export and reports keepalive dispatch or capacity exhaustion to its drain. */
-export interface RetainedSend {
-  id: string;
-  onKeepalive: () => void;
-  onBudgetExhausted: () => void;
-}
-
-function markDispatched(key: string, dispatched: number | undefined) {
-  try {
-    const entry = entrySchema.safeParse(
-      JSON.parse(localStorage.getItem(key) ?? "null"),
-    );
-
-    if (entry.success) {
-      localStorage.setItem(key, JSON.stringify({ ...entry.data, dispatched }));
-    }
-  } catch {
-    return;
-  }
-}
 
 function settleEntry(key: string, result: ExportResult) {
   const terminal = isTerminal(result);
@@ -409,6 +378,23 @@ export function withExportCarryover(
     return key;
   }
 
+  function retainOnFailure(
+    payload: Uint8Array,
+    callback: (result: ExportResult) => void,
+  ) {
+    try {
+      if (retain(payload, callback) === null) {
+        return false;
+      }
+    } catch {
+      return false;
+    }
+
+    void drain();
+
+    return true;
+  }
+
   function canRetain(payload: Uint8Array | undefined): payload is Uint8Array {
     return payload !== undefined && allowed() && "locks" in navigator;
   }
@@ -469,7 +455,20 @@ export function withExportCarryover(
     }) satisfies SignalSender,
     send: ((payload, callback) => {
       if (!shouldPersist() || !canRetain(payload)) {
-        send(payload, callback);
+        // WARNING: a send that began while the page was visible is not retained, but the page can hide or start leaving before it dispatches and the keepalive budget can already be spent; a body that fails then is retained for the next load instead of dropped.
+        send(payload, (result) => {
+          if (
+            result.code !== ExportResultCode.SUCCESS &&
+            !isTerminal(result) &&
+            (isPageHidden() || isPageLeaving()) &&
+            canRetain(payload) &&
+            retainOnFailure(payload, callback)
+          ) {
+            return;
+          }
+
+          callback(result);
+        });
 
         return;
       }

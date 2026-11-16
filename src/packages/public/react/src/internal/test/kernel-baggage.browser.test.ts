@@ -69,12 +69,9 @@ async function sendXhr(url: string) {
   });
 }
 
-test.each([
-  { mode: "managed", extracted: "untouched" },
-  { mode: "application", extracted: undefined },
-] as const)(
-  "$mode baggage opt-out keeps browser session attributes and trace context",
-  async ({ mode, extracted }) => {
+test.each([{ extracted: undefined }] as const)(
+  "baggage opt-out keeps browser session attributes and trace context without registering a propagator",
+  async ({ extracted }) => {
     expect.hasAssertions();
 
     const spans = new InMemorySpanExporter();
@@ -97,11 +94,13 @@ test.each([
     );
 
     const kernel = await createKernel({
+      onCreated: (created) => {
+        created.consent.set(true);
+      },
       opts: {
         apiHost: "https://kernel.invalid",
-        consent: true,
         _internalAdditionalSpanProcessors: [new SimpleSpanProcessor(spans)],
-        tracing: { mode, propagateTraceBaggage: false },
+        tracing: { propagateTraceBaggage: false },
       },
     });
 

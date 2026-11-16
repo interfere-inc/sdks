@@ -45,7 +45,7 @@ export function buildKernel(input: BuildKernelInput = {}) {
 
   kernel.attachRuntime(runtime);
 
-  runtime.applyProviderConfig(input.pluginOverrides, undefined);
+  runtime.applyProviderConfig(input.pluginOverrides);
 
   return { kernel, runtime, tracker };
 }

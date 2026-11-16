@@ -84,7 +84,7 @@ afterEach(() => {
   setInjectedConfiguration("__INTERFERE_FORCE_ENABLE__", undefined);
 });
 
-describe.each([false, { mode: "managed", webVitals: false }] as const)(
+describe.each([false, { webVitals: false }] as const)(
   "pending consent with tracing %j",
   (tracing) => {
     test.each([
@@ -120,13 +120,12 @@ describe.each([false, { mode: "managed", webVitals: false }] as const)(
           }),
         );
 
-        if (timing === "before init") {
-          wrapper.consent.set(false);
-        }
+        wrapper.consent.set(
+          timing === "before init" ? false : { replay: false },
+        );
 
         const initializing = wrapper.init({
           apiHost: API,
-          consent: { analytics: true, replay: false },
           enabled: true,
           tracing,
         });

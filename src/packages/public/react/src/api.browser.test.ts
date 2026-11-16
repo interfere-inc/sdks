@@ -103,7 +103,7 @@ describe("api", () => {
         sdkStack: [],
       });
 
-      kernel.attachOtel(handle, () => handle.contextManager.disable());
+      kernel.attachOtel(handle, () => undefined);
 
       registerKernel(kernel);
     });

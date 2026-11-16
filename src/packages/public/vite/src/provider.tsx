@@ -1,7 +1,6 @@
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
 import { InterfereProvider as CoreInterfereProvider } from "@interfere/react/provider";
 import type { PluginOverrides } from "@interfere/react/provider";
-import type { ConsentInput } from "@interfere/types/sdk/plugins/manifest";
 
 import { useSyncExternalStore } from "react";
 import type { PropsWithChildren } from "react";
@@ -11,7 +10,6 @@ import { getKernelOrNull, subscribeToKernel } from "./init";
 const nullSnapshot = () => null;
 
 interface InterfereProviderProps extends PropsWithChildren {
-  consent?: ConsentInput | undefined;
   /** Reports render errors and rethrows to the host boundary. Defaults to true. */
   captureRenderErrors?: boolean;
   plugins?: PluginOverrides | undefined;
@@ -23,7 +21,6 @@ interface InterfereProviderProps extends PropsWithChildren {
  */
 export function InterfereProvider({
   children,
-  consent,
   plugins,
   captureRenderErrors,
 }: InterfereProviderProps) {
@@ -38,7 +35,6 @@ export function InterfereProvider({
       kernel={kernel}
       {...omitUndefined({
         captureRenderErrors,
-        consent,
         plugins,
       })}
     >
@@ -51,7 +47,7 @@ export { useInterfere, useSession } from "@interfere/react/provider";
 
 export type {
   ConsentCategory,
-  ConsentInput,
+  ConsentDecision,
   ConsentState,
   GateableCategory,
 } from "@interfere/types/sdk/plugins/manifest";

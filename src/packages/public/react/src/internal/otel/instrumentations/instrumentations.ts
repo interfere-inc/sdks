@@ -1,10 +1,9 @@
 /* oxlint-disable typescript/no-unnecessary-condition */
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
-import type { TracingOwnership } from "@interfere/types/sdk/remote-config/tracing-ownership";
-
 import { ROOT_CONTEXT, context, trace } from "@opentelemetry/api";
 import type {
   Context,
+  Span,
   SpanOptions,
   Tracer,
   TracerProvider,
@@ -20,11 +19,6 @@ import type { WebTracerProvider } from "@opentelemetry/sdk-trace-web";
 import { THIRD_PARTY_IGNORE } from "../../third-party-hosts.js";
 import { excludeFromExport } from "../export-filter.js";
 import { requestObservationLogger } from "../request-observer/request-observer-events.js";
-import {
-  REQUEST_TRACER_NAME,
-  installRequestObserver,
-} from "../request-observer/request-observer.js";
-import type { RequestObserverInput } from "../request-observer/request-observer.js";
 import type { TraceHeaderWriter } from "../trace-headers.js";
 import { ATTR_URL_FULL, ATTR_URL_PATH, stampUrlAttrs } from "../url-attrs.js";
 import {
@@ -33,23 +27,42 @@ import {
 } from "./failure-policy.js";
 import type { CaptureFailedRequestsOption } from "./failure-policy.js";
 import { propagationTargets } from "./propagation-targets.js";
+import { createRequestInstrumentations } from "./request-instrumentations.js";
+import type { RequestInstrumentationsInput } from "./request-instrumentations.js";
 import type { PropagateToEntry, TraceHeadersOption } from "./header-policy.js";
 
 // WARNING: Document load extracts the traceparent meta through the global propagator, bypassing the freshness guard; remote parents must become ROOT_CONTEXT.
 function browserRootedTracerProvider(provider: TracerProvider) {
+  let documentLoad: Span | undefined;
+
   return {
     getTracer: (...args: Parameters<TracerProvider["getTracer"]>) => {
       const tracer = provider.getTracer(...args);
 
       return {
         startSpan: (name: string, options?: SpanOptions, ctx?: Context) => {
-          const parent = ctx ?? context.active();
+          const active = ctx ?? context.active();
 
-          return tracer.startSpan(
-            name,
-            options,
-            trace.getSpanContext(parent)?.isRemote ? ROOT_CONTEXT : parent,
-          );
+          let parent = trace.getSpanContext(active)?.isRemote
+            ? ROOT_CONTEXT
+            : active;
+
+          // WARNING: Document load nests documentFetch under documentLoad only through context.with, which needs a global context manager Interfere never registers.
+          if (
+            name === "documentFetch" &&
+            documentLoad &&
+            !trace.getSpan(parent)
+          ) {
+            parent = trace.setSpan(parent, documentLoad);
+          }
+
+          const span = tracer.startSpan(name, options, parent);
+
+          if (name === "documentLoad") {
+            documentLoad = span;
+          }
+
+          return span;
         },
         startActiveSpan: tracer.startActiveSpan.bind(tracer),
       } satisfies Tracer;
@@ -80,9 +93,8 @@ export interface InstrumentationsInput {
    */
   ignoreUrls: (string | RegExp)[];
   loggerProvider?: LoggerProvider;
-  /** Who owns OpenTelemetry on this page, as the ownership controller resolved it: `managed` records request spans, `application` records request observations. Request headers do not depend on it. Defaults to `managed`. */
-  mode?: TracingOwnership;
-  onSessionResume?: RequestObserverInput["onSessionResume"];
+  defersTraceContext?: RequestInstrumentationsInput["defersTraceContext"];
+  onSessionResume?: RequestInstrumentationsInput["onSessionResume"];
   /** Explicit HTTP(S) origins allowed to receive trace headers; an entry object carries its own header list. */
   propagateTo?: (PropagateToEntry | string)[];
   /** Redacts URLs in request observations. Defaults to leaving them unchanged. */
@@ -97,8 +109,9 @@ export interface InstrumentationsInput {
   traceHeaders?: TraceHeaderWriter | null;
   /** `false` when a tracing vendor on the page propagates W3C trace context itself; removes `traceparent` and `tracestate` from every origin. Defaults to `true`. */
   writesTraceContext?: boolean;
-  captureContext?: RequestObserverInput["captureContext"];
-  canCorrelate?: RequestObserverInput["canCorrelate"];
+  captureContext?: RequestInstrumentationsInput["captureContext"];
+  canCorrelate?: RequestInstrumentationsInput["canCorrelate"];
+  canPersistDiagnostics?: RequestInstrumentationsInput["canPersistDiagnostics"];
   /**
    * The kernel's private provider — instrumentations register against
    * it, not the global one, so customer OTel setups stay untouched.
@@ -108,6 +121,8 @@ export interface InstrumentationsInput {
 
 export interface BundledInstrumentations {
   dispose: () => void;
+  /** Ends every request span still waiting on upstream's resource-timing delay or its outcome, so a flush as the page leaves exports them. */
+  endOpenRequests: () => void;
   /** Idempotent toggle for the analytics-consent-gated pageEvents signals. */
   setPageEventsEnabled: (enabled: boolean) => void;
 }
@@ -119,10 +134,9 @@ export interface BundledInstrumentations {
  * interaction / long-task / resource-load by `http.route` without
  * cardinality blow-up from raw pathnames.
  *
- * Requests go through the single request observer: a managed page gets
- * request spans on the private provider, an application-mode page gets
- * request observation events; both write the headers `traceHeaders`
- * decides on.
+ * Request spans come from the upstream fetch and XMLHttpRequest
+ * instrumentations on the private provider, with Interfere's header
+ * policy and failed-request evidence attached through their hooks.
  */
 export function registerBundledInstrumentations(input: InstrumentationsInput) {
   const {
@@ -132,13 +146,10 @@ export function registerBundledInstrumentations(input: InstrumentationsInput) {
     backendHosts = [],
     propagateTo = [],
     redactUrl = (url: string) => url,
-    mode = "managed",
     traceHeaders = null,
   } = input;
 
   const { resolveRoute } = input;
-
-  const managed = mode === "managed";
 
   const targets = propagationTargets(
     omitUndefined({
@@ -151,7 +162,7 @@ export function registerBundledInstrumentations(input: InstrumentationsInput) {
     }),
   );
 
-  const requestObserver = installRequestObserver(
+  const requests = createRequestInstrumentations(
     omitUndefined({
       applicationErrors: capturesApplicationErrors(input.captureFailedRequests),
       failureRanges: resolveFailureRanges(input.captureFailedRequests),
@@ -162,15 +173,18 @@ export function registerBundledInstrumentations(input: InstrumentationsInput) {
       onSessionResume: input.onSessionResume,
       captureContext: input.captureContext,
       canCorrelate: input.canCorrelate,
+      canPersistDiagnostics: input.canPersistDiagnostics,
       redactUrl,
       resolveRoute,
       targets,
       traceHeaders,
-      tracer: managed ? tracerProvider.getTracer(REQUEST_TRACER_NAME) : null,
+      defersTraceContext: input.defersTraceContext,
+      evidenceTracer: tracerProvider.getTracer("@interfere/react/request"),
     }),
   );
 
   const coreInstrumentations = [
+    ...requests.instrumentations,
     new LongTaskInstrumentation({
       observerCallback: (span, info: ObserverCallbackInformation) => {
         stampUrlAttrs(span, resolveRoute);
@@ -262,10 +276,11 @@ export function registerBundledInstrumentations(input: InstrumentationsInput) {
     dispose: () => {
       setPageEventsEnabled(false);
 
-      requestObserver.dispose();
+      requests.dispose();
 
       unregisterCore();
     },
+    endOpenRequests: requests.endOpenRequests,
     setPageEventsEnabled,
   } satisfies BundledInstrumentations;
 }

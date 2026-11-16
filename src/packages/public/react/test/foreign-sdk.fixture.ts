@@ -17,7 +17,7 @@ import { registerBundledInstrumentations } from "../src/internal/otel/instrument
 import type { BundledInstrumentations } from "../src/internal/otel/instrumentations/instrumentations.js";
 import type { TraceHeadersOption } from "../src/internal/otel/instrumentations/header-policy.js";
 import { installViewTracker } from "../src/internal/otel/navigation.js";
-import { claimTracingOwnership } from "../src/internal/otel/ownership.js";
+import { traceContextWriterFor } from "../src/internal/otel/instrumentations/trace-context-writers.js";
 import { buildOtelProvider } from "../src/internal/otel/provider.js";
 import type { OtelProviderHandle } from "../src/internal/otel/provider.js";
 import errorsPlugin from "../src/plugins/errors.js";
@@ -27,13 +27,10 @@ import { foreignWriter } from "./foreign-writer.js";
 
 const INTERFERE_SESSION_ID = "11111111-1111-4111-8111-111111111111";
 
-export type TracingMode = "application" | "auto" | "managed";
-
 export interface InterfereOptions {
   console?: boolean;
   headers?: TraceHeadersOption;
   errors?: boolean;
-  mode?: TracingMode;
   propagation?: "interfere" | "external";
   navigation?: boolean;
   propagateTo?: string[];
@@ -193,21 +190,17 @@ function installInterfere(options: InterfereOptions = {}) {
 
   kernel = new Kernel(new SessionTracker({ target }));
 
-  const ownership = claimTracingOwnership({
-    contextManager: provider.contextManager,
-    mode: options.mode ?? "auto",
-    propagation: options.propagation ?? "interfere",
-    propagator: provider.propagator,
-  });
-
   instrumentations = registerBundledInstrumentations({
     ...options,
     ignoreUrls: [/\/ingest(?:[/?#]|$)/u],
     loggerProvider: provider.loggerProvider,
-    mode: ownership.mode,
     propagateTo: options.propagateTo ?? [],
     traceHeaders: provider.traceHeaders,
-    writesTraceContext: ownership.writesTraceContext,
+    defersTraceContext:
+      options.propagation === undefined
+        ? (url: string) => traceContextWriterFor(url) !== undefined
+        : undefined,
+    writesTraceContext: options.propagation !== "external",
     tracerProvider: provider.tracerProvider,
   });
 
@@ -215,8 +208,6 @@ function installInterfere(options: InterfereOptions = {}) {
     instrumentations?.dispose();
 
     instrumentations = null;
-
-    ownership.release();
   });
 
   if (options.errors) {

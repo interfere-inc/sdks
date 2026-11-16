@@ -68,83 +68,66 @@ test("a request that already carries traceparent keeps it, gets Interfere baggag
   );
 });
 
-test.each([
-  ["an explicit tracing.mode", { tracing: { mode: "application" } } as const],
-  ["the tracing shorthand", { tracing: "application" } as const],
-])(
-  "application mode from %s writes no global, writes traceparent where absent, keeps a foreign one, appends baggage and records observations joined to the trace each request left with",
-  async (_source, opts) => {
-    expect.hasAssertions();
+test("the default writes no global, writes traceparent where absent, keeps a foreign one, appends baggage and records request spans carrying the trace each request left with", async () => {
+  expect.hasAssertions();
 
-    const warn = vi.spyOn(console, "warn");
+  const warn = vi.spyOn(console, "warn");
 
-    const { observations, options, requestSpans } = exporters();
+  const { observations, options, requestSpans } = exporters();
 
-    const kernel = await harness.boot({ ...opts, ...options });
+  const kernel = await harness.boot(options);
 
-    expect(propagation.fields()).toStrictEqual([]);
+  expect(propagation.fields()).toStrictEqual([]);
 
-    expect(context.setGlobalContextManager(new StackContextManager())).toBe(
-      true,
-    );
+  expect(context.setGlobalContextManager(new StackContextManager())).toBe(true);
 
-    context.disable();
+  context.disable();
 
-    await fetch(PAGE_URL);
+  await fetch(PAGE_URL);
 
-    await sendXhr(PAGE_URL);
+  await sendXhr(PAGE_URL);
 
-    await fetch(PAGE_URL, { headers: { traceparent: FOREIGN_TRACEPARENT } });
+  await fetch(PAGE_URL, { headers: { traceparent: FOREIGN_TRACEPARENT } });
 
-    await settle();
+  await settle();
 
-    expect(harness.seen().map((entry) => tagged(entry))).toStrictEqual([
-      { baggage: sessionBaggage(kernel), foreign: null, traceparent: "own" },
-      { baggage: sessionBaggage(kernel), foreign: null, traceparent: "own" },
-      {
-        baggage: sessionBaggage(kernel),
-        foreign: null,
-        traceparent: FOREIGN_TRACEPARENT,
-      },
-    ]);
+  expect(harness.seen().map((entry) => tagged(entry))).toStrictEqual([
+    { baggage: sessionBaggage(kernel), foreign: null, traceparent: "own" },
+    { baggage: sessionBaggage(kernel), foreign: null, traceparent: "own" },
+    {
+      baggage: sessionBaggage(kernel),
+      foreign: null,
+      traceparent: FOREIGN_TRACEPARENT,
+    },
+  ]);
 
-    expect(vendorDiagnostics(warn)).toStrictEqual([]);
+  expect(vendorDiagnostics(warn)).toStrictEqual([]);
 
-    const left = traceIdsLeft(harness.seen());
+  const left = traceIdsLeft(harness.seen());
 
-    const common = {
-      "url.full": PAGE_URL,
-      "url.path": "/ownership-test",
-      "http.request.method": "GET",
-      "http.response.status_code": 204,
-      "interfere.view.id": kernel.views.viewId(),
-      "session.id": kernel.session.getId(),
-    };
+  expect(observations()).toStrictEqual([]);
 
-    expect(observations().map((record) => record.attributes)).toStrictEqual([
-      {
-        ...common,
-        "interfere.request.kind": "fetch",
-        [ATTR_REQUEST_TRACE_ID]: left[0],
-      },
-      {
-        ...common,
-        "interfere.request.kind": "xhr",
-        [ATTR_REQUEST_TRACE_ID]: left[1],
-      },
-      {
-        ...common,
-        "interfere.request.kind": "fetch",
-        [ATTR_REQUEST_TRACE_ID]: FOREIGN_TRACE_ID,
-      },
-    ]);
+  expect(
+    requestSpans().map((span) => [
+      span.name,
+      span.attributes["http.response.status_code"],
+      span.attributes["session.id"],
+      span.attributes[ATTR_REQUEST_TRACE_ID],
+    ]),
+  ).toStrictEqual(
+    left.map((traceId) => [
+      "GET /ownership-test",
+      204,
+      kernel.session.getId(),
+      traceId,
+    ]),
+  );
 
-    expect(
-      observations().map((record) => record.spanContext?.traceId),
-    ).toStrictEqual(left);
+  expect(
+    requestSpans()
+      .slice(0, 2)
+      .map((span) => span.spanContext().traceId),
+  ).toStrictEqual(left.slice(0, 2));
 
-    expect(new Set(left).size).toBe(3);
-
-    expect(requestSpans()).toStrictEqual([]);
-  },
-);
+  expect(new Set(left).size).toBe(3);
+});

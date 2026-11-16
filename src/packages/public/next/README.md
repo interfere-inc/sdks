@@ -199,8 +199,6 @@ You don't need to change anything. Interfere works alongside them.
 
 **In the browser**, Interfere checks each request for another tool that writes the `traceparent` header: Datadog RUM (for its `allowedTracingUrls`), Sentry (with `propagateTraceparent`) or another OpenTelemetry propagator. If one is there, Interfere leaves the header to it, so the request carries a single `traceparent` and stays in that tool's trace. Interfere records the request either way. Interfere never removes or replaces headers that your code or another tool set.
 
-<!-- PLACEHOLDER: keep the next paragraph only if `tracing.propagation` ships as an escape hatch; add one sentence for `tracing.mode` only if it stays public. -->
-
 If another tool writes `traceparent` and Interfere doesn't recognise it, such as New Relic or an in-house interceptor, set `tracing: { propagation: "external" }` in `init()`. Interfere then writes no `traceparent` or `tracestate` and still records every request.
 
 **On the server**, `register()` checks whether an OpenTelemetry tracer provider is already registered.
@@ -237,36 +235,98 @@ export async function register() {
 
 ### Consent
 
-Interfere always captures errors. Analytics and session replay can wait for consent:
-
-| Category    | Covers                                                      | Can be denied |
-| ----------- | ----------------------------------------------------------- | ------------- |
-| `necessary` | Errors                                                      | No            |
-| `analytics` | Page views, clicks, rage clicks, device id and browser logs | Yes           |
-| `replay`    | Session replay                                              | Yes           |
-
-Without a consent setting, every category is allowed. To start with analytics and replay denied, pass `consent: false` to `init()`:
+Interfere captures everything by default. If your app must collect consent before analytics, set one option:
 
 ```ts
-// instrumentation-client.ts
-import { init } from "@interfere/next/instrument-client";
-
-void init({ consent: false });
+void init({ consent: "required" });
 ```
 
-Then keep the provider in step with your consent banner:
+Until the visitor grants consent, Interfere:
+
+- captures errors, request spans and timings, and links each request to your backend with a page-scoped id in `baggage`;
+- reads and writes nothing on the device: no cookies, no `localStorage` or `sessionStorage`, no device id and no fingerprint;
+- records no page views, clicks, rage clicks, console logs or session replay.
+
+The page-scoped id lives in memory and changes on every page load. When consent is granted, Interfere starts the persisted session and records a `session.start` event whose `session.previous_id` is the page id, so requests made before consent stay linked to the session.
+
+Record the visitor's decision with `consent.set`:
+
+```ts
+import { consent } from "@interfere/next/instrument-client";
+
+consent.set(true); // analytics and replay
+consent.set({ replay: false }); // analytics without replay
+consent.set(false); // deny or revoke; erases Interfere's device id and stored session
+consent.get(); // { analytics: boolean, replay: boolean }
+```
+
+Calls made before `init()` finishes are applied when it does. In React, `useInterfere().consent` is the same object. If your app may send nothing before consent, not even errors, call `init()` only once consent is granted.
+
+| Category    | Covers                                                                      | Before consent |
+| ----------- | --------------------------------------------------------------------------- | -------------- |
+| `necessary` | Errors, request spans and timings, with a page-scoped id                    | Captured       |
+| `analytics` | Persisted session, device id, page views, clicks, rage clicks, browser logs | Withheld       |
+| `replay`    | Session replay                                                              | Withheld       |
+
+#### Connecting your consent manager
+
+Each recipe calls `consent.set` whenever the manager's decision changes. Map the category your banner uses for analytics or statistics.
+
+**c15t** (inside `ConsentManagerProvider`):
 
 ```tsx
-const { has } = useConsentManager(); // your consent library
+import { useConsentManager } from "@c15t/react";
+import { useEffect } from "react";
 
-<InterfereProvider
-  consent={{ analytics: has("measurement"), replay: has("experience") }}
->
-  {children}
-</InterfereProvider>;
+export function InterfereConsent() {
+  const { has } = useConsentManager();
+  const analytics = has("measurement");
+  const replay = has("experience");
+
+  useEffect(() => {
+    consent.set(analytics ? { replay } : false);
+  }, [analytics, replay]);
+
+  return null;
+}
 ```
 
-You can also call `consent.set()` and `consent.get()` from `useInterfere()`. While analytics is denied, the session id is not sent to your APIs.
+Without React, subscribe to c15t's store: `consentStore.subscribe((state) => consent.set(state.has("measurement")))`.
+
+**OneTrust** (`C0002` is OneTrust's default Performance group; use yours):
+
+```ts
+const previous = window.OptanonWrapper;
+
+window.OptanonWrapper = () => {
+  previous?.();
+  consent.set(window.OnetrustActiveGroups?.includes(",C0002,") ?? false);
+};
+```
+
+**Cookiebot**:
+
+```ts
+const sync = () => consent.set(window.Cookiebot?.consent?.statistics === true);
+
+window.addEventListener("CookiebotOnConsentReady", sync);
+```
+
+**IAB TCF v2.2** (any TCF CMP; Purpose 1 stores data on the device and Purpose 8 measures content performance):
+
+```ts
+window.__tcfapi?.("addEventListener", 2, (data, ok) => {
+  if (ok && data.eventStatus !== "cmpuishown") {
+    consent.set(
+      data.gdprApplies === false ||
+        (data.purpose.consents[1] === true &&
+          data.purpose.consents[8] === true),
+    );
+  }
+});
+```
+
+**Google Consent Mode** is set by your consent manager; connect Interfere to that manager's event as above.
 
 ### What is never recorded
 
@@ -298,7 +358,7 @@ Pass settings as the first argument: `withInterfere({ serviceName: "storefront" 
 
 | Option                          | Default            | What it does                                                                                                                            |
 | ------------------------------- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `consent`                       | All allowed        | `false` denies analytics and replay until you grant them. See [Consent](#consent).                                                      |
+| `consent`                       | All allowed        | `"required"` holds analytics and replay until you grant consent. See [Consent](#consent).                                               |
 | `tracing.propagateTo`           | `[]`               | Other origins your pages call, such as `"https://api.example.com"`. They receive trace headers so their spans join the browser's trace. |
 | `tracing.headers`               | All three          | Which trace headers Interfere may add: `traceparent`, `tracestate`, `baggage`. `false` adds none.                                       |
 | `tracing.propagateTraceBaggage` | `true`             | `false` stops Interfere sending the session id in the `baggage` header.                                                                 |

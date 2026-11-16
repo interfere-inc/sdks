@@ -16,7 +16,7 @@ import { DISABLE_ALL_PLUGINS } from "../../../test/fixtures/disable-all-plugins.
 import { worker } from "../../../test/msw.js";
 import { MAX_EXPORT_BODY_BYTES } from "../capture/capture-only-sink.js";
 import { createKernel } from "../kernel.js";
-import type { Kernel, KernelOptions } from "../kernel.js";
+import type { Kernel } from "../kernel.js";
 import { decodedBodyText } from "../../../test/fixtures/request-body.js";
 
 const API = "https://capture-only-batches.invalid";
@@ -181,11 +181,14 @@ afterEach(async () => {
   }
 });
 
-async function kernelWithHeldFirstExport(
-  opts: Pick<KernelOptions, "consent"> = {},
-) {
+async function kernelWithHeldFirstExport(granted = false) {
   const kernel = await createKernel({
-    opts: { ...opts, apiHost: API, tracing: false },
+    onCreated: (created) => {
+      if (granted) {
+        created.consent.set(true);
+      }
+    },
+    opts: { apiHost: API, tracing: false },
   });
 
   ownedKernel = kernel;
@@ -321,7 +324,7 @@ test("tracing: false drains page views queued behind a held export as keepalive-
     globalThis.history.replaceState(state, "", href);
   });
 
-  const kernel = await kernelWithHeldFirstExport({ consent: true });
+  const kernel = await kernelWithHeldFirstExport(true);
 
   await vi.waitFor(() => {
     expect(kernel.isPageEventsCaptureEnabled()).toBe(true);

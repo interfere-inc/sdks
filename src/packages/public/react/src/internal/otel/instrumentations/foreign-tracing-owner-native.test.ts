@@ -13,7 +13,7 @@ import {
 
 const KINDS = ["fetch", "fetch-request", "xhr"] as const;
 
-const MODES = ["application", "auto", "managed"] as const;
+const MODES = ["default"] as const;
 
 const STYLES: { expected: string[]; name: string; styles: ForeignStyle[] }[] = [
   {
@@ -63,52 +63,46 @@ function withTraceparent(names: string[]) {
     : [...names, "traceparent"].toSorted();
 }
 
-describe.each(MODES)(
-  "%s mode beneath a foreign writer installed later",
-  (mode) => {
-    test.each(STYLES)(
-      "keeps a foreign W3C context, writes its own only when the writer carries none, and merges its session into the foreign baggage ($name)",
-      async ({ expected, styles }) => {
-        expect.hasAssertions();
+describe.each(MODES)("%s mode beneath a foreign writer installed later", () => {
+  test.each(STYLES)(
+    "keeps a foreign W3C context, writes its own only when the writer carries none, and merges its session into the foreign baggage ($name)",
+    async ({ expected, styles }) => {
+      expect.hasAssertions();
 
-        const runtime = await openRuntime();
+      const runtime = await openRuntime();
 
-        await installInterfere(runtime, { mode });
+      await installInterfere(runtime, {});
 
-        await installForeign(runtime, { styles });
+      await installForeign(runtime, { styles });
 
-        const step = await probe(runtime, "outer-foreign", [...KINDS]);
+      const step = await probe(runtime, "outer-foreign", [...KINDS]);
 
-        const foreignW3c = styles.includes("w3c");
+      const foreignW3c = styles.includes("w3c");
 
-        expect(step.results.map((result) => result.status)).toStrictEqual([
-          200, 200, 200,
-        ]);
+      expect(step.results.map((result) => result.status)).toStrictEqual([
+        200, 200, 200,
+      ]);
 
-        expect(step.wire).toHaveLength(KINDS.length);
+      expect(step.wire).toHaveLength(KINDS.length);
 
-        for (const entry of step.wire) {
-          expect(headerNames(entry)).toStrictEqual(withTraceparent(expected));
+      for (const entry of step.wire) {
+        expect(headerNames(entry)).toStrictEqual(withTraceparent(expected));
 
-          expect(owner(entry.headers["traceparent"] ?? null)).toBe(
-            foreignW3c ? "foreign" : "interfere",
-          );
+        expect(owner(entry.headers["traceparent"] ?? null)).toBe(
+          foreignW3c ? "foreign" : "interfere",
+        );
 
-          expect(baggageKeys(entry.headers["baggage"] ?? null)).toStrictEqual(
-            MERGED_BAGGAGE,
-          );
-        }
+        expect(baggageKeys(entry.headers["baggage"] ?? null)).toStrictEqual(
+          MERGED_BAGGAGE,
+        );
+      }
 
-        expect(step.observations).toHaveLength(KINDS.length);
-      },
-    );
-  },
-);
+      expect(step.observations).toHaveLength(KINDS.length);
+    },
+  );
+});
 
-const INNER = [
-  ["application mode", { mode: "application" }],
-  ["auto mode", {}],
-] as const;
+const INNER = [["default", {}]] as const;
 
 describe.each(INNER)(
   "%s with explicit propagation ownership above a foreign writer installed first",
@@ -204,12 +198,12 @@ test.each([undefined, "DD_RUM", "__SENTRY__"])(
   },
 );
 
-test("application mode keeps an unsampled foreign context injected with flags 00", async () => {
+test("the default keeps an unsampled foreign context injected with flags 00", async () => {
   expect.hasAssertions();
 
   const runtime = await openRuntime();
 
-  await installInterfere(runtime, { mode: "application" });
+  await installInterfere(runtime, {});
 
   await installForeign(runtime, {
     injectUnsampled: true,
@@ -232,12 +226,12 @@ test("application mode keeps an unsampled foreign context injected with flags 00
   expect(step.observations).toHaveLength(2);
 });
 
-test("application mode alone writes its own trace context and baggage", async () => {
+test("the default alone writes its own trace context and baggage", async () => {
   expect.hasAssertions();
 
   const runtime = await openRuntime();
 
-  await installInterfere(runtime, { mode: "application" });
+  await installInterfere(runtime, {});
 
   const step = await probe(runtime, "application-alone");
 
@@ -257,7 +251,7 @@ test("application mode alone writes its own trace context and baggage", async ()
   expect(step.observations).toHaveLength(2);
 });
 
-test("managed mode propagates W3C context and baggage to the page origin and nothing to a cross-site origin", async () => {
+test("the default propagates W3C context and baggage to the page origin and nothing to a cross-site origin", async () => {
   expect.hasAssertions();
 
   const runtime = await openRuntime();
@@ -289,7 +283,7 @@ test("managed mode propagates W3C context and baggage to the page origin and not
   expect(cross.observations).toHaveLength(2);
 });
 
-test("managed mode never strips or rewrites a foreign writer's vendor headers", async () => {
+test("the default never strips or rewrites a foreign writer's vendor headers", async () => {
   expect.hasAssertions();
 
   const runtime = await openRuntime();
@@ -317,7 +311,7 @@ test("managed mode never strips or rewrites a foreign writer's vendor headers", 
   expect(step.observations).toHaveLength(2);
 });
 
-test("managed mode carries interfere.session.id and interfere.device.id in baggage instead of the bare semconv keys", async () => {
+test("the default carries interfere.session.id and interfere.device.id in baggage instead of the bare semconv keys", async () => {
   expect.hasAssertions();
 
   const runtime = await openRuntime();
@@ -336,7 +330,7 @@ test("managed mode carries interfere.session.id and interfere.device.id in bagga
   }
 });
 
-test("managed mode preserves a foreign session.id baggage member next to its own namespaced keys", async () => {
+test("the default preserves a foreign session.id baggage member next to its own namespaced keys", async () => {
   expect.hasAssertions();
 
   const runtime = await openRuntime();

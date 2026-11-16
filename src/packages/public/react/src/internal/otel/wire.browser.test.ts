@@ -21,7 +21,9 @@ test("stamps device consent and rotation on buffered vital points at record time
 
   onTestFinished(async () => kernel.dispose());
 
-  runtime.applyProviderConfig({ ...DISABLE_ALL_PLUGINS, device: true }, false);
+  runtime.applyProviderConfig({ ...DISABLE_ALL_PLUGINS, device: true });
+
+  kernel.consent.set(false);
 
   const exporter = new InMemoryMetricExporter(AggregationTemporality.DELTA);
 
@@ -35,7 +37,7 @@ test("stamps device consent and rotation on buffered vital points at record time
     releaseSlug: null,
     sdkStack: [],
     targets: resolveTargets("https://test.local"),
-    tracing: { mode: "application", additionalMetricReaders: [reader] },
+    tracing: { additionalMetricReaders: [reader] },
   });
 
   const report = vi.mocked(onCLS).mock.lastCall?.[0];

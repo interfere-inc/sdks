@@ -1,6 +1,6 @@
 import { clearExportCarryover } from "./otel/export-carryover.js";
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
-import type { SessionId } from "@interfere/types/data/session";
+import type { PageSessionId, SessionId } from "@interfere/types/data/session";
 import { releaseSlugSchema } from "@interfere/types/releases/slug";
 import {
   isNonErrorException,
@@ -16,14 +16,12 @@ import {
   SDK_STACK_GLOBAL,
 } from "@interfere/types/sdk/injected-globals";
 import type {
-  ConsentInput,
+  ConsentDecision,
   ConsentState,
   PluginKey,
 } from "@interfere/types/sdk/plugins/manifest";
 import { readBakedPlugins } from "@interfere/types/sdk/remote-config";
 import type { AnonymousReplayPolicy } from "@interfere/types/sdk/remote-config/anonymous-replay";
-import { tracingModeSchema } from "@interfere/types/sdk/remote-config/tracing-mode";
-import type { TracingMode } from "@interfere/types/sdk/remote-config/tracing-mode";
 import { SERVICE_NAME_GLOBAL } from "@interfere/types/sdk/service-name";
 import {
   redactUrl,
@@ -46,6 +44,7 @@ import type {
 } from "../plugins/lib/types.js";
 
 import { SessionTracker } from "../tracking/api.js";
+import { sessionStartRecord } from "../tracking/session.js";
 import { ViewIds, identityAttributes } from "../tracking/view.js";
 import { getGlobal, getStringGlobal } from "../util/global.js";
 import { createLogger } from "../util/log.js";
@@ -108,11 +107,11 @@ export function buildSdkStack(wrapperVersions?: string[]) {
 
 export interface KernelOptions extends ErrorFilterOptions {
   /**
-   * Current analytics/replay permission, applied at startup. Omit to keep defaults.
-   * Booleans set both categories; objects replace the decision with omitted categories allowed.
-   * This does not disable errors, tracing, or session storage.
+   * Set to `"required"` when this app must collect consent before analytics. Until `consent.set` grants it, the SDK
+   * stores and reads nothing on the device and sends errors and request diagnostics under a page-scoped id.
+   * Omit to capture everything.
    */
-  consent?: ConsentInput | undefined;
+  consent?: "required" | undefined;
   /**
    * The endpoint the SDK posts telemetry to. Defaults to Interfere's
    * endpoint. Set it to a subdomain of your own site that resolves to
@@ -153,10 +152,9 @@ export interface KernelOptions extends ErrorFilterOptions {
    * `internal/otel/*` out of this path so the error-only bundle never
    * imports the OTel SDK or the OTLP exporters, and exceptions are not
    * exported (the capture-only transport is tracked separately). Omitted
-   * (default) loads the OTel module in `auto` mode. A string sets the mode
-   * alone; an object loads it with the supplied config, including `mode`.
+   * (default) loads the OTel module; an object supplies its config.
    */
-  tracing?: false | TracingMode | TracingOptions;
+  tracing?: false | TracingOptions;
 }
 
 /**
@@ -166,9 +164,7 @@ export interface KernelOptions extends ErrorFilterOptions {
  * need to touch any of these — sensible defaults ship out of the box.
  */
 export interface TracingOptions {
-  /** Auto claims free OpenTelemetry globals; managed records request spans; application leaves globals untouched and records observations. */
-  mode?: TracingMode;
-  /** Defaults to interfere. External leaves W3C trace-context propagation to another layer, registers no propagator, and resolves auto to application. Baggage remains independently controlled. */
+  /** Who writes `traceparent`: unset detects Datadog RUM, Sentry and other OpenTelemetry setups per request and leaves it to them; `"external"` leaves it to another tool everywhere; `"interfere"` always writes it where absent. Baggage is controlled separately. */
   propagation?: "interfere" | "external";
   /**
    * Additional OpenTelemetry processors, in array order after built-in enrichment
@@ -237,9 +233,9 @@ export interface KernelInternalOptions extends KernelOptions {
 }
 
 export interface KernelConsent {
-  get: () => ConsentState | null;
-  /** Replace the current analytics/replay decision. Omit to remove consent gating. */
-  set: (value?: ConsentInput) => void;
+  get: () => ConsentState;
+  /** Records the visitor's decision: `true` grants analytics and replay, `false` denies both, `{ replay: false }` grants analytics only. */
+  set: (decision: ConsentDecision) => void;
 }
 
 export interface KernelIdentity {
@@ -254,7 +250,7 @@ export interface KernelDevice {
 }
 
 export interface KernelSession {
-  getId: () => SessionId | null;
+  getId: () => PageSessionId | SessionId | null;
   getWindowId: () => string | null;
 }
 
@@ -329,20 +325,25 @@ export class Kernel implements PluginContext {
     this.privacyPolicy = resolvePrivacyPolicy(privacy);
     this.urlRedaction = resolveUrlRedaction(privacy.urls);
 
+    tracker.onSessionUpgrade((previousId, sessionId) => {
+      this.sink?.emitLog(sessionStartRecord(previousId, sessionId));
+    });
+
     this.consent = {
       get: () => this.requireRuntime().getConsent(),
-      set: (value) => {
+      set: (decision) => {
         const runtime = this.requireRuntime();
+        const previous = runtime.getConsent();
 
-        if (value === undefined) {
-          runtime.resetConsent();
-        } else {
-          runtime.setConsent(value);
-        }
+        runtime.setConsent(decision);
 
-        if (runtime.getConsent()?.analytics === false) {
+        const current = runtime.getConsent();
+
+        this.tracker.setPersistent(current.analytics);
+
+        if (previous.analytics && !current.analytics) {
           clearExportCarryover();
-        } else if (runtime.getConsent()?.replay === false) {
+        } else if (previous.replay && !current.replay) {
           clearExportCarryover("replay:");
         }
 
@@ -383,6 +384,8 @@ export class Kernel implements PluginContext {
 
   attachRuntime(runtime: PluginRuntime) {
     this.runtime = runtime;
+
+    this.tracker.setPersistent(runtime.getConsent().analytics);
   }
 
   private requireRuntime() {
@@ -694,17 +697,8 @@ export class Kernel implements PluginContext {
     this.otelControls = { recordCurrentView: correlation.recordCurrentView };
   }
 
-  syncProviderConfig(config: {
-    consent?: ConsentInput | undefined;
-    plugins?: PluginOverrides | undefined;
-  }) {
-    this.requireRuntime().applyProviderConfig(config.plugins, config.consent);
-
-    if (this.requireRuntime().getConsent()?.analytics === false) {
-      clearExportCarryover();
-    } else if (this.requireRuntime().getConsent()?.replay === false) {
-      clearExportCarryover("replay:");
-    }
+  syncProviderConfig(config: { plugins?: PluginOverrides | undefined }) {
+    this.requireRuntime().applyProviderConfig(config.plugins);
 
     this.startup.releaseDeferred();
   }
@@ -833,18 +827,13 @@ export async function createKernel(input: CreateKernelInput = {}) {
     }
 
     if (opts.tracing !== false) {
-      const { resolveTracingMode, wireOtel } = await import("./otel/index.js");
+      const { wireOtel } = await import("./otel/index.js");
 
       const tracingOpts =
         // oxlint-disable-next-line anti-slop/no-runtime-typeof -- The public tracing option accepts an instrumentation-options object or false; anything else means defaults.
         typeof opts.tracing === "object" ? opts.tracing : undefined;
 
-      const resolvedTracing: ResolvedTracingOptions = {
-        ...tracingOpts,
-        mode: resolveTracingMode(
-          tracingModeSchema.safeParse(opts.tracing).data ?? tracingOpts?.mode,
-        ),
-      };
+      const resolvedTracing: ResolvedTracingOptions = { ...tracingOpts };
 
       if (serviceName) {
         resolvedTracing.serviceName = serviceName;

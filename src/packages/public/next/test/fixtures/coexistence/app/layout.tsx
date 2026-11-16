@@ -5,7 +5,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <InterfereProvider consent>
+        <InterfereProvider>
           {children}
           <button type="button">Rage target</button>
         </InterfereProvider>

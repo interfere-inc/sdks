@@ -30,10 +30,6 @@ async function expectObservedUnder(
 
   const observations = harness.observationsFor(label);
 
-  expect(new Set(observations.map((record) => record.traceId))).toStrictEqual(
-    new Set(traceIds),
-  );
-
   expect(
     new Set(
       observations.map((record) =>
@@ -165,8 +161,6 @@ test("errors and page views from the same journey carry the Interfere session th
 
   await page.getByRole("button", { name: "Capture journey error" }).click();
 
-  await flushByLeaving(page);
-
   await expect
     .poll(
       () =>
@@ -174,6 +168,8 @@ test("errors and page views from the same journey carry the Interfere session th
       POLL,
     )
     .toBe(1);
+
+  await flushByLeaving(page);
 
   const [exception] = exceptions(
     harness.interfereRequests(),
@@ -328,6 +324,8 @@ test("denied analytics keeps necessary request observations, drops analytics-gat
 
   const granted = await harness.journey(page, "consent-granted");
 
+  const returnTo = new URL("/journey", page.url()).href;
+
   await flushByLeaving(page);
 
   expect(
@@ -337,13 +335,26 @@ test("denied analytics keeps necessary request observations, drops analytics-gat
       interfereBaggageKeys([entry]),
     ]),
   ).toStrictEqual([
-    ...Array.from({ length: 4 }, () => [true, true, []]),
+    ...Array.from({ length: 4 }, () => [true, true, ["interfere.session.id"]]),
     ...Array.from({ length: 4 }, () => [
       true,
       true,
       ["interfere.session.id", "interfere.device.id"],
     ]),
   ]);
+
+  await expect
+    .poll(
+      () => [
+        harness.navigations("consent=denied-a"),
+        harness.navigations("consent=denied-b"),
+        harness.navigations("consent=granted"),
+      ],
+      POLL,
+    )
+    .toStrictEqual([[], ["push"], ["push"]]);
+
+  await page.goto(returnTo);
 
   await expect
     .poll(
@@ -367,10 +378,4 @@ test("denied analytics keeps necessary request observations, drops analytics-gat
   expect([...deviceIds(granted.label)]).toStrictEqual([
     expect.stringMatching(/^[\da-f-]{36}$/u),
   ]);
-
-  expect([
-    harness.navigations("consent=denied-a"),
-    harness.navigations("consent=denied-b"),
-    harness.navigations("consent=granted"),
-  ]).toStrictEqual([[], ["push"], ["push"]]);
 });

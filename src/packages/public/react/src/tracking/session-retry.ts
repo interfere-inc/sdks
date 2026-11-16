@@ -5,6 +5,14 @@ import { IngestBackoffError } from "../internal/ingest-backoff/ingest-backoff.js
 
 const RETRY_DELAYS_MS = [5000, 15_000] as const;
 
+export function syncKey(
+  sessionId: string,
+  deviceId: string | null,
+  fpHash: string | null,
+) {
+  return `${sessionId}|${deviceId ?? ""}|${fpHash ?? ""}`;
+}
+
 export class SessionRetry {
   private timer: ReturnType<typeof setTimeout> | null = null;
   private attempts = 0;

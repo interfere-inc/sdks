@@ -1,8 +1,6 @@
 /* oxlint-disable react-perf/jsx-no-new-object-as-prop */
 "use client";
 
-import type { ConsentInput } from "@interfere/types/sdk/plugins/manifest";
-
 import { useContext, useLayoutEffect } from "react";
 import type { PropsWithChildren } from "react";
 
@@ -16,8 +14,6 @@ import {
 import type { PluginOverrides } from "./plugins/lib/loader.js";
 
 interface InterfereProviderProps extends PropsWithChildren {
-  /** Sets analytics/replay consent; undefined preserves the current decision, and omitted categories are allowed. */
-  consent?: ConsentInput | undefined;
   /** Reports render errors and rethrows to the host boundary. Defaults to true. */
   captureRenderErrors?: boolean;
   /** Active kernel returned by init(); pass null before initialization or during server rendering. */
@@ -29,13 +25,12 @@ interface InterfereProviderProps extends PropsWithChildren {
 export function InterfereProvider({
   kernel,
   children,
-  consent,
   plugins,
   captureRenderErrors,
 }: InterfereProviderProps) {
   useLayoutEffect(() => {
-    kernel?.syncProviderConfig({ consent, plugins });
-  }, [kernel, consent, plugins]);
+    kernel?.syncProviderConfig({ plugins });
+  }, [kernel, plugins]);
 
   const value: InterfereContextValue = kernel
     ? {

@@ -1,16 +1,21 @@
 import { PLUGIN_MANIFEST } from "@interfere/types/sdk/plugins/manifest";
 import type {
   ConsentCategory,
-  ConsentInput,
+  ConsentDecision,
   ConsentState,
   GateableCategory,
   PluginKey,
 } from "@interfere/types/sdk/plugins/manifest";
 
-export const DEFAULT_CONSENT = {
+export const DEFAULT_CONSENT = Object.freeze({
   analytics: true,
   replay: true,
-} as const satisfies ConsentState;
+}) satisfies ConsentState;
+
+export const PENDING_CONSENT = Object.freeze({
+  analytics: false,
+  replay: false,
+}) satisfies ConsentState;
 
 // oxlint-disable-next-line typescript/no-unsafe-type-assertion
 const PLUGIN_CONSENT_BY_KEY = Object.fromEntries(
@@ -26,32 +31,21 @@ export function getPluginConsentCategory(key: PluginKey) {
 
 export function isConsentAllowed(
   category: ConsentCategory,
-  consentState: ConsentState | null,
+  consentState: ConsentState,
 ) {
-  return (
-    category === "necessary" ||
-    consentState === null ||
-    consentState[category] === true
+  return category === "necessary" || consentState[category];
+}
+
+export function resolveConsentDecision(decision: ConsentDecision) {
+  if (decision === true || decision === false) {
+    return { analytics: decision, replay: decision } satisfies ConsentState;
+  }
+
+  return { analytics: true, replay: decision.replay } satisfies ConsentState;
+}
+
+export function hasConsentChanged(current: ConsentState, next: ConsentState) {
+  return GATEABLE_CATEGORIES.some(
+    (category) => current[category] !== next[category],
   );
-}
-
-export function resolveGrantedConsent(consent?: ConsentInput) {
-  if (consent === true || consent === false) {
-    return { analytics: consent, replay: consent } satisfies ConsentState;
-  }
-
-  return { ...DEFAULT_CONSENT, ...consent } satisfies ConsentState;
-}
-
-export function hasConsentChanged(
-  current: ConsentState | null,
-  next: ConsentState | null,
-) {
-  for (const category of GATEABLE_CATEGORIES) {
-    if (current?.[category] !== next?.[category]) {
-      return true;
-    }
-  }
-
-  return false;
 }

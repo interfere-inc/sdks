@@ -85,6 +85,9 @@ async function startKernel(opts: KernelOptions) {
   );
 
   const kernel = await createKernel({
+    onCreated: (created) => {
+      created.consent.set(true);
+    },
     opts: {
       ...opts,
       apiHost: API_HOST,
@@ -172,7 +175,6 @@ describe("interaction privacy", () => {
     expect.hasAssertions();
 
     const { kernel, logs, spans } = await startKernel({
-      consent: true,
       privacy: PRIVACY,
     });
 
@@ -294,7 +296,7 @@ describe("interaction privacy", () => {
   test("interactions: false drops user actions but keeps page views and document load", async () => {
     expect.hasAssertions();
 
-    const { kernel, logs, spans } = await startKernel({ consent: true });
+    const { kernel, logs, spans } = await startKernel({});
 
     render(`<button id="go">Go</button>`);
 
@@ -346,7 +348,6 @@ describe("URL redaction", () => {
     history.replaceState({}, "", `/landing?q=${SECRET}#${SECRET}`);
 
     const { kernel, logs, spans } = await startKernel({
-      consent: true,
       privacy: { urls: true },
     });
 

@@ -170,15 +170,19 @@ describe.each([
         routeRequests[0]?.url.startsWith("/drain/v1/traces/platform"),
       ).toBe(serverTracing === "drain");
 
-      expect(
-        exportedSpans(collector.requests)
-          .filter(
-            (item) =>
-              attribute(item.resource, "interfere.sdk.name") ===
-              "@interfere/react",
-          )
-          .map((item) => item.traceId),
-      ).toContain(routeError.traceId);
+      await expect
+        .poll(
+          () =>
+            exportedSpans(collector.requests)
+              .filter(
+                (item) =>
+                  attribute(item.resource, "interfere.sdk.name") ===
+                  "@interfere/react",
+              )
+              .map((item) => item.traceId),
+          { timeout: 15_000 },
+        )
+        .toContain(routeError.traceId);
 
       const release = attribute(routeError.resource, "release.slug");
 

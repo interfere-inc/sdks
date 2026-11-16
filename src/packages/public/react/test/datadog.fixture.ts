@@ -12,7 +12,6 @@ import { createKernel } from "../src/internal/kernel.js";
 
 interface Options {
   order: "datadog-first" | "interfere-first";
-  mode: "auto" | "application" | "managed";
   baggage: boolean;
   sampled: boolean;
   injectAll?: boolean;
@@ -83,15 +82,16 @@ async function install(options: Options) {
   }
 
   kernel = await createKernel({
+    onCreated: (created) => {
+      created.consent.set({ replay: false });
+    },
     opts: {
       apiHost: location.origin,
-      consent: { analytics: true, replay: false },
       _internalAdditionalSpanProcessors: [new SimpleSpanProcessor(spans)],
       _internalAdditionalLogRecordProcessors: [
         new SimpleLogRecordProcessor({ exporter: logs }),
       ],
       tracing: {
-        mode: options.mode,
         propagation: "external",
         propagateTraceBaggage: options.baggage,
       },
@@ -156,7 +156,13 @@ async function request(kind: "fetch" | "request" | "xhr") {
   };
 }
 
+const REQUEST_SPAN_END_MS = 400;
+
 async function snapshot() {
+  await new Promise((resolve) => {
+    setTimeout(resolve, REQUEST_SPAN_END_MS);
+  });
+
   if (!disposed) {
     await kernel.flush();
   }
@@ -186,11 +192,11 @@ const fixture = {
       deliver();
     }
   },
-  revoke: () => kernel.consent.set({ analytics: false, replay: false }),
+  revoke: () => kernel.consent.set(false),
   revokeRegrant: () => {
-    kernel.consent.set({ analytics: false, replay: false });
+    kernel.consent.set(false);
 
-    kernel.consent.set({ analytics: true, replay: false });
+    kernel.consent.set({ replay: false });
   },
   rotate: () => kernel.identity.clear(),
   session: () => kernel.session.getId(),

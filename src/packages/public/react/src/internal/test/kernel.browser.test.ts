@@ -216,7 +216,11 @@ describe("Kernel", () => {
 
     expect(kernel.device.getDeviceId()).toMatch(/\S/u);
     expect(kernel.identity.get()).toBeNull();
-    expect(kernel.consent.get()).toBeNull();
+
+    expect(kernel.consent.get()).toStrictEqual({
+      analytics: true,
+      replay: true,
+    });
   });
 
   test("device capture cleanup purges stored identity only on consent revocation", () => {
@@ -266,30 +270,6 @@ describe("Kernel", () => {
     expect(kernel.identity.get()).toBeNull();
     expect(kernel.session.getId()).toMatch(/\S/u);
     expect(kernel.session.getId()).not.toBe(initialSessionId);
-  });
-
-  test("syncProviderConfig forwards consent to the runtime", () => {
-    const { kernel } = buildKernel();
-
-    ownedKernels.add(kernel);
-
-    kernel.syncProviderConfig({ consent: { analytics: true, replay: false } });
-
-    expect(kernel.consent.get()).toStrictEqual({
-      analytics: true,
-      replay: false,
-    });
-
-    kernel.syncProviderConfig({ consent: undefined });
-
-    expect(kernel.consent.get()).toStrictEqual({
-      analytics: true,
-      replay: false,
-    });
-
-    kernel.consent.set();
-
-    expect(kernel.consent.get()).toBeNull();
   });
 
   test("dispose cleans up the tracker", async () => {
@@ -776,9 +756,9 @@ describe(createKernel, () => {
 
     ownedKernels.add(kernel);
 
-    kernel.syncProviderConfig({
-      consent: { analytics: false, replay: false },
-    });
+    kernel.consent.set(false);
+
+    kernel.syncProviderConfig({});
 
     await kernel.dispose();
 

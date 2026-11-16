@@ -23,20 +23,19 @@ test("does not subscribe or upload when native rrweb snapshot initialization fai
 
   replay.target.value = "initial input";
 
-  replay.runtime.applyProviderConfig(
-    {
-      ...DISABLE_ALL_PLUGINS,
-      replay: {
-        maskInputOptions: { text: true },
-        maskInputFn: () => {
-          maskInput();
+  replay.runtime.applyProviderConfig({
+    ...DISABLE_ALL_PLUGINS,
+    replay: {
+      maskInputOptions: { text: true },
+      maskInputFn: () => {
+        maskInput();
 
-          throw error;
-        },
+        throw error;
       },
     },
-    { analytics: false, replay: false },
-  );
+  });
+
+  replay.runtime.setConsent(false);
 
   onTestFinished(() => {
     const stop = record({ emit: vi.fn<() => void>() });
@@ -63,24 +62,23 @@ test("does not subscribe or upload when native rrweb snapshot initialization fai
 test("stops after repeated native recorder faults and delivers its recorded tail", async () => {
   let faults = 0;
 
-  replay.runtime.applyProviderConfig(
-    {
-      ...DISABLE_ALL_PLUGINS,
-      replay: {
-        maskInputOptions: { text: true },
-        maskInputFn: (text) => {
-          if (text) {
-            faults += 1;
+  replay.runtime.applyProviderConfig({
+    ...DISABLE_ALL_PLUGINS,
+    replay: {
+      maskInputOptions: { text: true },
+      maskInputFn: (text) => {
+        if (text) {
+          faults += 1;
 
-            throw new TypeError("cannot read detached input");
-          }
+          throw new TypeError("cannot read detached input");
+        }
 
-          return text;
-        },
+        return text;
       },
     },
-    { analytics: false, replay: false },
-  );
+  });
+
+  replay.runtime.setConsent(false);
 
   replay.cleanup = replayPlugin.setup(replay.kernel);
 
@@ -119,10 +117,9 @@ test("stops after repeated native recorder faults and delivers its recorded tail
 });
 
 test("keeps recording when the browser rejects the page's own stylesheet rules", async () => {
-  replay.runtime.applyProviderConfig(
-    { ...DISABLE_ALL_PLUGINS, replay: true },
-    { analytics: false, replay: false },
-  );
+  replay.runtime.applyProviderConfig({ ...DISABLE_ALL_PLUGINS, replay: true });
+
+  replay.runtime.setConsent(false);
 
   replay.cleanup = replayPlugin.setup(replay.kernel);
 
@@ -167,10 +164,9 @@ test("keeps recording when the browser rejects the page's own stylesheet rules",
 const MUTATION_STORM_LONG_TASK_BUDGET_MS = 100;
 
 async function startRecordingReplay() {
-  replay.runtime.applyProviderConfig(
-    { ...DISABLE_ALL_PLUGINS, replay: true },
-    { analytics: false, replay: false },
-  );
+  replay.runtime.applyProviderConfig({ ...DISABLE_ALL_PLUGINS, replay: true });
+
+  replay.runtime.setConsent(false);
 
   replay.cleanup = replayPlugin.setup(replay.kernel);
 

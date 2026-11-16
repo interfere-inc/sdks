@@ -1,5 +1,8 @@
-import type { SessionId } from "@interfere/types/data/session";
-import { sessionIdSchema } from "@interfere/types/data/session";
+import type { PageSessionId, SessionId } from "@interfere/types/data/session";
+import {
+  pageSessionIdSchema,
+  sessionIdSchema,
+} from "@interfere/types/data/session";
 
 import { v4 as uuidv4, v7 as uuidv7 } from "uuid";
 
@@ -32,6 +35,13 @@ function tryStorage(type: "localStorage" | "sessionStorage") {
           return null;
         }
       },
+      removeItem(key: string) {
+        try {
+          s.removeItem(key);
+        } catch {
+          return;
+        }
+      },
       setItem(key: string, value: string) {
         try {
           s.setItem(key, value);
@@ -47,25 +57,39 @@ function tryStorage(type: "localStorage" | "sessionStorage") {
 
 export type OnRotate = (sessionId: string) => void;
 
+/** Removes the persisted session, so a later page starts from a fresh id. */
+export function clearStoredSession() {
+  const local = tryStorage("localStorage");
+
+  for (const key of [SESSION_ID_KEY, SESSION_STARTED_KEY, LAST_ACTIVITY_KEY]) {
+    local?.removeItem(key);
+  }
+
+  tryStorage("sessionStorage")?.removeItem(WINDOW_ID_KEY);
+}
+
 export class SessionManager {
-  sessionId: SessionId | null = null;
+  sessionId: PageSessionId | SessionId | null = null;
   windowId: string | null = null;
   private readonly local: ReturnType<typeof tryStorage>;
   private readonly session: ReturnType<typeof tryStorage>;
   private readonly onRotate: OnRotate | null = null;
+  private readonly persistent: boolean;
   private lastActivityMs = 0;
   private sessionStartedMs = 0;
 
-  constructor(onRotate?: OnRotate) {
-    this.local = tryStorage("localStorage");
-    this.session = tryStorage("sessionStorage");
-    this.onRotate = onRotate ?? null;
+  /** A non-persistent manager neither reads nor writes browser storage and issues page-scoped ids. */
+  constructor(onRotate?: OnRotate, persistent = true) {
+    this.local = persistent ? tryStorage("localStorage") : null;
+    this.session = persistent ? tryStorage("sessionStorage") : null;
+    this.onRotate = persistent ? (onRotate ?? null) : null;
+    this.persistent = persistent;
 
     this.restore();
   }
 
   getSessionId() {
-    if (this.sessionId) {
+    if (this.sessionId !== null) {
       return this.sessionId;
     }
 
@@ -121,7 +145,10 @@ export class SessionManager {
   }
 
   private rotate() {
-    this.sessionId = sessionIdSchema.parse(uuidv7());
+    this.sessionId = this.persistent
+      ? sessionIdSchema.parse(uuidv7())
+      : pageSessionIdSchema.parse(`page_${uuidv7()}`);
+
     this.sessionStartedMs = Date.now();
 
     this.local?.setItem(SESSION_ID_KEY, this.sessionId);
@@ -158,4 +185,22 @@ export class SessionManager {
 
     return Date.now() - ts > SESSION_TIMEOUT_MS;
   }
+}
+
+/** OTel semantic-convention event a page emits when its page-scoped session is replaced by the persisted one. */
+export const SESSION_START_EVENT_NAME = "session.start";
+
+export const ATTR_SESSION_ID = "session.id";
+
+const ATTR_SESSION_PREVIOUS_ID = "session.previous_id";
+
+/** The `session.start` record linking a page-scoped session to the persisted session that replaced it. */
+export function sessionStartRecord(previousId: string, sessionId: string) {
+  return {
+    attributes: {
+      [ATTR_SESSION_ID]: sessionId,
+      [ATTR_SESSION_PREVIOUS_ID]: previousId,
+    },
+    eventName: SESSION_START_EVENT_NAME,
+  };
 }

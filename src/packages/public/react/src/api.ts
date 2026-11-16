@@ -4,12 +4,14 @@ import {
   toException,
 } from "@interfere/types/sdk/errors";
 
-import { SpanStatusCode, trace } from "@opentelemetry/api";
-import type { Span, SpanOptions } from "@opentelemetry/api";
+import { SpanStatusCode, context, trace } from "@opentelemetry/api";
+import type { Context, Span, SpanOptions } from "@opentelemetry/api";
 
 import { activeKernel } from "./internal/kernel-registry.js";
 
 const TRACER_NAME = "@interfere/react";
+
+let scope: Context | undefined;
 
 function tracer() {
   return activeKernel()?.getTracer(TRACER_NAME) ?? trace.getTracer(TRACER_NAME);
@@ -51,9 +53,21 @@ export function span(
   fn: (span: Span) => unknown,
   options?: SpanOptions,
 ) {
-  return tracer().startActiveSpan(name, options ?? {}, (s) => {
+  const parent = scope ?? context.active();
+
+  return tracer().startActiveSpan(name, options ?? {}, parent, (s) => {
     try {
-      const result = fn(s);
+      const previous = scope;
+
+      scope = trace.setSpan(parent, s);
+
+      let result: unknown;
+
+      try {
+        result = fn(s);
+      } finally {
+        scope = previous;
+      }
 
       if (isPromise(result)) {
         return result.then(

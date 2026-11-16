@@ -1,7 +1,5 @@
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
 import type { ReleaseSlug } from "@interfere/types/releases/slug";
-import { DEFAULT_TRACING_MODE } from "@interfere/types/sdk/remote-config/tracing-mode";
-import type { TracingMode } from "@interfere/types/sdk/remote-config/tracing-mode";
 import type { Context } from "@opentelemetry/api";
 import type { LogRecordProcessor } from "@opentelemetry/sdk-logs";
 import type { MetricReader } from "@opentelemetry/sdk-metrics";
@@ -13,10 +11,11 @@ import {
 } from "./request-observer/request-identity.js";
 import { installViewCorrelation } from "./correlation.js";
 import { registerBundledInstrumentations } from "./instrumentations/instrumentations.js";
-import { claimTracingOwnership } from "./ownership.js";
+import { traceContextWriterFor } from "./instrumentations/trace-context-writers.js";
 import { readPropagationFromDocument } from "./propagation.js";
 import { buildOtelProvider } from "./provider.js";
 import { captureWebVitals } from "./web-vitals.js";
+import { isPageLeaving } from "../page-lifecycle/unloading.js";
 
 import type { resolveTargets } from "../config/config.js";
 import type { Kernel, TracingOptions } from "../kernel.js";
@@ -29,7 +28,6 @@ export interface ResolvedTracingOptions extends TracingOptions {
   additionalLogRecordProcessors?: LogRecordProcessor[];
   additionalMetricReaders?: MetricReader[];
   additionalSpanProcessors?: SpanProcessor[];
-  mode: TracingMode;
   serviceName?: string;
   serviceNamespace?: string;
 }
@@ -41,30 +39,28 @@ export interface TracingRuntimeInput {
   targets: ReturnType<typeof resolveTargets>;
 }
 
-/** The browser tracing mode: the explicit option, else auto. There is no dashboard setting. */
-export function resolveTracingMode(explicit: TracingMode | undefined) {
-  return explicit ?? DEFAULT_TRACING_MODE;
-}
-
 export function wireOtel(
   input: TracingRuntimeInput & { tracing: ResolvedTracingOptions },
 ) {
   const { kernel, targets, tracing } = input;
 
+  let endOpenRequests: (() => void) | undefined;
+
   const handle = buildOtelProvider(
     omitUndefined({
+      beforeFlush: () => {
+        if (isPageLeaving()) {
+          endOpenRequests?.();
+        }
+      },
       clientOptions: targets.ingest,
-      canPersistExports: () => kernel.consent.get()?.analytics !== false,
+      canPersistExports: () => kernel.consent.get().analytics,
       propagateTraceBaggage: tracing.propagateTraceBaggage,
       propagationOwnership: tracing.propagation,
       getDeviceId: () => kernel.device.getDeviceId(),
       getSessionId: () => kernel.session.getId(),
       getViewId: () => kernel.views.viewId(),
       getActionId: () => kernel.views.actionId(),
-      getPropagationSessionId: () =>
-        kernel.consent.get()?.analytics === false
-          ? null
-          : kernel.session.getId(),
       isDeviceInfoEnabled: () => kernel.isDeviceInfoCaptureEnabled(),
       onExceptionSpan: () => {
         kernel.noteException();
@@ -80,15 +76,6 @@ export function wireOtel(
       additionalLogRecordProcessors: tracing.additionalLogRecordProcessors,
       additionalMetricReaders: tracing.additionalMetricReaders,
       urlRedaction: kernel.urlRedaction,
-    }),
-  );
-
-  const ownership = claimTracingOwnership(
-    omitUndefined({
-      contextManager: handle.contextManager,
-      mode: tracing.mode,
-      propagator: handle.propagator,
-      propagation: tracing.propagation,
     }),
   );
 
@@ -111,7 +98,10 @@ export function wireOtel(
         ...(tracing.ignoreUrls ?? []),
       ],
       backendHosts: tracing.backendHosts,
-      mode: ownership.mode,
+      defersTraceContext:
+        tracing.propagation === undefined
+          ? (url: string) => traceContextWriterFor(url) !== undefined
+          : undefined,
       onSessionResume: (handler: Parameters<Kernel["onSessionResume"]>[0]) =>
         kernel.onSessionResume(handler),
       propagateTo: tracing.propagateTo,
@@ -121,10 +111,10 @@ export function wireOtel(
       headers: tracing.headers,
       propagateTraceBaggage: tracing.propagateTraceBaggage,
       traceHeaders: handle.traceHeaders,
-      writesTraceContext: ownership.writesTraceContext,
+      writesTraceContext: tracing.propagation !== "external",
       canCorrelate: (ctx?: Context) =>
-        kernel.consent.get()?.analytics !== false &&
-        (ctx === undefined || requestIdentityIsCurrent(ctx)),
+        ctx === undefined || requestIdentityIsCurrent(ctx),
+      canPersistDiagnostics: () => kernel.consent.get().analytics,
       captureContext: (ctx: Context) => {
         const consent = kernel.consent.get();
 
@@ -141,6 +131,8 @@ export function wireOtel(
       },
     }),
   );
+
+  ({ endOpenRequests } = instrumentations);
 
   const stopVitals =
     tracing.webVitals === false
@@ -166,8 +158,6 @@ export function wireOtel(
       correlation.dispose();
 
       instrumentations.dispose();
-
-      ownership.release();
     },
     {
       recordCurrentView: correlation.recordCurrentView,

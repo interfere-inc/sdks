@@ -145,6 +145,11 @@ afterEach(async () => {
 
 async function startKernel(opts: Pick<KernelOptions, "consent">) {
   const kernel = await createKernel({
+    onCreated: (created) => {
+      if (opts.consent !== "required") {
+        created.consent.set(true);
+      }
+    },
     opts: { ...opts, apiHost: API, tracing: false },
   });
 
@@ -182,7 +187,7 @@ function clickButton(kernel: Kernel) {
 test("tracing: false exports one page view per view and one user action per click as identity-stamped log records", async () => {
   expect.hasAssertions();
 
-  const kernel = await startKernel({ consent: true });
+  const kernel = await startKernel({});
 
   await vi.waitFor(() => {
     expect(kernel.isPageEventsCaptureEnabled()).toBe(true);
@@ -274,7 +279,7 @@ test("tracing: false stamps each log export with its dispatch time", async () =>
 
   const startedAt = Date.now();
 
-  const kernel = await startKernel({ consent: true });
+  const kernel = await startKernel({});
 
   await vi.waitFor(() => {
     expect(kernel.isPageEventsCaptureEnabled()).toBe(true);
@@ -310,7 +315,7 @@ test("tracing: false stamps each log export with its dispatch time", async () =>
 test("tracing: false with consent denied exports no page view or user action", async () => {
   expect.hasAssertions();
 
-  const kernel = await startKernel({ consent: false });
+  const kernel = await startKernel({ consent: "required" });
 
   globalThis.history.pushState(null, "", "/capture-only-events/denied");
 

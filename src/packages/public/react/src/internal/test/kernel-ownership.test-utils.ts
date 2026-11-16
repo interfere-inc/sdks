@@ -1,6 +1,6 @@
 import { browserStorage } from "@interfere/test-config/browser-storage";
 import { setInjectedConfiguration } from "@interfere/test-config/injected-configuration";
-import { context, propagation, trace } from "@opentelemetry/api";
+import { SpanKind, context, propagation, trace } from "@opentelemetry/api";
 import type {
   Context,
   TextMapPropagator,
@@ -81,9 +81,12 @@ export async function sendXhr(
   });
 }
 
+const REQUEST_SPAN_END_MS = 400;
+
+/** Waits past the upstream instrumentations' 300 ms resource-timing wait, after which request spans end. */
 export async function settle() {
   await new Promise<void>((resolve) => {
-    setTimeout(resolve, 0);
+    setTimeout(resolve, REQUEST_SPAN_END_MS);
   });
 }
 
@@ -92,6 +95,9 @@ export function exporters() {
   const spans = new InMemorySpanExporter();
 
   return {
+    allSpans: () => spans.getFinishedSpans(),
+    clientSpans: () =>
+      spans.getFinishedSpans().filter((span) => span.kind === SpanKind.CLIENT),
     observations: () =>
       logs
         .getFinishedLogRecords()

@@ -7,6 +7,7 @@ import type { OtlpSignal } from "@interfere/constants/api";
 import { toError } from "@interfere/types/sdk/errors";
 
 import type { ExportResult } from "@opentelemetry/core";
+import { SpanKind } from "@opentelemetry/api";
 import { ExportResultCode } from "@opentelemetry/core";
 import { JsonTraceSerializer } from "@opentelemetry/otlp-transformer";
 import type { ReadableSpan, SpanExporter } from "@opentelemetry/sdk-trace-base";
@@ -17,6 +18,8 @@ import {
   isPageHidden,
   reserveKeepaliveBody,
 } from "../page-lifecycle/page-lifecycle.js";
+import { isPageLeaving } from "../page-lifecycle/unloading.js";
+import { currentSpanGate, noteLogsDecided } from "./transport/leave-gate.js";
 import { withExportCarryover } from "./export-carryover.js";
 import type { RetainedSend } from "./export-carryover.js";
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
@@ -211,8 +214,13 @@ function makeSender(input: ExporterCommon, signal: OtlpSignal) {
               EXPORT_KEEPALIVE_MAX_BYTES,
             );
 
+            if (signal === "logs") {
+              noteLogsDecided();
+            }
+
             if (release === null) {
-              if (isPageHidden()) {
+              // WARNING: a leave-time flush can run while the page still looks visible (beforeunload); an ordinary fetch started then is cancelled by the navigation, so an over-budget body must be carried over instead.
+              if (isPageHidden() || isPageLeaving()) {
                 retained?.onBudgetExhausted();
 
                 throw new Error("Keepalive budget exhausted");
@@ -236,7 +244,7 @@ function makeSender(input: ExporterCommon, signal: OtlpSignal) {
               setTimeout(resolve, 0);
             });
 
-            if (isPageHidden()) {
+            if (isPageHidden() || isPageLeaving()) {
               throw new Error("Keepalive request rejected");
             }
 
@@ -325,8 +333,39 @@ function makeSender(input: ExporterCommon, signal: OtlpSignal) {
     input.canPersistExports ?? (() => true),
   );
 
-  return Object.assign(carryover.send, { dispose: () => carryover.dispose() });
+  // WARNING: a beforeunload flush runs while the page still looks visible and the navigation tears it down before navigator.locks grants a drain, so it must deliver (retain and dispatch at once) rather than send.
+  const leaveAware = ((payload, resultCallback) => {
+    if (isPageLeaving() && !isPageHidden()) {
+      carryover.deliver(payload, resultCallback);
+
+      return;
+    }
+
+    carryover.send(payload, resultCallback);
+  }) satisfies SignalSender;
+
+  return Object.assign(leaveAware, { dispose: () => carryover.dispose() });
 }
+
+function leavePriority(span: ReadableSpan) {
+  if (span.events.some((event) => event.name === "exception")) {
+    return 0;
+  }
+
+  return span.kind === SpanKind.CLIENT ? 1 : 2;
+}
+
+// WARNING: A leave-time export larger than the keepalive budget is split and the tail is retained for the next page; exception spans, then request spans, go first so a bounced visit still delivers them.
+function leaveOrder(spans: ReadableSpan[]) {
+  return isPageHidden() || isPageLeaving()
+    ? [0, 1, 2].flatMap((priority) =>
+        spans.filter((span) => leavePriority(span) === priority),
+      )
+    : spans;
+}
+
+const serialize = (chunk: ReadableSpan[]) =>
+  JsonTraceSerializer.serializeRequest(chunk);
 
 class IngestTraceExporter implements SpanExporter {
   private readonly send: SignalSender;
@@ -347,12 +386,49 @@ class IngestTraceExporter implements SpanExporter {
       return;
     }
 
-    sendInKeepaliveChunks(
-      spans,
-      (chunk) => JsonTraceSerializer.serializeRequest(chunk),
-      this.send,
-      this.inFlight.track(resultCallback),
-    );
+    const gate = currentSpanGate();
+
+    if (!gate || !(isPageHidden() || isPageLeaving())) {
+      sendInKeepaliveChunks(
+        leaveOrder(spans),
+        serialize,
+        this.send,
+        this.inFlight.track(resultCallback),
+      );
+
+      return;
+    }
+
+    const exceptions = spans.filter((span) => leavePriority(span) === 0);
+    const rest = spans.filter((span) => leavePriority(span) !== 0);
+    const done = this.inFlight.track(resultCallback);
+
+    let pending = (exceptions.length > 0 ? 1 : 0) + (rest.length > 0 ? 1 : 0);
+    let failure: ExportResult | undefined;
+
+    const settle = (result: ExportResult) => {
+      pending -= 1;
+
+      if (result.code !== ExportResultCode.SUCCESS) {
+        failure ??= result;
+      }
+
+      if (pending === 0) {
+        done(failure ?? { code: ExportResultCode.SUCCESS });
+      }
+    };
+
+    if (exceptions.length > 0) {
+      sendInKeepaliveChunks(exceptions, serialize, this.send, settle);
+    }
+
+    if (rest.length > 0) {
+      void (async () => {
+        await gate.wait();
+
+        sendInKeepaliveChunks(leaveOrder(rest), serialize, this.send, settle);
+      })();
+    }
   }
 
   async shutdown() {

@@ -344,9 +344,11 @@ test.each([
     );
 
     const kernel = await createKernel({
+      onCreated: (created) => {
+        created.consent.set(true);
+      },
       opts: {
         apiHost: "https://kernel.invalid",
-        consent: true,
         tracing: { propagateTo: ["https://api.example.test"] },
       },
     });
@@ -374,13 +376,20 @@ test.each([
 
     await send(sameOriginUrl);
 
-    expect(headers.get(sameOriginUrl)?.baggage).toBeNull();
+    const pageHeader = `interfere.session.id=${String(kernel.session.getId())}`;
+
+    expect(pageHeader).toMatch(/[=]page_/u);
+    expect(headers.get(sameOriginUrl)?.baggage).toBe(pageHeader);
     expect(headers.get(sameOriginUrl)?.traceparent).toMatch(traceHeader);
 
     kernel.consent.set(true);
 
     await send(sameOriginUrl);
 
-    expect(headers.get(sameOriginUrl)?.baggage).toBe(sessionHeader);
+    expect(headers.get(sameOriginUrl)?.baggage).toBe(
+      `interfere.session.id=${String(kernel.session.getId())}`,
+    );
+
+    expect(headers.get(sameOriginUrl)?.baggage).not.toBe(pageHeader);
   },
 );

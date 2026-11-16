@@ -28,36 +28,36 @@ afterEach(async () => {
 });
 
 test("exposes replay options and clears them when disabled", () => {
-  runtime.applyProviderConfig(
-    { ...DISABLE_ALL_PLUGINS, replay: { maskAllInputs: true } },
-    { analytics: false, replay: false },
-  );
+  runtime.applyProviderConfig({
+    ...DISABLE_ALL_PLUGINS,
+    replay: { maskAllInputs: true },
+  });
 
   expect(runtime.getReplayConfig()).toStrictEqual({ maskAllInputs: true });
 
-  runtime.applyProviderConfig(DISABLE_ALL_PLUGINS, undefined);
+  runtime.applyProviderConfig(DISABLE_ALL_PLUGINS);
 
   expect(runtime.getReplayConfig()).toStrictEqual({});
 });
 
 test("preserves identical settled consent by identity", () => {
-  runtime.applyProviderConfig(DISABLE_ALL_PLUGINS, undefined);
+  runtime.applyProviderConfig(DISABLE_ALL_PLUGINS);
 
   runtime.start();
 
-  runtime.setConsent({ analytics: true, replay: false });
+  runtime.setConsent({ replay: false });
 
   const consent = runtime.getConsent();
 
   expect(consent).toStrictEqual({ analytics: true, replay: false });
 
-  runtime.setConsent({ analytics: true, replay: false });
+  runtime.setConsent({ replay: false });
 
   expect(runtime.getConsent()).toBe(consent);
 });
 
 test("publishes disabled remote state and unsubscribes", () => {
-  runtime.applyProviderConfig(DISABLE_ALL_PLUGINS, undefined);
+  runtime.applyProviderConfig(DISABLE_ALL_PLUGINS);
 
   const states: string[] = [];
 
@@ -81,7 +81,7 @@ test("publishes disabled remote state and unsubscribes", () => {
 });
 
 test("publishes enabled local defaults after remote settlement", () => {
-  runtime.applyProviderConfig(DISABLE_ALL_PLUGINS, undefined);
+  runtime.applyProviderConfig(DISABLE_ALL_PLUGINS);
 
   const states: string[] = [];
 
@@ -103,8 +103,10 @@ test("disposes a fresh runtime without installing browser handlers", async () =>
   expect(globalThis.onerror).toBe(original);
 });
 
-test("applies shorthand immediately and replaces it with granular consent", () => {
-  runtime.applyProviderConfig(DISABLE_ALL_PLUGINS, false);
+test("applies each decision and replaces the previous one", () => {
+  runtime.applyProviderConfig(DISABLE_ALL_PLUGINS);
+
+  kernel.consent.set(false);
 
   runtime.start();
 
@@ -117,7 +119,7 @@ test("applies shorthand immediately and replaces it with granular consent", () =
 
   expect(kernel.consent.get()).toStrictEqual({ analytics: true, replay: true });
 
-  kernel.consent.set({ analytics: true, replay: false });
+  kernel.consent.set({ replay: false });
 
   expect(kernel.consent.get()).toStrictEqual({
     analytics: true,
@@ -131,7 +133,7 @@ test("applies shorthand immediately and replaces it with granular consent", () =
     replay: false,
   });
 
-  kernel.consent.set();
+  kernel.consent.set(true);
 
-  expect(kernel.consent.get()).toBeNull();
+  expect(kernel.consent.get()).toStrictEqual({ analytics: true, replay: true });
 });

@@ -1,3 +1,4 @@
+import { StackContextManager } from "@opentelemetry/sdk-trace-web";
 import { USER_ACTION_EVENT_NAME } from "@interfere/types/data/correlation-events";
 
 import { context, propagation, trace } from "@opentelemetry/api";
@@ -16,7 +17,6 @@ import { worker } from "../../../test/msw.js";
 import { DEFAULT_PRIVACY_POLICY } from "../dom/privacy.js";
 import { ViewIds } from "../../tracking/view.js";
 import { registerBundledInstrumentations } from "./instrumentations/instrumentations.js";
-import { claimTracingOwnership } from "./ownership.js";
 import { buildOtelProvider } from "./provider.js";
 import { installUserActions } from "./user-actions.js";
 
@@ -57,11 +57,7 @@ test("a native click emits a user action, stamps synchronous work with its actio
     sdkStack: [],
   });
 
-  const ownership = claimTracingOwnership({
-    contextManager: handle.contextManager,
-    mode: "managed",
-    propagator: handle.propagator,
-  });
+  context.setGlobalContextManager(new StackContextManager().enable());
 
   const instrumentations = registerBundledInstrumentations({
     ignoreUrls: [/sdk\.invalid/u],
@@ -98,7 +94,7 @@ test("a native click emits a user action, stamps synchronous work with its actio
 
     instrumentations.dispose();
 
-    ownership.release();
+    context.disable();
 
     await handle.shutdown();
 

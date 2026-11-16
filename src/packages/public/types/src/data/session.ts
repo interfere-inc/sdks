@@ -21,3 +21,8 @@ export const sessionIdSchema = storedSessionIdSchema
   });
 
 export type SessionId = z.infer<typeof sessionIdSchema>;
+
+/** Page-scoped session id the browser SDK uses while consent is required and not granted: held in memory only and new on every page load. */
+export const pageSessionIdSchema = z.templateLiteral(["page_", z.uuidv7()]);
+
+export type PageSessionId = z.infer<typeof pageSessionIdSchema>;

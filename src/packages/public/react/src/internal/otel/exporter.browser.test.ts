@@ -5,6 +5,7 @@ import type { ExportResult } from "@opentelemetry/core";
 import { resourceFromAttributes } from "@opentelemetry/resources";
 import type { ResourceMetrics } from "@opentelemetry/sdk-metrics";
 import type { ReadableSpan } from "@opentelemetry/sdk-trace-base";
+import { z } from "zod";
 
 import { PRODUCER_VERSION } from "../version.js";
 import {
@@ -1123,6 +1124,153 @@ describe("trace export while the page is hidden", () => {
     expect(
       requests.map((request) => request.headers.get("x-interfere-carryover")),
     ).toStrictEqual([null, expect.stringMatching(/^[0-9a-f-]{36}$/u)]);
+  });
+
+  test("splits a beforeunload flush into keepalive-sized requests, sends only keepalive ones and carries the rest to the next shown page", async () => {
+    expect.hasAssertions();
+
+    globalThis.dispatchEvent(new Event("beforeunload"));
+
+    const { callback, spy } = resultCallback();
+
+    exporterUnderTest().export(bulkySpans(40), callback);
+
+    await requestSignal.reached(1);
+
+    const leaving = requests.length;
+
+    expect([
+      leaving > 0,
+      requests.every((request) => request.keepalive),
+    ]).toStrictEqual([true, true]);
+
+    globalThis.dispatchEvent(
+      new PageTransitionEvent("pagehide", { persisted: true }),
+    );
+
+    globalThis.dispatchEvent(
+      new PageTransitionEvent("pageshow", { persisted: true }),
+    );
+
+    await spy.called;
+
+    expect(spy).toHaveBeenCalledWith({ code: 0 });
+
+    const delivered = async () => {
+      const bodies = await Promise.all(
+        requests.map(
+          async (request) =>
+            (await request.clone().json()) as {
+              resourceSpans: { scopeSpans: { spans: unknown[] }[] }[];
+            },
+        ),
+      );
+
+      return bodies
+        .flatMap((body) => body.resourceSpans)
+        .flatMap((resourceSpans) => resourceSpans.scopeSpans)
+        .reduce((total, scope) => total + scope.spans.length, 0);
+    };
+
+    let total = await delivered();
+
+    while (total < 40) {
+      // oxlint-disable-next-line no-await-in-loop -- Each wait is for the next request the carried-over drain sends; the spy resolves once exports are parked, before the drain has sent them all.
+      await requestSignal.reached(requests.length + 1);
+
+      // oxlint-disable-next-line no-await-in-loop -- The count depends on the request just recorded.
+      total = await delivered();
+    }
+
+    expect(total).toBe(40);
+  });
+
+  test("puts exception spans, then request spans, first in a leave-time export", async () => {
+    expect.hasAssertions();
+
+    globalThis.dispatchEvent(new Event("beforeunload"));
+
+    const { callback } = resultCallback();
+
+    exporterUnderTest().export(
+      [
+        { ...makeSpan(), name: "resource" },
+        { ...makeSpan(), kind: SpanKind.CLIENT, name: "GET" },
+        {
+          ...makeSpan(),
+          events: [
+            {
+              attributes: { "exception.type": "TypeError" },
+              droppedAttributesCount: 0,
+              name: "exception",
+              time: [0, 0],
+            },
+          ],
+          name: "exception",
+        },
+      ],
+      callback,
+    );
+
+    await requestSignal.reached(1);
+
+    const [request] = requests;
+
+    const body = z
+      .object({
+        resourceSpans: z.array(
+          z.object({
+            scopeSpans: z.array(
+              z.object({ spans: z.array(z.object({ name: z.string() })) }),
+            ),
+          }),
+        ),
+      })
+      .parse(await request?.clone().json());
+
+    expect(
+      body.resourceSpans
+        .flatMap((resource) => resource.scopeSpans)
+        .flatMap((scope) => scope.spans)
+        .map((span) => span.name),
+    ).toStrictEqual(["exception", "GET", "resource"]);
+  });
+
+  test("carries an over-budget export over after beforeunload instead of sending it without keepalive, and delivers it once the page is shown", async () => {
+    expect.hasAssertions();
+
+    globalThis.dispatchEvent(new Event("beforeunload"));
+
+    const { callback, spy } = resultCallback();
+
+    exporterUnderTest().export(
+      [{ ...makeSpan(), attributes: { payload: incompressible(40_000) } }],
+      callback,
+    );
+
+    await new Promise((resolve) => {
+      setTimeout(resolve, 100);
+    });
+
+    expect(requests.filter((request) => !request.keepalive)).toStrictEqual([]);
+
+    globalThis.dispatchEvent(
+      new PageTransitionEvent("pagehide", { persisted: true }),
+    );
+
+    globalThis.dispatchEvent(
+      new PageTransitionEvent("pageshow", { persisted: true }),
+    );
+
+    await spy.called;
+
+    await requestSignal.reached(1);
+
+    expect(spy).toHaveBeenCalledWith({ code: 0 });
+
+    expect(
+      requests.map((request) => request.headers.get("x-interfere-carryover")),
+    ).toStrictEqual([expect.stringMatching(/^[0-9a-f-]{36}$/u)]);
   });
 
   test("splits a large batch into keepalive-sized requests once hidden", async () => {

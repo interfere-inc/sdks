@@ -143,7 +143,7 @@ test("renders children and exposes the initialized kernel's actual accessors", a
   expect(view.result.current.session).toBe(kernel.session.getId());
   expect(view.result.current.session).toStrictEqual(expect.any(String));
 
-  view.result.current.context.consent.set({ analytics: true, replay: false });
+  view.result.current.context.consent.set({ replay: false });
 
   assert.exists(kernel);
 
@@ -152,13 +152,13 @@ test("renders children and exposes the initialized kernel's actual accessors", a
     replay: false,
   });
 
-  view.result.current.context.consent.set({ analytics: false, replay: true });
+  view.result.current.context.consent.set(false);
 
   assert.exists(kernel);
 
   expect(kernel.consent.get()).toStrictEqual({
     analytics: false,
-    replay: true,
+    replay: false,
   });
 
   await vi.waitFor(() => {

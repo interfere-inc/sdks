@@ -353,58 +353,100 @@ init({
 | `errors.sampleRate` | Sends this fraction of exceptions, from `0` (none) to `1` (all, the default).                                                                                                                                                                                               |
 | `beforeSend`        | Runs last, for exceptions the other options kept. Mutate the exception, return a replacement, or return `null` to drop it. The second argument carries `originalException` and `mechanism`. If the hook throws or returns anything else, the exception it received is sent. |
 
-## Consent Management
+## Consent
 
-Omitting consent preserves the SDK defaults. To deny analytics and replay from startup, pass `consent: false` to `init()` before mounting the provider. Use the provider’s `consent` prop to keep the current decision synchronized:
+Interfere captures everything by default. If your app must collect consent before analytics, set one option:
+
+```ts
+void init({ consent: "required" });
+```
+
+Until the visitor grants consent, Interfere:
+
+- captures errors, request spans and timings, and links each request to your backend with a page-scoped id in `baggage`;
+- reads and writes nothing on the device: no cookies, no `localStorage` or `sessionStorage`, no device id and no fingerprint;
+- records no page views, clicks, rage clicks, console logs or session replay.
+
+The page-scoped id lives in memory and changes on every page load. When consent is granted, Interfere starts the persisted session and records a `session.start` event whose `session.previous_id` is the page id, so requests made before consent stay linked to the session.
+
+Record the visitor's decision with `consent.set`:
+
+```ts
+import { consent } from "@interfere/vite/init";
+
+consent.set(true); // analytics and replay
+consent.set({ replay: false }); // analytics without replay
+consent.set(false); // deny or revoke; erases Interfere's device id and stored session
+consent.get(); // { analytics: boolean, replay: boolean }
+```
+
+Calls made before `init()` finishes are applied when it does. In React, `useInterfere().consent` is the same object. If your app may send nothing before consent, not even errors, call `init()` only once consent is granted.
+
+| Category    | Covers                                                                      | Before consent |
+| ----------- | --------------------------------------------------------------------------- | -------------- |
+| `necessary` | Errors, request spans and timings, with a page-scoped id                    | Captured       |
+| `analytics` | Persisted session, device id, page views, clicks, rage clicks, browser logs | Withheld       |
+| `replay`    | Session replay                                                              | Withheld       |
+
+### Connecting your consent manager
+
+Each recipe calls `consent.set` whenever the manager's decision changes. Map the category your banner uses for analytics or statistics.
+
+**c15t** (inside `ConsentManagerProvider`):
 
 ```tsx
-import { InterfereProvider } from "@interfere/vite/provider";
+import { useConsentManager } from "@c15t/react";
+import { useEffect } from "react";
 
-function App() {
-  return (
-    <InterfereProvider consent={{ analytics: true, replay: false }}>
-      <YourApp />
-    </InterfereProvider>
-  );
+export function InterfereConsent() {
+  const { has } = useConsentManager();
+  const analytics = has("measurement");
+  const replay = has("experience");
+
+  useEffect(() => {
+    consent.set(analytics ? { replay } : false);
+  }, [analytics, replay]);
+
+  return null;
 }
 ```
 
-### Consent categories
+Without React, subscribe to c15t's store: `consentStore.subscribe((state) => consent.set(state.has("measurement")))`.
 
-| Category    | Plugins                               | Gated?    |
-| ----------- | ------------------------------------- | --------- |
-| `necessary` | Error tracking                        | Always on |
-| `analytics` | Page events, rage clicks, fingerprint | Yes       |
-| `replay`    | Session replay                        | Yes       |
-
-Omitting the `consent` prop preserves consent supplied to `init()`, including later updates through `consent.set()`. If no initial consent was supplied, omitting the prop allows all features. Consent controls analytics and replay permission; it does not enable plugins disabled in configuration. Objects replace the current decision, and omitted categories remain allowed. Errors, logs, tracing, and session storage are not disabled by this setting.
-
-### Imperative API
-
-Use `consent.set()` and `consent.get()` from the `useInterfere` hook:
-
-```tsx
-const { consent } = useInterfere();
-
-consent.set(false);
-consent.set(true);
-consent.set({ analytics: true, replay: false });
-consent.get();
-```
-
-These values describe permission **now**, not features to enable after a future consent action. `true` allows both categories and `false` denies both. Connect your consent manager's updates to `consent.set()`, passing both booleans for granular decisions. `consent.get()` returns the resolved category object, or `null` when no gating is applied. Calling `consent.set()` without a value removes gating; it does not record a visitor's acceptance.
-
-### Initial consent via init
-
-To set consent before React renders (avoiding any window where non-consented plugins might load), pass it to `init()` directly instead of using `auto`:
+**OneTrust** (`C0002` is OneTrust's default Performance group; use yours):
 
 ```ts
-import { init } from "@interfere/vite/init";
+const previous = window.OptanonWrapper;
 
-await init({ consent: false });
+window.OptanonWrapper = () => {
+  previous?.();
+  consent.set(window.OnetrustActiveGroups?.includes(",C0002,") ?? false);
+};
 ```
 
-The provider's `consent` prop will then keep it in sync as the user updates their preferences.
+**Cookiebot**:
+
+```ts
+const sync = () => consent.set(window.Cookiebot?.consent?.statistics === true);
+
+window.addEventListener("CookiebotOnConsentReady", sync);
+```
+
+**IAB TCF v2.2** (any TCF CMP; Purpose 1 stores data on the device and Purpose 8 measures content performance):
+
+```ts
+window.__tcfapi?.("addEventListener", 2, (data, ok) => {
+  if (ok && data.eventStatus !== "cmpuishown") {
+    consent.set(
+      data.gdprApplies === false ||
+        (data.purpose.consents[1] === true &&
+          data.purpose.consents[8] === true),
+    );
+  }
+});
+```
+
+**Google Consent Mode** is set by your consent manager; connect Interfere to that manager's event as above.
 
 ## What's Included
 

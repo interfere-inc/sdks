@@ -16,7 +16,7 @@ export type { Kernel, KernelOptions } from "@interfere/react/internal/kernel";
 
 export type {
   ConsentCategory,
-  ConsentInput,
+  ConsentDecision,
   ConsentState,
   GateableCategory,
 } from "@interfere/types/sdk/plugins/manifest";

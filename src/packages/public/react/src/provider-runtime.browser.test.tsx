@@ -1,3 +1,4 @@
+import type { ConsentState } from "@interfere/types/sdk/plugins/manifest";
 import { HttpResponse, http } from "msw";
 import { worker } from "../test/msw.js";
 import { useEffect } from "react";
@@ -70,20 +71,20 @@ describe("react provider browser runtime", () => {
   });
 
   test.each([
-    ["denied", { analytics: false, replay: false }],
-    ["measurement-only", { analytics: true, replay: false }],
-  ])(
+    ["denied", false, { analytics: false, replay: false }],
+    ["measurement-only", { replay: false }, { analytics: true, replay: false }],
+  ] as const)(
     "reapplies %s child consent after the null-kernel no-op setter is replaced",
-    async (_, state) => {
+    async (_, decision, state) => {
       expect.hasAssertions();
 
-      const writes: ReturnType<Kernel["consent"]["get"]>[] = [];
+      const writes: (ConsentState | null)[] = [];
 
       function ConsentSync() {
         const { consent } = useInterfere();
 
         useEffect(() => {
-          consent.set(state);
+          consent.set(decision);
 
           writes.push(consent.get());
         }, [consent]);

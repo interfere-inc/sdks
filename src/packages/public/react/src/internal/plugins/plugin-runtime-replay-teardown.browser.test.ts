@@ -51,10 +51,11 @@ test.each([
 
     const actions = {
       provider: () =>
-        runtime.applyProviderConfig(
-          { ...DISABLE_ALL_PLUGINS, rageClick: true, replay: false },
-          undefined,
-        ),
+        runtime.applyProviderConfig({
+          ...DISABLE_ALL_PLUGINS,
+          rageClick: true,
+          replay: false,
+        }),
       dispose: async () => runtime.dispose(),
     };
 

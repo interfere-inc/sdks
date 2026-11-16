@@ -1,9 +1,5 @@
 export const CONSENT_CATEGORIES = ["necessary", "analytics", "replay"] as const;
 
-type AtLeastOne<T> = {
-  [K in keyof T]-?: Required<Pick<T, K>> & Partial<T>;
-}[keyof T];
-
 export const PLUGIN_MANIFEST = [
   {
     consentCategory: "necessary",
@@ -56,7 +52,8 @@ export type PluginKey = PluginManifest[number]["name"];
 
 export type GateableCategory = Exclude<ConsentCategory, "necessary">;
 
-export type ConsentState = AtLeastOne<Record<GateableCategory, boolean>>;
+/** Whether analytics and replay are currently allowed. */
+export type ConsentState = Readonly<Record<GateableCategory, boolean>>;
 
-/** Current permission for analytics and replay, together or by category. */
-export type ConsentInput = boolean | ConsentState;
+/** A visitor's decision: `true` grants analytics and replay, `false` denies both, and `{ replay: false }` grants analytics only. */
+export type ConsentDecision = boolean | { readonly replay: boolean };

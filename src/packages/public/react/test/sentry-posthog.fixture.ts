@@ -98,15 +98,16 @@ async function install(options: Options) {
   }
 
   kernel = await createKernel({
+    onCreated: (created) => {
+      created.consent.set({ replay: false });
+    },
     opts: {
       apiHost: location.origin,
-      consent: { analytics: true, replay: false },
       _internalAdditionalSpanProcessors: [new SimpleSpanProcessor(spans)],
       _internalAdditionalLogRecordProcessors: [
         new SimpleLogRecordProcessor({ exporter: logs }),
       ],
       tracing: {
-        mode: "auto",
         propagation: options.vendor === "sentry" ? "external" : "interfere",
         propagateTraceBaggage: false,
       },
@@ -174,7 +175,13 @@ async function request(kind: "fetch" | "request" | "xhr") {
   };
 }
 
+const REQUEST_SPAN_END_MS = 400;
+
 async function snapshot() {
+  await new Promise((resolve) => {
+    setTimeout(resolve, REQUEST_SPAN_END_MS);
+  });
+
   await kernel.flush();
 
   return [

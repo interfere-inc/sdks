@@ -107,7 +107,7 @@ export function createReplayHarness({
 
   kernel.attachRuntime(runtime);
 
-  runtime.applyProviderConfig(DISABLE_ALL_PLUGINS, undefined);
+  runtime.applyProviderConfig(DISABLE_ALL_PLUGINS);
 
   if (remoteConfig === "defaults") {
     runtime.applyRemoteConfigDefaults();

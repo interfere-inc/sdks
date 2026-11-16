@@ -13,9 +13,11 @@ import { InterfereProvider, useInterfere } from "@interfere/vite/provider";
 
 const query = new URL(location.href).searchParams;
 
-const initializing = init({
-  consent: { analytics: !query.has("denied"), replay: !query.has("denied") },
-});
+if (!query.has("denied")) {
+  consent.set(true);
+}
+
+const initializing = init(query.has("denied") ? { consent: "required" } : {});
 
 if (query.has("early")) {
   await identity.set({
@@ -113,7 +115,7 @@ function Customer() {
       <button
         type="button"
         onClick={() => {
-          consent.set({ analytics: true, replay: true });
+          consent.set(true);
 
           setMessage("granted");
         }}
@@ -123,7 +125,7 @@ function Customer() {
       <button
         type="button"
         onClick={() => {
-          consent.set({ analytics: false, replay: false });
+          consent.set(false);
 
           setMessage("revoked");
         }}

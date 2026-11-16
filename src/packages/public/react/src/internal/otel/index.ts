@@ -20,12 +20,10 @@ export {
 
 export { installViewTracker, type ViewTracker } from "./navigation.js";
 
-export { claimTracingOwnership } from "./ownership.js";
-
 export { readPropagationFromDocument } from "./propagation.js";
 
 export { buildOtelProvider, type OtelProviderHandle } from "./provider.js";
 
 export { captureWebVitals } from "./web-vitals.js";
 
-export { resolveTracingMode, wireOtel } from "./wire.js";
+export { wireOtel } from "./wire.js";

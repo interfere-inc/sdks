@@ -9,16 +9,16 @@ import {
 } from "../../../../test/foreign-sdk.test-utils.js";
 
 const KINDS = ["fetch", "fetch-request", "xhr"] as const;
-const MODES = ["application", "auto", "managed"] as const;
+const MODES = ["default"] as const;
 
 test.each(MODES)(
   "%s baggage opt-out preserves foreign baggage and trace ownership on fetch and XHR",
-  async (mode) => {
+  async () => {
     expect.hasAssertions();
 
     const runtime = await openRuntime();
 
-    await installInterfere(runtime, { mode, propagateTraceBaggage: false });
+    await installInterfere(runtime, { propagateTraceBaggage: false });
 
     await installForeign(runtime, { styles: ["w3c"] });
 
@@ -60,12 +60,12 @@ test.each(MODES)(
 
 test.each(MODES)(
   "%s baggage-free requests export identity in the actual outgoing trace",
-  async (mode) => {
+  async () => {
     expect.hasAssertions();
 
     const runtime = await openRuntime();
 
-    await installInterfere(runtime, { mode, propagateTraceBaggage: false });
+    await installInterfere(runtime, { propagateTraceBaggage: false });
 
     const step = await probe(runtime, "baggage-off-no-vendor", [...KINDS]);
 
@@ -100,54 +100,46 @@ test.each(MODES)(
   },
 );
 
-test.each(["auto", "application"] as const)(
-  "%s captures wire identity from the Datadog-shaped passthrough fixture installed later",
-  async (mode) => {
-    expect.hasAssertions();
+test("captures wire identity from the Datadog-shaped passthrough fixture installed later", async () => {
+  expect.hasAssertions();
 
-    const runtime = await openRuntime();
+  const runtime = await openRuntime();
 
-    await runtime.page.evaluate(() =>
-      globalThis.foreignSdkFixture.foreign.importUninitialized(),
+  await runtime.page.evaluate(() =>
+    globalThis.foreignSdkFixture.foreign.importUninitialized(),
+  );
+
+  await installInterfere(runtime, {
+    propagation: "external",
+    propagateTraceBaggage: false,
+  });
+
+  await installForeign(runtime, {
+    global: "DD_RUM",
+    styles: ["w3c"],
+    baggage: false,
+  });
+
+  const step = await probe(runtime, "baggage-off-dd-imported", [...KINDS]);
+
+  expect(step.wire).toHaveLength(KINDS.length);
+  expect(step.observations).toHaveLength(KINDS.length);
+
+  for (const observation of step.observations) {
+    const entry = step.wire.find((request) => request.url === observation.url);
+
+    expect(entry).toBeDefined();
+
+    expect(entry?.headers["baggage"]).toBeNull();
+
+    expect(observation.sessionId).toBe("11111111-1111-4111-8111-111111111111");
+
+    expect(observation.deviceId).toBe("device-fixture");
+
+    expect(observation.kind).toBe("span");
+
+    expect(observation.requestTraceId).toBe(
+      entry?.headers["traceparent"]?.split("-")[1],
     );
-
-    await installInterfere(runtime, {
-      mode,
-      propagation: "external",
-      propagateTraceBaggage: false,
-    });
-
-    await installForeign(runtime, {
-      global: "DD_RUM",
-      styles: ["w3c"],
-      baggage: false,
-    });
-
-    const step = await probe(runtime, "baggage-off-dd-imported", [...KINDS]);
-
-    expect(step.wire).toHaveLength(KINDS.length);
-    expect(step.observations).toHaveLength(KINDS.length);
-
-    for (const observation of step.observations) {
-      const entry = step.wire.find(
-        (request) => request.url === observation.url,
-      );
-
-      expect(entry).toBeDefined();
-
-      expect(entry?.headers["baggage"]).toBeNull();
-
-      expect(observation.sessionId).toBe(
-        "11111111-1111-4111-8111-111111111111",
-      );
-
-      expect(observation.deviceId).toBe("device-fixture");
-
-      expect(observation.traceId).toBe(observation.requestTraceId);
-
-      expect(observation.requestTraceId).toBe(
-        entry?.headers["traceparent"]?.split("-")[1],
-      );
-    }
-  },
-);
+  }
+});

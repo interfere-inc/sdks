@@ -3,7 +3,7 @@
 
 import type { IdentifyParams } from "@interfere/types/sdk/identify";
 import type {
-  ConsentInput,
+  ConsentDecision,
   ConsentState,
 } from "@interfere/types/sdk/plugins/manifest";
 
@@ -14,7 +14,7 @@ import type { Kernel } from "./kernel.js";
 export interface InterfereContextValue {
   consent: {
     get: () => ConsentState | null;
-    set: (state?: ConsentInput) => void;
+    set: (decision: ConsentDecision) => void;
   };
   device: {
     getDeviceId: () => string | null;

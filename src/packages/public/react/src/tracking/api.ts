@@ -10,20 +10,13 @@ import type {
 } from "../internal/activity/activity.js";
 import { createLogger } from "../util/log.js";
 import { DeviceManager } from "./device.js";
-import { SessionManager } from "./session.js";
-import { SessionRetry } from "./session-retry.js";
+import type { SessionManager } from "./session.js";
+import { SessionSlot } from "./session-slot.js";
+import { SessionRetry, syncKey } from "./session-retry.js";
 
 const log = createLogger("tracking");
 
 const SYNC_COOLDOWN_MS = 5000;
-
-function syncKey(
-  sessionId: string,
-  deviceId: string | null,
-  fpHash: string | null,
-) {
-  return `${sessionId}|${deviceId ?? ""}|${fpHash ?? ""}`;
-}
 
 export interface SessionTrackerOptions {
   device?: DeviceManager;
@@ -35,7 +28,9 @@ export class SessionTracker {
   private readonly client: InterfereClient;
   private readonly device: DeviceManager;
 
-  private mgr: SessionManager | null = null;
+  private readonly slot = new SessionSlot((id) => {
+    void this.onRotate(id);
+  });
   private readonly activity = new ActivityMonitor();
   private currentIdentity: IdentifyParams | null = null;
   private identifiedKey: string | null = null;
@@ -75,9 +70,7 @@ export class SessionTracker {
   }
 
   start() {
-    this.mgr = new SessionManager((id) => {
-      void this.onRotate(id);
-    });
+    this.slot.start();
 
     this.activity.start({
       markActivity: () => {
@@ -87,9 +80,25 @@ export class SessionTracker {
         this.rotateSession();
       },
       startedAt: () => this.getSessionStartedAt(),
-      lastActivityAt: () => this.mgr?.getLastActivityAt() ?? 0,
+      lastActivityAt: () => this.slot.manager?.getLastActivityAt() ?? 0,
     });
   }
+
+  /** Switches between the persisted session and a page-scoped in-memory one. Upgrading reports the page id it replaces; downgrading erases the persisted session. */
+  setPersistent(persistent: boolean) {
+    const switched = this.slot.setPersistent(persistent, () => {
+      this.invalidateSync();
+    });
+
+    if (switched && persistent && this.currentIdentity) {
+      this.identifiedKey = null;
+
+      void this.identify(this.currentIdentity);
+    }
+  }
+
+  readonly onSessionUpgrade: SessionSlot["onUpgrade"] = (handler) =>
+    this.slot.onUpgrade(handler);
 
   startDeviceIdentity() {
     if (this.identityStarted) {
@@ -122,10 +131,10 @@ export class SessionTracker {
       return;
     }
 
-    const initialSessionId = this.mgr?.getSessionId() ?? null;
+    const initialSessionId = this.slot.manager?.getSessionId() ?? null;
     const initialFpHash = this.device.getFpHash();
 
-    if (initialSessionId) {
+    if (initialSessionId !== null) {
       await this.syncSession(
         initialSessionId,
         this.device.getDeviceId(),
@@ -139,13 +148,13 @@ export class SessionTracker {
 
     const fpHash = await this.device.whenFingerprintReady();
 
-    const sessionId = this.mgr?.getSessionId() ?? null;
+    const sessionId = this.slot.manager?.getSessionId() ?? null;
 
     if (
       gen !== this.generation ||
       // oxlint-disable-next-line typescript/no-unnecessary-condition -- Consent can change while registration and fingerprinting are pending.
       !this.identityStarted ||
-      !sessionId ||
+      sessionId === null ||
       fpHash === initialFpHash
     ) {
       return;
@@ -183,9 +192,13 @@ export class SessionTracker {
   }
 
   admitReplay() {
-    const sessionId = this.mgr?.getSessionId() ?? null;
+    const sessionId = this.slot.manager?.getSessionId() ?? null;
 
-    if (!sessionId || this.replayAdmittedSessionId === sessionId) {
+    if (
+      !this.slot.isPersistent() ||
+      sessionId === null ||
+      this.replayAdmittedSessionId === sessionId
+    ) {
       return;
     }
 
@@ -216,9 +229,9 @@ export class SessionTracker {
   }
 
   sessionId() {
-    const id = this.mgr?.getSessionId() ?? null;
+    const id = this.slot.manager?.getSessionId() ?? null;
 
-    if (id) {
+    if (id !== null && this.slot.isPersistent()) {
       this.ensureSynced(id);
     }
 
@@ -226,15 +239,15 @@ export class SessionTracker {
   }
 
   windowId() {
-    return this.mgr?.getWindowId() ?? null;
+    return this.slot.manager?.getWindowId() ?? null;
   }
 
   markActivity() {
-    this.mgr?.markActivity();
+    this.slot.manager?.markActivity();
   }
 
   getSessionStartedAt() {
-    return this.mgr?.getSessionStartedAt() ?? 0;
+    return this.slot.manager?.getSessionStartedAt() ?? 0;
   }
 
   getDeviceId() {
@@ -250,11 +263,17 @@ export class SessionTracker {
   }
 
   async identify(params: IdentifyParams) {
-    if (!this.mgr) {
+    if (!this.slot.manager) {
       return;
     }
 
-    const sessionId = this.mgr.getSessionId();
+    if (!this.slot.isPersistent()) {
+      this.currentIdentity = params;
+
+      return;
+    }
+
+    const sessionId = this.slot.manager.getSessionId();
 
     const key = JSON.stringify([
       sessionId,
@@ -336,11 +355,11 @@ export class SessionTracker {
       this.device.reset();
     }
 
-    this.mgr?.reset();
+    this.slot.manager?.reset();
   }
 
   rotateSession() {
-    this.mgr?.reset();
+    this.slot.manager?.reset();
   }
 
   dispose() {
@@ -350,7 +369,7 @@ export class SessionTracker {
 
     this.clearIdentity();
 
-    this.mgr = null;
+    this.slot.manager = null;
   }
 
   private invalidateSync() {
@@ -365,11 +384,11 @@ export class SessionTracker {
   }
 
   private currentSyncKey() {
-    const sessionId = this.mgr?.sessionId;
+    const sessionId = this.slot.manager?.sessionId ?? null;
 
-    return sessionId
-      ? syncKey(sessionId, this.device.getDeviceId(), this.device.getFpHash())
-      : null;
+    return sessionId === null
+      ? null
+      : syncKey(sessionId, this.device.getDeviceId(), this.device.getFpHash());
   }
 
   private ensureSynced(sessionId: string) {
@@ -429,9 +448,9 @@ export class SessionTracker {
         key === this.currentSyncKey()
       ) {
         this.syncRetry.schedule(error, () => {
-          const current = this.mgr?.sessionId;
+          const current = this.slot.manager?.sessionId ?? null;
 
-          if (generation === this.generation && current) {
+          if (generation === this.generation && current !== null) {
             this.ensureSynced(current);
           }
         });

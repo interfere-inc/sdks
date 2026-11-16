@@ -244,6 +244,7 @@ export async function applyXhrSpanAttrs(
   gate?: (key: string) => boolean,
   resolveRoute?: (pathname: string) => string | undefined,
   applicationErrors = false,
+  terminal?: string,
 ) {
   const url = xhr.responseURL || spanUrlFull(span);
 
@@ -288,6 +289,7 @@ export async function applyXhrSpanAttrs(
       pageExit,
       url,
       () => !gate || gate(failureKey("XHR", "network", url)),
+      terminal,
     );
   }
 

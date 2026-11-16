@@ -15,7 +15,7 @@ test("page observers survive reinitialization without retaining a disposed kerne
     releaseSlug: null,
     sdkStack: [],
     targets: resolveTargets("https://test.local"),
-    tracing: { mode: "application" },
+    tracing: {},
   });
 
   const report = vi.mocked(onCLS).mock.lastCall?.[0];
@@ -37,7 +37,7 @@ test("page observers survive reinitialization without retaining a disposed kerne
     releaseSlug: null,
     sdkStack: [],
     targets: resolveTargets("https://test.local"),
-    tracing: { mode: "application" },
+    tracing: {},
   });
 
   const nextIdentity = vi.spyOn(next.session, "getId");

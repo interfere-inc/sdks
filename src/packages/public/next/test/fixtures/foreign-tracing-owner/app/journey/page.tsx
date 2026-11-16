@@ -17,18 +17,10 @@ export default function Journey() {
       >
         Capture journey error
       </button>
-      <button
-        type="button"
-        onClick={() =>
-          interfere.consent.set({ analytics: false, replay: false })
-        }
-      >
+      <button type="button" onClick={() => interfere.consent.set(false)}>
         Deny analytics
       </button>
-      <button
-        type="button"
-        onClick={() => interfere.consent.set({ analytics: true, replay: true })}
-      >
+      <button type="button" onClick={() => interfere.consent.set(true)}>
         Grant analytics
       </button>
     </main>

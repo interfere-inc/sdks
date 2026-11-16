@@ -66,7 +66,7 @@ async function boot(opts: Omit<KernelInternalOptions, "apiHost"> = {}) {
   return kernel;
 }
 
-test("managed mode uses a context manager another SDK registered and leaves it registered on dispose", async () => {
+test("a context manager another SDK registered stays registered, and Interfere registers no propagator", async () => {
   expect.hasAssertions();
 
   const foreign = new StackContextManager().enable();
@@ -75,11 +75,7 @@ test("managed mode uses a context manager another SDK registered and leaves it r
 
   const kernel = await boot();
 
-  expect(propagation.fields()).toStrictEqual([
-    "traceparent",
-    "tracestate",
-    "baggage",
-  ]);
+  expect(propagation.fields()).toStrictEqual([]);
 
   await kernel.dispose();
 
@@ -96,6 +92,8 @@ test("an exception under an unsampled host context exports as its own root linke
   expect.hasAssertions();
 
   const spans = new InMemorySpanExporter();
+
+  context.setGlobalContextManager(new StackContextManager().enable());
 
   const kernel = await boot({
     _internalAdditionalSpanProcessors: [new SimpleSpanProcessor(spans)],

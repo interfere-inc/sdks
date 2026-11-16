@@ -1,5 +1,3 @@
-import type { ConsentState } from "@interfere/types/sdk/plugins/manifest";
-
 import type { PropsWithChildren } from "react";
 import { page } from "vitest/browser";
 import { ErrorBoundary } from "./error-boundary.js";
@@ -51,16 +49,6 @@ describe(InterfereProvider, () => {
     harness = makeHarness();
   });
 
-  function TestProvider({ consent }: { consent?: ConsentState }) {
-    return (
-      <InterfereProvider
-        consent={consent}
-        kernel={harness.kernel}
-        plugins={DISABLE_ALL_PLUGINS}
-      />
-    );
-  }
-
   async function renderWithSession() {
     const { result } = await renderHook(() => useInterfere(), {
       wrapper: providerWrapper(harness.kernel),
@@ -102,58 +90,6 @@ describe(InterfereProvider, () => {
     expect(result.current.kernel).toBe(harness.kernel);
   });
 
-  test.each([false, { analytics: false, replay: false }] as const)(
-    "syncs provider consent %j into the kernel",
-    async (consent) => {
-      expect.hasAssertions();
-
-      function wrapper({ children }: PropsWithChildren) {
-        return (
-          <InterfereProvider
-            consent={consent}
-            kernel={harness.kernel}
-            plugins={DISABLE_ALL_PLUGINS}
-          >
-            {children}
-          </InterfereProvider>
-        );
-      }
-
-      await renderHook(() => null, { wrapper });
-
-      await vi.waitFor(() => {
-        expect(harness.kernel.consent.get()).toStrictEqual({
-          analytics: false,
-          replay: false,
-        });
-      });
-    },
-  );
-
-  test("preserves the current consent when the prop is removed", async () => {
-    expect.hasAssertions();
-
-    const { rerender } = await render(
-      <TestProvider consent={{ analytics: false, replay: false }} />,
-    );
-
-    await vi.waitFor(() => {
-      expect(harness.kernel.consent.get()).toStrictEqual({
-        analytics: false,
-        replay: false,
-      });
-    });
-
-    await rerender(<TestProvider />);
-
-    await vi.waitFor(() => {
-      expect(harness.kernel.consent.get()).toStrictEqual({
-        analytics: false,
-        replay: false,
-      });
-    });
-  });
-
   test("preserves imperative denial across provider mounting and plugin updates", async () => {
     harness.kernel.consent.set(false);
 
@@ -176,9 +112,12 @@ describe(InterfereProvider, () => {
     expect(harness.kernel.isPageEventsCaptureEnabled()).toBe(false);
     expect(harness.kernel.isDeviceInfoCaptureEnabled()).toBe(false);
 
-    harness.kernel.consent.set();
+    harness.kernel.consent.set(true);
 
-    expect(harness.kernel.consent.get()).toBeNull();
+    expect(harness.kernel.consent.get()).toStrictEqual({
+      analytics: true,
+      replay: true,
+    });
   });
 
   test("updates identity when the current user changes", async () => {

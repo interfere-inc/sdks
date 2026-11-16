@@ -180,12 +180,12 @@ test("disposing Interfere keeps a foreign onerror handler that was installed lat
   ).resolves.toStrictEqual(["after dispose"]);
 });
 
-test("application mode writes its own trace context until the foreign writer's asynchronous session starts, then keeps the foreign one", async () => {
+test("the default writes its own trace context until the foreign writer's asynchronous session starts, then keeps the foreign one", async () => {
   expect.hasAssertions();
 
   const runtime = await openRuntime();
 
-  await installInterfere(runtime, { mode: "application" });
+  await installInterfere(runtime, {});
 
   await installForeign(runtime, { sessionDelayMs: 600 }, false);
 
@@ -281,14 +281,14 @@ describe.each(STATES)("foreign writer in state: $name", ({ arrange }) => {
     expect(step.foreignEvents).toHaveLength(0);
   });
 
-  test("application mode writes baggage and its own trace context while the foreign writer is silent", async () => {
+  test("the default writes baggage and its own trace context while the foreign writer is silent", async () => {
     expect.hasAssertions();
 
     const runtime = await openRuntime();
 
     await arrange(runtime);
 
-    await installInterfere(runtime, { mode: "application" });
+    await installInterfere(runtime, {});
 
     const step = await probe(runtime, "silent");
 

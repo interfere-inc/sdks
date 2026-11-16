@@ -12,6 +12,7 @@ import {
   propagation,
   trace,
 } from "@opentelemetry/api";
+import type { Context } from "@opentelemetry/api";
 import {
   InMemoryLogRecordExporter,
   SimpleLogRecordProcessor,
@@ -28,6 +29,11 @@ import {
   SimpleSpanProcessor,
 } from "@opentelemetry/sdk-trace-base";
 
+import {
+  CompositePropagator,
+  W3CBaggagePropagator,
+  W3CTraceContextPropagator,
+} from "@opentelemetry/core";
 import { buildOtelProvider } from "./provider.js";
 import { snapshotRequestIdentity } from "./request-observer/request-identity.js";
 import { requestObservationLogger } from "./request-observer/request-observer-events.js";
@@ -101,6 +107,31 @@ const traceExportSchema = z.object({
   ),
 });
 
+const W3C = new CompositePropagator({
+  propagators: [new W3CTraceContextPropagator(), new W3CBaggagePropagator()],
+});
+
+const ALL_HEADERS = new Set(["baggage", "traceparent", "tracestate"] as const);
+
+function headerPropagator(handle: OtelProviderHandle) {
+  return {
+    extract: W3C.extract.bind(W3C),
+    inject: (
+      ctx: Context,
+      carrier: Record<string, string>,
+      _setter: typeof defaultTextMapSetter,
+    ) => {
+      const headers = new Headers();
+
+      handle.traceHeaders(ctx, headers, ALL_HEADERS);
+
+      for (const [name, value] of headers) {
+        carrier[name] = value;
+      }
+    },
+  };
+}
+
 describe(buildOtelProvider, () => {
   let handle: OtelProviderHandle | null = null;
   const foreignProviders: BasicTracerProvider[] = [];
@@ -144,8 +175,6 @@ describe(buildOtelProvider, () => {
         );
       }
     } finally {
-      handle?.contextManager.disable();
-
       handle = null;
 
       context.disable();
@@ -170,27 +199,28 @@ describe(buildOtelProvider, () => {
     const traceparent =
       "00-1234567890abcdef1234567890abcdef-1234567890abcdef-00";
 
-    const parent = handle.propagator.extract(
+    const parent = headerPropagator(handle).extract(
       ROOT_CONTEXT,
       { traceparent, baggage: "test.region=west" },
       defaultTextMapGetter,
     );
 
-    expect(trace.getSpanContext(parent)?.traceId).toBe(
-      "1234567890abcdef1234567890abcdef",
+    const headers = new Headers();
+
+    handle.traceHeaders(
+      trace.setSpanContext(parent, {
+        spanId: "1234567890abcdef",
+        traceFlags: 1,
+        traceId: "1234567890abcdef1234567890abcdef",
+      }),
+      headers,
+      new Set(["baggage", "traceparent", "tracestate"]),
     );
 
-    const carrier = { traceparent: "caller-owned" };
-
-    handle.propagator.inject(parent, carrier, defaultTextMapSetter);
-
-    expect(carrier).toStrictEqual({
-      traceparent: "caller-owned",
+    expect(Object.fromEntries(headers)).toStrictEqual({
       baggage:
         "test.region=west,interfere.session.id=01900000-0000-7000-8000-000000000001",
     });
-
-    expect(handle.propagator.fields()).toStrictEqual(["baggage"]);
   });
 
   test("propagates the current session without changing trace context or other baggage", async () => {
@@ -200,7 +230,7 @@ describe(buildOtelProvider, () => {
 
     handle = buildProvider({ getSessionId: () => sessionId });
 
-    const { propagator } = handle;
+    const propagator = headerPropagator(handle);
 
     const traceparent =
       "00-1234567890abcdef1234567890abcdef-1234567890abcdef-01";
@@ -259,7 +289,7 @@ describe(buildOtelProvider, () => {
       getSessionId: () => sessionId,
     });
 
-    const { propagator } = handle;
+    const propagator = headerPropagator(handle);
 
     const inject = () => {
       const headers: Record<string, string> = {};
@@ -690,8 +720,6 @@ describe(buildOtelProvider, () => {
     });
 
     await handle.shutdown();
-
-    handle.contextManager.disable();
 
     handle = null;
 

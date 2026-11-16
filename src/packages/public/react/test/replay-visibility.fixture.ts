@@ -28,7 +28,7 @@ const runtime = new PluginRuntime(kernel);
 
 kernel.attachRuntime(runtime);
 
-runtime.applyProviderConfig(DISABLE_ALL_PLUGINS, undefined);
+runtime.applyProviderConfig(DISABLE_ALL_PLUGINS);
 
 runtime.applyRemoteConfigDefaults();
 

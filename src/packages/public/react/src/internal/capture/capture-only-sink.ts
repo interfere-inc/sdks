@@ -23,6 +23,7 @@ import type {
 } from "@opentelemetry/api-logs";
 
 import { identityAttributes } from "../../tracking/view.js";
+import { SESSION_START_EVENT_NAME } from "../../tracking/session.js";
 import { createLogger } from "../../util/log.js";
 import { fetchIngest, stampSentAt } from "../ingest-backoff/ingest-backoff.js";
 import { reserveKeepaliveBody } from "../page-lifecycle/page-lifecycle.js";
@@ -52,6 +53,7 @@ const EVENT_EXPORT_DELAY_MS = 5000;
 
 const EVENT_NAMES = new Set<string | undefined>([
   PAGE_VIEW_EVENT_NAME,
+  SESSION_START_EVENT_NAME,
   USER_ACTION_EVENT_NAME,
 ]);
 

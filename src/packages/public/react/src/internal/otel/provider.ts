@@ -4,7 +4,7 @@ import {
   INTERFERE_DEVICE_ID_KEY,
   INTERFERE_SESSION_ID_KEY,
 } from "@interfere/types/data/correlation-baggage";
-import type { SessionId } from "@interfere/types/data/session";
+import type { PageSessionId, SessionId } from "@interfere/types/data/session";
 import type { ReleaseSlug } from "@interfere/types/releases/slug";
 import {
   createUrlRedactionSpanProcessor,
@@ -19,7 +19,6 @@ import type {
   TextMapPropagator,
 } from "@opentelemetry/api";
 import {
-  CompositePropagator,
   W3CBaggagePropagator,
   W3CTraceContextPropagator,
 } from "@opentelemetry/core";
@@ -44,10 +43,7 @@ import {
   ParentBasedSampler,
 } from "@opentelemetry/sdk-trace-base";
 import type { SpanProcessor } from "@opentelemetry/sdk-trace-base";
-import {
-  StackContextManager,
-  WebTracerProvider,
-} from "@opentelemetry/sdk-trace-web";
+import { WebTracerProvider } from "@opentelemetry/sdk-trace-web";
 
 import { requestIdentity } from "./request-observer/request-identity.js";
 import { identityAttributes } from "../../tracking/view.js";
@@ -59,6 +55,9 @@ import {
   createTraceExporter,
 } from "./exporter.js";
 import { createExportFilterProcessor } from "./export-filter.js";
+import { isPageHidden } from "../page-lifecycle/page-lifecycle.js";
+import { isPageLeaving } from "../page-lifecycle/unloading.js";
+import { holdSpansForLogs } from "./transport/leave-gate.js";
 import { createTraceHeaderWriter } from "./trace-headers.js";
 import type { TraceHeaderWriter } from "./trace-headers.js";
 
@@ -210,8 +209,7 @@ export interface OtelProviderInput {
    * kernel having to rebuild the providers. Returns `null` before the
    * `SessionTracker` has bootstrapped.
    */
-  getSessionId: () => SessionId | null;
-  getPropagationSessionId?: () => SessionId | null;
+  getSessionId: () => PageSessionId | SessionId | null;
   /**
    * Consent gate for the browser-detector attributes (`browser.*`,
    * `user_agent.original`), read per span / log / metric export so a
@@ -225,6 +223,8 @@ export interface OtelProviderInput {
   getViewId?: () => string | null;
   /** Called when a finished span carries an `exception` event, whichever instrumentation recorded it. */
   onExceptionSpan?: () => void;
+  /** Runs before each flush, so work that must be ended first joins it. */
+  beforeFlush?: () => void;
   /** Optional release slug — top-level `release.slug` attr (Phase 6 wire identity). */
   releaseSlug?: ReleaseSlug | null | undefined;
   /**
@@ -245,29 +245,24 @@ export interface OtelProviderInput {
 }
 
 export interface OtelProviderHandle {
-  /** Plain stack context manager, registered globally only by the ownership controller in managed mode. No page fallback: unparented work is a root. */
-  contextManager: StackContextManager;
   /** Force-flush all three providers — call from kernel.flush() / on visibility hidden. */
   flush: () => Promise<void>;
   loggerProvider: LoggerProvider;
   meterProvider: MeterProvider;
   metricReader: MetricReader;
-  /** Interfere's W3C trace-context + session baggage propagator. Registered globally only by the ownership controller in managed mode. */
-  propagator: TextMapPropagator;
   /** Tear down all three providers — called from kernel.dispose(). */
   shutdown: () => Promise<void>;
-  /** Writes the headers the propagation policy allows for a request: `traceparent` where absent plus merged session baggage. Every tracing mode uses it. */
+  /** Writes the headers the propagation policy allows for a request: `traceparent` where absent plus merged session baggage. */
   traceHeaders: TraceHeaderWriter;
   tracerProvider: WebTracerProvider;
 }
 
 /**
- * Constructs the SDK's private OTel providers, context manager and
- * propagator. Nothing here touches an OpenTelemetry API global: the
+ * Constructs the SDK's private OTel providers and trace-header writer.
+ * Nothing here touches an OpenTelemetry API global: the
  * `WebTracerProvider` is passed to `registerInstrumentations(...)`
- * explicitly, and the context manager and propagator are handed to the
- * kernel's ownership controller, which registers them only in managed mode
- * and only when the registration call succeeds.
+ * explicitly, and Interfere never registers a global propagator or
+ * context manager.
  *
  * Kept out of `Kernel` so the error-only bundle path never imports the
  * OTel SDK.
@@ -317,14 +312,15 @@ export function buildOtelProvider(input: OtelProviderInput) {
 
   const tracerProvider = new WebTracerProvider({
     resource,
-    sampler: new ParentBasedSampler({ root: new AlwaysOnSampler() }),
+    sampler: new ParentBasedSampler({
+      localParentNotSampled: new AlwaysOnSampler(),
+      remoteParentNotSampled: new AlwaysOnSampler(),
+      root: new AlwaysOnSampler(),
+    }),
     spanProcessors,
   });
 
-  const contextManager = new StackContextManager();
-
   let isShutdown = false;
-  const getPropagationSessionId = input.getPropagationSessionId ?? getSessionId;
 
   const w3c = new W3CTraceContextPropagator();
 
@@ -342,11 +338,7 @@ export function buildOtelProvider(input: OtelProviderInput) {
   const sessionBaggage = createSessionBaggagePropagator({
     propagateTraceBaggage: input.propagateTraceBaggage !== false,
     getDeviceId: () => (isShutdown ? null : getDeviceId()),
-    getSessionId: () => (isShutdown ? null : getPropagationSessionId()),
-  });
-
-  const propagator = new CompositePropagator({
-    propagators: [traceContext, sessionBaggage],
+    getSessionId: () => (isShutdown ? null : getSessionId()),
   });
 
   const metricExporter = createMetricExporter(
@@ -395,18 +387,24 @@ export function buildOtelProvider(input: OtelProviderInput) {
   });
 
   return {
-    contextManager,
     flush: async () => {
-      await Promise.allSettled([
+      input.beforeFlush?.();
+
+      if (isPageHidden() || isPageLeaving()) {
+        holdSpansForLogs();
+      }
+
+      const flushes = [
         tracerProvider.forceFlush({ timeoutMillis: 75_000 }),
         metricReader.forceFlush({ timeoutMillis: 75_000 }),
         loggerProvider.forceFlush({ timeoutMillis: 75_000 }),
-      ]);
+      ];
+
+      await Promise.allSettled(flushes);
     },
     loggerProvider,
     meterProvider,
     metricReader,
-    propagator,
     shutdown: async () => {
       isShutdown = true;
 

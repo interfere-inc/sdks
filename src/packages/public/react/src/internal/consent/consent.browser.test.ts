@@ -1,115 +1,65 @@
 import {
+  DEFAULT_CONSENT,
+  PENDING_CONSENT,
   hasConsentChanged,
   isConsentAllowed,
-  resolveGrantedConsent,
+  resolveConsentDecision,
 } from "./consent.js";
 import { describe, expect, test } from "vitest";
 
 describe("consent policy", () => {
   describe(isConsentAllowed, () => {
     test("allows necessary category regardless of consent state", () => {
-      expect(isConsentAllowed("necessary", null)).toBe(true);
-
-      expect(
-        isConsentAllowed("necessary", { analytics: false, replay: false }),
-      ).toBe(true);
+      expect(isConsentAllowed("necessary", PENDING_CONSENT)).toBe(true);
     });
 
-    test("allows all categories when consent state is null (no gating)", () => {
-      expect(isConsentAllowed("analytics", null)).toBe(true);
-      expect(isConsentAllowed("replay", null)).toBe(true);
+    test("allows every category by default", () => {
+      expect(isConsentAllowed("analytics", DEFAULT_CONSENT)).toBe(true);
+      expect(isConsentAllowed("replay", DEFAULT_CONSENT)).toBe(true);
     });
 
-    test("allows a category when explicitly granted", () => {
-      expect(
-        isConsentAllowed("analytics", { analytics: true, replay: false }),
-      ).toBe(true);
+    test("blocks every gated category while consent is pending", () => {
+      expect(isConsentAllowed("analytics", PENDING_CONSENT)).toBe(false);
+      expect(isConsentAllowed("replay", PENDING_CONSENT)).toBe(false);
     });
 
-    test("blocks a category when explicitly denied", () => {
-      expect(
-        isConsentAllowed("analytics", { analytics: false, replay: true }),
-      ).toBe(false);
-    });
+    test("blocks only the denied category", () => {
+      const state = resolveConsentDecision({ replay: false });
 
-    test("blocks a category when not present in consent state", () => {
-      expect(isConsentAllowed("replay", { analytics: true })).toBe(false);
+      expect(isConsentAllowed("analytics", state)).toBe(true);
+      expect(isConsentAllowed("replay", state)).toBe(false);
     });
   });
 
-  describe(resolveGrantedConsent, () => {
+  describe(resolveConsentDecision, () => {
     test.each([
       [true, { analytics: true, replay: true }],
       [false, { analytics: false, replay: false }],
-    ] as const)(
-      "resolves %s into current category permissions",
-      (input, expected) => {
-        expect(resolveGrantedConsent(input)).toStrictEqual(expected);
-      },
-    );
-
-    test("returns all-granted when called with no argument", () => {
-      expect(resolveGrantedConsent()).toStrictEqual({
-        analytics: true,
-        replay: true,
-      });
-    });
-
-    test("merges a partial consent state over the defaults", () => {
-      expect(resolveGrantedConsent({ analytics: false })).toStrictEqual({
-        analytics: false,
-        replay: true,
-      });
-    });
-
-    test("keeps explicit values when merging over the defaults", () => {
-      expect(
-        resolveGrantedConsent({ analytics: false, replay: false }),
-      ).toStrictEqual({ analytics: false, replay: false });
+      [{ replay: false }, { analytics: true, replay: false }],
+      [{ replay: true }, { analytics: true, replay: true }],
+    ] as const)("resolves %j", (decision, expected) => {
+      expect(resolveConsentDecision(decision)).toStrictEqual(expected);
     });
   });
 
   describe(hasConsentChanged, () => {
     test("returns false for identical states", () => {
-      const state = { analytics: true, replay: false };
-
-      expect(hasConsentChanged(state, { analytics: true, replay: false })).toBe(
-        false,
-      );
+      expect(
+        hasConsentChanged(DEFAULT_CONSENT, resolveConsentDecision(true)),
+      ).toBe(false);
     });
 
     test("returns true when analytics changes", () => {
-      expect(
-        hasConsentChanged(
-          { analytics: true, replay: false },
-          { analytics: false, replay: false },
-        ),
-      ).toBe(true);
+      expect(hasConsentChanged(DEFAULT_CONSENT, PENDING_CONSENT)).toBe(true);
     });
 
     test("returns true when replay changes", () => {
       expect(
         hasConsentChanged(
-          { analytics: true, replay: false },
-          { analytics: true, replay: true },
+          DEFAULT_CONSENT,
+          resolveConsentDecision({ replay: false }),
         ),
       ).toBe(true);
-    });
-
-    test("returns true when transitioning from null to a state", () => {
-      expect(hasConsentChanged(null, { analytics: true, replay: true })).toBe(
-        true,
-      );
-    });
-
-    test("returns true when transitioning from a state to null", () => {
-      expect(hasConsentChanged({ analytics: true, replay: true }, null)).toBe(
-        true,
-      );
-    });
-
-    test("returns false for null to null", () => {
-      expect(hasConsentChanged(null, null)).toBe(false);
     });
   });
 });

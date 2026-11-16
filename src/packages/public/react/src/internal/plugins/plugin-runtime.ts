@@ -1,6 +1,6 @@
 import { PLUGIN_MANIFEST } from "@interfere/types/sdk/plugins/manifest";
 import type {
-  ConsentInput,
+  ConsentDecision,
   ConsentState,
   PluginKey,
 } from "@interfere/types/sdk/plugins/manifest";
@@ -20,10 +20,12 @@ import type { PageEventsConfig } from "../../plugins/page-events-config.js";
 import type { ReplayConfig } from "../../plugins/replay/config.js";
 import { createLogger } from "../../util/log.js";
 import {
+  DEFAULT_CONSENT,
+  PENDING_CONSENT,
   getPluginConsentCategory,
   hasConsentChanged,
   isConsentAllowed,
-  resolveGrantedConsent,
+  resolveConsentDecision,
 } from "../consent/consent.js";
 
 const log = createLogger("plugin-runtime");
@@ -51,7 +53,7 @@ export class PluginRuntime {
   private remoteConfig: RemotePluginConfig = {};
   private remoteConfigSettled = false;
   private awaitingRemoteConfig: boolean;
-  private consentState: ConsentState | null = null;
+  private consentState: ConsentState = DEFAULT_CONSENT;
   private configSettled = false;
   private replayConfig: ReplayConfig = {};
   private pageEventsConfig: PageEventsConfig = {};
@@ -62,14 +64,14 @@ export class PluginRuntime {
 
   constructor(
     context: PluginContext,
-    consent?: ConsentInput,
+    consent?: "required",
     remoteConfig: RemotePluginConfig = {},
     awaitingRemoteConfig = false,
   ) {
     this.context = context;
 
     this.consentState =
-      consent === undefined ? null : resolveGrantedConsent(consent);
+      consent === "required" ? PENDING_CONSENT : DEFAULT_CONSENT;
 
     this.configSettled = consent !== undefined;
     this.remoteConfig = remoteConfig;
@@ -88,10 +90,7 @@ export class PluginRuntime {
     return this.pageEventsConfig.interactions !== false;
   }
 
-  applyProviderConfig(
-    overrides: PluginOverrides | undefined,
-    consent: ConsentInput | undefined,
-  ) {
+  applyProviderConfig(overrides: PluginOverrides | undefined) {
     const pageEvents = overrides?.pageEvents;
     const replay = overrides?.replay;
 
@@ -101,17 +100,13 @@ export class PluginRuntime {
     // oxlint-disable-next-line anti-slop/no-runtime-typeof -- The public replay override accepts boolean enablement or a replay-options object.
     this.replayConfig = typeof replay === "object" ? replay : {};
 
-    if (consent !== undefined) {
-      this.consentState = resolveGrantedConsent(consent);
-    }
-
     this.configSettled = true;
 
     this.sync();
   }
 
-  setConsent(nextConsent?: ConsentInput) {
-    const nextState = resolveGrantedConsent(nextConsent);
+  setConsent(decision: ConsentDecision) {
+    const nextState = resolveConsentDecision(decision);
 
     if (
       this.configSettled &&
@@ -121,17 +116,6 @@ export class PluginRuntime {
     }
 
     this.consentState = nextState;
-    this.configSettled = true;
-
-    this.sync();
-  }
-
-  resetConsent() {
-    if (this.configSettled && !hasConsentChanged(this.consentState, null)) {
-      return;
-    }
-
-    this.consentState = null;
     this.configSettled = true;
 
     this.sync();

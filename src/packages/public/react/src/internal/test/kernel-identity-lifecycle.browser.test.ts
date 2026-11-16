@@ -1,16 +1,12 @@
 import { browserStorage } from "@interfere/test-config/browser-storage";
 import { setInjectedConfiguration } from "@interfere/test-config/injected-configuration";
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  onTestFinished,
-  test,
-  vi,
-} from "vitest";
+import type { ConsentDecision } from "@interfere/types/sdk/plugins/manifest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+
+import { HttpResponse, http } from "msw";
 
 import { DISABLE_ALL_PLUGINS } from "../../../test/fixtures/disable-all-plugins.js";
+import { worker } from "../../../test/msw.js";
 import {
   identifies,
   identifiesArrived,
@@ -21,6 +17,7 @@ import {
   withinASecond,
 } from "../../tracking/lifecycle.fixture.js";
 import { createKernel } from "../kernel.js";
+import type { Kernel } from "../kernel.js";
 
 const API_HOST = "https://kernel-lifecycle.invalid";
 
@@ -28,26 +25,49 @@ const SOURCE = { name: "Audit", type: "custom" } as const;
 
 const WAIT = { timeout: 5000 };
 
-async function kernelWith(consent: { analytics: boolean; replay: boolean }) {
+const logBodies: string[] = [];
+
+const kernels = new Set<Kernel>();
+
+const PAGE_ID = /^page_[0-9a-f-]{36}$/u;
+
+const SESSION_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-/u;
+
+async function kernelWith(decision?: ConsentDecision) {
   const kernel = await createKernel({
-    opts: { apiHost: API_HOST, consent, tracing: false },
+    onCreated: (created) => {
+      if (decision !== undefined) {
+        created.consent.set(decision);
+      }
+    },
+    opts: { apiHost: API_HOST, consent: "required", tracing: false },
   });
 
-  onTestFinished(async () => {
-    await kernel.dispose();
-  });
+  kernels.add(kernel);
 
-  kernel.syncProviderConfig({ consent });
+  kernel.syncProviderConfig({});
 
   kernel.session.getId();
 
-  await sessionsArrived(1);
+  if (kernel.consent.get().analytics) {
+    await sessionsArrived(1);
+  }
 
   return kernel;
 }
 
 beforeEach(() => {
   recordIngest(API_HOST);
+
+  logBodies.length = 0;
+
+  worker.use(
+    http.post(`${API_HOST}/drain/v1/logs`, async ({ request }) => {
+      logBodies.push(await request.text());
+
+      return new HttpResponse(null, { status: 204 });
+    }),
+  );
 
   setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", "interfere_pk_test");
 
@@ -58,6 +78,10 @@ beforeEach(() => {
 });
 
 afterEach(async () => {
+  await Promise.all([...kernels].map(async (kernel) => kernel.dispose()));
+
+  kernels.clear();
+
   await settle();
 
   setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", undefined);
@@ -68,62 +92,75 @@ afterEach(async () => {
 });
 
 describe("A50 analytics consent granted after init", () => {
-  test("starts device identity and backfills the current session with the device", async () => {
+  test("replaces the page id with a persisted session that carries the device", async () => {
     expect.hasAssertions();
 
-    const kernel = await kernelWith({ analytics: false, replay: false });
+    const kernel = await kernelWith();
 
-    const sessionId = kernel.session.getId();
+    const pageId = kernel.session.getId();
 
-    expect(kernel.device.getDeviceId()).toBeNull();
+    expect(pageId).toMatch(PAGE_ID);
 
-    kernel.consent.set({ analytics: true, replay: false });
+    kernel.consent.set({ replay: false });
 
     await vi.waitFor(
       () => expect(kernel.device.getDeviceId()).not.toBeNull(),
       WAIT,
     );
 
-    await sessionsArrived(2);
+    const sessionId = kernel.session.getId();
 
-    expect(sessions()[1]).toMatchObject({
+    expect(sessionId).toMatch(SESSION_ID);
+    expect(localStorage.getItem("interfere:session_id")).toBe(sessionId);
+
+    await sessionsArrived(1);
+
+    expect(sessions().at(-1)).toMatchObject({
       deviceId: kernel.device.getDeviceId(),
       sessionId,
     });
+
+    await kernel.flush();
+
+    expect(logBodies.join("")).toContain(`"stringValue":"${String(pageId)}"`);
+    expect(logBodies.join("")).toContain("session.previous_id");
   });
 });
 
-describe("A51 analytics consent denied", () => {
-  test("creates the session anonymously with no device id, storage or cookie", async () => {
+describe("A51 consent required and not granted", () => {
+  test("keeps a page id in memory and stores, cookies and posts nothing", async () => {
     expect.hasAssertions();
 
-    const kernel = await kernelWith({ analytics: false, replay: false });
+    const kernel = await kernelWith();
+
+    expect(kernel.session.getId()).toMatch(PAGE_ID);
+    expect(kernel.session.getId()).toBe(kernel.session.getId());
 
     await settle();
 
     expect(kernel.device.getDeviceId()).toBeNull();
-    expect(localStorage.getItem("interfere:device_id")).toBeNull();
-
-    expect(sessions().map((b) => b.deviceId ?? null)).toStrictEqual(
-      sessions().map(() => null),
-    );
+    expect(sessions()).toStrictEqual([]);
+    expect(Object.keys(localStorage)).toStrictEqual([]);
+    expect(Object.keys(sessionStorage)).toStrictEqual([]);
 
     await expect(cookieStore.get("interfere_did")).resolves.toBeNull();
   });
 });
 
 describe("A52 analytics consent revoked", () => {
-  test("purges the device id, storage and cookie, and later sessions carry no device", async () => {
+  test("purges the device and the persisted session and returns to a new page id", async () => {
     expect.hasAssertions();
 
-    const kernel = await kernelWith({ analytics: true, replay: false });
+    const kernel = await kernelWith({ replay: false });
 
     expect(kernel.device.getDeviceId()).not.toBeNull();
 
-    kernel.consent.set({ analytics: false, replay: false });
+    kernel.consent.set(false);
 
     expect(kernel.device.getDeviceId()).toBeNull();
     expect(localStorage.getItem("interfere:device_id")).toBeNull();
+    expect(localStorage.getItem("interfere:session_id")).toBeNull();
+    expect(kernel.session.getId()).toMatch(PAGE_ID);
 
     await expect(cookieStore.get("interfere_did")).resolves.toBeNull();
 
@@ -131,13 +168,11 @@ describe("A52 analytics consent revoked", () => {
 
     kernel.identity.clear();
 
-    const rotated = kernel.session.getId();
+    kernel.session.getId();
 
-    await sessionsArrived(before + 1);
+    await settle();
 
-    expect(sessions().slice(before)).toStrictEqual([
-      { deviceId: null, fpHash: null, sessionId: rotated },
-    ]);
+    expect(sessions()).toHaveLength(before);
   });
 });
 
@@ -145,13 +180,13 @@ describe("A53 consent re-granted after revoke", () => {
   test("mints a fresh device id instead of restoring the purged one", async () => {
     expect.hasAssertions();
 
-    const kernel = await kernelWith({ analytics: true, replay: false });
+    const kernel = await kernelWith({ replay: false });
 
     const purged = kernel.device.getDeviceId();
 
-    kernel.consent.set({ analytics: false, replay: false });
+    kernel.consent.set(false);
 
-    kernel.consent.set({ analytics: true, replay: false });
+    kernel.consent.set({ replay: false });
 
     await vi.waitFor(
       () => expect(kernel.device.getDeviceId()).not.toBeNull(),
@@ -163,59 +198,50 @@ describe("A53 consent re-granted after revoke", () => {
 });
 
 describe("A54 identify before analytics consent is granted", () => {
-  test("identify is re-sent with the device id once consent starts device identity", async () => {
+  test("holds identify until consent and then sends it once with the device", async () => {
     expect.hasAssertions();
 
-    const kernel = await kernelWith({ analytics: false, replay: false });
+    const kernel = await kernelWith();
 
     await kernel.identity.set({ identifier: "user-a54", source: SOURCE });
 
-    await identifiesArrived(1);
+    await settle();
 
-    kernel.consent.set({ analytics: true, replay: false });
+    expect(identifies()).toStrictEqual([]);
 
-    await withinASecond(identifiesArrived(2));
+    kernel.consent.set({ replay: false });
 
-    expect(identifies()).toHaveLength(2);
+    await withinASecond(identifiesArrived(1));
 
-    expect(identifies()[1]).toMatchObject({
+    expect(identifies()[0]).toMatchObject({
       deviceId: kernel.device.getDeviceId(),
       identifier: "user-a54",
+      sessionId: kernel.session.getId(),
     });
-  });
-
-  test("the identify sent before consent carries no device", async () => {
-    expect.hasAssertions();
-
-    const kernel = await kernelWith({ analytics: false, replay: false });
-
-    await kernel.identity.set({ identifier: "user-a54", source: SOURCE });
-
-    await identifiesArrived(1);
-
-    expect(identifies()[0]).toMatchObject({ deviceId: null, fpHash: null });
   });
 });
 
-describe("A55 consent changes keep the session", () => {
-  test("grant and revoke do not rotate the session id", async () => {
+describe("A55 consent changes move between page and persisted sessions", () => {
+  test("grant replaces the page id and revoke starts a new one", async () => {
     expect.hasAssertions();
 
-    const kernel = await kernelWith({ analytics: false, replay: false });
+    const kernel = await kernelWith();
+
+    const pageId = kernel.session.getId();
+
+    kernel.consent.set({ replay: false });
 
     const sessionId = kernel.session.getId();
 
-    kernel.consent.set({ analytics: true, replay: false });
+    expect(sessionId).not.toBe(pageId);
 
-    await vi.waitFor(
-      () => expect(kernel.device.getDeviceId()).not.toBeNull(),
-      WAIT,
-    );
+    kernel.consent.set(false);
 
-    kernel.consent.set({ analytics: false, replay: false });
+    const nextPageId = kernel.session.getId();
 
-    expect(kernel.session.getId()).toBe(sessionId);
-    expect(localStorage.getItem("interfere:session_id")).toBe(sessionId);
+    expect(nextPageId).toMatch(PAGE_ID);
+    expect(nextPageId).not.toBe(pageId);
+    expect(nextPageId).not.toBe(sessionId);
   });
 });
 
@@ -223,7 +249,7 @@ describe("A42 device id stable across reloads through the kernel", () => {
   test("a second kernel on the same storage reports the same device id", async () => {
     expect.hasAssertions();
 
-    const first = await kernelWith({ analytics: true, replay: false });
+    const first = await kernelWith({ replay: false });
 
     const id = first.device.getDeviceId();
 
@@ -231,7 +257,7 @@ describe("A42 device id stable across reloads through the kernel", () => {
 
     browserStorage.session.remove("interfere:window_id");
 
-    const second = await kernelWith({ analytics: true, replay: false });
+    const second = await kernelWith({ replay: false });
 
     expect(second.device.getDeviceId()).toBe(id);
   });

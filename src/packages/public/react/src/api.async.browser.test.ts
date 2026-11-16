@@ -1,3 +1,4 @@
+import { StackContextManager } from "@opentelemetry/sdk-trace-web";
 import { sessionIdSchema } from "@interfere/types/data/session";
 
 import { ROOT_CONTEXT, context, propagation, trace } from "@opentelemetry/api";
@@ -13,7 +14,6 @@ import {
   registerKernel,
   unregisterKernel,
 } from "./internal/kernel-registry.js";
-import { claimTracingOwnership } from "./internal/otel/ownership.js";
 import { buildOtelProvider } from "./internal/otel/provider.js";
 import { HttpResponse, http } from "msw";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
@@ -68,18 +68,12 @@ describe("span() async semantics", () => {
       sdkStack: [],
     });
 
-    const ownership = claimTracingOwnership({
-      contextManager: handle.contextManager,
-      mode: "managed",
-      propagator: handle.propagator,
-    });
-
-    if (!ownership.ownsContextManager) {
-      throw new Error("the stack context manager is not the global manager");
+    if (!context.setGlobalContextManager(new StackContextManager().enable())) {
+      throw new Error("another context manager is already registered");
     }
 
     kernel.attachOtel(handle, () => {
-      ownership.release();
+      context.disable();
     });
 
     registerKernel(kernel);

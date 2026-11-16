@@ -3,7 +3,6 @@ import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
 } from "@opentelemetry/sdk-trace-base";
-import type { ConsentInput } from "@interfere/types/sdk/plugins/manifest";
 import type { RemotePluginConfig } from "@interfere/types/sdk/remote-config";
 import { setInjectedConfiguration } from "@interfere/test-config/injected-configuration";
 import {
@@ -30,7 +29,7 @@ const ORIGIN = "https://plugin-runtime.invalid";
 
 const LOCAL = { ...DISABLE_ALL_PLUGINS, rageClick: true, replay: true };
 
-function createRuntime(consent?: ConsentInput, remote?: RemotePluginConfig) {
+function createRuntime(consent?: "required", remote?: RemotePluginConfig) {
   vi.useFakeTimers({ toFake: ["setInterval", "clearInterval"] });
 
   setInjectedConfiguration(API_URL_GLOBAL, ORIGIN);
@@ -58,7 +57,7 @@ function createRuntime(consent?: ConsentInput, remote?: RemotePluginConfig) {
     additionalSpanProcessors: [new SimpleSpanProcessor(exporter)],
   });
 
-  kernel.attachOtel(otel, () => otel.contextManager.disable());
+  kernel.attachOtel(otel, () => undefined);
 
   const target = document.createElement("button");
 
@@ -121,7 +120,7 @@ describe("D-PL-01 analytics and replay wait for provider config", () => {
     expect(rageClickSpans()).toBe(0);
     expect(runtime.getPluginConfigState("logs")).toBe("enabled");
 
-    runtime.applyProviderConfig(LOCAL, undefined);
+    runtime.applyProviderConfig(LOCAL);
 
     await vi.dynamicImportSettled();
 
@@ -139,10 +138,7 @@ describe("D-PL-02 remote false disables a plugin regardless of local options", (
 
     runtime.start();
 
-    runtime.applyProviderConfig(
-      { ...LOCAL, replay: { maskAllInputs: true } },
-      true,
-    );
+    runtime.applyProviderConfig({ ...LOCAL, replay: { maskAllInputs: true } });
 
     runtime.applyRemoteConfig({ rageClick: false, replay: false });
 
@@ -162,7 +158,7 @@ describe("D-PL-03 and D-PL-04 a later remote disable stops a running plugin and 
 
     runtime.applyRemoteConfigDefaults();
 
-    runtime.applyProviderConfig(LOCAL, true);
+    runtime.applyProviderConfig(LOCAL);
 
     await vi.dynamicImportSettled();
 
@@ -188,7 +184,7 @@ describe("D-PL-05 a remote disable racing the replay lazy load", () => {
 
     runtime.start();
 
-    runtime.applyProviderConfig(LOCAL, true);
+    runtime.applyProviderConfig(LOCAL);
 
     runtime.applyRemoteConfig({ replay: false });
 
@@ -208,9 +204,9 @@ describe("D-PL-06 consent revocation racing the replay lazy load", () => {
 
     runtime.applyRemoteConfigDefaults();
 
-    runtime.applyProviderConfig(LOCAL, true);
+    runtime.applyProviderConfig(LOCAL);
 
-    runtime.setConsent({ analytics: true, replay: false });
+    runtime.setConsent({ replay: false });
 
     await vi.dynamicImportSettled();
 
@@ -230,7 +226,7 @@ describe("D-PL-07 dispose racing the replay lazy load", () => {
 
     runtime.applyRemoteConfigDefaults();
 
-    runtime.applyProviderConfig(LOCAL, true);
+    runtime.applyProviderConfig(LOCAL);
 
     await kernel.dispose();
 
@@ -241,19 +237,21 @@ describe("D-PL-07 dispose racing the replay lazy load", () => {
 });
 
 describe("D-CS-01 consent categories gate plugins independently", () => {
-  test("analytics denied with replay granted records replay but no rage clicks; revoke and re-grant follow", async () => {
+  test("analytics granted with replay denied records rage clicks but no replay; revoke and re-grant follow", async () => {
     const { rageClickSpans, runtime } = createRuntime();
 
     runtime.start();
 
     runtime.applyRemoteConfigDefaults();
 
-    runtime.applyProviderConfig(LOCAL, { analytics: false, replay: true });
+    runtime.applyProviderConfig(LOCAL);
+
+    runtime.setConsent({ replay: false });
 
     await vi.dynamicImportSettled();
 
-    expect(isRecording()).toBe(true);
-    expect(rageClickSpans()).toBe(0);
+    expect(isRecording()).toBe(false);
+    expect(rageClickSpans()).toBe(1);
 
     runtime.setConsent(false);
 

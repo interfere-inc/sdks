@@ -46,7 +46,11 @@ if (new URL(location.href).searchParams.has("queue")) {
   }
 }
 
-await init({ consent: { analytics: !denied, replay: !denied } });
+if (!denied) {
+  consent.set(true);
+}
+
+await init(denied ? { consent: "required" } : {});
 
 function Crash(): never {
   throw new Error("acceptance-render");
@@ -180,7 +184,7 @@ function Customer() {
       <button
         type="button"
         onClick={() => {
-          consent.set({ analytics: true, replay: true });
+          consent.set(true);
 
           setMessage("granted");
         }}
@@ -190,7 +194,7 @@ function Customer() {
       <button
         type="button"
         onClick={() => {
-          consent.set({ analytics: false, replay: false });
+          consent.set(false);
 
           setMessage("revoked");
         }}

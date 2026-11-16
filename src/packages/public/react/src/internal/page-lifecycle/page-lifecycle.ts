@@ -1,4 +1,4 @@
-import { setPageUnloading } from "./unloading.js";
+import { setPageLeaving, setPageUnloading } from "./unloading.js";
 
 export { reserveKeepaliveBody } from "./keepalive-budget.js";
 
@@ -49,10 +49,14 @@ function fireShown() {
 
   setPageUnloading(false);
 
+  setPageLeaving(false);
+
   fire(shownHandlers);
 }
 
 function fireUnloading() {
+  setPageLeaving(true);
+
   fire(unloadingHandlers);
 }
 
@@ -76,6 +80,8 @@ function onVisibilityChange() {
 }
 
 function onPageShow() {
+  setPageLeaving(false);
+
   if (!documentHidden()) {
     fireShown();
   }
@@ -97,7 +103,7 @@ function install() {
 
   globalThis.addEventListener("pageshow", onPageShow);
 
-  // WARNING: beforeunload is only an early flush while ordinary fetches can still finish (Chromium caps in-flight keepalive bodies at 64 KB during pagehide); it fires for cancelled navigations and is skipped by mobile Safari, so it must never mark the page hidden or replace the pagehide flush.
+  // WARNING: beforeunload is an early flush whose ordinary fetches the navigation may cancel, so exports it starts must fit keepalive or be retained; it fires for cancelled navigations and is skipped by mobile Safari, so it must never mark the page hidden or replace the pagehide flush.
   globalThis.addEventListener("beforeunload", fireUnloading);
 }
 
@@ -163,4 +169,6 @@ export function resetPageLifecycleForTests() {
   hidden = false;
 
   setPageUnloading(false);
+
+  setPageLeaving(false);
 }

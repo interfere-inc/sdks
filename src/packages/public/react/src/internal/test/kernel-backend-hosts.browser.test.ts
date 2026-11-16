@@ -72,7 +72,10 @@ test.each([false, true])(
     );
 
     ownedKernel = await createKernel({
-      opts: { apiHost: "https://kernel.invalid", consent: true },
+      onCreated: (created) => {
+        created.consent.set(true);
+      },
+      opts: { apiHost: "https://kernel.invalid" },
     });
 
     await fetch(backendUrl);

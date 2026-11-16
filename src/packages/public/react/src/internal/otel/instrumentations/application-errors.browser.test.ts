@@ -257,7 +257,7 @@ test("default XHR response text is never read unless HTTP-200 inspection is enab
   ).toBeUndefined();
 });
 
-test("disposed opt-in capture adds no response clone after default reinstallation", async () => {
+test("disposed opt-in capture adds no response clone beyond the instrumentation's own body-completion clone after default reinstallation", async () => {
   handle.dispose();
 
   install(true);
@@ -278,7 +278,7 @@ test("disposed opt-in capture adds no response clone after default reinstallatio
 
   expect(
     clone.mock.contexts.filter((context) => context === result),
-  ).toHaveLength(0);
+  ).toHaveLength(1);
 
   expect(
     requestSpans(exporter)[0]?.events.filter(

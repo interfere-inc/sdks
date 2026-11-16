@@ -39,18 +39,15 @@ const open = nativeBrowserFixture(
 );
 
 const cases = (["datadog-first", "interfere-first"] as const).flatMap((order) =>
-  (["auto", "application", "managed"] as const).flatMap((mode) =>
-    [false, true].map((baggage) => ({
-      order,
-      mode,
-      baggage,
-      baggagePattern: baggage ? /^interfere\.session\.id=.+$/u : /^$/u,
-    })),
-  ),
+  [false, true].map((baggage) => ({
+    order,
+    baggage,
+    baggagePattern: baggage ? /^interfere\.session\.id=.+$/u : /^$/u,
+  })),
 );
 
 test.each(cases)(
-  "actual Datadog $order/$mode baggage=$baggage preserves one correlated trace per request",
+  "actual Datadog $order baggage=$baggage preserves one correlated trace per request",
   async (options) => {
     expect.hasAssertions();
 
@@ -118,7 +115,6 @@ test.each([false, true])(
       async (all) =>
         globalThis.datadogFixture.install({
           order: "datadog-first",
-          mode: "auto",
           baggage: false,
           sampled: false,
           injectAll: all,
@@ -179,7 +175,6 @@ test.each(["revoke", "revokeRegrant", "dispose"] as const)(
     await page.evaluate(async () =>
       globalThis.datadogFixture.install({
         order: "datadog-first",
-        mode: "auto",
         baggage: false,
         sampled: true,
         holdBridge: true,
@@ -226,7 +221,6 @@ test("delayed actual Datadog callback keeps request-time session after rotation"
   await page.evaluate(async () =>
     globalThis.datadogFixture.install({
       order: "datadog-first",
-      mode: "auto",
       baggage: false,
       sampled: true,
       holdBridge: true,

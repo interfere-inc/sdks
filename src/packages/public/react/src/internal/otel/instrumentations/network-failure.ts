@@ -252,14 +252,18 @@ export async function settleFetchFailure(
   });
 }
 
-/** Marks an aborted or timed-out XHR from its terminal span event, or records its transport failure unless the page leaves within the hold. */
+/** Marks an aborted or timed-out XHR from its terminal event, or records its transport failure unless the page leaves within the hold. */
 export async function settleXhrFailure(
   span: Span,
   pageExit: PageExitWatch,
   url: string,
   admit: () => boolean,
+  terminal?: string,
 ) {
-  const cancellation = xhrCancellation(span);
+  const cancellation =
+    terminal === "abort" || terminal === "timeout"
+      ? terminal
+      : xhrCancellation(span);
 
   if (cancellation) {
     span.setAttribute(ATTR_HTTP_CANCELLED, cancellation);

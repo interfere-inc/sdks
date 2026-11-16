@@ -36,7 +36,7 @@ export function createTracedKernel() {
     sdkStack: [],
   });
 
-  kernel.attachOtel(handle, () => handle.contextManager.disable());
+  kernel.attachOtel(handle, () => undefined);
 
   onTestFinished(async () => {
     try {

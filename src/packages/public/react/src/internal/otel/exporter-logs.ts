@@ -9,6 +9,7 @@ import type {
 import type { SignalSender } from "./exporter.js";
 import { createInFlightExports } from "./transport/in-flight-exports.js";
 import { sendInKeepaliveChunks } from "./keepalive-chunks.js";
+import { noteLogsDecided, noteLogsExporting } from "./transport/leave-gate.js";
 
 export class IngestLogExporter implements LogRecordExporter {
   private readonly send: SignalSender;
@@ -29,12 +30,18 @@ export class IngestLogExporter implements LogRecordExporter {
       return;
     }
 
+    noteLogsExporting();
+
     sendInKeepaliveChunks(
       logs,
       // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- SDK and transformer versions use identical OTLP enum values.
       (chunk) => JsonLogsSerializer.serializeRequest(chunk),
       this.send,
-      this.inFlight.track(resultCallback),
+      this.inFlight.track((result) => {
+        noteLogsDecided();
+
+        resultCallback(result);
+      }),
     );
   }
 

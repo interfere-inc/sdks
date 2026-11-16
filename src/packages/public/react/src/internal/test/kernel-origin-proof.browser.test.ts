@@ -81,11 +81,11 @@ test("a discovered backend host carries headers on GET from the start and on POS
   const backend = record(BACKEND);
   const explicit = record(EXPLICIT);
 
-  const { observations, options } = exporters();
+  const { clientSpans, observations, options } = exporters();
 
   await harness.boot({
     ...options,
-    tracing: { mode: "application", propagateTo: [EXPLICIT] },
+    tracing: { propagateTo: [EXPLICIT] },
   });
 
   await post(`${BACKEND}/orders`);
@@ -112,8 +112,10 @@ test("a discovered backend host carries headers on GET from the start and on POS
 
   expect(carried(explicit)).toStrictEqual([["POST", true, true]]);
 
+  expect(observations()).toStrictEqual([]);
+
   expect(
-    observations().map((entry) => entry.attributes["url.full"]),
+    clientSpans().map((span) => span.attributes["url.full"]),
   ).toStrictEqual([
     `${BACKEND}/orders`,
     `${BACKEND}/orders`,

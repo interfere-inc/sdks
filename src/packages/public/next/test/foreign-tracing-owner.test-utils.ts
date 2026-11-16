@@ -67,8 +67,8 @@ async function bundleForeignWriter(directory: string) {
 /**
  * Builds the application-owned tracing packed Next app once per file: a host
  * `@vercel/otel` provider exporting OTLP to the receiver, Interfere's
- * `register({ tracing: "application" })`, the browser initialised with
- * `tracing: "application"`, and a Datadog-shaped foreign writer double.
+ * `register({ tracing: "application" })`, the browser initialised with its
+ * defaults, and a Datadog-shaped foreign writer double.
  */
 export function foreignTracingOwnerHarness() {
   let collector: Awaited<ReturnType<typeof receiver>>;
@@ -164,10 +164,10 @@ export function foreignTracingOwnerHarness() {
   }
 
   function observationsFor(label: string) {
-    return exportedLogRecords(interfereRequests()).filter(
-      (record) =>
-        record.eventName === "interfere.request" &&
-        String(attribute(record.attributes, "url.full") ?? "").includes(
+    return exportedSpans(interfereRequests()).filter(
+      (span) =>
+        attribute(span.attributes, "http.request.method") !== undefined &&
+        String(attribute(span.attributes, "url.full") ?? "").includes(
           `case=${label}&`,
         ),
     );

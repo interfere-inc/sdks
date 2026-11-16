@@ -5,7 +5,7 @@ import { setInjectedConfiguration } from "@interfere/test-config/injected-config
 import { ErrorBoundary } from "@interfere/react/error-boundary";
 import { page } from "vitest/browser";
 import { render } from "vitest-browser-react";
-import { close, init } from "./instrument-client.js";
+import { close, consent, init } from "./instrument-client.js";
 import { InterfereProvider } from "./provider.js";
 import { afterEach, assert, beforeEach, expect, test, vi } from "vitest";
 import type { MockInstance } from "vitest";
@@ -122,12 +122,11 @@ afterEach(async () => {
   }
 });
 
-test("forwards current options, preserves omitted consent, and honors explicit revocation", async ({
+test("forwards current plugin options and keeps the consent decision across rerenders", async ({
   onTestFinished,
 }) => {
   const view = await render(
     <InterfereProvider
-      consent={{ analytics: false, replay: false }}
       plugins={{ ...plugins, replay: { maskAllInputs: true } }}
     >
       <div>configured children</div>
@@ -136,52 +135,39 @@ test("forwards current options, preserves omitted consent, and honors explicit r
 
   onTestFinished(async () => view.unmount());
 
-  await view.rerender(
-    <InterfereProvider
-      consent={{ analytics: true, replay: false }}
-      plugins={{ ...plugins, replay: { maskAllInputs: true } }}
-    >
-      <div>configured children</div>
-    </InterfereProvider>,
-  );
-
   const kernel = await init({
     apiHost: "https://next-provider.invalid",
     enabled: true,
     tracing: false,
   });
 
-  expect(kernel).not.toBeNull();
-
   assert.exists(kernel);
 
   await expect
-    .poll(() => kernel.consent.get())
-    .toEqual({ analytics: true, replay: false });
+    .poll(() => kernel.getReplayConfig())
+    .toStrictEqual({ maskAllInputs: true });
 
-  assert.exists(kernel);
+  consent.set({ replay: false });
 
-  expect(kernel.getReplayConfig()).toStrictEqual({ maskAllInputs: true });
+  expect(kernel.consent.get()).toStrictEqual({
+    analytics: true,
+    replay: false,
+  });
 
   await view.rerender(
     <InterfereProvider
-      consent={{ analytics: false, replay: true }}
       plugins={{ ...plugins, replay: { maskAllInputs: false } }}
     >
       <div>configured children</div>
     </InterfereProvider>,
   );
 
-  assert.exists(kernel);
+  expect(kernel.getReplayConfig()).toStrictEqual({ maskAllInputs: false });
 
   expect(kernel.consent.get()).toStrictEqual({
-    analytics: false,
-    replay: true,
+    analytics: true,
+    replay: false,
   });
-
-  assert.exists(kernel);
-
-  expect(kernel.getReplayConfig()).toStrictEqual({ maskAllInputs: false });
 
   await view.rerender(
     <InterfereProvider>
@@ -189,20 +175,9 @@ test("forwards current options, preserves omitted consent, and honors explicit r
     </InterfereProvider>,
   );
 
-  assert.exists(kernel);
-
-  expect(kernel.consent.get()).toStrictEqual({
-    analytics: false,
-    replay: true,
-  });
-
   expect(kernel.getReplayConfig()).toStrictEqual({});
 
-  await view.rerender(
-    <InterfereProvider consent={false}>
-      <div>configured children</div>
-    </InterfereProvider>,
-  );
+  consent.set(false);
 
   expect(kernel.consent.get()).toStrictEqual({
     analytics: false,

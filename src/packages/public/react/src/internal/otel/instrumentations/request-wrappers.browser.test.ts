@@ -1,8 +1,10 @@
 import { LoggerProvider } from "@opentelemetry/sdk-logs";
 import {
   InMemorySpanExporter,
+  NoopSpanProcessor,
   SimpleSpanProcessor,
 } from "@opentelemetry/sdk-trace-base";
+import type { ReadableSpan, Span } from "@opentelemetry/sdk-trace-base";
 import { WebTracerProvider } from "@opentelemetry/sdk-trace-web";
 import { HttpResponse, http } from "msw";
 import { expect, onTestFinished, test } from "vitest";
@@ -11,83 +13,80 @@ import { worker } from "../../../../test/msw.js";
 import { w3cTraceHeaders } from "../../../../test/trace-headers.test-utils.js";
 import { registerBundledInstrumentations } from "./instrumentations.js";
 
-function countWrites<T extends object, K extends keyof T>(target: T, key: K) {
-  const descriptor = Object.getOwnPropertyDescriptor(target, key);
-  let current = target[key];
-  let count = 0;
+test("one upstream wrapper per request API, inert after dispose, and requests still reach the network", async () => {
+  expect.hasAssertions();
 
-  Object.defineProperty(target, key, {
-    configurable: true,
-    enumerable: descriptor?.enumerable ?? false,
-    get: () => current,
-    set: (next: T[K]) => {
-      count += 1;
+  const nativeFetch = globalThis.fetch;
+  // oxlint-disable-next-line typescript/unbound-method -- The prototype methods are compared by identity.
+  const nativeOpen = XMLHttpRequest.prototype.open;
+  // oxlint-disable-next-line typescript/unbound-method -- The prototype methods are compared by identity.
+  const nativeSend = XMLHttpRequest.prototype.send;
+  // oxlint-disable-next-line typescript/unbound-method -- The prototype methods are compared by identity.
+  const nativeSetRequestHeader = XMLHttpRequest.prototype.setRequestHeader;
 
-      current = next;
-    },
+  const started: string[] = [];
+
+  const provider = new WebTracerProvider({
+    spanProcessors: [
+      new (class extends NoopSpanProcessor {
+        override onStart(span: Span) {
+          started.push(span.name);
+        }
+      })(),
+    ],
   });
 
-  return {
-    count: () => count,
-    restore: () => {
-      Object.defineProperty(target, key, { ...descriptor, value: current });
-    },
-    value: () => current,
-  };
-}
+  onTestFinished(async () => {
+    // oxlint-disable-next-line interfere-testing/no-test-doubles -- Restores the native fetch by identity after the inert wrapper.
+    globalThis.fetch = nativeFetch;
 
-test.each([
-  { mode: "managed" as const, writer: true },
-  { mode: "managed" as const, writer: false },
-  { mode: "application" as const, writer: true },
-])(
-  "$mode (writer $writer): one fetch wrapper and one XHR wrapper, each restored on dispose",
-  async ({ mode, writer }) => {
-    expect.hasAssertions();
+    XMLHttpRequest.prototype.open = nativeOpen;
 
-    const writes = [
-      countWrites(globalThis, "fetch"),
-      countWrites(XMLHttpRequest.prototype, "open"),
-      countWrites(XMLHttpRequest.prototype, "setRequestHeader"),
-      countWrites(XMLHttpRequest.prototype, "send"),
-    ] as const;
+    XMLHttpRequest.prototype.send = nativeSend;
 
-    const natives = writes.map((write) => write.value());
-    const provider = new WebTracerProvider();
+    await provider.shutdown();
+  });
 
-    try {
-      const handle = registerBundledInstrumentations({
-        captureFailedRequests: {
-          applicationErrors: true,
-          statusCodes: [[400, 599]],
-        },
-        ignoreUrls: [],
-        loggerProvider: new LoggerProvider(),
-        mode,
-        traceHeaders: writer ? w3cTraceHeaders() : null,
-        tracerProvider: provider,
-      });
+  const url = `${location.origin}/wrapped`;
 
-      handle.setPageEventsEnabled(true);
+  worker.use(http.get(url, () => new HttpResponse(null, { status: 204 })));
 
-      expect(writes.map((write) => write.count())).toStrictEqual([1, 1, 1, 1]);
+  const handle = registerBundledInstrumentations({
+    ignoreUrls: [],
+    loggerProvider: new LoggerProvider(),
+    traceHeaders: w3cTraceHeaders(),
+    tracerProvider: provider,
+  });
 
-      handle.dispose();
+  const wrapped = [
+    globalThis.fetch,
+    // oxlint-disable-next-line typescript/unbound-method -- The prototype methods are compared by identity.
+    XMLHttpRequest.prototype.open,
+    // oxlint-disable-next-line typescript/unbound-method -- The prototype methods are compared by identity.
+    XMLHttpRequest.prototype.send,
+  ];
 
-      expect(writes.map((write) => write.count())).toStrictEqual([2, 2, 2, 2]);
+  expect([
+    wrapped[0] === nativeFetch,
+    wrapped[1] === nativeOpen,
+    wrapped[2] === nativeSend,
+    XMLHttpRequest.prototype.setRequestHeader === nativeSetRequestHeader,
+  ]).toStrictEqual([false, false, false, true]);
 
-      expect(
-        writes.map((write, index) => write.value() === natives[index]),
-      ).toStrictEqual([true, true, true, true]);
-    } finally {
-      for (const write of writes) {
-        write.restore();
-      }
+  handle.dispose();
 
-      await provider.shutdown();
-    }
-  },
-);
+  expect([
+    globalThis.fetch,
+    // oxlint-disable-next-line typescript/unbound-method -- The prototype methods are compared by identity.
+    XMLHttpRequest.prototype.open,
+    // oxlint-disable-next-line typescript/unbound-method -- The prototype methods are compared by identity.
+    XMLHttpRequest.prototype.send,
+  ]).toStrictEqual(wrapped);
+
+  const response = await fetch(url);
+
+  expect([response.status, started]).toStrictEqual([204, []]);
+});
 
 function listenerLedger(xhr: XMLHttpRequest) {
   const live = new Set<EventListener>();
@@ -119,7 +118,72 @@ function listenerLedger(xhr: XMLHttpRequest) {
   return { add, live };
 }
 
-test("a reused XHR keeps no Interfere listener once each request completes", async () => {
+test("a reused XHR keeps no instrumentation listener once each request span ends", async () => {
+  expect.hasAssertions();
+
+  const exporter = new InMemorySpanExporter();
+  const ended = Promise.withResolvers<undefined>();
+  const url = `${location.origin}/reused-xhr`;
+
+  let endedRequests = 0;
+
+  const provider = new WebTracerProvider({
+    spanProcessors: [
+      new SimpleSpanProcessor(exporter),
+      new (class extends NoopSpanProcessor {
+        override onEnd(span: ReadableSpan) {
+          if (span.attributes["url.full"] === url) {
+            endedRequests += 1;
+          }
+
+          if (endedRequests === 3) {
+            ended.resolve(undefined);
+          }
+        }
+      })(),
+    ],
+  });
+
+  const handle = registerBundledInstrumentations({
+    ignoreUrls: [],
+    traceHeaders: w3cTraceHeaders(),
+    tracerProvider: provider,
+  });
+
+  onTestFinished(async () => {
+    handle.dispose();
+
+    await provider.shutdown();
+  });
+
+  worker.use(http.get(url, () => new HttpResponse(null, { status: 204 })));
+
+  const xhr = new XMLHttpRequest();
+  const ledger = listenerLedger(xhr);
+
+  for (let send = 0; send < 3; send += 1) {
+    // oxlint-disable-next-line eslint/no-await-in-loop -- The same XHR object is reused, so each request must finish before the next open.
+    await new Promise<void>((resolve) => {
+      ledger.add("loadend", () => resolve(), { once: true });
+
+      xhr.open("GET", url);
+
+      xhr.send();
+    });
+  }
+
+  await ended.promise;
+
+  expect(ledger.live.size).toBe(0);
+
+  expect(
+    exporter
+      .getFinishedSpans()
+      .filter((span) => span.attributes["url.full"] === url),
+  ).toHaveLength(3);
+});
+
+test("ending open requests as the page leaves exports a just-completed request span without waiting for upstream's resource-timing delay", async () => {
   expect.hasAssertions();
 
   const exporter = new InMemorySpanExporter();
@@ -140,29 +204,19 @@ test("a reused XHR keeps no Interfere listener once each request completes", asy
     await provider.shutdown();
   });
 
-  const url = `${location.origin}/reused-xhr`;
+  const url = `${location.origin}/leaving`;
 
   worker.use(http.get(url, () => new HttpResponse(null, { status: 204 })));
 
-  const xhr = new XMLHttpRequest();
-  const ledger = listenerLedger(xhr);
+  const response = await fetch(url);
 
-  for (let send = 0; send < 3; send += 1) {
-    // oxlint-disable-next-line eslint/no-await-in-loop -- The same XHR object is reused, so each request must finish before the next open.
-    await new Promise<void>((resolve) => {
-      ledger.add("loadend", () => resolve(), { once: true });
+  const before = exporter.getFinishedSpans().length;
 
-      xhr.open("GET", url);
+  handle.endOpenRequests();
 
-      xhr.send();
-    });
-  }
-
-  expect(ledger.live.size).toBe(0);
-
-  expect(
-    exporter
-      .getFinishedSpans()
-      .filter((span) => span.attributes["url.full"] === url),
-  ).toHaveLength(3);
+  expect([
+    response.status,
+    before,
+    exporter.getFinishedSpans().map((span) => span.attributes["url.full"]),
+  ]).toStrictEqual([204, 0, [url]]);
 });

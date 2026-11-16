@@ -4,9 +4,9 @@ import {
 } from "@interfere/types/data/correlation-events";
 import { v7 as uuidv7 } from "uuid";
 
-const ATTR_DEVICE_ID = "device.id" as const;
+import { ATTR_SESSION_ID } from "./session.js";
 
-const ATTR_SESSION_ID = "session.id" as const;
+const ATTR_DEVICE_ID = "device.id" as const;
 
 /** Why a view started: the initial document load, a history change, or the max-age cut of a parked tab. */
 export type ViewTrigger =

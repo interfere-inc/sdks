@@ -2,7 +2,7 @@ import type { ExportResult } from "@opentelemetry/core";
 import { ExportResultCode } from "@opentelemetry/core";
 
 import { isPageHidden } from "../page-lifecycle/page-lifecycle.js";
-import { isPageUnloading } from "../page-lifecycle/unloading.js";
+import { isPageLeaving } from "../page-lifecycle/unloading.js";
 import type { SignalSender } from "./exporter.js";
 
 const UNLOAD_REQUEST_MAX_BYTES = 16_000;
@@ -14,20 +14,33 @@ function splitPayloads<T>(
   maxBytes: number,
 ) {
   const chunks: (Uint8Array | undefined)[] = [];
-  const pending = [items];
 
-  for (let next = pending.pop(); next; next = pending.pop()) {
-    const payload = serialize(next);
+  const fits = (payload: Uint8Array | undefined) =>
+    (payload?.byteLength ?? 0) <= maxBytes;
 
-    if (next.length <= 1 || (payload?.byteLength ?? 0) <= maxBytes) {
-      chunks.push(payload);
+  let start = 0;
 
-      continue;
+  while (start < items.length) {
+    let end = start + 1;
+    let payload = serialize(items.slice(start, end));
+    let high = items.length;
+
+    while (fits(payload) && end < high) {
+      const middle = Math.ceil((end + high) / 2);
+      const candidate = serialize(items.slice(start, middle));
+
+      if (fits(candidate)) {
+        end = middle;
+
+        payload = candidate;
+      } else {
+        high = middle - 1;
+      }
     }
 
-    const middle = Math.ceil(next.length / 2);
+    chunks.push(payload);
 
-    pending.push(next.slice(middle), next.slice(0, middle));
+    start = end;
   }
 
   return chunks;
@@ -43,7 +56,7 @@ export function sendInKeepaliveChunks<T>(
   const chunks = splitPayloads(
     items,
     serialize,
-    isPageHidden() || isPageUnloading()
+    isPageHidden() || isPageLeaving()
       ? UNLOAD_REQUEST_MAX_BYTES
       : REQUEST_MAX_BYTES,
   );

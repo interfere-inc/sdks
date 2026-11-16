@@ -63,7 +63,7 @@ class InertAnnouncingPropagator implements TextMapPropagator {
   }
 }
 
-test("a page (inert global propagator, consent false, Datadog RUM present, tracing.headers false) writes no header to the page origin or a configured backend host while every request is still observed", async () => {
+test("a page (inert global propagator, consent false, Datadog RUM present, tracing.headers false) writes no header to the page origin or a configured backend host while every page request still gets a request span", async () => {
   expect.hasAssertions();
 
   Object.assign(globalThis, {
@@ -92,7 +92,7 @@ test("a page (inert global propagator, consent false, Datadog RUM present, traci
 
   await harness.boot({
     ...options,
-    consent: false,
+    consent: "required",
     tracing: { captureFailedRequests: false, headers: false },
   });
 
@@ -124,19 +124,11 @@ test("a page (inert global propagator, consent false, Datadog RUM present, traci
     [null, null, null],
   ]);
 
-  expect(
-    observations().map((recordEntry) => [
-      recordEntry.attributes["interfere.request.kind"],
-      recordEntry.attributes["url.full"],
-    ]),
-  ).toStrictEqual([
-    ["fetch", PAGE_URL],
-    ["xhr", PAGE_URL],
-    ["fetch", `${BACKEND}/orders`],
-    ["xhr", `${BACKEND}/orders`],
-  ]);
+  expect(observations()).toStrictEqual([]);
 
-  expect(requestSpans()).toStrictEqual([]);
+  expect(
+    requestSpans().map((span) => span.attributes["http.response.status_code"]),
+  ).toStrictEqual([204, 204]);
 
   expect(vendorDiagnostics(warn)).toStrictEqual([]);
 

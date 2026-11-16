@@ -279,3 +279,76 @@ test.each(["dispose", "clear", "consent"] as const)(
     expect(result.results).toHaveLength(1);
   },
 );
+
+test("a send begun on a visible page that fails after the page hides is retained and delivered", async () => {
+  expect.hasAssertions();
+
+  showPage();
+
+  let attempts = 0;
+
+  const carryover = withExportCarryover(
+    "hide-in-flight",
+    (_payload, callback) => {
+      attempts += 1;
+
+      if (attempts === 1) {
+        hidePage();
+
+        callback({
+          code: ExportResultCode.FAILED,
+          error: new Error("Keepalive budget exhausted"),
+        });
+
+        return;
+      }
+
+      callback({ code: ExportResultCode.SUCCESS });
+    },
+    () => true,
+  );
+
+  onTestFinished(() => carryover.dispose());
+
+  const result = resultCallback();
+
+  carryover.send(new TextEncoder().encode("late-hide"), result.callback);
+
+  await expect(result.called).resolves.toStrictEqual({
+    code: ExportResultCode.SUCCESS,
+  });
+
+  await expect.poll(retained).toHaveLength(0);
+
+  expect(attempts).toBe(2);
+  expect(result.results).toStrictEqual([{ code: ExportResultCode.SUCCESS }]);
+});
+
+test("a failure on a page that stays visible is reported, not retained", async () => {
+  expect.hasAssertions();
+
+  showPage();
+
+  const carryover = withExportCarryover(
+    "stays-visible",
+    (_payload, callback) => {
+      callback({
+        code: ExportResultCode.FAILED,
+        error: new TypeError("Failed to fetch"),
+      });
+    },
+    () => true,
+  );
+
+  onTestFinished(() => carryover.dispose());
+
+  const result = resultCallback();
+
+  carryover.send(new TextEncoder().encode("stays-visible"), result.callback);
+
+  await expect(result.called).resolves.toMatchObject({
+    code: ExportResultCode.FAILED,
+  });
+
+  expect(retained()).toHaveLength(0);
+});

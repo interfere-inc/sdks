@@ -66,7 +66,7 @@ beforeEach(() => {
     sdkStack: [],
   });
 
-  kernel.attachOtel(handle, () => handle.contextManager.disable());
+  kernel.attachOtel(handle, () => undefined);
 
   registerKernel(kernel);
 
@@ -252,11 +252,11 @@ test("captures logs only while analytics consent is granted", async () => {
 
   cleanup = undefined;
 
-  const runtime = new PluginRuntime(kernel, false);
+  const runtime = new PluginRuntime(kernel, "required");
 
   kernel.attachRuntime(runtime);
 
-  runtime.applyProviderConfig({ ...DISABLE_ALL_PLUGINS, logs: true }, false);
+  runtime.applyProviderConfig({ ...DISABLE_ALL_PLUGINS, logs: true });
 
   await vi.dynamicImportSettled();
 
@@ -266,7 +266,7 @@ test("captures logs only while analytics consent is granted", async () => {
 
   expect(exporter.getFinishedLogRecords()).toStrictEqual([]);
 
-  kernel.consent.set({ analytics: true, replay: false });
+  kernel.consent.set({ replay: false });
 
   await vi.dynamicImportSettled();
 

@@ -163,12 +163,11 @@ describe("A56 consent.set before init() resolves", () => {
     try {
       const initializing = wrapper.init({
         apiHost: API_HOST,
-        consent: { analytics: true, replay: true },
         enabled: true,
         tracing: false,
       });
 
-      wrapper.consent.set({ analytics: false, replay: false });
+      wrapper.consent.set(false);
 
       await initializing;
 

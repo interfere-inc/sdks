@@ -106,42 +106,18 @@ function useInterfereIdentity() {
 
 ## Consent Management
 
-By default, all SDK features are active. To gate features behind user consent:
-
-```tsx
-<InterfereProvider consent={{ analytics: true, replay: false }}>
-  <App />
-</InterfereProvider>
-```
-
-### Consent categories
-
-| Category    | Plugins                               | Gated?    |
-| ----------- | ------------------------------------- | --------- |
-| `necessary` | Error tracking                        | Always on |
-| `analytics` | Page events, rage clicks, fingerprint | Yes       |
-| `replay`    | Session replay                        | Yes       |
-
-### Imperative API
-
-```tsx
-const { consent } = useInterfere();
-
-consent.set({ analytics: true, replay: true }); // selective
-consent.set(); // grant all
-consent.get(); // current state
-```
-
-### Initial consent via bootstrap
-
-To set consent before React renders:
+By default, all SDK features are active. If your app must collect consent first:
 
 ```ts
 // src/main.tsx
-import { init } from "@interfere/vite/init";
+import { consent, init } from "@interfere/vite/init";
 
-init({ consent: { analytics: false, replay: false } });
+init({ consent: "required" });
+
+consent.set(true); // once the visitor accepts; `{ replay: false }` grants analytics only, `false` revokes
 ```
+
+See the `@interfere/vite` README for what is captured before consent and for consent-manager recipes.
 
 ## What's Included
 

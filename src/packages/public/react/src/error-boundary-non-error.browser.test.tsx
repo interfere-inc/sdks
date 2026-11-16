@@ -62,7 +62,7 @@ beforeEach(() => {
 
   kernel.attachRuntime(runtime);
 
-  runtime.applyProviderConfig(DISABLE_ALL_PLUGINS, undefined);
+  runtime.applyProviderConfig(DISABLE_ALL_PLUGINS);
 });
 
 afterEach(async () => {

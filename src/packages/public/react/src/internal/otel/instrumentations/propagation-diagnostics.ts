@@ -51,11 +51,15 @@ function writeOrigins(key: string, origins: ReadonlySet<string>) {
  * policy never breaks a first POST. An origin whose header-bearing request
  * failed at the network layer before any response was seen is marked
  * header-less for the session; nothing is retried. The memo lives in
- * `sessionStorage` when available, else in this page.
+ * `sessionStorage` when available and `canPersist` allows it, else in this page.
  */
-export function propagationDiagnostics(pageOrigin: string) {
-  const proven = readOrigins(PROVEN_KEY);
-  const denied = readOrigins(DENIED_KEY);
+export function propagationDiagnostics(
+  pageOrigin: string,
+  canPersist: () => boolean = () => true,
+) {
+  const persisted = canPersist();
+  const proven = persisted ? readOrigins(PROVEN_KEY) : new Set<string>();
+  const denied = persisted ? readOrigins(DENIED_KEY) : new Set<string>();
   const warned = new Set<string>();
 
   let active = true;
@@ -88,7 +92,9 @@ export function propagationDiagnostics(pageOrigin: string) {
       if (active && origin && !proven.has(origin)) {
         proven.add(origin);
 
-        writeOrigins(PROVEN_KEY, proven);
+        if (canPersist()) {
+          writeOrigins(PROVEN_KEY, proven);
+        }
       }
     },
     failure(
@@ -116,7 +122,9 @@ export function propagationDiagnostics(pageOrigin: string) {
       if (!denied.has(origin)) {
         denied.add(origin);
 
-        writeOrigins(DENIED_KEY, denied);
+        if (canPersist()) {
+          writeOrigins(DENIED_KEY, denied);
+        }
       }
 
       if (!warned.has(origin)) {

@@ -180,7 +180,12 @@ describe("D-RC-10 a newer protocol version and unknown fields are tolerated", ()
 
     expect(kernel.getPluginConfigState("replay")).toBe("disabled");
     expect(kernel.getPluginConfigState("errors")).toBe("enabled");
-    expect(kernel.consent.get()).toBeNull();
+
+    expect(kernel.consent.get()).toStrictEqual({
+      analytics: true,
+      replay: true,
+    });
+
     expect(kernel.remoteProtocolVersion).toBe(99);
 
     worker.resetHandlers();
@@ -207,7 +212,6 @@ describe("D-RC-11 remote config cannot widen local capture or consent", () => {
     const kernel = await startKernel();
 
     kernel.syncProviderConfig({
-      consent: { analytics: true, replay: true },
       plugins: { ...DISABLE_ALL_PLUGINS, errors: true },
     });
 
@@ -225,7 +229,7 @@ describe("D-RC-11 remote config cannot widen local capture or consent", () => {
     serveSessions();
 
     const kernel = await startKernel({
-      consent: { analytics: false, replay: false },
+      consent: "required",
     });
 
     expect(kernel.consent.get()).toStrictEqual({

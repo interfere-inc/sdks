@@ -67,7 +67,7 @@ export async function startRecordingPluginRuntime(options: {
     additionalSpanProcessors: [new SimpleSpanProcessor(exporter)],
   });
 
-  kernel.attachOtel(otel, () => otel.contextManager.disable());
+  kernel.attachOtel(otel, () => undefined);
 
   const target = document.createElement("button");
 
@@ -78,7 +78,7 @@ export async function startRecordingPluginRuntime(options: {
 
   onTestFinished(async () => {
     try {
-      runtime.setConsent({ analytics: false, replay: false });
+      runtime.setConsent(false);
 
       await kernel.dispose();
     } finally {
@@ -100,15 +100,12 @@ export async function startRecordingPluginRuntime(options: {
 
   runtime.applyRemoteConfigDefaults();
 
-  runtime.applyProviderConfig(
-    {
-      ...DISABLE_ALL_PLUGINS,
-      rageClick: true,
-      replay: true,
-      device: options.devicePlugin,
-    },
-    undefined,
-  );
+  runtime.applyProviderConfig({
+    ...DISABLE_ALL_PLUGINS,
+    rageClick: true,
+    replay: true,
+    device: options.devicePlugin,
+  });
 
   await vi.dynamicImportSettled();
 

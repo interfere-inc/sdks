@@ -38,27 +38,18 @@ afterEach(async () => {
 
 test.each([
   {
-    consent: { analytics: true, replay: false },
+    consent: "required" as const,
     enabled: true,
-    expected: deviceId,
+    state: { analytics: false, replay: false },
   },
   {
-    consent: { analytics: false, replay: false },
+    consent: undefined,
     enabled: true,
-    expected: null,
-  },
-  { consent: true as const, enabled: true, expected: deviceId },
-  { consent: false as const, enabled: true, expected: null },
-  { consent: true as const, enabled: false, expected: null },
-  { consent: undefined, enabled: true, expected: null },
-  {
-    consent: { analytics: true, replay: false },
-    enabled: false,
-    expected: null,
+    state: { analytics: true, replay: true },
   },
 ])(
   "resolves startup device identity with consent $consent and device enabled $enabled",
-  async ({ consent, enabled, expected }) => {
+  async ({ consent, enabled, state }) => {
     setInjectedConfiguration("__INTERFERE_PLUGINS__", {
       ...DISABLE_ALL_PLUGINS,
       device: enabled,
@@ -72,15 +63,10 @@ test.each([
       await kernel.dispose();
     });
 
-    expect(kernel.device.getDeviceId()).toBe(expected);
-    expect(kernel.isDeviceInfoCaptureEnabled()).toBe(expected !== null);
+    expect(kernel.device.getDeviceId()).toBeNull();
+    expect(kernel.isDeviceInfoCaptureEnabled()).toBe(false);
 
-    const expectedConsent =
-      consent === true || consent === false
-        ? { analytics: consent, replay: consent }
-        : (consent ?? null);
-
-    expect(kernel.consent.get()).toStrictEqual(expectedConsent);
+    expect(kernel.consent.get()).toStrictEqual(state);
   },
 );
 
@@ -96,10 +82,10 @@ test("attaches the saved device to spans created during tracing startup", async 
   const started = vi.spyOn(processor, "onStart");
 
   const kernel = await createKernel({
-    opts: {
-      consent: { analytics: true, replay: false },
-      _internalAdditionalSpanProcessors: [processor],
+    onCreated: (created) => {
+      created.consent.set({ replay: false });
     },
+    opts: { _internalAdditionalSpanProcessors: [processor] },
   });
 
   kernel.getTracer("startup").startSpan("startup-work").end();
@@ -115,7 +101,7 @@ test("attaches the saved device to spans created during tracing startup", async 
     replay: false,
   });
 
-  kernel.consent.set({ analytics: false, replay: false });
+  kernel.consent.set(false);
 
   expect(kernel.device.getDeviceId()).toBeNull();
 
@@ -231,4 +217,27 @@ test("exports exceptions held for consent when the kernel is disposed", async ()
   await kernel.dispose();
 
   expect(exported()).toStrictEqual(["held 0"]);
+});
+
+test("restores the saved device only once required consent is granted", async () => {
+  setInjectedConfiguration("__INTERFERE_PLUGINS__", {
+    ...DISABLE_ALL_PLUGINS,
+    device: true,
+  });
+
+  browserStorage.local.set("interfere:device_id", deviceId);
+
+  const kernel = await createKernel({
+    opts: { consent: "required", tracing: false },
+  });
+
+  onTestFinished(async () => {
+    await kernel.dispose();
+  });
+
+  expect(kernel.device.getDeviceId()).toBeNull();
+
+  kernel.consent.set(true);
+
+  await expect.poll(() => kernel.device.getDeviceId()).toBe(deviceId);
 });

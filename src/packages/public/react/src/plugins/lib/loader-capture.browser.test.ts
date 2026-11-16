@@ -97,6 +97,7 @@ beforeEach(() => {
 
       instrumentations.dispose();
     },
+    endOpenRequests: instrumentations.endOpenRequests,
     recordCurrentView: views.recordCurrentView,
     setPageEventsEnabled: instrumentations.setPageEventsEnabled,
   };
@@ -114,8 +115,6 @@ afterEach(async () => {
 
     await kernel.dispose();
   } finally {
-    otel.contextManager.disable();
-
     context.disable();
 
     propagation.disable();
@@ -219,9 +218,11 @@ test("keeps page events capturing when a second sync starts while the plugin loa
   kernel.attachOtel(otel, controls.dispose, observed);
 
   const pageEventsOnly = { ...DISABLE_ALL_PLUGINS, pageEvents: true };
-  const overlapping = new PluginRuntime(kernel, true, pageEventsOnly);
+  const overlapping = new PluginRuntime(kernel, undefined, pageEventsOnly);
 
   kernel.attachRuntime(overlapping);
+
+  overlapping.setConsent(true);
 
   overlapping.start();
 

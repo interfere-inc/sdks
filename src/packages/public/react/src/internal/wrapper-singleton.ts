@@ -1,6 +1,6 @@
 import type { IdentifyParams } from "@interfere/types/sdk/identify";
 import type {
-  ConsentInput,
+  ConsentDecision,
   ConsentState,
 } from "@interfere/types/sdk/plugins/manifest";
 
@@ -19,7 +19,7 @@ export interface WrapperSingleton {
   close: () => Promise<void>;
   consent: {
     get: () => ConsentState | null;
-    set: (value?: ConsentInput) => void;
+    set: (decision: ConsentDecision) => void;
   };
   getKernel: () => Kernel;
   getKernelOrNull: () => Kernel | null;
@@ -67,7 +67,7 @@ type Lifecycle =
 /** Owns one wrapper's kernel; initialization and shutdown finish before another kernel can start. */
 export function createWrapperSingleton(input: WrapperSingletonInput) {
   let lifecycle: Lifecycle = { status: "idle" };
-  let queuedConsent: { value: ConsentInput | undefined } | null = null;
+  let queuedConsent: { value: ConsentDecision } | null = null;
   let queuedIdentity: IdentifyParams | null = null;
 
   const listeners = new Set<() => void>();

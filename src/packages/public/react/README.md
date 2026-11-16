@@ -161,8 +161,6 @@ Pass `{ root: true }` as the third argument to start a new trace.
 
 You don't need to change anything. Interfere checks each request for another tool that writes the `traceparent` header: Datadog RUM (for its `allowedTracingUrls`), Sentry (with `propagateTraceparent`) or another OpenTelemetry propagator. If one is there, Interfere leaves the header to it, so the request carries a single `traceparent` and stays in that tool's trace. Interfere records the request either way. Interfere never removes or replaces headers that your code or another tool set, and it leaves other tools' OpenTelemetry providers on the page alone.
 
-<!-- PLACEHOLDER: keep the next paragraph only if `tracing.propagation` ships as an escape hatch; add one sentence for `tracing.mode` only if it stays public. -->
-
 If another tool writes `traceparent` and Interfere doesn't recognise it, such as New Relic or an in-house interceptor, set `tracing: { propagation: "external" }` in `init()`. Interfere then writes no `traceparent` or `tracestate` and still records every request.
 
 If another tool copies request headers before sending them, Interfere can't see the `traceparent` that went out. Report it from that tool's request-completion hook:
