@@ -19,9 +19,9 @@ pub enum ProblemEvidenceResponseObservationsItemEvidenceItem {
 
         ProblemEvidenceResponseObservationsItemEvidenceItemAffectedUsers(ProblemEvidenceResponseObservationsItemEvidenceItemAffectedUsers),
 
-        ProblemEvidenceResponseObservationsItemEvidenceItemAfterLimit(ProblemEvidenceResponseObservationsItemEvidenceItemAfterLimit),
+        ProblemEvidenceResponseObservationsItemEvidenceItemAfterEventCount(ProblemEvidenceResponseObservationsItemEvidenceItemAfterEventCount),
 
-        ProblemEvidenceResponseObservationsItemEvidenceItemEight(ProblemEvidenceResponseObservationsItemEvidenceItemEight),
+        ProblemEvidenceResponseObservationsItemEvidenceItemRecordCount(ProblemEvidenceResponseObservationsItemEvidenceItemRecordCount),
 
         ProblemEvidenceResponseObservationsItemEvidenceItemEvidenceDigest(ProblemEvidenceResponseObservationsItemEvidenceItemEvidenceDigest),
 
@@ -59,12 +59,12 @@ impl ProblemEvidenceResponseObservationsItemEvidenceItem {
         matches!(self, Self::ProblemEvidenceResponseObservationsItemEvidenceItemAffectedUsers(_))
     }
 
-    pub fn is_problem_evidence_response_observations_item_evidence_item_after_limit(&self) -> bool {
-        matches!(self, Self::ProblemEvidenceResponseObservationsItemEvidenceItemAfterLimit(_))
+    pub fn is_problem_evidence_response_observations_item_evidence_item_after_event_count(&self) -> bool {
+        matches!(self, Self::ProblemEvidenceResponseObservationsItemEvidenceItemAfterEventCount(_))
     }
 
-    pub fn is_problem_evidence_response_observations_item_evidence_item_eight(&self) -> bool {
-        matches!(self, Self::ProblemEvidenceResponseObservationsItemEvidenceItemEight(_))
+    pub fn is_problem_evidence_response_observations_item_evidence_item_record_count(&self) -> bool {
+        matches!(self, Self::ProblemEvidenceResponseObservationsItemEvidenceItemRecordCount(_))
     }
 
     pub fn is_problem_evidence_response_observations_item_evidence_item_evidence_digest(&self) -> bool {
@@ -178,30 +178,30 @@ impl ProblemEvidenceResponseObservationsItemEvidenceItem {
                 }
     }
 
-    pub fn as_problem_evidence_response_observations_item_evidence_item_after_limit(&self) -> Option<&ProblemEvidenceResponseObservationsItemEvidenceItemAfterLimit> {
+    pub fn as_problem_evidence_response_observations_item_evidence_item_after_event_count(&self) -> Option<&ProblemEvidenceResponseObservationsItemEvidenceItemAfterEventCount> {
         match self {
-                    Self::ProblemEvidenceResponseObservationsItemEvidenceItemAfterLimit(value) => Some(value),
+                    Self::ProblemEvidenceResponseObservationsItemEvidenceItemAfterEventCount(value) => Some(value),
                     _ => None,
                 }
     }
 
-    pub fn into_problem_evidence_response_observations_item_evidence_item_after_limit(self) -> Option<ProblemEvidenceResponseObservationsItemEvidenceItemAfterLimit> {
+    pub fn into_problem_evidence_response_observations_item_evidence_item_after_event_count(self) -> Option<ProblemEvidenceResponseObservationsItemEvidenceItemAfterEventCount> {
         match self {
-                    Self::ProblemEvidenceResponseObservationsItemEvidenceItemAfterLimit(value) => Some(value),
+                    Self::ProblemEvidenceResponseObservationsItemEvidenceItemAfterEventCount(value) => Some(value),
                     _ => None,
                 }
     }
 
-    pub fn as_problem_evidence_response_observations_item_evidence_item_eight(&self) -> Option<&ProblemEvidenceResponseObservationsItemEvidenceItemEight> {
+    pub fn as_problem_evidence_response_observations_item_evidence_item_record_count(&self) -> Option<&ProblemEvidenceResponseObservationsItemEvidenceItemRecordCount> {
         match self {
-                    Self::ProblemEvidenceResponseObservationsItemEvidenceItemEight(value) => Some(value),
+                    Self::ProblemEvidenceResponseObservationsItemEvidenceItemRecordCount(value) => Some(value),
                     _ => None,
                 }
     }
 
-    pub fn into_problem_evidence_response_observations_item_evidence_item_eight(self) -> Option<ProblemEvidenceResponseObservationsItemEvidenceItemEight> {
+    pub fn into_problem_evidence_response_observations_item_evidence_item_record_count(self) -> Option<ProblemEvidenceResponseObservationsItemEvidenceItemRecordCount> {
         match self {
-                    Self::ProblemEvidenceResponseObservationsItemEvidenceItemEight(value) => Some(value),
+                    Self::ProblemEvidenceResponseObservationsItemEvidenceItemRecordCount(value) => Some(value),
                     _ => None,
                 }
     }
@@ -259,8 +259,8 @@ impl fmt::Display for ProblemEvidenceResponseObservationsItemEvidenceItem {
             Self::ProblemEvidenceResponseObservationsItemEvidenceItemFour(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::ProblemEvidenceResponseObservationsItemEvidenceItemFive(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::ProblemEvidenceResponseObservationsItemEvidenceItemAffectedUsers(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
-            Self::ProblemEvidenceResponseObservationsItemEvidenceItemAfterLimit(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
-            Self::ProblemEvidenceResponseObservationsItemEvidenceItemEight(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::ProblemEvidenceResponseObservationsItemEvidenceItemAfterEventCount(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::ProblemEvidenceResponseObservationsItemEvidenceItemRecordCount(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::ProblemEvidenceResponseObservationsItemEvidenceItemEvidenceDigest(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::ProblemEvidenceResponseObservationsItemEvidenceItemMinSeverity(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::ProblemEvidenceResponseObservationsItemEvidenceItemSince(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),

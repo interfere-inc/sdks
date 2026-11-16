@@ -8,7 +8,7 @@ import { expect, test } from "vitest";
 
 import { correlationSpanProcessor } from "./instrumentation.js";
 
-test("host providers correlate request and child spans without replacing vendor identity", async () => {
+test("host providers correlate request and child spans from interfere.* baggage only", async () => {
   const processor = correlationSpanProcessor();
 
   expect(correlationSpanProcessor()).not.toBe(processor);
@@ -59,9 +59,7 @@ test("host providers correlate request and child spans without replacing vendor 
 
     tracer.startSpan("legacy-request", {}, legacy).end();
 
-    expect(exporter.getFinishedSpans()[2]?.attributes).toStrictEqual({
-      "session.id": "019f4cac-2178-768b-ac0a-5b98b34d4c58",
-    });
+    expect(exporter.getFinishedSpans()[2]?.attributes).toStrictEqual({});
   } finally {
     await provider.shutdown();
   }

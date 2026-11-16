@@ -1,6 +1,6 @@
 import { drainUrl } from "@interfere/constants/api";
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
-import { correlationBaggageSpanProcessor } from "@interfere/types/sdk/correlation-span-processor";
+import { correlationSpanProcessor } from "@interfere/types/sdk/correlation-span-processor";
 import { VERCEL_EXPORT_TIMEOUT_MS } from "@interfere/types/sdk/server-tracing";
 import {
   createUrlRedactionSpanProcessor,
@@ -129,7 +129,7 @@ export async function startNodeRuntime(input: NodeRuntimeInput) {
 
   const spanProcessors: SpanProcessor[] = [
     containSpanProcessor(createUrlRedactionSpanProcessor(urlRedaction)),
-    correlationBaggageSpanProcessor,
+    correlationSpanProcessor(),
     ...(drain
       ? []
       : [

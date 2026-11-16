@@ -1,29 +1,6 @@
-import { acceptsCorrelationBaggageEntry } from "#data/correlation-baggage";
+import { BaggageSpanProcessor } from "@opentelemetry/baggage-span-processor";
 
-import { propagation } from "@opentelemetry/api";
-import type { SpanProcessor } from "@opentelemetry/sdk-trace-base";
-
-/** Creates a processor that copies valid Interfere correlation baggage onto host spans. */
+/** Creates a processor that copies Interfere correlation baggage (interfere.* keys) onto host spans. */
 export function correlationSpanProcessor() {
-  return { ...correlationBaggageSpanProcessor } satisfies SpanProcessor;
+  return new BaggageSpanProcessor((key) => key.startsWith("interfere."));
 }
-
-export const correlationBaggageSpanProcessor = {
-  async forceFlush() {
-    await Promise.resolve();
-  },
-  // oxlint-disable-next-line eslint/no-empty-function
-  onEnd() {},
-  onStart(span, parentContext) {
-    for (const [key, entry] of propagation
-      .getBaggage(parentContext)
-      ?.getAllEntries() ?? []) {
-      if (acceptsCorrelationBaggageEntry(key, entry.value)) {
-        span.setAttribute(key, entry.value);
-      }
-    }
-  },
-  async shutdown() {
-    await Promise.resolve();
-  },
-} satisfies SpanProcessor;
