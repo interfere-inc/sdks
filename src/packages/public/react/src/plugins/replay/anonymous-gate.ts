@@ -32,6 +32,7 @@ export function createAnonymousReplayGate({
   softLimitBytes,
 }: AnonymousReplayGateInput) {
   let admittedSessionId: string | null = null;
+  let recordingInBufferMode = false;
 
   function mode() {
     if (ctx.isIdentified()) {
@@ -50,6 +51,32 @@ export function createAnonymousReplayGate({
     return (policy === "on_error" ? "buffer" : "off") satisfies RecordingMode;
   }
 
+  function syncRecording() {
+    const recorder = getRecorder();
+
+    if (!recorder || isHalted() || isPaused()) {
+      return;
+    }
+
+    if (mode() === "off") {
+      recorder.stop();
+    } else {
+      recorder.start();
+    }
+  }
+
+  function restartRecording() {
+    getRecorder()?.stop();
+
+    syncRecording();
+  }
+
+  function leaveBufferMode() {
+    if (recordingInBufferMode) {
+      restartRecording();
+    }
+  }
+
   function admitOnError() {
     const sessionId = ctx.getSessionId();
 
@@ -62,6 +89,8 @@ export function createAnonymousReplayGate({
     ctx.admitReplay();
 
     flush();
+
+    leaveBufferMode();
   }
 
   function recordIdentified() {
@@ -72,16 +101,12 @@ export function createAnonymousReplayGate({
     if (ctx.getAnonymousReplayPolicy() === "never") {
       buffer.drain();
 
-      getRecorder()?.takeFullSnapshot();
+      restartRecording();
     }
 
     flush();
-  }
 
-  function takeCheckpoint() {
-    if (!isPaused() && mode() === "buffer") {
-      getRecorder()?.takeFullSnapshot();
-    }
+    leaveBufferMode();
   }
 
   return {
@@ -90,6 +115,18 @@ export function createAnonymousReplayGate({
         | ReplayAdmission
         | undefined;
     },
+
+    allowsRecording() {
+      return mode() !== "off";
+    },
+
+    checkoutEveryNms() {
+      recordingInBufferMode = mode() === "buffer";
+
+      return recordingInBufferMode ? ANONYMOUS_CHECKPOINT_MS : undefined;
+    },
+
+    syncRecording,
 
     holdsUploads() {
       const current = mode();
@@ -112,17 +149,10 @@ export function createAnonymousReplayGate({
 
       const unsubscribeIdentified = ctx.onIdentified(recordIdentified);
 
-      const checkpointTimer = setInterval(
-        takeCheckpoint,
-        ANONYMOUS_CHECKPOINT_MS,
-      );
-
       return () => {
         unsubscribeException();
 
         unsubscribeIdentified();
-
-        clearInterval(checkpointTimer);
       };
     },
   };

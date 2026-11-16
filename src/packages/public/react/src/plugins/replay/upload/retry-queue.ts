@@ -15,7 +15,7 @@ export interface PendingReplayChunk {
   trigger: ChunkTrigger | undefined;
 }
 
-export function createReplayRetryQueue() {
+export function createReplayRetryQueue(opts: { onKeyframeLost: () => void }) {
   let pending: { chunk: PendingReplayChunk; bytes: number }[] = [];
   let totalBytes = 0;
 
@@ -27,7 +27,14 @@ export function createReplayRetryQueue() {
 
       totalBytes += bytes;
 
-      while (totalBytes > MAX_RETRY_BYTES) {
+      if (totalBytes <= MAX_RETRY_BYTES) {
+        return;
+      }
+
+      while (
+        totalBytes > MAX_RETRY_BYTES ||
+        pending[0]?.chunk.payload.hasFullSnapshot === false
+      ) {
         const dropped = pending.shift();
 
         if (!dropped) {
@@ -40,6 +47,10 @@ export function createReplayRetryQueue() {
           "replay retry buffer full; dropping oldest chunk of %d bytes",
           dropped.bytes,
         );
+      }
+
+      if (pending.length === 0) {
+        opts.onKeyframeLost();
       }
     },
     drain() {

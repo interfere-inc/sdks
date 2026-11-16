@@ -72,3 +72,26 @@ test("discards pending config data on disabled cleanup", async () => {
   expect(uploads[0]?.text).toContain("enabled-later");
   expect(uploads[0]?.text).not.toContain("disabled-tail");
 });
+
+test("caps the pending buffer and re-snapshots after dropping it", async () => {
+  const payload = "x".repeat(1024 * 1024);
+
+  for (let index = 0; index < 20; index += 1) {
+    record.addCustomEvent(`pending-${index}`, payload);
+  }
+
+  replay.runtime.applyRemoteConfigDefaults();
+
+  await replayUploads.uploadsReached(2);
+
+  expect(uploads.map(({ text }) => text).join("\n")).not.toContain(
+    '"pending-0"',
+  );
+
+  expect(uploads.flatMap(({ events }) => events)).toStrictEqual(
+    expect.arrayContaining([
+      expect.objectContaining({ type: EventType.Meta }),
+      expect.objectContaining({ type: EventType.FullSnapshot }),
+    ]),
+  );
+});

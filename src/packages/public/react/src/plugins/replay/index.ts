@@ -11,7 +11,10 @@ import { onPageUnloading } from "../../internal/page-lifecycle/page-lifecycle.js
 import { createLogger } from "../../util/log.js";
 import type { Plugin } from "../lib/types.js";
 import { createAnonymousReplayGate } from "./anonymous-gate.js";
-import { createReplayBuffer } from "./chunking/buffer.js";
+import {
+  capPendingReplayBuffer,
+  createReplayBuffer,
+} from "./chunking/buffer.js";
 import {
   splitReplayEvents,
   toReplayChunkPayload,
@@ -77,13 +80,18 @@ const replayPlugin: Plugin = {
     let stopAnonymousGate: (() => void) | null = null;
     let isPaused = false;
     let stopMarked = false;
+    let awaitingKeyframe = false;
 
     const startup = new AbortController();
+    const consent = new AbortController();
     const compressor = createCompressor();
     const windowId = ctx.getWindowId();
     const sequence = createSegmentSequence(windowId);
 
-    const retryQueue = createReplayRetryQueue();
+    const retryQueue = createReplayRetryQueue({
+      onKeyframeLost: requestKeyframe,
+    });
+
     let recorderFaults = 0;
     let halted = false;
 
@@ -214,6 +222,12 @@ const replayPlugin: Plugin = {
       softLimitBytes: SOFT_FLUSH_BYTES,
     });
 
+    function requestKeyframe() {
+      awaitingKeyframe = true;
+
+      recorder?.takeFullSnapshot();
+    }
+
     function markStopped(reason: ReplayStopReason) {
       if (stopMarked) {
         return;
@@ -229,11 +243,13 @@ const replayPlugin: Plugin = {
     }
 
     function flush(opts?: FlushOptions) {
-      if (
-        halted ||
-        ctx.getPluginConfigState("replay") !== "enabled" ||
-        anonymousGate.holdsUploads()
-      ) {
+      const state = ctx.getPluginConfigState("replay");
+
+      if (!halted && state === "pending") {
+        awaitingKeyframe ||= capPendingReplayBuffer(buffer, SOFT_FLUSH_BYTES);
+      }
+
+      if (halted || state !== "enabled" || anonymousGate.holdsUploads()) {
         return;
       }
 
@@ -250,16 +266,18 @@ const replayPlugin: Plugin = {
         return;
       }
 
-      const { chunks, droppedEventBytes } = splitReplayEvents(drained);
+      const split = splitReplayEvents(drained, awaitingKeyframe);
 
-      for (const bytes of droppedEventBytes) {
+      ({ awaitingKeyframe } = split);
+
+      for (const bytes of split.droppedEventBytes) {
         log.warn(
           "dropping replay event of ~%d bytes: too large to upload",
           bytes,
         );
       }
 
-      for (const group of chunks) {
+      for (const group of split.chunks) {
         void sendChunk(
           {
             payload: toReplayChunkPayload(group),
@@ -270,6 +288,10 @@ const replayPlugin: Plugin = {
           },
           opts?.unload ?? false,
         );
+      }
+
+      if (split.requestKeyframe) {
+        requestKeyframe();
       }
     }
 
@@ -282,6 +304,7 @@ const replayPlugin: Plugin = {
           ...pending,
           compressor,
           ctx,
+          signal: consent.signal,
           unload,
         });
 
@@ -312,7 +335,12 @@ const replayPlugin: Plugin = {
 
     // WARNING: A hidden or idle page keeps its session id and can keep throwing for hours; without this snapshot those failures have no replay evidence.
     const snapshotWhilePaused = (reason: SessionPauseReason) => {
-      if (!isPaused || halted || !recorder?.start()) {
+      if (
+        !isPaused ||
+        halted ||
+        !anonymousGate.allowsRecording() ||
+        !recorder?.start()
+      ) {
         return;
       }
 
@@ -330,7 +358,7 @@ const replayPlugin: Plugin = {
 
       isPaused = false;
 
-      recorder?.start();
+      anonymousGate.syncRecording();
 
       armFlushTimer();
     };
@@ -342,6 +370,8 @@ const replayPlugin: Plugin = {
 
     const init = async () => {
       recorder = await startReplayRecorder({
+        checkoutEveryNms: () => anonymousGate.checkoutEveryNms(),
+        deferStart: !anonymousGate.allowsRecording(),
         onEvent: (event, isCheckout) => {
           if (startup.signal.aborted) {
             return;
@@ -385,9 +415,17 @@ const replayPlugin: Plugin = {
 
       unsubscribeConfig = ctx.subscribePluginConfigState("replay", (state) => {
         if (state === "enabled") {
+          anonymousGate.syncRecording();
+
+          if (awaitingKeyframe) {
+            requestKeyframe();
+          }
+
           flush();
         }
       });
+
+      anonymousGate.syncRecording();
 
       armFlushTimer();
 
@@ -421,6 +459,8 @@ const replayPlugin: Plugin = {
 
     return (reason) => {
       if (reason === "consent-revoked") {
+        consent.abort();
+
         clearExportCarryover("replay:");
 
         buffer.drain();

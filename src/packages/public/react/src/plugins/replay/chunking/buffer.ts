@@ -3,6 +3,11 @@ import type { eventWithTime } from "@rrweb/types";
 
 import { classifyReplayEvent, utf8ByteLength } from "./chunking.js";
 import type { BufferedReplayEvent } from "./chunking.js";
+import { createLogger } from "../../../util/log.js";
+
+const log = createLogger("replay");
+
+const MAX_PENDING_BYTES = 16 * 1024 * 1024;
 
 export interface ReplayBuffer {
   drain: () => BufferedReplayEvent[];
@@ -45,7 +50,14 @@ export function createReplayBuffer(opts: {
         checkpoints.push(entries.length);
       }
 
-      entries.push({ json, ts: Date.now(), bytes, isActivity, isFullSnapshot });
+      entries.push({
+        json,
+        ts: Date.now(),
+        bytes,
+        isActivity,
+        isFullSnapshot,
+        eventType: event.type,
+      });
 
       totalBytes += bytes;
 
@@ -72,4 +84,28 @@ export function createReplayBuffer(opts: {
       totalBytes = entries.reduce((sum, entry) => sum + entry.bytes, 0);
     },
   } satisfies ReplayBuffer;
+}
+
+export function capPendingReplayBuffer(
+  buffer: ReplayBuffer,
+  softLimitBytes: number,
+) {
+  if (buffer.totalBytes < softLimitBytes) {
+    return false;
+  }
+
+  buffer.retainFromCheckpoint(Date.now());
+
+  if (buffer.totalBytes < MAX_PENDING_BYTES) {
+    return false;
+  }
+
+  log.warn(
+    "dropping %d replay bytes buffered while remote config is pending",
+    buffer.totalBytes,
+  );
+
+  buffer.drain();
+
+  return true;
 }

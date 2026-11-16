@@ -80,4 +80,71 @@ describe(startReplayRecorder, () => {
     expect(onFault).toHaveBeenCalledTimes(2);
     expect(onFault).toHaveBeenCalledWith(error);
   });
+
+  test("stopping releases the node mirror rrweb keeps between recordings", async () => {
+    const recorder = await startReplayRecorder({
+      onEvent: vi.fn<Parameters<typeof startReplayRecorder>[0]["onEvent"]>(),
+      onFault: vi.fn<Parameters<typeof startReplayRecorder>[0]["onFault"]>(),
+      onMutationStorm:
+        vi.fn<Parameters<typeof startReplayRecorder>[0]["onMutationStorm"]>(),
+      recordOptions: toRecordOptions({}),
+    });
+
+    onTestFinished(() => recorder?.stop());
+
+    expect(record.mirror.getIds().length).toBeGreaterThan(0);
+
+    recorder?.stop();
+
+    expect(record.mirror.getIds()).toStrictEqual([]);
+  });
+
+  test("reads the checkout interval each time recording starts", async () => {
+    let checkoutEveryNms: number | undefined = 30_000;
+
+    const recorder = await startReplayRecorder({
+      checkoutEveryNms: () => checkoutEveryNms,
+      onEvent: vi.fn<Parameters<typeof startReplayRecorder>[0]["onEvent"]>(),
+      onFault: vi.fn<Parameters<typeof startReplayRecorder>[0]["onFault"]>(),
+      onMutationStorm:
+        vi.fn<Parameters<typeof startReplayRecorder>[0]["onMutationStorm"]>(),
+      recordOptions: toRecordOptions({}),
+    });
+
+    onTestFinished(() => recorder?.stop());
+
+    recorder?.stop();
+
+    checkoutEveryNms = undefined;
+
+    recorder?.start();
+
+    const intervals = vi
+      .mocked(record)
+      .mock.calls.map(([options]) => options?.checkoutEveryNms);
+
+    expect(intervals.at(-2)).toBe(30_000);
+    expect(intervals.at(-1)).not.toBe(30_000);
+  });
+
+  test("can be created without recording until started", async () => {
+    vi.mocked(record).mockClear();
+
+    const recorder = await startReplayRecorder({
+      deferStart: true,
+      onEvent: vi.fn<Parameters<typeof startReplayRecorder>[0]["onEvent"]>(),
+      onFault: vi.fn<Parameters<typeof startReplayRecorder>[0]["onFault"]>(),
+      onMutationStorm:
+        vi.fn<Parameters<typeof startReplayRecorder>[0]["onMutationStorm"]>(),
+      recordOptions: toRecordOptions({}),
+    });
+
+    onTestFinished(() => recorder?.stop());
+
+    expect(recorder).not.toBeNull();
+    expect(record).not.toHaveBeenCalled();
+
+    expect(recorder?.start()).toBe(true);
+    expect(record).toHaveBeenCalledTimes(1);
+  });
 });

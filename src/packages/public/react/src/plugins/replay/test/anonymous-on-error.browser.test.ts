@@ -146,7 +146,11 @@ test("the buffer keeps about the last minute, starting at a full snapshot", asyn
 
   record.addCustomEvent("stale", true);
 
-  await vi.advanceTimersByTimeAsync(120_000);
+  await vi.advanceTimersByTimeAsync(40_000);
+
+  record.takeFullSnapshot(true);
+
+  await vi.advanceTimersByTimeAsync(80_000);
 
   record.addCustomEvent("recent", true);
 
@@ -275,6 +279,40 @@ test("identify on a never surface starts recording from a fresh full snapshot", 
   ]);
 
   expect(uploadedText()).toContain("identified");
+});
+
+test("a never surface does not start rrweb until the visitor is identified", async () => {
+  expect.hasAssertions();
+
+  const harness = await startReplayHarness({ anonymousReplayPolicy: "never" });
+
+  expect(() => record.addCustomEvent("anonymous", true)).toThrow(
+    "please add custom event after start recording",
+  );
+
+  await harness.kernel.identity.set({ identifier: "user-3", source: SOURCE });
+
+  expect(() => record.addCustomEvent("identified", true)).not.toThrow();
+});
+
+test("a never policy that arrives with the remote config stops the pending recording", async () => {
+  expect.hasAssertions();
+
+  const harness = await startReplayHarness({ remoteConfig: "pending" });
+
+  expect(() => record.addCustomEvent("pending", true)).not.toThrow();
+
+  harness.kernel.anonymousReplayPolicy = "never";
+
+  harness.runtime.applyRemoteConfigDefaults();
+
+  expect(() => record.addCustomEvent("anonymous", true)).toThrow(
+    "please add custom event after start recording",
+  );
+
+  await vi.advanceTimersByTimeAsync(10_000);
+
+  expect(requests).toHaveLength(0);
 });
 
 test("an always surface records anonymous sessions without the trigger", async () => {

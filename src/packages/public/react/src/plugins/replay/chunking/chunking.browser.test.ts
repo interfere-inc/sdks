@@ -1,3 +1,5 @@
+import { EventType } from "@rrweb/types";
+
 import {
   classifyReplayEvent,
   splitReplayEvents,
@@ -20,6 +22,7 @@ function buffered(event: unknown, ts: number) {
     bytes: utf8ByteLength(json),
     isActivity,
     isFullSnapshot,
+    eventType: null,
     json,
     ts,
   } satisfies BufferedReplayEvent;
@@ -30,8 +33,17 @@ function sized(bytes: number, ts: number) {
     bytes,
     isActivity: false,
     isFullSnapshot: false,
+    eventType: null,
     json: `{"ts":${ts}}`,
     ts,
+  } satisfies BufferedReplayEvent;
+}
+
+function typed(eventType: EventType, bytes: number, ts: number) {
+  return {
+    ...sized(bytes, ts),
+    eventType,
+    isFullSnapshot: eventType === EventType.FullSnapshot,
   } satisfies BufferedReplayEvent;
 }
 
@@ -248,6 +260,63 @@ describe("plugins/replay/chunking", () => {
 
         expect(chunkBytes).toBeLessThanOrEqual(TARGET_CHUNK_BYTES);
       }
+    });
+
+    test("skips the incrementals that follow a dropped full snapshot until the next keyframe", () => {
+      const before = typed(EventType.IncrementalSnapshot, 10, 1);
+      const meta = typed(EventType.Meta, 10, 2);
+      const snapshot = typed(EventType.FullSnapshot, UPLOAD_LIMIT_BYTES, 3);
+      const marker = typed(EventType.Custom, 10, 4);
+
+      const first = splitReplayEvents([
+        before,
+        meta,
+        snapshot,
+        typed(EventType.IncrementalSnapshot, 10, 4),
+        marker,
+      ]);
+
+      expect(first.chunks).toStrictEqual([[before, meta, marker]]);
+      expect(first.awaitingKeyframe).toBe(true);
+      expect(first.requestKeyframe).toBe(false);
+
+      const nextMeta = typed(EventType.Meta, 10, 6);
+      const nextSnapshot = typed(EventType.FullSnapshot, 10, 7);
+
+      const second = splitReplayEvents(
+        [typed(EventType.IncrementalSnapshot, 10, 5), nextMeta, nextSnapshot],
+        first.awaitingKeyframe,
+      );
+
+      expect(second.chunks).toStrictEqual([[nextMeta, nextSnapshot]]);
+      expect(second.awaitingKeyframe).toBe(false);
+    });
+
+    test("asks for a fresh keyframe after dropping an oversized incremental", () => {
+      const kept = typed(EventType.IncrementalSnapshot, 10, 1);
+
+      const result = splitReplayEvents([
+        kept,
+        typed(EventType.IncrementalSnapshot, UPLOAD_LIMIT_BYTES, 2),
+        typed(EventType.IncrementalSnapshot, 10, 3),
+      ]);
+
+      expect(result.chunks).toStrictEqual([[kept]]);
+      expect(result.awaitingKeyframe).toBe(true);
+      expect(result.requestKeyframe).toBe(true);
+    });
+
+    test("keeps later events after dropping an oversized custom event", () => {
+      const later = typed(EventType.IncrementalSnapshot, 10, 2);
+
+      const result = splitReplayEvents([
+        typed(EventType.Custom, UPLOAD_LIMIT_BYTES, 1),
+        later,
+      ]);
+
+      expect(result.chunks).toStrictEqual([[later]]);
+      expect(result.awaitingKeyframe).toBe(false);
+      expect(result.requestKeyframe).toBe(false);
     });
   });
 });

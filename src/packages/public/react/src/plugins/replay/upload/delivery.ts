@@ -19,7 +19,12 @@ const REPLAY_META_HEADER = "x-replay-meta";
 
 const textEncoder = new TextEncoder();
 
-export type DeliverResult = "ok" | "skipped" | "retryable" | "fatal";
+export type DeliverResult =
+  | "ok"
+  | "skipped"
+  | "retryable"
+  | "fatal"
+  | "aborted";
 
 export type ChunkTrigger = "exception";
 
@@ -63,6 +68,7 @@ interface PreparedBody {
 async function prepareBody(
   compressor: Compressor,
   rawBytes: Uint8Array<ArrayBuffer>,
+  signal: AbortSignal | undefined,
 ) {
   if (!compressor.gzip) {
     return {
@@ -73,7 +79,7 @@ async function prepareBody(
   }
 
   try {
-    const compressed = await compressor.gzip(rawBytes);
+    const compressed = await compressor.gzip(rawBytes, signal);
 
     return {
       body: compressed,
@@ -81,7 +87,9 @@ async function prepareBody(
       release: null,
     } satisfies PreparedBody;
   } catch (error) {
-    log.warn("gzip failed for chunk; sending uncompressed: %o", error);
+    if (!signal?.aborted) {
+      log.warn("gzip failed for chunk; sending uncompressed: %o", error);
+    }
 
     return {
       body: rawBytes,
@@ -151,6 +159,8 @@ export interface DeliverInput {
   admission?: ReplayAdmission | undefined;
   /** Why the chunk was cut outside the regular flush cadence, recorded on the `replay.chunk` span. */
   trigger?: ChunkTrigger | undefined;
+  /** Aborts compression and the upload when replay consent is revoked. */
+  signal?: AbortSignal | undefined;
   /** The page is hiding or unloading: compress synchronously and ask the browser to finish the request after the page unloads while the shared keepalive body budget has room. */
   unload: boolean;
 }
@@ -164,6 +174,7 @@ export async function deliverChunk({
   carryover,
   compressor,
   payload,
+  signal,
   trigger,
   unload,
 }: DeliverInput) {
@@ -176,7 +187,13 @@ export async function deliverChunk({
 
   const prepared: PreparedBody = unload
     ? prepareUnloadBody(rawBytes)
-    : await prepareBody(compressor, rawBytes);
+    : await prepareBody(compressor, rawBytes, signal);
+
+  if (signal?.aborted) {
+    prepared.release?.();
+
+    return "aborted" satisfies DeliverResult;
+  }
 
   const meta = encodeReplayMeta(chunk, payload, admission);
 
@@ -207,6 +224,7 @@ export async function deliverChunk({
           })
         : await uploadReplayChunk(target, sessionId, prepared.body, headers, {
             keepalive,
+            signal,
           });
 
     if (!upload.ok) {
@@ -220,6 +238,10 @@ export async function deliverChunk({
 
     response = await upload.json();
   } catch (error) {
+    if (signal?.aborted) {
+      return "aborted" satisfies DeliverResult;
+    }
+
     log.warn("replay chunk upload failed: %o", error);
 
     return "retryable" satisfies DeliverResult;

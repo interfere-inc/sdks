@@ -6,22 +6,43 @@ const log = createLogger("replay/compressor");
 export interface Compressor {
   readonly dispose: () => void;
   readonly gzip:
-    | ((bytes: Uint8Array) => Promise<Uint8Array<ArrayBuffer>>)
+    | ((
+        bytes: Uint8Array,
+        signal?: AbortSignal,
+      ) => Promise<Uint8Array<ArrayBuffer>>)
     | null;
 }
 
 const FAIL_OPEN: Compressor = { dispose: () => undefined, gzip: null };
 
-const gzip = async (bytes: Uint8Array) => {
+const gzip = async (bytes: Uint8Array, signal?: AbortSignal) => {
+  signal?.throwIfAborted();
+
   const cs = new CompressionStream("gzip");
-  const compressed = new Response(cs.readable).arrayBuffer();
   const writer = cs.writable.getWriter();
 
-  await writer.write(new Uint8Array(bytes));
+  const abort = () => {
+    void writer.abort(signal?.reason);
+  };
 
-  await writer.close();
+  signal?.addEventListener("abort", abort, { once: true });
 
-  return new Uint8Array(await compressed) satisfies Uint8Array<ArrayBuffer>;
+  const write = async () => {
+    await writer.write(new Uint8Array(bytes));
+
+    await writer.close();
+  };
+
+  try {
+    const [compressed] = await Promise.all([
+      new Response(cs.readable).arrayBuffer(),
+      write(),
+    ]);
+
+    return new Uint8Array(compressed) satisfies Uint8Array<ArrayBuffer>;
+  } finally {
+    signal?.removeEventListener("abort", abort);
+  }
 };
 
 export function createCompressor() {

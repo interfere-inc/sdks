@@ -22,6 +22,7 @@ export interface BufferedReplayEvent {
   bytes: number;
   isActivity: boolean;
   isFullSnapshot: boolean;
+  eventType: number | null;
   json: string;
   ts: number;
 }
@@ -36,8 +37,10 @@ export interface ReplayChunkPayload {
 }
 
 export interface SplitReplayEventsResult {
+  awaitingKeyframe: boolean;
   chunks: BufferedReplayEvent[][];
   droppedEventBytes: number[];
+  requestKeyframe: boolean;
 }
 
 // oxlint-disable-next-line anti-slop/no-unknown-parameters -- Replay classification must tolerate malformed buffered values without discarding their serialized payloads.
@@ -110,18 +113,40 @@ export function toReplayChunkPayload(group: BufferedReplayEvent[]) {
   } satisfies ReplayChunkPayload;
 }
 
-export function splitReplayEvents(buffered: BufferedReplayEvent[]) {
+export function splitReplayEvents(
+  buffered: BufferedReplayEvent[],
+  awaitingKeyframe = false,
+) {
   const chunks: BufferedReplayEvent[][] = [];
   const droppedEventBytes: number[] = [];
+
+  let awaiting = awaitingKeyframe;
+  let requestKeyframe = false;
 
   let current: BufferedReplayEvent[] = [];
   let currentBytes = 0;
 
   for (const entry of buffered) {
+    if (awaiting && entry.eventType === EventType.IncrementalSnapshot) {
+      continue;
+    }
+
+    if (entry.eventType === EventType.Meta || entry.isFullSnapshot) {
+      awaiting = false;
+    }
+
     const singleEventBodyBytes = entry.bytes + NEWLINE_BYTES;
 
     if (singleEventBodyBytes > UPLOAD_LIMIT_BYTES) {
       droppedEventBytes.push(singleEventBodyBytes);
+
+      if (entry.eventType === EventType.IncrementalSnapshot) {
+        requestKeyframe = true;
+      }
+
+      awaiting ||=
+        entry.isFullSnapshot ||
+        entry.eventType === EventType.IncrementalSnapshot;
 
       continue;
     }
@@ -146,7 +171,12 @@ export function splitReplayEvents(buffered: BufferedReplayEvent[]) {
     chunks.push(current);
   }
 
-  return { chunks, droppedEventBytes } satisfies SplitReplayEventsResult;
+  return {
+    awaitingKeyframe: awaiting,
+    chunks,
+    droppedEventBytes,
+    requestKeyframe,
+  } satisfies SplitReplayEventsResult;
 }
 
 export function utf8ByteLength(value: string) {

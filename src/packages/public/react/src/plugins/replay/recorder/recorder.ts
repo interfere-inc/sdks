@@ -65,6 +65,8 @@ export interface ReplayRecorder {
 }
 
 export interface StartReplayRecorderOptions {
+  checkoutEveryNms?: () => number | undefined;
+  deferStart?: boolean;
   onEvent: (event: eventWithTime, isCheckout?: boolean) => void;
   // oxlint-disable-next-line anti-slop/no-unknown-parameters -- rrweb forwards arbitrary thrown values to its fault callback, including non-Error rejections.
   onFault: (error: unknown) => void;
@@ -74,6 +76,8 @@ export interface StartReplayRecorderOptions {
 }
 
 export async function startReplayRecorder({
+  checkoutEveryNms,
+  deferStart = false,
   onEvent,
   onFault,
   onMutationStorm,
@@ -132,7 +136,7 @@ export async function startReplayRecorder({
           recordAfter: "DOMContentLoaded",
           inlineStylesheet: true,
           slimDOMOptions: "all",
-          checkoutEveryNms: CHECKOUT_EVERY_MS,
+          checkoutEveryNms: checkoutEveryNms?.() ?? CHECKOUT_EVERY_MS,
           dataURLOptions: {
             type: "image/webp",
             quality: CANVAS_IMAGE_QUALITY,
@@ -165,7 +169,11 @@ export async function startReplayRecorder({
 
       stormObserver = undefined;
 
-      stopRecording?.();
+      if (stopRecording) {
+        stopRecording();
+
+        record.mirror.reset();
+      }
 
       stopRecording = undefined;
     },
@@ -176,7 +184,7 @@ export async function startReplayRecorder({
     },
   };
 
-  if (!recorder.start()) {
+  if (!deferStart && !recorder.start()) {
     log.error("rrweb failed to start, replay disabled");
 
     return null;
