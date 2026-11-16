@@ -199,7 +199,7 @@ You don't need to change anything. Interfere works alongside them.
 
 **In the browser**, Interfere checks each request for another tool that writes the `traceparent` header: Datadog RUM (for its `allowedTracingUrls`), Sentry (with `propagateTraceparent`) or another OpenTelemetry propagator. If one is there, Interfere leaves the header to it, so the request carries a single `traceparent` and stays in that tool's trace. Interfere records the request either way. Interfere never removes or replaces headers that your code or another tool set.
 
-<!-- PLACEHOLDER c0xr (pending Luke's decision on interfere-c0xr.1): keep the next paragraph only if `tracing.propagation` ships as an escape hatch; add one sentence for `tracing.mode` only if it stays public. -->
+<!-- PLACEHOLDER: keep the next paragraph only if `tracing.propagation` ships as an escape hatch; add one sentence for `tracing.mode` only if it stays public. -->
 
 If another tool writes `traceparent` and Interfere doesn't recognise it, such as New Relic or an in-house interceptor, set `tracing: { propagation: "external" }` in `init()`. Interfere then writes no `traceparent` or `tracestate` and still records every request.
 
