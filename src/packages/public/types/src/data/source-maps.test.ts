@@ -1,6 +1,7 @@
 import { runInNewContext } from "node:vm";
 import { z } from "zod";
 import {
+  completeSourceMapsRequest,
   debugIdRuntimeSnippet,
   injectDebugIdIntoJs,
   readDebugIdFromJs,
@@ -141,3 +142,12 @@ describe(injectDebugIdIntoJs, () => {
     expect(Object.values(registry)).not.toContain(debugId);
   });
 });
+
+test.each(["webpack", "turbopack", "rollup", "rolldown", "tsc"])(
+  "source-map finalize accepts bundler %s",
+  (bundler) => {
+    expect(
+      completeSourceMapsRequest.safeParse({ bundler, files: [] }).success,
+    ).toBe(true);
+  },
+);

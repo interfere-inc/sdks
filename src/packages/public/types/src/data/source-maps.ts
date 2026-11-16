@@ -11,7 +11,7 @@ import { sourceMapBatchCapability } from "./source-map-upload-batch.ts";
  * shapes; we want that pivot when investigating resolution issues).
  */
 export const manifestBundlerSchema = z
-  .enum(["webpack", "turbopack", "rollup", "tsc"])
+  .enum(["webpack", "turbopack", "rollup", "rolldown", "tsc"])
   .meta({ id: "ManifestBundler", title: "ManifestBundler" });
 
 export type ManifestBundler = z.infer<typeof manifestBundlerSchema>;

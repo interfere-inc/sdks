@@ -5,6 +5,7 @@ export const ManifestBundler = {
     Webpack: "webpack",
     Turbopack: "turbopack",
     Rollup: "rollup",
+    Rolldown: "rolldown",
     Tsc: "tsc",
 } as const;
 export type ManifestBundler = (typeof ManifestBundler)[keyof typeof ManifestBundler];

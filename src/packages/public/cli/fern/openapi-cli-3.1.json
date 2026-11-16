@@ -3115,6 +3115,7 @@
           "webpack",
           "turbopack",
           "rollup",
+          "rolldown",
           "tsc"
         ],
         "description": "ManifestBundler"
