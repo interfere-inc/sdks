@@ -709,6 +709,26 @@
       }
     },
     {
+      "id": "confirm_domain_ownership",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/workspaces.confirmDomainOwnership",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "clerkDomainId": "clerkDomainId"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true\n}"
+      }
+    },
+    {
       "id": "destroy",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/actions/workspaces.destroy",
@@ -1178,7 +1198,7 @@
       "requiresAuth": true,
       "response": {
         "status": 200,
-        "body": "{\n  \"affiliationEmailAddress\": \"affiliationEmailAddress\",\n  \"clerkDomainId\": \"clerkDomainId\",\n  \"domainMetadata\": {\n    \"cfHostnameId\": \"cfHostnameId\",\n    \"cfSslStatus\": \"cfSslStatus\",\n    \"lastError\": \"lastError\",\n    \"provider\": \"cloudflare\"\n  },\n  \"enrollmentMode\": \"enrollmentMode\",\n  \"id\": \"id\",\n  \"name\": \"name\",\n  \"organizationId\": \"organizationId\",\n  \"status\": \"pending\",\n  \"type\": \"clerk\",\n  \"verifiedAt\": 1.1,\n  \"createdAt\": 1.1,\n  \"deletedAt\": 1.1,\n  \"updatedAt\": 1.1\n}"
+        "body": "{\n  \"affiliationEmailAddress\": \"affiliationEmailAddress\",\n  \"clerkDomainId\": \"clerkDomainId\",\n  \"domainMetadata\": {\n    \"cfHostnameId\": \"cfHostnameId\",\n    \"cfSslStatus\": \"cfSslStatus\",\n    \"lastError\": \"lastError\",\n    \"provider\": \"cloudflare\"\n  },\n  \"enrollmentMode\": \"enrollmentMode\",\n  \"id\": \"id\",\n  \"name\": \"name\",\n  \"organizationId\": \"organizationId\",\n  \"ownershipVerifiedAt\": 1.1,\n  \"status\": \"pending\",\n  \"type\": \"clerk\",\n  \"verifiedAt\": 1.1,\n  \"createdAt\": 1.1,\n  \"deletedAt\": 1.1,\n  \"updatedAt\": 1.1\n}"
       }
     },
     {
@@ -1198,7 +1218,7 @@
       "requiresAuth": true,
       "response": {
         "status": 200,
-        "body": "{\n  \"affiliationEmailAddress\": \"affiliationEmailAddress\",\n  \"clerkDomainId\": \"clerkDomainId\",\n  \"domainMetadata\": {\n    \"cfHostnameId\": \"cfHostnameId\",\n    \"cfSslStatus\": \"cfSslStatus\",\n    \"lastError\": \"lastError\",\n    \"provider\": \"cloudflare\"\n  },\n  \"enrollmentMode\": \"enrollmentMode\",\n  \"id\": \"id\",\n  \"name\": \"name\",\n  \"organizationId\": \"organizationId\",\n  \"status\": \"pending\",\n  \"type\": \"clerk\",\n  \"verifiedAt\": 1.1,\n  \"createdAt\": 1.1,\n  \"deletedAt\": 1.1,\n  \"updatedAt\": 1.1\n}"
+        "body": "{\n  \"affiliationEmailAddress\": \"affiliationEmailAddress\",\n  \"clerkDomainId\": \"clerkDomainId\",\n  \"domainMetadata\": {\n    \"cfHostnameId\": \"cfHostnameId\",\n    \"cfSslStatus\": \"cfSslStatus\",\n    \"lastError\": \"lastError\",\n    \"provider\": \"cloudflare\"\n  },\n  \"enrollmentMode\": \"enrollmentMode\",\n  \"id\": \"id\",\n  \"name\": \"name\",\n  \"organizationId\": \"organizationId\",\n  \"ownershipVerifiedAt\": 1.1,\n  \"status\": \"pending\",\n  \"type\": \"clerk\",\n  \"verifiedAt\": 1.1,\n  \"createdAt\": 1.1,\n  \"deletedAt\": 1.1,\n  \"updatedAt\": 1.1\n}"
       }
     },
     {
@@ -1214,7 +1234,7 @@
       "requiresAuth": true,
       "response": {
         "status": 200,
-        "body": "[\n  {\n    \"affiliationEmailAddress\": \"affiliationEmailAddress\",\n    \"clerkDomainId\": \"clerkDomainId\",\n    \"domainMetadata\": {\n      \"cfHostnameId\": \"cfHostnameId\",\n      \"cfSslStatus\": \"cfSslStatus\",\n      \"lastError\": \"lastError\",\n      \"provider\": \"cloudflare\"\n    },\n    \"enrollmentMode\": \"enrollmentMode\",\n    \"id\": \"id\",\n    \"name\": \"name\",\n    \"organizationId\": \"organizationId\",\n    \"status\": \"pending\",\n    \"type\": \"clerk\",\n    \"verifiedAt\": 1.1,\n    \"createdAt\": 1.1,\n    \"deletedAt\": 1.1,\n    \"updatedAt\": 1.1\n  }\n]"
+        "body": "[\n  {\n    \"affiliationEmailAddress\": \"affiliationEmailAddress\",\n    \"clerkDomainId\": \"clerkDomainId\",\n    \"domainMetadata\": {\n      \"cfHostnameId\": \"cfHostnameId\",\n      \"cfSslStatus\": \"cfSslStatus\",\n      \"lastError\": \"lastError\",\n      \"provider\": \"cloudflare\"\n    },\n    \"enrollmentMode\": \"enrollmentMode\",\n    \"id\": \"id\",\n    \"name\": \"name\",\n    \"organizationId\": \"organizationId\",\n    \"ownershipVerifiedAt\": 1.1,\n    \"status\": \"pending\",\n    \"type\": \"clerk\",\n    \"verifiedAt\": 1.1,\n    \"createdAt\": 1.1,\n    \"deletedAt\": 1.1,\n    \"updatedAt\": 1.1\n  }\n]"
       }
     },
     {
@@ -1230,7 +1250,7 @@
       "requiresAuth": true,
       "response": {
         "status": 200,
-        "body": "[\n  {\n    \"affiliationEmailAddress\": \"affiliationEmailAddress\",\n    \"clerkDomainId\": \"clerkDomainId\",\n    \"domainMetadata\": {\n      \"cfHostnameId\": \"cfHostnameId\",\n      \"cfSslStatus\": \"cfSslStatus\",\n      \"lastError\": \"lastError\",\n      \"provider\": \"cloudflare\"\n    },\n    \"enrollmentMode\": \"enrollmentMode\",\n    \"id\": \"id\",\n    \"name\": \"name\",\n    \"organizationId\": \"organizationId\",\n    \"status\": \"pending\",\n    \"type\": \"clerk\",\n    \"verifiedAt\": 1.1,\n    \"createdAt\": 1.1,\n    \"deletedAt\": 1.1,\n    \"updatedAt\": 1.1\n  }\n]"
+        "body": "[\n  {\n    \"affiliationEmailAddress\": \"affiliationEmailAddress\",\n    \"clerkDomainId\": \"clerkDomainId\",\n    \"domainMetadata\": {\n      \"cfHostnameId\": \"cfHostnameId\",\n      \"cfSslStatus\": \"cfSslStatus\",\n      \"lastError\": \"lastError\",\n      \"provider\": \"cloudflare\"\n    },\n    \"enrollmentMode\": \"enrollmentMode\",\n    \"id\": \"id\",\n    \"name\": \"name\",\n    \"organizationId\": \"organizationId\",\n    \"ownershipVerifiedAt\": 1.1,\n    \"status\": \"pending\",\n    \"type\": \"clerk\",\n    \"verifiedAt\": 1.1,\n    \"createdAt\": 1.1,\n    \"deletedAt\": 1.1,\n    \"updatedAt\": 1.1\n  }\n]"
       }
     },
     {
@@ -5049,6 +5069,27 @@
         "workspace": "workspaceSlug"
       },
       "body": {},
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "confirm_domain_ownership_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/workspaces.confirmDomainOwnership",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "clerkDomainId": "clerkDomainId"
+        }
+      },
       "queryMatchers": [],
       "headerMatchers": [],
       "requiresAuth": true,

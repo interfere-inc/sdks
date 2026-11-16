@@ -1216,6 +1216,11 @@ async fn wire_complete_onboarding() {
 }
 
 #[tokio::test]
+async fn wire_confirm_domain_ownership() {
+    run_case("confirm_domain_ownership").await;
+}
+
+#[tokio::test]
 async fn wire_destroy() {
     run_case("destroy").await;
 }
@@ -2318,6 +2323,11 @@ async fn wire_add_proxy_domain_error() {
 #[tokio::test]
 async fn wire_complete_onboarding_error() {
     run_case("complete_onboarding_error").await;
+}
+
+#[tokio::test]
+async fn wire_confirm_domain_ownership_error() {
+    run_case("confirm_domain_ownership_error").await;
 }
 
 #[tokio::test]

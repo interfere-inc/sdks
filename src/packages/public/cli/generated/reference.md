@@ -2443,6 +2443,17 @@ Mark workspace onboarding complete after the required setup has actually been pe
 | `--workspace-slug` | `string` | Yes |  |
 | `--json` | `JSON` | No | Request body as JSON (or use individual body-field flags) |
 
+#### `interfere workspaces confirm-domain-ownership`
+
+Record that a workspace domain's DNS ownership is verified, after the sign-in service has confirmed the TXT record. Fails while ownership is still pending. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
+
+`POST /v3/workspaces/{workspaceSlug}/actions/workspaces.confirmDomainOwnership`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
+
 #### `interfere workspaces create-workspace-public-key`
 
 Creates a publishable key for the whole workspace. Every app in the workspace can ship it; the gateway resolves the app from the telemetry. Requires workspace authentication write permission. Reuse the same idempotency key and request after an uncertain response.

@@ -5,7 +5,7 @@
 //!
 //! ## Type Categories
 //!
-//! - **Request/Response Types**: 2164 types for API operations
+//! - **Request/Response Types**: 2167 types for API operations
 //! - **Model Types**: 631 types for data representation
 
 pub mod drain_drain_otlp_export_request_signal;
@@ -20,6 +20,7 @@ pub mod sessions_create_session_request_replay_trigger;
 pub mod workspaces_workspace_create_request_data_residency_location;
 pub mod workspaces_workspace_create_request_residency_policy;
 pub mod workspaces_add_proxy_domain_workspaces_request_args;
+pub mod workspaces_confirm_domain_ownership_workspaces_request_args;
 pub mod workspaces_remove_proxy_domain_workspaces_request_args;
 pub mod workspaces_set_enterprise_connection_active_workspaces_request_args;
 pub mod workspaces_update_auto_assign_problems_workspaces_request_args;
@@ -2317,6 +2318,7 @@ pub mod mutation_members_update_role_response;
 pub mod mutation_notification_preferences_set_workflow_channel_response;
 pub mod mutation_workspaces_add_proxy_domain_response;
 pub mod mutation_workspaces_complete_onboarding_response;
+pub mod mutation_workspaces_confirm_domain_ownership_response;
 pub mod mutation_workspaces_destroy_response;
 pub mod mutation_workspaces_remove_proxy_domain_response;
 pub mod mutation_workspaces_set_enterprise_connection_active_response;
@@ -2629,6 +2631,7 @@ pub mod workspace_create_request;
 pub mod current_workspaces_request;
 pub mod add_proxy_domain_workspaces_request;
 pub mod complete_onboarding_workspaces_request;
+pub mod confirm_domain_ownership_workspaces_request;
 pub mod destroy_workspaces_request;
 pub mod remove_proxy_domain_workspaces_request;
 pub mod set_enterprise_connection_active_workspaces_request;
@@ -2816,6 +2819,7 @@ pub use sessions_create_session_request_replay_trigger::CreateSessionRequestRepl
 pub use workspaces_workspace_create_request_data_residency_location::WorkspaceCreateRequestDataResidencyLocation;
 pub use workspaces_workspace_create_request_residency_policy::WorkspaceCreateRequestResidencyPolicy;
 pub use workspaces_add_proxy_domain_workspaces_request_args::AddProxyDomainWorkspacesRequestArgs;
+pub use workspaces_confirm_domain_ownership_workspaces_request_args::ConfirmDomainOwnershipWorkspacesRequestArgs;
 pub use workspaces_remove_proxy_domain_workspaces_request_args::RemoveProxyDomainWorkspacesRequestArgs;
 pub use workspaces_set_enterprise_connection_active_workspaces_request_args::SetEnterpriseConnectionActiveWorkspacesRequestArgs;
 pub use workspaces_update_auto_assign_problems_workspaces_request_args::UpdateAutoAssignProblemsWorkspacesRequestArgs;
@@ -5113,6 +5117,7 @@ pub use mutation_members_update_role_response::MutationMembersUpdateRoleResponse
 pub use mutation_notification_preferences_set_workflow_channel_response::MutationNotificationPreferencesSetWorkflowChannelResponse;
 pub use mutation_workspaces_add_proxy_domain_response::MutationWorkspacesAddProxyDomainResponse;
 pub use mutation_workspaces_complete_onboarding_response::MutationWorkspacesCompleteOnboardingResponse;
+pub use mutation_workspaces_confirm_domain_ownership_response::MutationWorkspacesConfirmDomainOwnershipResponse;
 pub use mutation_workspaces_destroy_response::MutationWorkspacesDestroyResponse;
 pub use mutation_workspaces_remove_proxy_domain_response::MutationWorkspacesRemoveProxyDomainResponse;
 pub use mutation_workspaces_set_enterprise_connection_active_response::MutationWorkspacesSetEnterpriseConnectionActiveResponse;
@@ -5425,6 +5430,7 @@ pub use workspace_create_request::WorkspaceCreateRequest;
 pub use current_workspaces_request::CurrentWorkspacesRequest;
 pub use add_proxy_domain_workspaces_request::AddProxyDomainWorkspacesRequest;
 pub use complete_onboarding_workspaces_request::CompleteOnboardingWorkspacesRequest;
+pub use confirm_domain_ownership_workspaces_request::ConfirmDomainOwnershipWorkspacesRequest;
 pub use destroy_workspaces_request::DestroyWorkspacesRequest;
 pub use remove_proxy_domain_workspaces_request::RemoveProxyDomainWorkspacesRequest;
 pub use set_enterprise_connection_active_workspaces_request::SetEnterpriseConnectionActiveWorkspacesRequest;

@@ -12523,6 +12523,16 @@
             "type": "string",
             "format": "uuid"
           },
+          "ownershipVerifiedAt": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "status": {
             "anyOf": [
               {
@@ -12602,6 +12612,7 @@
           "id",
           "name",
           "organizationId",
+          "ownershipVerifiedAt",
           "status",
           "type",
           "verifiedAt",
@@ -12732,6 +12743,16 @@
                 "type": "string",
                 "format": "uuid"
               },
+              "ownershipVerifiedAt": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
               "status": {
                 "anyOf": [
                   {
@@ -12811,6 +12832,7 @@
               "id",
               "name",
               "organizationId",
+              "ownershipVerifiedAt",
               "status",
               "type",
               "verifiedAt",
@@ -12946,6 +12968,16 @@
               "type": "string",
               "format": "uuid"
             },
+            "ownershipVerifiedAt": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "status": {
               "anyOf": [
                 {
@@ -13025,6 +13057,7 @@
             "id",
             "name",
             "organizationId",
+            "ownershipVerifiedAt",
             "status",
             "type",
             "verifiedAt",
@@ -13156,6 +13189,16 @@
               "type": "string",
               "format": "uuid"
             },
+            "ownershipVerifiedAt": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "status": {
               "anyOf": [
                 {
@@ -13235,6 +13278,7 @@
             "id",
             "name",
             "organizationId",
+            "ownershipVerifiedAt",
             "status",
             "type",
             "verifiedAt",
@@ -53820,6 +53864,18 @@
           "success"
         ]
       },
+      "Mutation_workspaces_confirmDomainOwnershipResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "const": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success"
+        ]
+      },
       "Mutation_workspaces_destroyResponse": {
         "type": "object",
         "properties": {
@@ -71719,6 +71775,97 @@
           }
         },
         "x-fern-sdk-method-name": "complete-onboarding",
+        "x-cloudflare-labels": [
+          "cf-api-endpoint"
+        ],
+        "security": [
+          {
+            "clerkSession": []
+          }
+        ],
+        "x-interfere-read-only": false,
+        "x-internal": false,
+        "x-fern-sdk-group-name": [
+          "workspaces"
+        ],
+        "x-fern-retries": {
+          "disabled": true
+        }
+      }
+    },
+    "/v3/workspaces/{workspaceSlug}/actions/workspaces.confirmDomainOwnership": {
+      "post": {
+        "operationId": "workspaces_confirmDomainOwnership",
+        "summary": "workspaces confirmDomainOwnership",
+        "description": "Record that a workspace domain's DNS ownership is verified, after the sign-in service has confirmed the TXT record. Fails while ownership is still pending. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.",
+        "tags": [
+          "workspaces"
+        ],
+        "parameters": [
+          {
+            "name": "workspaceSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
+            },
+            "x-fern-parameter-name": "workspace"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "args": {
+                    "type": "object",
+                    "properties": {
+                      "clerkDomainId": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "clerkDomainId"
+                    ]
+                  }
+                },
+                "required": [
+                  "args"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mutation_workspaces_confirmDomainOwnershipResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/RpcValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse_b32e7e47d27147b78e9ca9c8927315e0c48a5a54a03868590623df7e2ff7d2af"
+          },
+          "403": {
+            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
+          },
+          "503": {
+            "$ref": "#/components/responses/ErrorResponse_a4a8a71ed4a33ddc602b7e2cf4dd0b51ef37c46db1b01870377abdbd6cbda1b5"
+          }
+        },
+        "x-fern-sdk-method-name": "confirm-domain-ownership",
         "x-cloudflare-labels": [
           "cf-api-endpoint"
         ],

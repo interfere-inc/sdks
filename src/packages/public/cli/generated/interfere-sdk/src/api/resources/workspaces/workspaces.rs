@@ -324,6 +324,76 @@ impl WorkspacesClient {
             .await
     }
 
+    /// Record that a workspace domain's DNS ownership is verified, after the sign-in service has confirmed the TXT record. Fails while ownership is still pending. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
+    ///
+    /// # Arguments
+    ///
+    /// * `workspace` - Workspace URL slug, using lowercase letters, numbers, and hyphens.
+    /// * `options` - Additional request options such as headers, timeout, etc.
+    ///
+    /// # Returns
+    ///
+    /// JSON response from the API
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use interfere_sdk::prelude::*;
+    ///
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     let config = ClientConfig {
+    ///         api_key: Some("<value>".to_string()),
+    ///         ..Default::default()
+    ///     };
+    ///     let client = InterfereClient::new(config).expect("Failed to build client");
+    ///     client
+    ///         .workspaces
+    ///         .confirm_domain_ownership(
+    ///             &"workspaceSlug".to_string(),
+    ///             &ConfirmDomainOwnershipWorkspacesRequest {
+    ///                 args: ConfirmDomainOwnershipWorkspacesRequestArgs {
+    ///                     clerk_domain_id: "clerkDomainId".to_string(),
+    ///                     ..Default::default()
+    ///                 },
+    ///             },
+    ///             None,
+    ///         )
+    ///         .await;
+    /// }
+    /// ```
+    pub async fn confirm_domain_ownership(
+        &self,
+        workspace: &str,
+        request: &ConfirmDomainOwnershipWorkspacesRequest,
+        options: Option<RequestOptions>,
+    ) -> Result<MutationWorkspacesConfirmDomainOwnershipResponse, ApiError> {
+        let endpoint_auth_headers = self
+            .http_client
+            .resolve_endpoint_auth_headers(&options, &[&["clerkSession"] as &[&str]])
+            .await?;
+        let options = {
+            let mut o = options.unwrap_or_default();
+            for (header_key, header_value) in endpoint_auth_headers {
+                o.additional_headers.insert(header_key, header_value);
+            }
+            o.max_retries = Some(0);
+            Some(o)
+        };
+        self.http_client
+            .execute_request(
+                Method::POST,
+                &format!(
+                    "v3/workspaces/{}/actions/workspaces.confirmDomainOwnership",
+                    workspace
+                ),
+                Some(serde_json::to_value(request).map_err(ApiError::Serialization)?),
+                None,
+                options,
+            )
+            .await
+    }
+
     /// Delete the workspace. This is a destructive administrative operation; verify the exact workspace and explicit deletion intent. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
     ///
     /// # Arguments

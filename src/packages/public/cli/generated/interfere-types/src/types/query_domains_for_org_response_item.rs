@@ -23,6 +23,11 @@ pub struct QueryDomainsForOrgResponseItem {
     #[serde(rename = "organizationId")]
     #[serde(default)]
     pub organization_id: String,
+    #[serde(rename = "ownershipVerifiedAt")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
+    #[serde(with = "crate::core::number_serializers::option")]
+    pub ownership_verified_at: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub status: Option<QueryDomainsForOrgResponseItemStatus>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -63,6 +68,7 @@ pub struct QueryDomainsForOrgResponseItemBuilder {
     id: Option<String>,
     name: Option<String>,
     organization_id: Option<String>,
+    ownership_verified_at: Option<f64>,
     status: Option<QueryDomainsForOrgResponseItemStatus>,
     r#type: Option<QueryDomainsForOrgResponseItemType>,
     verified_at: Option<f64>,
@@ -104,6 +110,11 @@ impl QueryDomainsForOrgResponseItemBuilder {
 
     pub fn organization_id(mut self, value: impl Into<String>) -> Self {
         self.organization_id = Some(value.into());
+        self
+    }
+
+    pub fn ownership_verified_at(mut self, value: f64) -> Self {
+        self.ownership_verified_at = Some(value);
         self
     }
 
@@ -153,6 +164,7 @@ impl QueryDomainsForOrgResponseItemBuilder {
             id: self.id.ok_or_else(|| BuildError::missing_field("id"))?,
             name: self.name.ok_or_else(|| BuildError::missing_field("name"))?,
             organization_id: self.organization_id.ok_or_else(|| BuildError::missing_field("organization_id"))?,
+            ownership_verified_at: self.ownership_verified_at,
             status: self.status,
             r#type: self.r#type,
             verified_at: self.verified_at,
