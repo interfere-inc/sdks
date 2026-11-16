@@ -9,6 +9,10 @@ import { NodeTracerProvider } from "@opentelemetry/sdk-trace-node";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import type { MockInstance } from "vitest";
 
+await import("./register");
+
+await import("./request-trace");
+
 let providers: MockInstance<typeof NodeTracerProvider.prototype.register>;
 let loggers: MockInstance<typeof logs.setGlobalLoggerProvider>;
 let meters: MockInstance<typeof metrics.setGlobalMeterProvider>;
@@ -19,6 +23,10 @@ let instrumentations: MockInstance<
 
 let collector: Awaited<ReturnType<typeof receiver>>;
 let backend: Awaited<ReturnType<typeof receiver>>;
+
+function pin() {
+  return { backend, collector, providers };
+}
 
 beforeEach(async () => {
   vi.resetModules();
@@ -89,7 +97,7 @@ test.each([
   { policy: "empty", urls: () => [], headers: [null, null, null] },
   {
     policy: "string",
-    urls: () => [`${backend.url}/allowed`],
+    urls: (url: string) => [`${url}/allowed`],
     headers: [
       expect.stringMatching(/^00-/u),
       expect.stringContaining("interfere="),
@@ -110,6 +118,8 @@ test.each([
   async ({ urls, headers }) => {
     expect.hasAssertions();
 
+    const { backend: target, collector: sink, providers: tracers } = pin();
+
     const { register } = await import("./register");
 
     const { traceMeta } = await import("./request-trace");
@@ -117,7 +127,7 @@ test.each([
     await register({
       tracing: "managed",
       consoleBridge: false,
-      propagateContextUrls: urls(),
+      propagateContextUrls: urls(target.url),
     });
 
     const ctx = propagation.setBaggage(
@@ -137,10 +147,10 @@ test.each([
             );
 
             const responses = await Promise.all([
-              fetch(`${backend.url}/allowed`),
-              fetch(`${backend.url}/denied`),
-              fetch(`${backend.url}/allowed`),
-              fetch(`${backend.url}/denied`, {
+              fetch(`${target.url}/allowed`),
+              fetch(`${target.url}/denied`),
+              fetch(`${target.url}/allowed`),
+              fetch(`${target.url}/denied`, {
                 headers: { baggage: "customer=value" },
               }),
             ]);
@@ -154,11 +164,11 @@ test.each([
         }),
     );
 
-    const allowed = backend.requests.filter(
+    const allowed = target.requests.filter(
       (request) => request.url === "/allowed",
     );
 
-    const denied = backend.requests.filter(
+    const denied = target.requests.filter(
       (request) => request.url === "/denied",
     );
 
@@ -183,17 +193,15 @@ test.each([
     ).toStrictEqual(expect.arrayContaining([null, "customer=value"]));
 
     await Promise.all(
-      providers.mock.contexts.map(async (provider) =>
+      tracers.mock.contexts.map(async (provider) =>
         provider instanceof NodeTracerProvider
           ? provider.forceFlush()
           : undefined,
       ),
     );
 
-    const spans = exportedSpans(collector.requests).filter((span) =>
-      attribute(span.attributes, "url.full")
-        ?.toString()
-        .startsWith(backend.url),
+    const spans = exportedSpans(sink.requests).filter((span) =>
+      attribute(span.attributes, "url.full")?.toString().startsWith(target.url),
     );
 
     expect(spans).toHaveLength(4);

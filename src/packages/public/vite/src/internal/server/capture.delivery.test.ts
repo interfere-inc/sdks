@@ -13,6 +13,8 @@ import { afterEach, beforeEach, expect, test, vi } from "vitest";
 
 type Capture = typeof import("./capture.js");
 
+await import("./capture.js");
+
 let capture: Capture;
 
 let host: ReturnType<typeof recordingProvider>;

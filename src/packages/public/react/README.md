@@ -15,46 +15,69 @@
 </p>
 
 <p align="center">
-  Client-side React SDK for <a href="https://interfere.com">Interfere</a> — error tracking, session replay, and analytics.
-</p>
-
-<p align="center">
   <a href="https://interfere.com/docs">Documentation</a>
   ·
-  <a href="mailto:support@interfere.com">Get Help</a>
+  <a href="mailto:support@interfere.com">Get help</a>
 </p>
 
 ---
 
-## Framework Guides
+The browser SDK for [Interfere](https://interfere.com) in React apps. It captures errors, including render errors, and records session replays, page views, rage clicks and the requests your pages make. It joins them into one trace per user action, so you can follow a bug from the click to the server error behind it.
 
-| Framework | Package                                                                                 | Guide                        |
-| --------- | --------------------------------------------------------------------------------------- | ---------------------------- |
-| Next.js   | [`@interfere/next`](https://www.npmjs.com/package/@interfere/next)                      | [docs/next.md](docs/next.md) |
-| Vite      | [`@interfere/vite`](https://www.npmjs.com/package/@interfere/vite) + `@interfere/react` | [docs/vite.md](docs/vite.md) |
+You don't install this package on its own. The framework SDKs include it and set it up at build time:
 
-## Installation
+| Your app                | Install                                                            | Guide                                                   |
+| ----------------------- | ------------------------------------------------------------------ | ------------------------------------------------------- |
+| Next.js                 | [`@interfere/next`](https://www.npmjs.com/package/@interfere/next) | [Next.js guide](https://interfere.com/docs/sdk/next-js) |
+| Vite, or TanStack Start | [`@interfere/vite`](https://www.npmjs.com/package/@interfere/vite) | [Vite guide](https://interfere.com/docs/sdk/vite)       |
+
+This README covers what they share: the browser options, privacy, consent and the React API.
+
+## Requirements
+
+- React 19
+
+## Set up with Vite
 
 ```bash
-npm install @interfere/react
+npm install @interfere/vite
 ```
 
-### Installing a fresh release
+Set `VITE_INTERFERE_PUBLIC_KEY` to your workspace public key, from **Settings → Developer** in the Interfere dashboard. Then:
 
-Release-age policies can block a newly published SDK, including its transitive `@interfere/javascript` and `@interfere/build` packages. A pnpm policy of `minimumReleaseAge: 10080` waits seven days; Bun's `minimumReleaseAge = 1209600` waits fourteen days. Stable publication starts its own clock after RC qualification.
+**1. Add the Vite plugin.**
 
-For an approved early preview, retain existing exclusions and add the required Interfere packages to pnpm's `minimumReleaseAgeExclude` (which supports `"@interfere/*"`) or Bun's `install.minimumReleaseAgeExcludes`. Regenerate and commit the lockfile, restore frozen-lockfile enforcement, and verify the normal CI install.
+```ts
+// vite.config.ts
+import { interfere } from "@interfere/vite/plugin";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
 
-### Prerequisites
+export default defineConfig({
+  plugins: [react(), interfere()],
+});
+```
 
-- React 19 (`^19.0.0`)
-
-## Quick Start
+**2. Start the SDK before rendering.**
 
 ```tsx
-import { InterfereProvider } from "@interfere/react/provider";
+// src/main.tsx
+import { init } from "@interfere/vite/init";
+import { createRoot } from "react-dom/client";
+import { App } from "./app";
 
-function App() {
+void init();
+
+createRoot(document.getElementById("root")!).render(<App />);
+```
+
+**3. Add the provider.**
+
+```tsx
+// src/app.tsx
+import { InterfereProvider } from "@interfere/vite/provider";
+
+export function App() {
   return (
     <InterfereProvider>
       <YourApp />
@@ -63,97 +86,86 @@ function App() {
 }
 ```
 
-`InterfereProvider` captures render errors by default and rethrows them so your host error boundary keeps control of the fallback. Set `captureRenderErrors={false}` to disable this capture.
+The provider reports render errors and then rethrows them, so your own error boundaries still choose what to show. Pass `captureRenderErrors={false}` to turn this off.
 
-## What remote configuration can change
+For Next.js, follow the [`@interfere/next` README](https://www.npmjs.com/package/@interfere/next). Options go to `init()` from `@interfere/next/instrument-client` instead.
 
-The SDK config response contains `plugins` and `protocolVersion`, plus optional `backendHosts`, `ingestUrl`, `anonymousReplayPolicy`, `logSourcing`, `platform` and `serverTracing` fields. The browser resolver consumes the plugin settings, backend hosts, protocol version, ingest URL and anonymous replay policy; a build with baked plugin settings uses those settings, baked backend hosts and the baked anonymous replay policy instead of fetching runtime config.
+## Use it in components
 
-The anonymous replay policy decides what replay records before `identify()` succeeds. `always` records every session. `on_error` keeps the last minute or so of replay in memory, starting at a full snapshot taken every 30 seconds, and uploads nothing until the session hits an error: an uncaught error, an unhandled rejection, a captured exception or a failed request. The SDK then uploads the buffered replay and records the rest of the session normally. `never` records nothing while the session is anonymous. A successful `identify()` switches every policy to normal recording; with `never`, recording starts from a fresh full snapshot. `ingestUrl` selects the origin for telemetry uploads, separately from the config API origin.
-
-Remote plugin settings can disable shipped plugins; they cannot override local disables or consent. Lazy plugins load through dynamic imports of code-split chunks shipped in the installed package, not executable code fetched from an Interfere CDN; core error capture is bundled eagerly. Remote configuration cannot enable code the installed version does not ship.
-
-Remote `backendHosts` become discovered HTTPS origins. They receive trace headers on `GET`/`HEAD` initially; other methods receive them only after a header-bearing `GET`/`HEAD` to that origin receives a response in this browser session. Explicit `tracing.propagateTo` origins and their header lists are declared in application code and take precedence over discovered hosts. `tracing.headers: false` disables SDK header writes everywhere. Remote configuration cannot override either setting.
-
-## Workspace keys
-
-Every workspace receives a **Default** workspace public key. Use one workspace key across its Apps; additional keys can be created or rotated in **Settings → Developer → Public keys**. App keys (formerly surface keys) are deprecated but still accepted, with no removal date announced. An App key stays bound to its App and bypasses workspace routing.
-
-With a workspace key, App resolution uses:
-
-1. The `x-interfere-service` header, with optional `x-interfere-service-namespace`.
-2. Otherwise, OTLP `service.name` and `service.namespace` resource attributes.
-3. Without a usable identity, the workspace's default App. `unknown_service` never creates an App.
-
-For a named service, an existing service-to-App association wins; otherwise a matching App name or slug is used. First sight of an unmatched service can auto-create an App, limited to **20 new Apps per request** and **50 auto-created Apps per workspace**. If creation is disabled or a budget is exhausted, routing falls back to the default App; without an eligible default, the request is rejected. A missing or deleted default falls back to the oldest eligible App.
-
-In **Settings → Developer → Public keys**, choose **Default app** and toggle **Create apps from telemetry** (`auto_create_apps`). An App marked `explicit_only` is excluded from implicit name matching and default fallback; use an existing service association or its App key to target it.
-
-Name an App in the dashboard when creating it, or edit its title on the App page. Keep the SDK's `serviceName` stable: renaming the dashboard title does not change an existing service association. Open **Services** to find the service linked to an App before migrating keys. SDK requests use `serviceName` for `x-interfere-service`; a configured runtime `serviceNamespace` supplies the namespace header.
-
-Configure `serviceName: "storefront"` in your framework SDK's browser `init()`, its build plugin (`withInterfere()` for Next.js or `interfere()` for Vite), and server `register()` when used. `InterfereProvider` does not name the service; use the framework setup linked above.
-
-### Environment variables
-
-| Variable                    | Description                                              |
-| --------------------------- | -------------------------------------------------------- |
-| `INTERFERE_PUBLIC_KEY`      | Public workspace or App key for the Next.js integration. |
-| `VITE_INTERFERE_PUBLIC_KEY` | Public workspace or App key for the Vite integration.    |
-
-Your framework build integration supplies the key to the browser SDK.
-
-## Features
-
-- **Error tracking** — automatic capture of uncaught errors and unhandled rejections
-- **Session replay** — full visual playback of user sessions
-- **Page analytics** — SPA-aware pageviews and UI interaction events
-- **Rage click detection** — surface frustrated user behavior
-- **User identity** — attach user context to sessions
-- **Offline resilient** — events are persisted and delivered in the background
-
-## Hooks
+`useInterfere()` works inside the provider. It returns `identity`, `consent` and `session`.
 
 ```tsx
-import { useInterfere } from "@interfere/react/provider";
+import { useInterfere } from "@interfere/vite/provider";
+import { useEffect } from "react";
 
-function MyComponent() {
-  const { identity, session } = useInterfere();
+export function IdentifyUser({ user }: { user: User | null }) {
+  const { identity } = useInterfere();
 
-  identity.set({
-    company: { tier: "Enterprise" },
-    identifier: "usr_123",
-    email: "jane@example.com",
-    name: "Jane",
-    source: { type: "clerk", name: "Clerk" },
-  });
+  useEffect(() => {
+    if (user) {
+      void identity.set({
+        identifier: user.id,
+        email: user.email,
+        name: user.name,
+        source: { type: "clerk", name: "Clerk" },
+      });
+    } else {
+      identity.clear();
+    }
+  }, [identity, user]);
 
-  const sessionId = session.getId();
+  return null;
 }
 ```
 
-`company.tier` sets the company’s tier in Interfere; tiers are managed under Settings or the tiers API.
+| `identity.set()` field | Required | Notes                                                                                     |
+| ---------------------- | -------- | ----------------------------------------------------------------------------------------- |
+| `identifier`           | Yes      | Your user id, not an email. A Clerk id must start with `user_`.                           |
+| `source`               | Yes      | `{ type: "clerk", name: "Clerk" }`, `"auth0"`, `"workos"`, or `{ type: "custom", name }`. |
+| `name`, `email`        | No       |                                                                                           |
+| `avatar`               | No       | An image URL.                                                                             |
+| `company`              | No       | `{ tier: "Enterprise" }` sets the company's tier in Interfere.                            |
+| `traits`               | No       | Any other key-value data.                                                                 |
 
-## Session correlation
+`identity.clear()` forgets the user and starts a new session. Call it on sign-out. `session.getId()` returns the current session id; `useSession()` is a shortcut.
 
-By default, the SDK writes W3C trace context to permitted fetch and XHR requests only when they carry none, preserves existing caller headers, and records the outgoing trace ID when observable. `tracing.mode` controls OpenTelemetry globals and request recording: `auto` claims available globals and backs off when another OpenTelemetry propagator is registered; `managed` records spans; `application` claims no globals and records request observations. Set `tracing.propagation: "external"` independently when another layer owns trace headers.
+### Report errors and time work
 
-`tracing.headers` restricts which headers Interfere may write; `false` disables all SDK header injection. Explicit `propagateTo` entries can restrict an origin further. External propagation always suppresses SDK trace-context injection, even if a header list includes it. The baggage flag independently suppresses SDK baggage injection. Caller and external headers are never removed.
+```ts
+import { capture, span } from "@interfere/vite/init"; // or "@interfere/next/instrument-client"
 
-With baggage enabled, instrumented requests carry `interfere.session.id` and the consented device ID to the page origin, exact HTTP(S) origins in `tracing.propagateTo`, and configured backend hosts as exact HTTPS origins. Sibling subdomains, schemes and ports require their own origins. Cross-origin APIs must allow the headers actually sent. Interfere diagnoses suspected CORS failures without retrying application requests.
+capture(error);
 
-Explicitly denying analytics consent stops session baggage propagation while retaining trace propagation. `tracing: false` disables SDK instrumentation. Existing application-owned propagators are not replaced.
+await span("checkout", async () => {
+  await submitOrder(cart);
+});
+```
 
-### Disable baggage propagation
+`capture()` reports an error you handled. `span()` times a piece of work and records an error if it throws. Its timing covers everything `fn` awaits. But requests that start after its first `await` belong to the page, not to the span. To make them children of the span, run them in its context:
 
-Set `tracing: { propagateTraceBaggage: false }` to stop Interfere from adding baggage while retaining permitted `traceparent` and `tracestate` propagation. Baggage is enabled by default. The flag applies to every origin, including explicit `propagateTo` header lists; existing `headers: false` and header subsets still restrict what can be written. This also disables outgoing baggage injection through Interfere’s managed OpenTelemetry propagator while preserving inbound extraction. It does not remove baggage supplied by your code or another SDK. Browser spans retain their session and consented device attributes. Backend spans can be associated through a shared trace ID when the browser identity-bearing telemetry is available, but no longer receive those identifiers directly through Interfere baggage.
+```ts
+import { context, trace } from "@opentelemetry/api";
 
-### External trace propagation
+await span("checkout", async (checkout) => {
+  const cart = await loadCart();
 
-Set `tracing: { propagation: "external" }` when another instrumentation layer owns outgoing trace context. Interfere then writes neither `traceparent` nor `tracestate`, including through its managed propagator. Existing application headers remain intact. Baggage retains its independent default-on policy; set `propagateTraceBaggage: false` when the API does not accept it.
+  await context.with(trace.setSpan(context.active(), checkout), () =>
+    submitOrder(cart),
+  );
+});
+```
 
-`auto` with external propagation resolves to application mode and claims no OpenTelemetry globals. Explicit `managed` mode can still record Interfere spans and claim an available context manager, but does not register a propagator. With default propagation, `auto` checks OpenTelemetry registration ownership only; it does not inspect other SDK globals or guess which private request wrappers will run later.
+Pass `{ root: true }` as the third argument to start a new trace.
 
-When external instrumentation privately clones request headers, call the generic helper from its supported request-completion hook:
+## Using Datadog, Sentry or OpenTelemetry too
+
+You don't need to change anything. Interfere checks each request for another tool that writes the `traceparent` header: Datadog RUM (for its `allowedTracingUrls`), Sentry (with `propagateTraceparent`) or another OpenTelemetry propagator. If one is there, Interfere leaves the header to it, so the request carries a single `traceparent` and stays in that tool's trace. Interfere records the request either way. Interfere never removes or replaces headers that your code or another tool set, and it leaves other tools' OpenTelemetry providers on the page alone.
+
+<!-- PLACEHOLDER c0xr (pending Luke's decision on interfere-c0xr.1): keep the next paragraph only if `tracing.propagation` ships as an escape hatch; add one sentence for `tracing.mode` only if it stays public. -->
+
+If another tool writes `traceparent` and Interfere doesn't recognise it, such as New Relic or an in-house interceptor, set `tracing: { propagation: "external" }` in `init()`. Interfere then writes no `traceparent` or `tracestate` and still records every request.
+
+If another tool copies request headers before sending them, Interfere can't see the `traceparent` that went out. Report it from that tool's request-completion hook:
 
 ```ts
 import { correlateRequestTrace } from "@interfere/react/request-trace";
@@ -161,146 +173,129 @@ import { correlateRequestTrace } from "@interfere/react/request-trace";
 correlateRequestTrace(response, sentRequestHeaders);
 ```
 
-Pass the exact fetch `Response` and the final **request** headers, not response headers or headers reconstructed from a URL. The helper reads W3C trace context, preserves request-time identity and timestamp, and changes neither headers nor callback return values. XHR correlation reads final intercepted request headers directly. No request is replayed and no correlation is guessed from URLs or timing.
+Pass the fetch `Response` and the request headers that were actually sent.
 
-A request without valid trace context or without an available completion hook remains unlinked. Delayed callbacks after consent changes or SDK disposal do not emit correlation. Browser telemetry records the outgoing trace ID in `interfere.request.trace_id`, which can differ from an Interfere span's own trace ID. Baggage independently carries identity to the backend; disabling it requires identity-bearing browser telemetry to be retained and indexed for trace-based association.
+## Consent
 
-### Which headers go where
+Interfere always captures errors. Analytics and session replay can wait for consent:
 
-| Origin                                       | Headers                                                      | When                                                                                                                                                                |
-| -------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| The page origin                              | the `tracing.headers` set (all by default)                   | always                                                                                                                                                              |
-| A `tracing.propagateTo` origin               | the `tracing.headers` set, or the entry's own `headers` list | always: you asserted it                                                                                                                                             |
-| A backend host configured for your workspace | the `tracing.headers` set                                    | on `GET` and `HEAD` from the first request; on other methods once one header-bearing `GET` or `HEAD` to that origin has received a response in this browser session |
-| Any other origin                             | none                                                         | never                                                                                                                                                               |
+| Category    | Covers                                                      | Can be denied |
+| ----------- | ----------------------------------------------------------- | ------------- |
+| `necessary` | Errors                                                      | No            |
+| `analytics` | Page views, clicks, rage clicks, device id and browser logs | Yes           |
+| `replay`    | Session replay                                              | Yes           |
 
-A backend host is discovered from your workspace configuration rather than asserted by your code, so its CORS policy is proved before a `POST` carries headers: an unmodified `Access-Control-Allow-Headers` can never break a first request. The proof is kept in `sessionStorage` and survives reloads. If a header-bearing request to any origin fails at the network layer before that origin has ever answered one, Interfere logs one diagnostic naming `Access-Control-Allow-Headers`, sends no trace headers to that origin for the rest of the browser session and still records the request. The SDK never resends an application request: a failed call stays failed for your code to handle. Add the origin to `propagateTo` to assert its policy, or give it a narrower `headers` list.
+Without a consent setting, every category is allowed. To start with analytics and replay denied, pass `consent: false` to `init()`. Then keep the provider in step with your consent banner:
 
-## Upgrading from 12.x
+```tsx
+const { has } = useConsentManager(); // your consent library
 
-Upgrade every `@interfere/*` package together. Browser options that change:
-
-| 12.x                                                            | 13.x                                                                                                                                           |
-| --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `tracing.apiHosts: ["api.example.com"]`                         | `tracing.propagateTo: ["https://api.example.com"]`; `apiHosts` was removed in 13.0.1.                                                          |
-| `tracing.propagateContextUrls`, same-site wildcard propagation  | Removed. Trace headers reach the page origin, `propagateTo` entries and configured backend hosts only.                                         |
-| `<InterfereProvider errorBoundary={false}>`                     | `<InterfereProvider captureRenderErrors={false}>`                                                                                              |
-| Retry of a failed cross-origin request without trace headers    | Removed. One call is one request; a suspected CORS rejection is logged once per origin and stamped on the request observation.                 |
-| Interfere's `traceparent` replaced one another tool wrote first | Written only to requests that carry none, in every tracing mode; a `traceparent` another tool wrote first is kept and recorded on the request. |
-
-The 13.0 release notes carry the complete table, including the server-side options of `@interfere/next` and `@interfere/vite`.
-
-## Filtering errors
-
-Browser `init()` takes four options that decide which exceptions leave the page. They apply to every capture source: uncaught errors, unhandled rejections, render errors, console errors and `capture()`. They do not apply to failed-request exceptions, which `tracing.captureFailedRequests` controls.
-
-```ts
-// Vite shown; Next.js imports init from "@interfere/next/instrument-client"
-import { init } from "@interfere/vite/init";
-
-init({
-  ignoreErrors: ["ResizeObserver loop", /^AbortError: /],
-  denyUrls: [/^https:\/\/widgets\.example\//, "cdn.ads.example"],
-  errors: { sampleRate: 0.5 },
-  beforeSend: (exception) => {
-    if (exception instanceof Error) {
-      exception.message = exception.message.replace(
-        /token=\S+/g,
-        "token=[redacted]",
-      );
-    }
-
-    return exception;
-  },
-});
+<InterfereProvider
+  consent={{ analytics: has("measurement"), replay: has("experience") }}
+>
+  <YourApp />
+</InterfereProvider>;
 ```
 
-| Option              | Effect                                                                                                                                                                                                                                                                      |
-| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ignoreErrors`      | Drops an exception when its message, or `Type: message`, matches. Strings match as substrings; regular expressions are tested.                                                                                                                                              |
-| `denyUrls`          | Drops an exception when the script URL of its innermost stack frame matches. When the stack has no location, the `window.onerror` source URL is used.                                                                                                                       |
-| `errors.sampleRate` | Sends this fraction of exceptions, from `0` (none) to `1` (all, the default).                                                                                                                                                                                               |
-| `beforeSend`        | Runs last, for exceptions the other options kept. Mutate the exception, return a replacement, or return `null` to drop it. The second argument carries `originalException` and `mechanism`. If the hook throws or returns anything else, the exception it received is sent. |
+`true` or `false` sets both categories. An object sets each one, and a category you leave out is allowed. From a component, `consent.set()` and `consent.get()` do the same. While analytics is denied, the session id is not sent to your APIs. Consent doesn't turn off error capture or request tracing.
 
 ## Privacy
 
-Pass `privacy` to your framework's browser `init()` to mark elements whose content the SDK never records. The same selectors apply to session replay and to click, submit and rage-click records, from the first capture:
+### Private elements
+
+Elements with the `interfere-block` or `interfere-mask` class are kept out of replays and out of click, submit and rage-click records. Add your own selectors in `init()`:
 
 ```ts
-const options: KernelOptions = {
+void init({
   privacy: {
     blockSelector: "[data-sensitive]",
     maskTextSelector: "[data-mask-text]",
   },
-};
+});
 ```
 
-The `interfere-block` and `interfere-mask` classes always apply. A selector matches the target element or any ancestor. The selectors apply even when replay is disabled.
-
-`replay.blockSelector` and `replay.maskTextSelector` on the provider apply to replay only.
+A selector matches the element and everything inside it. It applies from the first capture, whether or not replay is on.
 
 ### Interaction records
 
-Click, submit and rage-click records keep what the person did and which control they used, but never what a private element shows or holds. A click on a private account-number field records that the "Account number" field was clicked, not the number. Field values are never recorded.
+Click, submit and rage-click records keep what the person did and which control they used. A record never includes what a private element shows or holds. A click on a private account-number field records that the "Account number" field was clicked, not the number.
 
-| Target                                        | Recorded                                                                                                                                     |
-| --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| Blocked (`interfere-block`, `blockSelector`)  | Event type, timing, tag name and field label. `ui.target.privacy` is `blocked`.                                                              |
-| Masked (`interfere-mask`, `maskTextSelector`) | Event type, timing, tag name, `role` and field label. `ui.target.privacy` is `masked`.                                                       |
-| Public                                        | Tag, `id`, `name`, `role`, `aria-label`, field label and up to 120 characters of text. Text inside blocked or masked descendants is skipped. |
+| Target                                        | Recorded                                                                                                                        |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Blocked (`interfere-block`, `blockSelector`)  | Event type, timing, tag name and field label.                                                                                   |
+| Masked (`interfere-mask`, `maskTextSelector`) | Event type, timing, tag name, `role` and field label.                                                                           |
+| Anything else                                 | Tag, `id`, `name`, `role`, `aria-label`, field label and up to 120 characters of text. Text inside private elements is skipped. |
 
-The field label (`ui.target.label`) comes from developer-authored sources only:
+The field label comes from your markup only:
 
-1. A `data-interfere-label` attribute on the target or an ancestor, such as `<div data-sensitive data-interfere-label="Security code">`. Use this when the visible label sits inside the private region.
-2. Otherwise, the text of the field's `<label>` elements and `aria-labelledby` targets, when those labels are not themselves blocked or masked.
+1. A `data-interfere-label` attribute on the element or a parent, such as `<div data-sensitive data-interfere-label="Security code">`. Use it when the visible label sits inside the private region.
+2. Otherwise, the field's `<label>` or `aria-labelledby` text, unless that label is itself private.
 
-A private element's own `aria-label`, `placeholder`, `title`, text and value are never recorded, because applications often put the current value there. Form fields (`input`, `select`, `textarea`) never contribute text, even when public.
+A private element's own `aria-label`, `placeholder`, `title`, text and value are never recorded, because apps often put the current value there. Form fields (`input`, `select`, `textarea`) never contribute text, even when they aren't private. Link URLs (`href`) are never recorded. An invalid selector makes every target private and logs a warning.
 
-For blocked and masked targets the SDK also replaces OpenTelemetry's id-based `target_xpath` with a positional path. Target URLs (`href`) are never recorded. An invalid selector blocks every interaction target and logs a warning.
+To keep page views and load timing without click and submit records, pass `plugins={{ pageEvents: { interactions: false } }}` to the provider. `pageEvents: false` turns off page events entirely, and `rageClick: false` turns off rage clicks.
 
-To keep navigation, document-load and resource timing without click and submit spans, pass `pageEvents: { interactions: false }`. `pageEvents: false` still turns off all page events, and `rageClick: false` turns off rage clicks. Denying analytics consent stops page events and rage clicks.
+### URL redaction
 
-## URL redaction
+URLs are redacted before they leave the browser. Credentials in a URL (`https://user:pass@host`) always become `REDACTED:REDACTED`. Query parameter names stay, and their values are redacted according to `privacy.urls`:
 
-The SDK redacts URLs before they leave the browser. Parameter names stay, redacted values become `REDACTED`, and credentials in a URL (`https://user:pass@host`) always become `REDACTED:REDACTED`. Configure query and fragment redaction with `privacy.urls`:
-
-| `privacy.urls`        | Query values redacted                         | Fragment |
-| --------------------- | --------------------------------------------- | -------- |
-| Omitted (default)     | Built-in sensitive names only                 | Kept     |
-| `{ deny: ["email"] }` | Built-in sensitive names and the listed names | Kept     |
-| `{ allow: ["page"] }` | Every name except the listed names            | Kept     |
-| `true`                | Every name                                    | Removed  |
-| `false`               | None                                          | Kept     |
+| `privacy.urls`        | Values redacted                                 | Fragment |
+| --------------------- | ----------------------------------------------- | -------- |
+| Not set (default)     | Built-in sensitive names                        | Kept     |
+| `{ deny: ["email"] }` | Built-in sensitive names and the names you list | Kept     |
+| `{ allow: ["page"] }` | Every name except the ones you list             | Kept     |
+| `true`                | Every name                                      | Removed  |
+| `false`               | None                                            | Kept     |
 
 ```ts
-const options: KernelOptions = {
-  privacy: { urls: { allow: ["page", "sort"], fragment: true } },
-};
+void init({ privacy: { urls: { allow: ["page", "sort"], fragment: true } } });
 ```
 
-`fragment: true` removes fragments, including hash-router paths. The built-in sensitive names follow the OpenTelemetry URL conventions and common credential names: `AWSAccessKeyId`, `sig`, `code` and `key`, plus any name that contains `token`, `secret`, `password`, `passwd`, `auth`, `credential`, `session`, `signature`, `api_key` or `apikey`. Names match case-insensitively after URL decoding. A name in `deny` is always redacted; a name in `allow` keeps its value, even when it is a built-in sensitive name.
+The built-in sensitive names are `AWSAccessKeyId`, `sig`, `code` and `key`, plus any name containing `token`, `secret`, `password`, `passwd`, `auth`, `credential`, `session`, `signature`, `api_key` or `apikey`. Names match without regard to case. A name in `deny` is always redacted; a name in `allow` is kept, even when it is built in. `fragment: true` removes fragments, including hash-router paths.
 
-A parameter without `=` (such as `?eyJhbGci…`) is redacted whole when its name is redacted, because a bare value can be a token. The SDK splits each value at the first `?` and `#` without parsing it, so relative paths and malformed values follow the same rule. A query inside a hash route belongs to the fragment and is kept with it. Requests, routing and trace propagation still use the original URL. Path segments are not redacted, so a token in a path such as `/share/abc123` is still recorded.
+Your app still uses the original URL for requests and routing. Path segments aren't redacted, so a token in a path such as `/share/abc123` is still recorded.
 
-| Record                                                                                                                                                                                | Covered                                                 |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| `url.full`, `url.path`, `url.original`, `http.url`, `http.target`, `http.referrer` and `referer` header attributes on SDK spans and span events, and span names such as `GET /a?id=1` | Yes                                                     |
-| `url.query` and `url.fragment` attributes                                                                                                                                             | Values redacted; fragment removed with `fragment: true` |
-| Navigation logs, including the initial page load                                                                                                                                      | Yes                                                     |
-| Absolute URLs in exception messages, the cause chain and the span status, including SDK messages for failed requests, resource loads and CSP violations                               | Yes                                                     |
-| Session replay page URLs and `href`, `src`, `srcset`, `action`, `formaction`, `poster`, `cite` and `data` attributes                                                                  | Yes                                                     |
-| Spans on your own OpenTelemetry provider, URLs in stack frames, relative paths in exception messages, inlined CSS in replay and console logs                                          | No                                                      |
+| Where URLs appear                                                                                                           | Redacted |
+| --------------------------------------------------------------------------------------------------------------------------- | -------- |
+| URL attributes and names of Interfere's spans, such as `GET /a?id=1`                                                        | Yes      |
+| Navigation records, including the first page load                                                                           | Yes      |
+| Absolute URLs in error messages, including messages for failed requests, resource loads and CSP violations                  | Yes      |
+| Replay page URLs and `href`, `src`, `srcset`, `action`, `formaction`, `poster`, `cite` and `data` attributes                | Yes      |
+| Spans from your own OpenTelemetry provider, stack frames, relative paths in error messages, CSS in replays and console logs | No       |
 
-Replay plays images and links back from their recorded URLs, so a redacted signed URL (for example `?X-Amz-Signature=REDACTED`) no longer loads in the player.
+Replays show images and links from their recorded URLs, so an image behind a redacted signed URL (`?X-Amz-Signature=REDACTED`) won't load in the player.
 
-The SDK redacts each span while it ends, so `onEnd` in `tracing.spanProcessors` and the Interfere exporter receive redacted values. `onStart` still sees the URL the instrumentation set at span creation. The browser provider is private to the SDK, so other OpenTelemetry exporters on the page are unaffected.
+## Options
 
-## Browser span processors
+Pass these to `init()`. Most apps need none of them.
 
-Framework browser `init()` options accept `tracing.spanProcessors`, an array of standard OpenTelemetry `SpanProcessor` instances. For example, these options remove an application attribute before export:
+| Option                          | Default            | What it does                                                                                                                            |
+| ------------------------------- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `consent`                       | All allowed        | `false` denies analytics and replay until you grant them. See [Consent](#consent).                                                      |
+| `tracing.propagateTo`           | `[]`               | Other origins your pages call, such as `"https://api.example.com"`. They receive trace headers so their spans join the browser's trace. |
+| `tracing.headers`               | All three          | Which trace headers Interfere may add: `traceparent`, `tracestate`, `baggage`. `false` adds none.                                       |
+| `tracing.propagateTraceBaggage` | `true`             | `false` stops Interfere sending the session id in the `baggage` header.                                                                 |
+| `tracing.captureFailedRequests` | 4xx and 5xx        | Reports failed responses from your own origin and `propagateTo` origins as errors. `false` turns this off.                              |
+| `tracing.ignoreUrls`            | None               | Requests to matching URLs aren't recorded.                                                                                              |
+| `tracing.webVitals`             | `true`             | `false` stops recording Core Web Vitals.                                                                                                |
+| `tracing.spanProcessors`        | None               | Your own OpenTelemetry span processors. See below.                                                                                      |
+| `tracing`                       | On                 | `false` turns off browser tracing: request spans, page views, clicks and web vitals. Errors are still captured.                         |
+| `privacy`                       | Built-in redaction | See [Privacy](#privacy).                                                                                                                |
+| `ignoreErrors`                  | None               | Drops errors whose message, or `Type: message`, matches. Strings match anywhere in the message.                                         |
+| `denyUrls`                      | None               | Drops errors thrown from scripts whose URL matches, such as browser extensions or third-party widgets.                                  |
+| `errors.sampleRate`             | `1`                | Sends this fraction of errors, from `0` to `1`.                                                                                         |
+| `beforeSend`                    | None               | Runs last on each error. Edit it, return a replacement, or return `null` to drop it.                                                    |
+| `serviceName`                   | Set by the build   | Names this app in Interfere. The build plugin sets it from your `package.json` name.                                                    |
+
+`ignoreErrors`, `denyUrls`, `errors.sampleRate` and `beforeSend` apply to every error source except failed requests, which `tracing.captureFailedRequests` controls.
+
+Your app's own origin always receives trace headers, as do the backend hosts listed for your workspace in the dashboard. Another origin receives them only through `propagateTo`.
+
+### Span processors
+
+`tracing.spanProcessors` takes standard OpenTelemetry processors. They run after Interfere adds session and device details and before export. This one removes an attribute:
 
 ```ts
-import type { KernelOptions } from "@interfere/react/internal/kernel";
 import type { SpanProcessor } from "@opentelemetry/sdk-trace-base";
 
 const dropTenant: SpanProcessor = {
@@ -312,56 +307,74 @@ const dropTenant: SpanProcessor = {
   async shutdown() {},
 };
 
-const options: KernelOptions = {
-  tracing: { spanProcessors: [dropTenant] },
-};
+void init({ tracing: { spanProcessors: [dropTenant] } });
 ```
 
-Pass `options` to your framework's browser `init()`. Processors are additive. Built-in session and device enrichment runs first, followed by your processors in array order, internal wrapper processors, and the Interfere batch exporter. Default instrumentation and export remain enabled.
+Edit `span.attributes` synchronously in `onEnd`; `setAttribute` can't change an ended span. Interfere flushes and shuts down your processors, so give each `init()` new instances.
 
-Finish attribute mutations synchronously in `onEnd`, before it returns. OpenTelemetry does not await asynchronous work in `onStart` or `onEnd`. Ended spans cannot be changed through `setAttribute`; edit `span.attributes` as above. Use `privacy.urls` for query values and fragments.
+## Troubleshooting
 
-The SDK calls each processor's `forceFlush` during flush and `shutdown` during disposal. Use a fresh processor instance for each SDK initialization and do not share it with another provider. `tracing: false` skips tracing setup, including custom processors.
+### Requests to my API fail with a CORS error
 
-## Trace export and context
+A cross-origin API has to allow the headers Interfere adds:
 
-The SDK batches ended spans and sends them every 60 seconds, or sooner when 200 spans are waiting. When the page is hidden or unloaded, it sends everything still queued at once with a keepalive request. Spans still queued when a tab is killed without a hide event, such as a crash, are lost. Logs are sent every 5 seconds.
+```http
+Access-Control-Allow-Headers: traceparent, tracestate, baggage
+```
 
-The SDK tracks the active span without zone.js. A click or submit span ends when its synchronous event handler returns. Spans started after an `await` in that handler, including fetch and XHR requests, are children of the page span instead of the click span. If your app loads zone.js itself, as Angular does, the SDK does not use it.
-
-`span(name, fn)` follows the same rule. The span's duration covers `fn` and, when `fn` returns a promise, all of its awaited work, and a throw or rejection is recorded on the span. The span is the active context only until the first `await` in `fn`, so spans and requests started after it are not its children. To parent them, capture the span and run the work in its context:
+If you can't change the API, send it fewer headers:
 
 ```ts
-import { context, trace } from "@opentelemetry/api";
-import { span } from "@interfere/react/api";
-
-await span("checkout", async (checkout) => {
-  const cart = await loadCart();
-
-  await context.with(trace.setSpan(context.active(), checkout), () =>
-    submitOrder(cart),
-  );
+void init({
+  tracing: {
+    propagateTo: [
+      { origin: "https://api.example.com", headers: ["traceparent"] },
+    ],
+  },
 });
 ```
 
-Pass `{ root: true }` as the third argument to start a span in a new trace.
+| Origin                                      | Headers it receives                        | When                                                                                        |
+| ------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| Your page's origin                          | `tracing.headers` (all three by default)   | Always                                                                                      |
+| A `tracing.propagateTo` origin              | `tracing.headers`, or the entry's own list | Always                                                                                      |
+| A backend host from your workspace settings | `tracing.headers`                          | On `GET` and `HEAD` at first; on other methods once one of those has succeeded this session |
+| Anything else                               | None                                       | Never                                                                                       |
 
-## Documentation
+If a request carrying these headers fails at the network level, and that origin has never answered one, Interfere logs one warning naming the origin. It then stops sending headers there for the rest of the browser session. It never retries your request.
 
-Visit [interfere.com/docs](https://interfere.com/docs) for the full documentation.
+### No data arrives
+
+- Check that the public key is set on the build: `VITE_INTERFERE_PUBLIC_KEY` for Vite, `INTERFERE_PUBLIC_KEY` for Next.js. Without it the SDK logs a warning and stays off.
+- Look for `[interfere]` warnings in the browser console. They name the cause.
+- `init()` must run before your app renders.
+- Ad blockers can block telemetry. Serve it from your own domain with the `apiHost` option and the DNS record shown in the dashboard.
+- Interfere ignores known bots.
+
+### Data is sent late
+
+Spans are sent every 60 seconds, or sooner once 200 are waiting, and logs every 5 seconds. When the page is hidden or closed, everything queued is sent at once. Spans still queued when a tab crashes are lost.
+
+## Upgrading from 12.x
+
+Upgrade every `@interfere/*` package together.
+
+| 12.x                                                      | 13.x                                                           |
+| --------------------------------------------------------- | -------------------------------------------------------------- |
+| `tracing.apiHosts: ["api.example.com"]`                   | `tracing.propagateTo: ["https://api.example.com"]`             |
+| `tracing.propagateContextUrls`, wildcard origins          | Removed. List each origin in `propagateTo`.                    |
+| `<InterfereProvider errorBoundary={false}>`               | `<InterfereProvider captureRenderErrors={false}>`              |
+| A failed cross-origin request was retried without headers | Not retried. Interfere logs a warning once per origin instead. |
+| Interfere replaced a `traceparent` another tool wrote     | Interfere keeps it.                                            |
+
+The [13.0 release notes](./CHANGELOG.md) list every change.
+
+## Learn more
+
+- [Interfere documentation](https://interfere.com/docs)
+- [Next.js guide](https://interfere.com/docs/sdk/next-js) and [Vite guide](https://interfere.com/docs/sdk/vite)
+- [Email support](mailto:support@interfere.com)
 
 ## License
 
 MIT
-
-## Supported runtimes
-
-Node.js 24.x is the supported Node.js release line and is exercised in CI. Browser entry points run in the browser; Node.js is required for server execution and build tooling.
-
-| Integration | Supported versions                           |
-| ----------- | -------------------------------------------- |
-| Next.js     | `^15.3.0` or `^16.0.0`                       |
-| React       | React 19 (`^19.0.0`)                         |
-| Vite        | Vite 8.2.4 or later within Vite 8 (`^8.2.4`) |
-
-Next.js adapters accept `^15.3.0 || ^16.0.0`. Next.js 14 and React 18 are not supported.
