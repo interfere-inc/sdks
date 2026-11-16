@@ -11,15 +11,22 @@ const COOKIE_MAX_AGE_DAYS = 400;
 
 /**
  * Producer of an opaque, stable per-browser fingerprint hash. The default
- * dynamic-imports the FingerprintJS OSS library and self-defers via
- * `requestIdleCallback` so the ~1.5s of synchronous font / canvas / WebGL
- * probing the library performs on a cold load doesn't land on the
- * hydration tick. Tests inject a fixed-value provider that resolves
- * immediately — they pay nothing for the production deferral.
+ * dynamic-imports the FingerprintJS OSS library after an idle callback and
+ * collects only the sources that each finish well under the 50 ms long-task
+ * threshold, yielding between them. Tests inject a fixed-value provider that
+ * resolves immediately.
  */
 export type FingerprintProvider = () => Promise<string | null>;
 
 const FP_IDLE_TIMEOUT_MS = 5000;
+
+const FP_LONG_TASK_SOURCES = [
+  "canvas",
+  "domBlockers",
+  "fontPreferences",
+  "fonts",
+  "webGlExtensions",
+] as const;
 
 /**
  * Resolves on the next browser idle frame, capped at 5s. Falls back to
@@ -52,13 +59,21 @@ const defaultFingerprintProvider: FingerprintProvider = async () => {
   await whenIdle();
 
   try {
-    const FingerprintJS = await import("@fingerprintjs/fingerprintjs");
+    const { hashComponents, loadSources, prepareForSources, sources } =
+      await import("@fingerprintjs/fingerprintjs");
 
-    const fp = await FingerprintJS.load({ monitoring: false });
+    await prepareForSources();
 
-    const result = await fp.get();
+    const components = await loadSources(
+      sources,
+      { cache: {}, debug: false },
+      FP_LONG_TASK_SOURCES,
+      0,
+    )();
 
-    if (!result.visitorId) {
+    const visitorId = hashComponents(components);
+
+    if (!visitorId) {
       log.error(
         "Fingerprinting returned an empty visitor id; visitor identity will be cookie-only",
       );
@@ -66,7 +81,7 @@ const defaultFingerprintProvider: FingerprintProvider = async () => {
       return null;
     }
 
-    return result.visitorId;
+    return visitorId;
   } catch (error) {
     log.error(
       "fingerprint init failed; visitor identity will be cookie-only",

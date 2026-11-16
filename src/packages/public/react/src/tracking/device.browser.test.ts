@@ -249,5 +249,28 @@ describe(DeviceManager, () => {
       expect(hashA).toMatch(/\S/u);
       expect(hashB).toBe(hashA);
     });
+
+    test("skips the font, canvas and WebGL extension probes that each run as a long task", async () => {
+      const createElement = vi.spyOn(document, "createElement");
+      const toDataURL = vi.spyOn(HTMLCanvasElement.prototype, "toDataURL");
+
+      const extensions = vi.spyOn(
+        WebGLRenderingContext.prototype,
+        "getSupportedExtensions",
+      );
+
+      const dm = new DeviceManager();
+
+      dm.init();
+
+      await expect(dm.whenFingerprintReady()).resolves.toMatch(VISITOR_ID_RE);
+
+      expect(
+        createElement.mock.calls.filter(([tag]) => tag === "iframe"),
+      ).toStrictEqual([]);
+
+      expect(toDataURL).not.toHaveBeenCalled();
+      expect(extensions).not.toHaveBeenCalled();
+    });
   });
 });
