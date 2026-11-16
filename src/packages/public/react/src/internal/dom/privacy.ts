@@ -1,12 +1,10 @@
 import type { UrlRedactionOption } from "@interfere/types/sdk/url-redaction";
 
-import { createLogger } from "../../util/log.js";
 import {
   INTERFERE_BLOCK_CLASS,
   INTERFERE_MASK_TEXT_CLASS,
 } from "./privacy-classes.js";
-
-const log = createLogger("privacy");
+import { validSelectors } from "./selectors.js";
 
 export type PrivacyLevel = "blocked" | "masked" | "public";
 
@@ -28,7 +26,6 @@ export interface PrivacyOptions {
 }
 
 export interface PrivacyPolicy {
-  readonly blockAll: boolean;
   readonly blockSelector: string;
   readonly maskSelector: string;
 }
@@ -40,7 +37,6 @@ const FORM_FIELD_SELECTOR = "input, select, textarea";
 const TEXT_LIMIT = 120;
 
 export const DEFAULT_PRIVACY_POLICY: PrivacyPolicy = {
-  blockAll: false,
   blockSelector: `.${INTERFERE_BLOCK_CLASS}`,
   maskSelector: `.${INTERFERE_MASK_TEXT_CLASS}`,
 };
@@ -50,28 +46,25 @@ export function resolvePrivacyPolicy({
   maskTextSelector,
 }: PrivacyOptions = {}) {
   const policy: PrivacyPolicy = {
-    blockAll: false,
-    blockSelector: [DEFAULT_PRIVACY_POLICY.blockSelector, blockSelector]
+    blockSelector: [
+      DEFAULT_PRIVACY_POLICY.blockSelector,
+      validSelectors(blockSelector, "privacy.blockSelector"),
+    ]
       .filter(Boolean)
       .join(", "),
-    maskSelector: [DEFAULT_PRIVACY_POLICY.maskSelector, maskTextSelector]
+    maskSelector: [
+      DEFAULT_PRIVACY_POLICY.maskSelector,
+      validSelectors(maskTextSelector, "privacy.maskTextSelector"),
+    ]
       .filter(Boolean)
       .join(", "),
   };
 
-  try {
-    document.querySelector(`${policy.blockSelector}, ${policy.maskSelector}`);
-
-    return policy;
-  } catch {
-    log.warn("invalid privacy selector; interaction details are blocked");
-
-    return { ...policy, blockAll: true } satisfies PrivacyPolicy;
-  }
+  return policy;
 }
 
 export function privacyLevel(element: Element, policy: PrivacyPolicy) {
-  if (policy.blockAll || element.closest(policy.blockSelector)) {
+  if (element.closest(policy.blockSelector)) {
     return "blocked";
   }
 

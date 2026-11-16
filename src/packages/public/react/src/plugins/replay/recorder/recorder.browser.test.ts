@@ -33,6 +33,18 @@ async function startAndGetErrorHandler(
 }
 
 describe(startReplayRecorder, () => {
+  test("checks out every five minutes and samples canvas as WebP", async () => {
+    await startAndGetErrorHandler(
+      vi.fn<Parameters<typeof startReplayRecorder>[0]["onFault"]>(),
+    );
+
+    expect(vi.mocked(record).mock.calls[0]?.[0]).toMatchObject({
+      checkoutEveryNms: 300_000,
+      dataURLOptions: { type: "image/webp", quality: 0.6 },
+      sampling: { canvas: 2 },
+    });
+  });
+
   test.each([null, undefined, "failed", 42, { code: "recorder-failed" }])(
     "forwards arbitrary recorder fault %s unchanged",
     async (fault) => {

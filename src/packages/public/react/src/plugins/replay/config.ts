@@ -6,6 +6,7 @@ import {
   INTERFERE_IGNORE_CLASS,
   INTERFERE_MASK_TEXT_CLASS,
 } from "../../internal/dom/privacy-classes.js";
+import { validSelectors } from "../../internal/dom/selectors.js";
 import type { PrivacyPolicy } from "../../internal/dom/privacy.js";
 
 /** Session replay recording options passed through to the bundled rrweb recorder. */
@@ -54,17 +55,54 @@ function joinSelectors(...selectors: (string | undefined)[]) {
   return selectors.filter(Boolean).join(", ") || undefined;
 }
 
+function classSelector(className: string | RegExp | undefined) {
+  if (
+    className === undefined ||
+    className instanceof RegExp ||
+    className === ""
+  ) {
+    return;
+  }
+
+  return `.${CSS.escape(className)}`;
+}
+
+function classPattern(own: string, custom: string | RegExp | undefined) {
+  return custom instanceof RegExp
+    ? new RegExp(
+        `^${own}$|(?:${custom.source})`,
+        custom.flags.replaceAll(/[gy]/gu, ""),
+      )
+    : own;
+}
+
 export function toRecordOptions(config: ReplayConfig, privacy?: PrivacyPolicy) {
   const options: ReplayRecordOptions = omitUndefined({
-    ...config,
-    blockClass: INTERFERE_BLOCK_CLASS,
-    blockSelector: joinSelectors(privacy?.blockSelector, config.blockSelector),
+    blockClass: classPattern(INTERFERE_BLOCK_CLASS, config.blockClass),
+    blockSelector: joinSelectors(
+      privacy?.blockSelector,
+      classSelector(config.blockClass),
+      validSelectors(config.blockSelector, "replay.blockSelector"),
+    ),
     ignoreClass: INTERFERE_IGNORE_CLASS,
-    maskTextClass: INTERFERE_MASK_TEXT_CLASS,
+    ignoreSelector: joinSelectors(
+      classSelector(config.ignoreClass),
+      validSelectors(config.ignoreSelector, "replay.ignoreSelector"),
+    ),
+    maskAllInputs: config.maskAllInputs,
+    maskInputFn: config.maskInputFn,
+    maskInputOptions: config.maskInputOptions,
+    maskTextClass: classPattern(
+      INTERFERE_MASK_TEXT_CLASS,
+      config.maskTextClass,
+    ),
+    maskTextFn: config.maskTextFn,
     maskTextSelector: joinSelectors(
       privacy?.maskSelector,
-      config.maskTextSelector,
+      classSelector(config.maskTextClass),
+      validSelectors(config.maskTextSelector, "replay.maskTextSelector"),
     ),
+    recordCanvas: config.recordCanvas,
   });
 
   return options;

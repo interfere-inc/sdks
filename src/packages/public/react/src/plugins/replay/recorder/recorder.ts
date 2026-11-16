@@ -12,7 +12,11 @@ const SCROLL_SAMPLE_MS = 150;
 
 const MEDIA_SAMPLE_MS = 800;
 
-const CHECKOUT_EVERY_MS = 60_000;
+const CANVAS_SAMPLE_FPS = 2;
+
+const CANVAS_IMAGE_QUALITY = 0.6;
+
+const CHECKOUT_EVERY_MS = 5 * 60_000;
 
 const MUTATION_STORM_RECORD_LIMIT = 10_000;
 
@@ -129,7 +133,12 @@ export async function startReplayRecorder({
           inlineStylesheet: true,
           slimDOMOptions: "all",
           checkoutEveryNms: CHECKOUT_EVERY_MS,
+          dataURLOptions: {
+            type: "image/webp",
+            quality: CANVAS_IMAGE_QUALITY,
+          },
           sampling: {
+            canvas: CANVAS_SAMPLE_FPS,
             media: MEDIA_SAMPLE_MS,
             mousemove: MOUSEMOVE_SAMPLE_MS,
             scroll: SCROLL_SAMPLE_MS,

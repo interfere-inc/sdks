@@ -4,7 +4,8 @@ import {
   privacyLevel,
   resolvePrivacyPolicy,
 } from "./privacy.js";
-import { expect, onTestFinished, test } from "vitest";
+import { setLogLevel } from "../../util/log.js";
+import { expect, onTestFinished, test, vi } from "vitest";
 
 function render(html: string) {
   const host = document.createElement("div");
@@ -20,12 +21,31 @@ function render(html: string) {
   return host;
 }
 
-test("blocks every target when a privacy selector is invalid", () => {
-  const host = render(`<button>Pay</button>`);
+test("drops an invalid privacy selector and keeps the valid ones", () => {
+  setLogLevel("warn");
 
-  const policy = resolvePrivacyPolicy({ blockSelector: "[" });
+  const warn = vi.spyOn(console, "warn");
 
-  expect(privacyLevel(host, policy)).toBe("blocked");
+  const host = render(`
+    <button>Pay</button>
+    <div data-sensitive>4242</div>
+    <div data-mask>Ada</div>
+  `);
+
+  const policy = resolvePrivacyPolicy({
+    blockSelector: "[data-sensitive], [",
+    maskTextSelector: "[data-mask]",
+  });
+
+  const [button, sensitive, masked] = host.children;
+
+  expect(
+    [host, button, sensitive, masked].map(
+      (element) => element && privacyLevel(element, policy),
+    ),
+  ).toStrictEqual(["public", "public", "blocked", "masked"]);
+
+  expect(warn).toHaveBeenCalledTimes(1);
 });
 
 test("labels a field from public aria-labelledby targets only", () => {

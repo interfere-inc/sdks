@@ -214,7 +214,27 @@ void init({
 });
 ```
 
-A selector matches the element and everything inside it. It applies from the first capture, whether or not replay is on.
+A selector matches the element and everything inside it. It applies from the first capture, whether or not replay is on. An invalid selector is dropped with a console warning, and the valid ones still apply.
+
+### Form fields in replays
+
+By default, replays mask the value of password fields and record what people type into every other field. To mask more, pass replay options to the provider:
+
+```tsx
+<InterfereProvider plugins={{ replay: { maskAllInputs: true } }}>
+```
+
+| Replay option                       | What it does                                                                                                             |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `maskAllInputs`                     | `true` masks the value of every field.                                                                                   |
+| `maskInputOptions`                  | Masks fields by type, such as `{ email: true, tel: true }`. It replaces the default, so add `password: true` to keep it. |
+| `maskInputFn`, `maskTextFn`         | Your own function for masked values and masked text.                                                                     |
+| `blockClass`, `blockSelector`       | Blocks more elements in replays only, alongside `interfere-block` and `privacy.blockSelector`.                           |
+| `maskTextClass`, `maskTextSelector` | Masks more text in replays only, alongside `interfere-mask` and `privacy.maskTextSelector`.                              |
+| `ignoreClass`, `ignoreSelector`     | Fields whose input replays don't record, alongside `interfere-ignore`.                                                   |
+| `recordCanvas`                      | `true` records `<canvas>` content as WebP images, two frames a second. Off by default.                                   |
+
+`blockClass` and `maskTextClass` take a class name or a regular expression tested against each class name. Replay selectors follow the same rule as `privacy` selectors: an invalid one is dropped with a console warning, and the rest still apply.
 
 ### Interaction records
 
@@ -231,7 +251,7 @@ The field label comes from your markup only:
 1. A `data-interfere-label` attribute on the element or a parent, such as `<div data-sensitive data-interfere-label="Security code">`. Use it when the visible label sits inside the private region.
 2. Otherwise, the field's `<label>` or `aria-labelledby` text, unless that label is itself private.
 
-A private element's own `aria-label`, `placeholder`, `title`, text and value are never recorded, because apps often put the current value there. Form fields (`input`, `select`, `textarea`) never contribute text, even when they aren't private. Link URLs (`href`) are never recorded. An invalid selector makes every target private and logs a warning.
+A private element's own `aria-label`, `placeholder`, `title`, text and value are never recorded, because apps often put the current value there. Form fields (`input`, `select`, `textarea`) never contribute text, even when they aren't private. Link URLs (`href`) are never recorded.
 
 To keep page views and load timing without click and submit records, pass `plugins={{ pageEvents: { interactions: false } }}` to the provider. `pageEvents: false` turns off page events entirely, and `rageClick: false` turns off rage clicks.
 
