@@ -1,6 +1,9 @@
 import type { Attributes } from "@opentelemetry/api";
 import { isPlainRecord } from "@interfere/types/sdk/guards/json";
 
+export const ATTR_HTTP_CANCELLATION_INITIATOR =
+  "interfere.http.cancellation_initiator" as const;
+
 const CANCELLATION_INITIATORS = [
   "user",
   "navigation",
@@ -79,7 +82,7 @@ export function cancellationEvidence(reason: unknown) {
   }
 
   const attributes: Attributes = {
-    "interfere.http.cancellation_initiator": initiator,
+    [ATTR_HTTP_CANCELLATION_INITIATOR]: initiator,
   };
 
   return attributes;

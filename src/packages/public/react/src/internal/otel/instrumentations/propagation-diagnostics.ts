@@ -8,6 +8,9 @@ import type {
   TraceHeaderName,
 } from "./header-policy.js";
 
+const ATTR_PROPAGATION_SUSPECT_CORS =
+  "interfere.propagation.suspect_cors" as const;
+
 const PROVEN_KEY = "interfere:propagation_proven";
 
 const DENIED_KEY = "interfere:propagation_denied";
@@ -300,7 +303,7 @@ export function propagationDiagnostics(
         return;
       }
 
-      span?.setAttribute("interfere.propagation.suspect_cors", true);
+      span?.setAttribute(ATTR_PROPAGATION_SUSPECT_CORS, true);
 
       deny(
         origin,

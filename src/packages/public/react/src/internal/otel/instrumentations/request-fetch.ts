@@ -26,6 +26,10 @@ import {
   skipFetchHeaderInjection,
 } from "./upstream-request-members.js";
 
+const ATTR_ERROR_TYPE = "error.type" as const;
+
+const ATTR_HTTP_REQUEST_BODY_SIZE = "http.request.body.size" as const;
+
 function spanUrl(span: Span) {
   return spanStringAttribute(span, "url.full");
 }
@@ -105,7 +109,7 @@ export function createFetchInstrumentation(
       const size = request instanceof Request ? 0 : bodySize(request.body);
 
       if (size > 0) {
-        span.setAttribute("http.request.body.size", size);
+        span.setAttribute(ATTR_HTTP_REQUEST_BODY_SIZE, size);
       }
 
       if (isPrefetchRequest(request)) {
@@ -128,7 +132,7 @@ export function createFetchInstrumentation(
         if (!aborted && name !== "AbortError") {
           span.setStatus({ code: SpanStatusCode.ERROR, message: name });
 
-          span.setAttribute("error.type", name);
+          span.setAttribute(ATTR_ERROR_TYPE, name);
         }
 
         if (state?.injected) {

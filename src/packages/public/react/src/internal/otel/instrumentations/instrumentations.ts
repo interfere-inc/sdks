@@ -31,6 +31,10 @@ import { createRequestInstrumentations } from "./request-instrumentations.js";
 import type { RequestInstrumentationsInput } from "./request-instrumentations.js";
 import type { PropagateToEntry, TraceHeadersOption } from "./header-policy.js";
 
+const ATTR_LONGTASK_CONTAINER_TYPE = "longtask.container_type" as const;
+
+const ATTR_SERVER_ADDRESS = "server.address" as const;
+
 // WARNING: Document load extracts the traceparent meta through the global propagator, bypassing the freshness guard; remote parents must become ROOT_CONTEXT.
 function browserRootedTracerProvider(provider: TracerProvider) {
   let documentLoad: Span | undefined;
@@ -192,7 +196,7 @@ export function registerBundledInstrumentations(input: InstrumentationsInput) {
         const containerType = info.longtaskEntry.attribution[0]?.containerType;
 
         if (containerType) {
-          span.setAttribute("longtask.container_type", containerType);
+          span.setAttribute(ATTR_LONGTASK_CONTAINER_TYPE, containerType);
         }
       },
     }),
@@ -237,7 +241,7 @@ export function registerBundledInstrumentations(input: InstrumentationsInput) {
 
           span.setAttribute(ATTR_URL_PATH, url.pathname);
 
-          span.setAttribute("server.address", url.host);
+          span.setAttribute(ATTR_SERVER_ADDRESS, url.host);
         },
       },
       enabled: false,

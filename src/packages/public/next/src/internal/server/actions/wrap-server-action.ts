@@ -8,6 +8,8 @@ import { markServerAction } from "./server-action-marker.js";
 
 const SITE = "withInterfereServerAction()";
 
+const ATTR_SERVER_ACTION_OUTCOME = "interfere.server_action.outcome" as const;
+
 const TRACER_NAME = "@interfere/next/server";
 
 interface ServerActionOptions {
@@ -63,7 +65,7 @@ export async function withInterfereServerAction<T>(
       : action());
 
     contain(SITE, () =>
-      span?.setAttribute("interfere.server_action.outcome", "success"),
+      span?.setAttribute(ATTR_SERVER_ACTION_OUTCOME, "success"),
     );
 
     return result;
@@ -72,12 +74,12 @@ export async function withInterfereServerAction<T>(
       const outcome = controlFlowOutcome(error);
 
       if (outcome) {
-        span?.setAttribute("interfere.server_action.outcome", outcome);
+        span?.setAttribute(ATTR_SERVER_ACTION_OUTCOME, outcome);
 
         return;
       }
 
-      span?.setAttribute("interfere.server_action.outcome", "error");
+      span?.setAttribute(ATTR_SERVER_ACTION_OUTCOME, "error");
 
       span?.setStatus({ code: SpanStatusCode.ERROR });
 

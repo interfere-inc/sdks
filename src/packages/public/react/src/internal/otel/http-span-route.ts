@@ -3,6 +3,8 @@ import type { Span } from "@opentelemetry/api";
 import { normalizePath } from "./normalize-path.js";
 import { ATTR_HTTP_ROUTE } from "./url-attrs.js";
 
+const ATTR_ROUTE_SOURCE = "interfere.route.source" as const;
+
 export function stampHttpSpanRoute(
   span: Span,
   method: string,
@@ -14,10 +16,7 @@ export function stampHttpSpanRoute(
 
   span.setAttribute(ATTR_HTTP_ROUTE, route);
 
-  span.setAttribute(
-    "interfere.route.source",
-    template ? "template" : "normalized",
-  );
+  span.setAttribute(ATTR_ROUTE_SOURCE, template ? "template" : "normalized");
 
   span.updateName(`${method} ${route}`);
 }

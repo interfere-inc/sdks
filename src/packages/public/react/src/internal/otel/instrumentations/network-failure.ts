@@ -10,6 +10,7 @@ import type {
 import type { ReadableSpan } from "@opentelemetry/sdk-trace-base";
 
 import {
+  ATTR_HTTP_CANCELLATION_INITIATOR,
   bindRequestRecovery,
   cancellationEvidence,
 } from "./request-cancellation.js";
@@ -119,7 +120,7 @@ async function settleAfterTransportHold(
         const initiator = pageExit.initiatorSince?.(failedAt);
 
         if (initiator) {
-          span.setAttribute("interfere.http.cancellation_initiator", initiator);
+          span.setAttribute(ATTR_HTTP_CANCELLATION_INITIATOR, initiator);
         } else if (!pageExit.leftSince(failedAt)) {
           record();
         }
