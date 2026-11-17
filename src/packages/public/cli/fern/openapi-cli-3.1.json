@@ -76500,7 +76500,7 @@
                   "plan": {
                     "enum": [
                       "pro",
-                      "growth"
+                      "business"
                     ],
                     "type": "string",
                     "default": "pro"
