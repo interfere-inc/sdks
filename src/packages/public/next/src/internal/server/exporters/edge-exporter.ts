@@ -10,6 +10,19 @@ import { JsonTraceSerializer } from "@opentelemetry/otlp-transformer";
 import type { ReadableSpan, SpanExporter } from "@opentelemetry/sdk-trace-base";
 import { exportTracePayload } from "../tracing/trace-payload";
 
+const NEXT_ORIGINAL_FETCH = "_nextOriginalFetch";
+
+interface NextPatchedFetch {
+  readonly [NEXT_ORIGINAL_FETCH]?: typeof fetch;
+}
+
+function untracedFetch() {
+  const host: typeof fetch & NextPatchedFetch = globalThis.fetch;
+
+  // WARNING: Next's patched fetch traces each call as AppRender.fetch on the global provider; exporting through it exports every export forever.
+  return host[NEXT_ORIGINAL_FETCH] ?? host;
+}
+
 export class FetchTraceExporter implements SpanExporter {
   private readonly client: InterfereClient;
 
@@ -25,7 +38,7 @@ export class FetchTraceExporter implements SpanExporter {
         ) =>
           retryTelemetry(
             async (signal) =>
-              globalThis.fetch(url, { ...init, keepalive: true, signal }),
+              untracedFetch()(url, { ...init, keepalive: true, signal }),
             init?.signal,
           ),
         globalThis.fetch,

@@ -1,4 +1,8 @@
+import { trace } from "@opentelemetry/api";
 import { ExportResultCode } from "@opentelemetry/core";
+import { workAsyncStorage } from "next/dist/server/app-render/work-async-storage.external";
+import { workUnitAsyncStorage } from "next/dist/server/app-render/work-unit-async-storage.external";
+import { patchFetch } from "next/dist/server/lib/patch-fetch";
 import { InterfereClient } from "@interfere/javascript";
 import { exportTracePayload } from "../tracing/trace-payload";
 import { HttpResponse, http } from "msw";
@@ -63,6 +67,8 @@ describe(FetchTraceExporter, () => {
   });
 
   afterEach(async () => {
+    trace.disable();
+
     await provider.shutdown();
 
     await bareProvider.shutdown();
@@ -109,6 +115,22 @@ describe(FetchTraceExporter, () => {
     expect(headers.has("x-interfere-public-key")).toBe(false);
 
     await expect(new Response(init?.body).text()).resolves.toContain("edge-op");
+  });
+
+  test("exports once through Next's patched fetch instead of exporting its own fetch spans", async () => {
+    trace.setGlobalTracerProvider(provider);
+
+    patchFetch({ workAsyncStorage, workUnitAsyncStorage });
+
+    provider.getTracer("edge").startSpan("edge-op").end();
+
+    await provider.forceFlush();
+
+    await provider.forceFlush();
+
+    await provider.forceFlush();
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   test.each([429, 503])(
