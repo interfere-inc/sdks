@@ -16,6 +16,8 @@ export namespace SourceMapUploadSessionResponse {
     export namespace Uploads {
         export interface Item {
             path: string;
+            /** True when the Company already stores the bytes of the declared sha256. Skip uploading this file and still list it at finalize. */
+            present?: boolean | undefined;
         }
     }
 }

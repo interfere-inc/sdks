@@ -73,68 +73,77 @@ export async function uploadSourceMapChunks(options: {
       throw new Error("Source-map server returned a different batch");
     }
 
-    const jobs = sourceMapUploadJobs(files, signed.batchUpload);
+    const present = new Set(
+      signed.uploads.flatMap((file) => (file.present ? [file.path] : [])),
+    );
+
+    const pending = files.filter((file) => !present.has(file.path));
+
+    const jobs = sourceMapUploadJobs(pending, signed.batchUpload);
     let totalBytes = 0;
 
     await Promise.all(
-      Array.from({ length: Math.min(concurrency, files.length) }, async () => {
-        for (const job of jobs) {
-          abortSignal.throwIfAborted();
+      Array.from(
+        { length: Math.min(concurrency, pending.length) },
+        async () => {
+          for (const job of jobs) {
+            abortSignal.throwIfAborted();
 
-          assertSessionOpen();
-
-          if (job.chunks) {
-            // oxlint-disable-next-line no-await-in-loop -- One worker waits for its durable acknowledgement before taking another job.
-            await uploadSourceMapRequest(
-              async () =>
-                await client.releases.uploadSourceMapBatch(
-                  { releaseSlug, environment, chunks: job.chunks },
-                  { abortSignal, headers },
-                ),
-              abortSignal,
-            );
-
-            totalBytes += job.rawBytes;
-
-            continue;
-          }
-
-          const { file } = job;
-          const bytes = new TextEncoder().encode(file.content);
-
-          for (
-            let offset = 0;
-            offset < bytes.byteLength;
-            offset += chunkBytes
-          ) {
             assertSessionOpen();
 
-            const chunk = new Blob([
-              bytes.subarray(offset, offset + chunkBytes),
-            ]);
+            if (job.chunks) {
+              // oxlint-disable-next-line no-await-in-loop -- One worker waits for its durable acknowledgement before taking another job.
+              await uploadSourceMapRequest(
+                async () =>
+                  await client.releases.uploadSourceMapBatch(
+                    { releaseSlug, environment, chunks: job.chunks },
+                    { abortSignal, headers },
+                  ),
+                abortSignal,
+              );
 
-            // oxlint-disable-next-line no-await-in-loop -- Each file's chunks must be acknowledged in offset order.
-            await uploadSourceMapRequest(
-              async () =>
-                await client.releases.uploadSourceMap(
-                  chunk,
-                  releaseSlug,
-                  { environment, path: file.path, offset },
-                  {
-                    abortSignal,
-                    headers: {
-                      ...headers,
-                      "x-interfere-source-map-size": String(chunk.size),
+              totalBytes += job.rawBytes;
+
+              continue;
+            }
+
+            const { file } = job;
+            const bytes = new TextEncoder().encode(file.content);
+
+            for (
+              let offset = 0;
+              offset < bytes.byteLength;
+              offset += chunkBytes
+            ) {
+              assertSessionOpen();
+
+              const chunk = new Blob([
+                bytes.subarray(offset, offset + chunkBytes),
+              ]);
+
+              // oxlint-disable-next-line no-await-in-loop -- Each file's chunks must be acknowledged in offset order.
+              await uploadSourceMapRequest(
+                async () =>
+                  await client.releases.uploadSourceMap(
+                    chunk,
+                    releaseSlug,
+                    { environment, path: file.path, offset },
+                    {
+                      abortSignal,
+                      headers: {
+                        ...headers,
+                        "x-interfere-source-map-size": String(chunk.size),
+                      },
                     },
-                  },
-                ),
-              abortSignal,
-            );
-          }
+                  ),
+                abortSignal,
+              );
+            }
 
-          totalBytes += bytes.byteLength;
-        }
-      }),
+            totalBytes += bytes.byteLength;
+          }
+        },
+      ),
     );
 
     assertSessionOpen();

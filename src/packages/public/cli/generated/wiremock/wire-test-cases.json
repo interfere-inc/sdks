@@ -360,7 +360,7 @@
       "requiresAuth": true,
       "response": {
         "status": 200,
-        "body": "{\n  \"batchUpload\": {\n    \"version\": 1.1,\n    \"compression\": \"gzip\",\n    \"maxBodyBytes\": 1,\n    \"maxFiles\": 1\n  },\n  \"expiresAt\": 1,\n  \"uploadGrant\": \"uploadGrant\",\n  \"uploads\": [\n    {\n      \"path\": \"path\"\n    }\n  ]\n}"
+        "body": "{\n  \"batchUpload\": {\n    \"version\": 1.1,\n    \"compression\": \"gzip\",\n    \"maxBodyBytes\": 1,\n    \"maxFiles\": 1\n  },\n  \"expiresAt\": 1,\n  \"uploadGrant\": \"uploadGrant\",\n  \"uploads\": [\n    {\n      \"path\": \"path\",\n      \"present\": true\n    }\n  ]\n}"
       }
     },
     {

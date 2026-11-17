@@ -2638,6 +2638,10 @@
               "properties": {
                 "path": {
                   "type": "string"
+                },
+                "present": {
+                  "type": "boolean",
+                  "description": "True when the Company already stores the bytes of the declared sha256. Skip uploading this file and still list it at finalize."
                 }
               },
               "required": [
@@ -2742,6 +2746,11 @@
           "path": {
             "type": "string",
             "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$",
+            "description": "Lowercase hex SHA-256 of the file bytes. When the Company already stores these bytes, the response marks the file present and it needs no upload."
           },
           "sizeBytes": {
             "type": "integer",

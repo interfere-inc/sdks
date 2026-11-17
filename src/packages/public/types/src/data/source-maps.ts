@@ -75,6 +75,14 @@ export const signSourceMapFile = z
     hasSourcesContent: z.boolean(),
     mappingsPresent: z.boolean(),
     path: z.string().min(1),
+    sha256: z
+      .string()
+      .regex(/^[a-f0-9]{64}$/u)
+      .optional()
+      .meta({
+        description:
+          "Lowercase hex SHA-256 of the file bytes. When the Company already stores these bytes, the response marks the file present and it needs no upload.",
+      }),
     sizeBytes: z.number().int().nonnegative(),
   })
   .meta({ id: "SignSourceMapFile", title: "SignSourceMapFile" });
@@ -120,7 +128,15 @@ export const sourceMapUploadSessionResponse = z
       description:
         "Opaque grant for this upload session. Send it as the X-Interfere-Upload-Grant header on chunk and batch uploads in place of the API key; it expires with the session.",
     }),
-    uploads: z.array(z.object({ path: z.string() })),
+    uploads: z.array(
+      z.object({
+        path: z.string(),
+        present: z.boolean().optional().meta({
+          description:
+            "True when the Company already stores the bytes of the declared sha256. Skip uploading this file and still list it at finalize.",
+        }),
+      }),
+    ),
   })
   .meta({ id: "SourceMapUploadSessionResponse" });
 
