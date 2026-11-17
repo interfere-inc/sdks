@@ -68579,7 +68579,7 @@
       "post": {
         "operationId": "problems_kanban",
         "summary": "problems kanban",
-        "description": "List visible problems for a board, optionally filtered by app (surface) and environment patterns. Obtain app IDs from surfaces.list and environment names from environments.list. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.",
+        "description": "List visible problems for a board, optionally filtered by environmentNames from environments.list. The app (surface)-scoped environments filter is deprecated. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.",
         "tags": [
           "problems"
         ],
@@ -68606,6 +68606,16 @@
                   "args": {
                     "type": "object",
                     "properties": {
+                      "environmentNames": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 32,
+                          "description": "Workspace environment name as reported by the SDK, lowercased, such as production."
+                        },
+                        "description": "Workspace environment names from environments.list. A problem matches when any of its findings was reported in one of them."
+                      },
                       "environments": {
                         "type": "array",
                         "items": {
@@ -68626,12 +68636,10 @@
                             "surfaceId",
                             "identifiers"
                           ]
-                        }
+                        },
+                        "description": "Deprecated: use environmentNames. App (surface) environment identifiers, matched only on findings from that app."
                       }
-                    },
-                    "required": [
-                      "environments"
-                    ]
+                    }
                   }
                 }
               }
