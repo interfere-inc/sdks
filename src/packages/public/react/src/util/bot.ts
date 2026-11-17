@@ -1,12 +1,10 @@
-import { isBot } from "@ua-parser-js/pro-enterprise/bot-detection";
+import { isbot } from "isbot";
 
 const AUTOMATION_UA_RE = /headless|electron|puppeteer|playwright/iu;
 
 /**
- * `isBot` covers the union of the Crawlers, Fetchers, CLIs, and Libraries
- * extensions, so `isAICrawler` / `isAIAssistant` are strict subsets that
- * don't need separate checks. Returns `false` outside the browser (no UA
- * to inspect).
+ * `isbot` matches crawlers, fetchers, AI assistants, CLIs and HTTP
+ * libraries. Returns `false` outside the browser (no UA to inspect).
  */
 export function isBotUserAgent() {
   if (typeof navigator === "undefined") {
@@ -27,5 +25,5 @@ export function classifyBrowserAutomation(
     return true;
   }
 
-  return isBot(browser.userAgent);
+  return isbot(browser.userAgent);
 }

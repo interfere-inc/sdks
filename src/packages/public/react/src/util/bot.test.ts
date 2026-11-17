@@ -29,7 +29,7 @@ test.each([
     true,
   ],
   [
-    "AI fetcher UAs (covered via the Bots union)",
+    "an AI fetcher",
     {
       userAgent:
         "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko); compatible; ChatGPT-User/1.0; +https://openai.com/bot",
@@ -37,7 +37,7 @@ test.each([
     true,
   ],
   [
-    "headless Chrome, which the Bots union misses",
+    "headless Chrome",
     {
       userAgent:
         "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/141.0.7390.0 Safari/537.36",
@@ -52,6 +52,22 @@ test.each([
       webdriver: true,
     },
     true,
+  ],
+  [
+    "an AI assistant fetching on a user's behalf",
+    {
+      userAgent:
+        "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Claude-User/1.0; +Claude-User@anthropic.com)",
+    },
+    true,
+  ],
+  [
+    "an in-app browser",
+    {
+      userAgent:
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 18_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Instagram 350.0.0",
+    },
+    false,
   ],
   [
     "a normal Chrome UA",
