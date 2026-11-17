@@ -6,6 +6,7 @@ import { HeaderAuthProvider2 } from "./auth/HeaderAuthProvider2.js";
 import { HeaderAuthProvider3 } from "./auth/HeaderAuthProvider3.js";
 import { HeaderAuthProvider4 } from "./auth/HeaderAuthProvider4.js";
 import { HeaderAuthProvider5 } from "./auth/HeaderAuthProvider5.js";
+import { HeaderAuthProvider6 } from "./auth/HeaderAuthProvider6.js";
 import { RoutingAuthProvider } from "./auth/RoutingAuthProvider.js";
 import { mergeHeaders } from "./core/headers.js";
 import * as core from "./core/index.js";
@@ -21,8 +22,9 @@ export type AuthOption =
               HeaderAuthProvider3.AuthOptions,
               BearerAuthProvider.AuthOptions,
               HeaderAuthProvider4.AuthOptions,
-              BearerAuthProvider.AuthOptions,
               HeaderAuthProvider5.AuthOptions,
+              BearerAuthProvider.AuthOptions,
+              HeaderAuthProvider6.AuthOptions,
           ]
       >;
 
@@ -51,8 +53,9 @@ export type BaseClientOptions = {
         HeaderAuthProvider3.AuthOptions,
         BearerAuthProvider.AuthOptions,
         HeaderAuthProvider4.AuthOptions,
-        BearerAuthProvider.AuthOptions,
         HeaderAuthProvider5.AuthOptions,
+        BearerAuthProvider.AuthOptions,
+        HeaderAuthProvider6.AuthOptions,
     ]
 >;
 
@@ -130,8 +133,9 @@ export function normalizeClientOptionsWithAuth<T extends BaseClientOptions = Bas
         HeaderAuthProvider3,
         BearerAuthProvider,
         HeaderAuthProvider4,
-        BearerAuthProvider,
         HeaderAuthProvider5,
+        BearerAuthProvider,
+        HeaderAuthProvider6,
     ]);
     return normalized;
 }

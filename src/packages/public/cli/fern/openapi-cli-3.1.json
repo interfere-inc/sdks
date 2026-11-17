@@ -219,6 +219,12 @@
         "name": "x-api-key",
         "type": "apiKey"
       },
+      "releaseTokenHeader": {
+        "description": "Release token the build received from POST /v3/releases; names the workspace, service and release",
+        "in": "header",
+        "name": "x-interfere-release-token",
+        "type": "apiKey"
+      },
       "apiKey": {
         "description": "Build-time secret key, as issued in the Interfere dashboard. Workspace secret keys also need the target App's public key (or a workspace public key with SDK service headers when workspace-key routing is enabled) in the `x-interfere-public-key` header; legacy surface secret keys don't.",
         "scheme": "bearer",
@@ -61353,6 +61359,9 @@
           },
           {
             "workspaceTelemetryKeyHeader": []
+          },
+          {
+            "releaseTokenHeader": []
           },
           {
             "publicKeyHeader": []

@@ -62,6 +62,7 @@ impl DrainClient {
                     &["cloudflareStreamId"] as &[&str],
                     &["workspaceTelemetryKey"] as &[&str],
                     &["workspaceTelemetryKeyHeader"] as &[&str],
+                    &["releaseTokenHeader"] as &[&str],
                     &["publicKeyHeader"] as &[&str],
                     &["vercelDrainId"] as &[&str],
                 ],

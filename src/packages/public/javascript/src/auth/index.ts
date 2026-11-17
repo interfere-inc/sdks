@@ -4,4 +4,5 @@ export { HeaderAuthProvider2 } from "./HeaderAuthProvider2.js";
 export { HeaderAuthProvider3 } from "./HeaderAuthProvider3.js";
 export { HeaderAuthProvider4 } from "./HeaderAuthProvider4.js";
 export { HeaderAuthProvider5 } from "./HeaderAuthProvider5.js";
+export { HeaderAuthProvider6 } from "./HeaderAuthProvider6.js";
 export { RoutingAuthProvider } from "./RoutingAuthProvider.js";

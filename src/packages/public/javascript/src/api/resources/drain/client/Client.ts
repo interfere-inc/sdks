@@ -65,6 +65,7 @@ export class DrainClient {
                 { cloudflareStreamId: [] },
                 { workspaceTelemetryKey: [] },
                 { workspaceTelemetryKeyHeader: [] },
+                { releaseTokenHeader: [] },
                 { publicKeyHeader: [] },
                 { publicKey: [] },
                 { vercelDrainId: [] },

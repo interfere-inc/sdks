@@ -674,6 +674,21 @@ impl HttpClient {
             }
         }
 
+        // Header (API key) scheme "releaseTokenHeader".
+        {
+            let api_key = options
+                .as_ref()
+                .and_then(|opts| opts.api_key.as_ref())
+                .or(self.config.api_key.as_ref());
+            if let Some(key) = api_key {
+                let header_value = key.to_string();
+                available.insert(
+                    "releaseTokenHeader",
+                    vec![("x-interfere-release-token".to_string(), header_value)],
+                );
+            }
+        }
+
         // Header (API key) scheme "publicKeyHeader".
         {
             let api_key = options

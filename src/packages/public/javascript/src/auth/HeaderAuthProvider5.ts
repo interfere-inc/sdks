@@ -3,9 +3,9 @@
 import * as core from "../core/index.js";
 import * as errors from "../errors/index.js";
 
-const WRAPPER_PROPERTY = "apiKeyHeader" as const;
+const WRAPPER_PROPERTY = "releaseTokenHeader" as const;
 const PARAM_KEY = "apiKey" as const;
-const HEADER_NAME = "x-api-key" as const;
+const HEADER_NAME = "x-interfere-release-token" as const;
 
 export class HeaderAuthProvider5 implements core.AuthProvider {
     private readonly options: HeaderAuthProvider5.Options;
@@ -39,7 +39,7 @@ export class HeaderAuthProvider5 implements core.AuthProvider {
 }
 
 export namespace HeaderAuthProvider5 {
-    export const AUTH_SCHEME = "apiKeyHeader" as const;
+    export const AUTH_SCHEME = "releaseTokenHeader" as const;
     export const AUTH_CONFIG_ERROR_MESSAGE: string =
         `Please provide '${PARAM_KEY}' when initializing the client` as const;
     export type Options = AuthOptions;
