@@ -383,12 +383,12 @@ Your app's own origin always receives trace headers, as do the backend hosts lis
 
 ### Environment variables
 
-| Variable                | Required                     | What it does                                                                                                                                                                            |
-| ----------------------- | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `INTERFERE_PUBLIC_KEY`  | Yes                          | Your workspace public key. Without it the browser sends nothing.                                                                                                                        |
-| `INTERFERE_API_KEY`     | For releases and server data | A workspace secret key. Builds need **Publish releases**; the server runtime needs **Send telemetry**, and without this key it sends with the public key. Never ship it to the browser. |
-| `INTERFERE_ENVIRONMENT` | No                           | Labels the deployment, such as `staging` or `production`. Defaults to `VERCEL_ENV` on Vercel.                                                                                           |
-| `INTERFERE_SOURCE_ID`   | No                           | The commit SHA, if your CI doesn't expose one (`VERCEL_GIT_COMMIT_SHA`, `GITHUB_SHA`) and the build has no git checkout.                                                                |
+| Variable                | Required                     | What it does                                                                                                                                                                       |
+| ----------------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `INTERFERE_PUBLIC_KEY`  | Yes                          | Your workspace public key. Without it the browser sends nothing.                                                                                                                   |
+| `INTERFERE_API_KEY`     | For releases and server data | A workspace secret key. Builds need **Source maps**; the server runtime needs **Send telemetry**, and without this key it sends with the public key. Never ship it to the browser. |
+| `INTERFERE_ENVIRONMENT` | No                           | Labels the deployment, such as `staging` or `production`. Defaults to `VERCEL_ENV` on Vercel.                                                                                      |
+| `INTERFERE_SOURCE_ID`   | No                           | The commit SHA, if your CI doesn't expose one (`VERCEL_GIT_COMMIT_SHA`, `GITHUB_SHA`) and the build has no git checkout.                                                           |
 
 ## Troubleshooting
 
