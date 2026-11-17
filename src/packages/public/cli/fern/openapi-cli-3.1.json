@@ -5289,6 +5289,14 @@
                         },
                         "channelName": {
                           "type": "string"
+                        },
+                        "threshold": {
+                          "enum": [
+                            "HIGH",
+                            "MEDIUM",
+                            "ALL"
+                          ],
+                          "type": "string"
                         }
                       },
                       "required": [
@@ -18463,6 +18471,14 @@
                             },
                             "channelName": {
                               "type": "string"
+                            },
+                            "threshold": {
+                              "enum": [
+                                "HIGH",
+                                "MEDIUM",
+                                "ALL"
+                              ],
+                              "type": "string"
                             }
                           },
                           "required": [
@@ -19884,6 +19900,14 @@
                               "type": "string"
                             },
                             "channelName": {
+                              "type": "string"
+                            },
+                            "threshold": {
+                              "enum": [
+                                "HIGH",
+                                "MEDIUM",
+                                "ALL"
+                              ],
                               "type": "string"
                             }
                           },
@@ -21312,6 +21336,14 @@
                             "type": "string"
                           },
                           "channelName": {
+                            "type": "string"
+                          },
+                          "threshold": {
+                            "enum": [
+                              "HIGH",
+                              "MEDIUM",
+                              "ALL"
+                            ],
                             "type": "string"
                           }
                         },
@@ -22946,6 +22978,14 @@
                             },
                             "channelName": {
                               "type": "string"
+                            },
+                            "threshold": {
+                              "enum": [
+                                "HIGH",
+                                "MEDIUM",
+                                "ALL"
+                              ],
+                              "type": "string"
                             }
                           },
                           "required": [
@@ -24368,6 +24408,14 @@
                             },
                             "channelName": {
                               "type": "string"
+                            },
+                            "threshold": {
+                              "enum": [
+                                "HIGH",
+                                "MEDIUM",
+                                "ALL"
+                              ],
+                              "type": "string"
                             }
                           },
                           "required": [
@@ -25789,6 +25837,14 @@
                               "type": "string"
                             },
                             "channelName": {
+                              "type": "string"
+                            },
+                            "threshold": {
+                              "enum": [
+                                "HIGH",
+                                "MEDIUM",
+                                "ALL"
+                              ],
                               "type": "string"
                             }
                           },
@@ -27218,6 +27274,14 @@
                             },
                             "channelName": {
                               "type": "string"
+                            },
+                            "threshold": {
+                              "enum": [
+                                "HIGH",
+                                "MEDIUM",
+                                "ALL"
+                              ],
+                              "type": "string"
                             }
                           },
                           "required": [
@@ -28639,6 +28703,14 @@
                             "type": "string"
                           },
                           "channelName": {
+                            "type": "string"
+                          },
+                          "threshold": {
+                            "enum": [
+                              "HIGH",
+                              "MEDIUM",
+                              "ALL"
+                            ],
                             "type": "string"
                           }
                         },
@@ -30279,6 +30351,14 @@
                             },
                             "channelName": {
                               "type": "string"
+                            },
+                            "threshold": {
+                              "enum": [
+                                "HIGH",
+                                "MEDIUM",
+                                "ALL"
+                              ],
+                              "type": "string"
                             }
                           },
                           "required": [
@@ -31700,6 +31780,14 @@
                               "type": "string"
                             },
                             "channelName": {
+                              "type": "string"
+                            },
+                            "threshold": {
+                              "enum": [
+                                "HIGH",
+                                "MEDIUM",
+                                "ALL"
+                              ],
                               "type": "string"
                             }
                           },
@@ -71507,6 +71595,14 @@
                                 "type": "string"
                               },
                               "channelName": {
+                                "type": "string"
+                              },
+                              "threshold": {
+                                "enum": [
+                                  "HIGH",
+                                  "MEDIUM",
+                                  "ALL"
+                                ],
                                 "type": "string"
                               }
                             },

@@ -10,6 +10,8 @@ pub struct QueryIntegrationsGheServerInstallationResponseProviderMetadataChatRou
     #[serde(rename = "channelName")]
     #[serde(default)]
     pub channel_name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub threshold: Option<QueryIntegrationsGheServerInstallationResponseProviderMetadataChatRoutingChatRoutingValueThreshold>,
 }
 
 impl QueryIntegrationsGheServerInstallationResponseProviderMetadataChatRoutingChatRoutingValue {
@@ -23,6 +25,7 @@ impl QueryIntegrationsGheServerInstallationResponseProviderMetadataChatRoutingCh
 pub struct QueryIntegrationsGheServerInstallationResponseProviderMetadataChatRoutingChatRoutingValueBuilder {
     channel_id: Option<String>,
     channel_name: Option<String>,
+    threshold: Option<QueryIntegrationsGheServerInstallationResponseProviderMetadataChatRoutingChatRoutingValueThreshold>,
 }
 
 impl QueryIntegrationsGheServerInstallationResponseProviderMetadataChatRoutingChatRoutingValueBuilder {
@@ -36,6 +39,11 @@ impl QueryIntegrationsGheServerInstallationResponseProviderMetadataChatRoutingCh
         self
     }
 
+    pub fn threshold(mut self, value: QueryIntegrationsGheServerInstallationResponseProviderMetadataChatRoutingChatRoutingValueThreshold) -> Self {
+        self.threshold = Some(value);
+        self
+    }
+
     /// Consumes the builder and constructs a [`QueryIntegrationsGheServerInstallationResponseProviderMetadataChatRoutingChatRoutingValue`].
     /// This method will fail if any of the following fields are not set:
     /// - [`channel_id`](QueryIntegrationsGheServerInstallationResponseProviderMetadataChatRoutingChatRoutingValueBuilder::channel_id)
@@ -44,6 +52,7 @@ impl QueryIntegrationsGheServerInstallationResponseProviderMetadataChatRoutingCh
         Ok(QueryIntegrationsGheServerInstallationResponseProviderMetadataChatRoutingChatRoutingValue {
             channel_id: self.channel_id.ok_or_else(|| BuildError::missing_field("channel_id"))?,
             channel_name: self.channel_name.ok_or_else(|| BuildError::missing_field("channel_name"))?,
+            threshold: self.threshold,
         })
     }
 }
