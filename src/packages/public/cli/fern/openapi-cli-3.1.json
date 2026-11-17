@@ -38732,8 +38732,22 @@
                                           "type": "string"
                                         },
                                         "surfaceId": {
-                                          "type": "string",
-                                          "format": "uuid"
+                                          "anyOf": [
+                                            {
+                                              "anyOf": [
+                                                {
+                                                  "type": "string",
+                                                  "format": "uuid"
+                                                },
+                                                {
+                                                  "type": "null"
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "type": "null"
+                                            }
+                                          ]
                                         },
                                         "organizationId": {
                                           "type": "string",
@@ -44374,8 +44388,22 @@
                                             "type": "string"
                                           },
                                           "surfaceId": {
-                                            "type": "string",
-                                            "format": "uuid"
+                                            "anyOf": [
+                                              {
+                                                "anyOf": [
+                                                  {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                  },
+                                                  {
+                                                    "type": "null"
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "type": "null"
+                                              }
+                                            ]
                                           },
                                           "organizationId": {
                                             "type": "string",
@@ -47715,8 +47743,22 @@
               "type": "string"
             },
             "surfaceId": {
-              "type": "string",
-              "format": "uuid"
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
             },
             "organizationId": {
               "type": "string",
@@ -48841,8 +48883,22 @@
                     "format": "uuid"
                   },
                   "surfaceId": {
-                    "type": "string",
-                    "format": "uuid"
+                    "anyOf": [
+                      {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   },
                   "releaseId": {
                     "type": "string",
@@ -48980,8 +49036,22 @@
                 "type": "string"
               },
               "surfaceId": {
-                "type": "string",
-                "format": "uuid"
+                "anyOf": [
+                  {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
               },
               "organizationId": {
                 "type": "string",
@@ -50106,8 +50176,22 @@
                       "format": "uuid"
                     },
                     "surfaceId": {
-                      "type": "string",
-                      "format": "uuid"
+                      "anyOf": [
+                        {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "uuid"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
                     },
                     "releaseId": {
                       "type": "string",
@@ -50249,8 +50333,22 @@
               "type": "string"
             },
             "surfaceId": {
-              "type": "string",
-              "format": "uuid"
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
             },
             "organizationId": {
               "type": "string",
@@ -51375,8 +51473,22 @@
                     "format": "uuid"
                   },
                   "surfaceId": {
-                    "type": "string",
-                    "format": "uuid"
+                    "anyOf": [
+                      {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   },
                   "releaseId": {
                     "type": "string",

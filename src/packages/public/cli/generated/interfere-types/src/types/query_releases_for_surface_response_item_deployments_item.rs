@@ -10,8 +10,8 @@ pub struct QueryReleasesForSurfaceResponseItemDeploymentsItem {
     #[serde(default)]
     pub organization_id: String,
     #[serde(rename = "surfaceId")]
-    #[serde(default)]
-    pub surface_id: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub surface_id: Option<String>,
     #[serde(rename = "releaseId")]
     #[serde(default)]
     pub release_id: String,
@@ -131,7 +131,6 @@ impl QueryReleasesForSurfaceResponseItemDeploymentsItemBuilder {
     /// This method will fail if any of the following fields are not set:
     /// - [`id`](QueryReleasesForSurfaceResponseItemDeploymentsItemBuilder::id)
     /// - [`organization_id`](QueryReleasesForSurfaceResponseItemDeploymentsItemBuilder::organization_id)
-    /// - [`surface_id`](QueryReleasesForSurfaceResponseItemDeploymentsItemBuilder::surface_id)
     /// - [`release_id`](QueryReleasesForSurfaceResponseItemDeploymentsItemBuilder::release_id)
     /// - [`provider`](QueryReleasesForSurfaceResponseItemDeploymentsItemBuilder::provider)
     /// - [`status`](QueryReleasesForSurfaceResponseItemDeploymentsItemBuilder::status)
@@ -141,7 +140,7 @@ impl QueryReleasesForSurfaceResponseItemDeploymentsItemBuilder {
         Ok(QueryReleasesForSurfaceResponseItemDeploymentsItem {
             id: self.id.ok_or_else(|| BuildError::missing_field("id"))?,
             organization_id: self.organization_id.ok_or_else(|| BuildError::missing_field("organization_id"))?,
-            surface_id: self.surface_id.ok_or_else(|| BuildError::missing_field("surface_id"))?,
+            surface_id: self.surface_id,
             release_id: self.release_id.ok_or_else(|| BuildError::missing_field("release_id"))?,
             environment: self.environment,
             provider: self.provider.ok_or_else(|| BuildError::missing_field("provider"))?,

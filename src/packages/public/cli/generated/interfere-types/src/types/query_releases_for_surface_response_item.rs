@@ -9,8 +9,8 @@ pub struct QueryReleasesForSurfaceResponseItem {
     #[serde(default)]
     pub slug: String,
     #[serde(rename = "surfaceId")]
-    #[serde(default)]
-    pub surface_id: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub surface_id: Option<String>,
     #[serde(rename = "organizationId")]
     #[serde(default)]
     pub organization_id: String,
@@ -222,7 +222,6 @@ impl QueryReleasesForSurfaceResponseItemBuilder {
     /// This method will fail if any of the following fields are not set:
     /// - [`id`](QueryReleasesForSurfaceResponseItemBuilder::id)
     /// - [`slug`](QueryReleasesForSurfaceResponseItemBuilder::slug)
-    /// - [`surface_id`](QueryReleasesForSurfaceResponseItemBuilder::surface_id)
     /// - [`organization_id`](QueryReleasesForSurfaceResponseItemBuilder::organization_id)
     /// - [`status`](QueryReleasesForSurfaceResponseItemBuilder::status)
     /// - [`created_at`](QueryReleasesForSurfaceResponseItemBuilder::created_at)
@@ -232,7 +231,7 @@ impl QueryReleasesForSurfaceResponseItemBuilder {
         Ok(QueryReleasesForSurfaceResponseItem {
             id: self.id.ok_or_else(|| BuildError::missing_field("id"))?,
             slug: self.slug.ok_or_else(|| BuildError::missing_field("slug"))?,
-            surface_id: self.surface_id.ok_or_else(|| BuildError::missing_field("surface_id"))?,
+            surface_id: self.surface_id,
             organization_id: self.organization_id.ok_or_else(|| BuildError::missing_field("organization_id"))?,
             build_id: self.build_id,
             source_metadata: self.source_metadata,
