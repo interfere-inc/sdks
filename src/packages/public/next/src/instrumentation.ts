@@ -1,5 +1,6 @@
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
 import { startNodeRuntime } from "@interfere/server-core/node";
+import { serverCredential } from "@interfere/server-core/credential";
 import { containAsync } from "@interfere/server-core/contain";
 import { registeredTracerProvider } from "@interfere/server-core/ownership";
 import { readLogSourcingMode } from "@interfere/types/sdk/log-sourcing";
@@ -42,9 +43,10 @@ export async function register(opts: ServerInstrumentationOptions = {}) {
 
     const env = readInterfereEnv();
     const tracing = readServerTracing();
+    const credential = serverCredential(env.apiKey, env.publicKey);
 
     if (
-      !env.publicKey ||
+      !credential ||
       (tracing.mode === "drain" &&
         getStringFromEnv("OTEL_SDK_DISABLED")?.trim())
     ) {
@@ -66,7 +68,7 @@ export async function register(opts: ServerInstrumentationOptions = {}) {
       name: "@interfere/next",
       version: PRODUCER_VERSION,
       apiUrl: env.apiUrl,
-      publicKey: env.publicKey,
+      credential,
       options: {
         ...opts,
         _internalAdditionalSpanProcessors: [

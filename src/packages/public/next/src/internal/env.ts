@@ -20,13 +20,16 @@ interface InterfereEnv {
   };
 }
 
-/** Enable server telemetry when its public key is configured and the build has not disabled it. */
+/** Enable server telemetry when a server credential (workspace API key or public key alias) is configured and the build has not disabled it. */
 export function isEnabledOnServer() {
   if (interfereDisabled()) {
     return false;
   }
 
-  return Boolean(parseEnvValue(process.env["INTERFERE_PUBLIC_KEY"]));
+  return Boolean(
+    parseEnvValue(process.env["INTERFERE_API_KEY"]) ??
+    parseEnvValue(process.env["INTERFERE_PUBLIC_KEY"]),
+  );
 }
 
 export function readInterfereEnv() {
@@ -37,7 +40,9 @@ export function readInterfereEnv() {
 
   return {
     serviceName: getStringGlobal(SERVICE_NAME_GLOBAL) ?? null,
-    apiKey: parseEnvValue(process.env["INTERFERE_API_KEY"]),
+    apiKey: interfereDisabled()
+      ? null
+      : parseEnvValue(process.env["INTERFERE_API_KEY"]),
     apiUrl: parseEnvValue(process.env["INTERFERE_API_URL"]) ?? API_URL,
     nextRuntime: parseEnvValue(process.env["NEXT_RUNTIME"]),
     nodeEnvironment,

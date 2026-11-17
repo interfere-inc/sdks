@@ -11,6 +11,7 @@ import { afterEach, beforeEach, expect, test } from "vitest";
 import { worker } from "../../../../test/msw.js";
 import { settledRequestSpans } from "../../../../test/request-spans.test-utils.js";
 import { requestCancellation, requestRecovered } from "../../../api.js";
+import { transportContextAttrs } from "../../capture/transport-context.js";
 import { registerBundledInstrumentations } from "./instrumentations.js";
 
 const SEARCH_URL = `${location.origin}/api/search`;
@@ -364,6 +365,7 @@ test("unannotated transport failures retain their callsite without cancellation 
     "interfere.exception.kind": "error",
     "interfere.exception.mechanism": MECHANISM_TYPE.browser.fetchNetworkError,
     "interfere.exception.subtype": "network",
+    ...transportContextAttrs(),
   });
 
   expect(spans[0]?.attributes["interfere.http.capture_status"]).toBeUndefined();

@@ -41,7 +41,7 @@ function startHandlerProcess(fixturePath: string, mode: HandlerMode) {
   const child = spawn(process.execPath, [fixturePath, mode], {
     env: {
       ...process.env,
-      INTERFERE_PUBLIC_KEY: "interfere_pk_test_123",
+      INTERFERE_API_KEY: "interfere_pk_test_123",
       NEXT_PUBLIC_INTERFERE_FORCE_ENABLE: "1",
     },
     stdio: "pipe",

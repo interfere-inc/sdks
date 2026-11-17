@@ -4,6 +4,7 @@ import type { Interfere } from "@interfere/javascript";
 import type { ReleaseDiagnosticContext } from "@interfere/types/sdk/build-diagnostics";
 import { InterfereClient } from "@interfere/javascript";
 import type { Logger } from "vite";
+import { PRODUCER_VERSION } from "../../version";
 
 export function warnBuildPreflight(
   logger: Logger,
@@ -56,6 +57,7 @@ export async function preflightViteBinding(input: {
     apiKey: { token: input.apiKey },
     headers: {
       [PUBLIC_KEY_HEADER]: input.publicKey,
+      "x-interfere-producer-version": PRODUCER_VERSION,
       "x-interfere-service": input.serviceName,
     },
     maxRetries: 0,

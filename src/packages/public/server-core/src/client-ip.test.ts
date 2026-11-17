@@ -29,7 +29,7 @@ test.each([
         name: "client-ip",
         version: "1.0.0",
         apiUrl: collector.url,
-        publicKey: "test",
+        credential: { apiKey: "test" },
         resourceAttributes: {},
         options: {
           consoleBridge: false,

@@ -6,20 +6,19 @@ import {
 } from "@interfere/types/sdk/runtime";
 
 interface InterfereServerEnv {
+  readonly apiKey: string | null;
   readonly apiUrl: string;
   readonly nodeEnvironment: string;
   readonly publicKey: string | null;
 }
 
 /**
- * Server-side gate for the proxy handler, the `captureError` /
- * `onRequestError` helpers, and the OTel register path. Reads the same
- * publishable `VITE_INTERFERE_PUBLIC_KEY` as the browser — the key is
- * not a secret, so there is no reason to demand a second server-only
- * variable. Vite only inlines `VITE_*` into the client bundle, so the
- * plugin mirrors it into `process.env` for the dev server. Collector
- * ingress remains the authority on whether local / unknown / production
- * events are allowed.
+ * Server-side gate for the `captureError` / `onRequestError` helpers, request
+ * tracing and the OTel register path. Server telemetry authenticates with the
+ * workspace API key (`INTERFERE_API_KEY`, `org:telemetry:write`), read from the
+ * runtime environment and never baked into a bundle, else with the public key
+ * alias. Collector ingress remains the authority on whether local / unknown /
+ * production events are allowed.
  */
 export function isEnabledOnServer() {
   if (import.meta.env.VITE_INTERFERE_DISABLED) {
@@ -30,7 +29,7 @@ export function isEnabledOnServer() {
     return true;
   }
 
-  return readPublicKey() !== null;
+  return readApiKey() !== null || readPublicKey() !== null;
 }
 
 export function readInterfereServerEnv() {
@@ -39,11 +38,18 @@ export function readInterfereServerEnv() {
     explicit: import.meta.env.VITE_INTERFERE_ENVIRONMENT,
   });
 
+  const disabled = Boolean(import.meta.env.VITE_INTERFERE_DISABLED);
+
   return {
+    apiKey: disabled ? null : readApiKey(),
     apiUrl: parseEnvValue(readProcessEnv()?.["INTERFERE_API_URL"]) ?? API_URL,
     nodeEnvironment,
-    publicKey: import.meta.env.VITE_INTERFERE_DISABLED ? null : readPublicKey(),
+    publicKey: disabled ? null : readPublicKey(),
   } satisfies InterfereServerEnv;
+}
+
+function readApiKey() {
+  return parseEnvValue(readProcessEnv()?.["INTERFERE_API_KEY"]);
 }
 
 function readPublicKey() {

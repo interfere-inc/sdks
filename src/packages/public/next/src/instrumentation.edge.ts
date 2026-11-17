@@ -35,6 +35,8 @@ import {
   resolveTracingMode,
 } from "@interfere/server-core/ownership";
 import { PRODUCER_VERSION } from "./internal/version.js";
+import { serverCredential } from "@interfere/server-core/credential";
+import { PUBLIC_KEY_HEADER } from "@interfere/constants/api";
 
 export { onRequestError } from "./internal/server/capture/capture.js";
 
@@ -74,8 +76,9 @@ function start(opts: ServerInstrumentationOptions) {
   }
 
   const env = readInterfereEnv();
+  const credential = serverCredential(env.apiKey, env.publicKey);
 
-  if (!env.publicKey) {
+  if (!credential) {
     return;
   }
 
@@ -122,8 +125,14 @@ function start(opts: ServerInstrumentationOptions) {
         new SimpleSpanProcessor(
           new FetchTraceExporter({
             baseUrl: env.apiUrl,
-            publicKeyHeader: { apiKey: env.publicKey },
-            headers: { "x-interfere-producer-version": PRODUCER_VERSION },
+            ...("apiKey" in credential
+              ? { workspaceTelemetryKeyHeader: { apiKey: credential.apiKey } }
+              : { publicKeyHeader: { apiKey: credential.publicKey } }),
+            headers: omitUndefined({
+              "x-interfere-producer-version": PRODUCER_VERSION,
+              [PUBLIC_KEY_HEADER]:
+                "apiKey" in credential ? credential.publicKey : undefined,
+            }),
           }),
         ),
       ],

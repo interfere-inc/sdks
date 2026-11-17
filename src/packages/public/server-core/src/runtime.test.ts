@@ -54,7 +54,7 @@ beforeEach(async () => {
     name: "core-contract",
     version: "1.0.0",
     apiUrl: collector.url,
-    publicKey: "core-contract",
+    credential: { apiKey: "core-contract" },
     resourceAttributes: {},
     options: { consoleBridge: false },
     drain: false,
@@ -173,6 +173,59 @@ test("startup failure releases owned globals and can register again", async () =
   await runtime.flush();
 
   expect(exportedSpans(collector.requests)).toHaveLength(1);
+});
+
+test("trace and log exports carry the workspace API key as a bearer token and no query credential", async () => {
+  await runtime.register(async () =>
+    startNodeRuntime({
+      ...input,
+      options: { consoleBridge: { level: "info" } },
+    }),
+  );
+
+  runtime.recordException(new Error("keyed capture"), {
+    type: "manual.api.capture",
+    handled: true,
+  });
+
+  // oxlint-disable-next-line no-console -- Exercise the real log exporter through the console bridge.
+  console.info("keyed-log");
+
+  await runtime.flush();
+
+  const exports = collector.requests.filter((request) =>
+    request.url.startsWith("/drain/v1/"),
+  );
+
+  expect(exports.map((request) => request.url).toSorted()).toStrictEqual([
+    "/drain/v1/logs",
+    "/drain/v1/traces",
+  ]);
+
+  expect(
+    exports.map((request) => request.headers.get("authorization")),
+  ).toStrictEqual(["Bearer core-contract", "Bearer core-contract"]);
+});
+
+test("a public key alias travels in its header and never in the query", async () => {
+  await runtime.register(async () =>
+    startNodeRuntime({ ...input, credential: { publicKey: "core-alias" } }),
+  );
+
+  runtime.recordException(new Error("alias capture"), {
+    type: "manual.api.capture",
+    handled: true,
+  });
+
+  await runtime.flush();
+
+  const exported = collector.requests.find((request) =>
+    request.url.startsWith("/drain/v1/traces"),
+  );
+
+  expect(exported?.url).toBe("/drain/v1/traces");
+  expect(exported?.headers.get("x-interfere-public-key")).toBe("core-alias");
+  expect(exported?.headers.has("authorization")).toBe(false);
 });
 
 test.each([

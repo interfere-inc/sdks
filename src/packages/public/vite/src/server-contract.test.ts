@@ -12,7 +12,7 @@ import { describe, vi } from "vitest";
 describe("shared server contract", () => {
   // oxlint-disable-next-line vitest/require-hook -- Registers the shared tests and their setup/teardown hooks.
   serverContract(async (collectorUrl) => {
-    vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "server-contract");
+    vi.stubEnv("INTERFERE_API_KEY", "server-contract");
 
     vi.stubEnv("INTERFERE_API_URL", collectorUrl);
 

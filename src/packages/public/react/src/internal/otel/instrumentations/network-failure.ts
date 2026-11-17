@@ -14,6 +14,7 @@ import {
   cancellationEvidence,
 } from "./request-cancellation.js";
 
+import { transportContextAttrs } from "../../capture/transport-context.js";
 import { safeStringify } from "../../../util/stringify.js";
 import {
   requestCallsiteAttributes,
@@ -95,6 +96,7 @@ function recordNetworkFailure(
   span.addEvent("exception", {
     ...evidence,
     ...callsite,
+    ...transportContextAttrs(),
     "exception.message": message,
     "exception.type": "NetworkError",
     "interfere.exception.chain": safeStringify(chain),

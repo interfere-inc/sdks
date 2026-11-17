@@ -46,7 +46,7 @@ describe(withInterfereServerAction, () => {
 
     vi.stubEnv("NEXT_PUBLIC_INTERFERE_FORCE_ENABLE", "1");
 
-    vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test_123");
+    vi.stubEnv("INTERFERE_API_KEY", "interfere_pk_test_123");
 
     exporter = new InMemorySpanExporter();
 

@@ -171,7 +171,7 @@ beforeEach(() => {
 
   setInjectedConfiguration(RELEASE_SLUG_GLOBAL, undefined);
 
-  vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test");
+  vi.stubEnv("INTERFERE_API_KEY", "interfere_pk_test");
 
   vi.stubEnv("INTERFERE_API_URL", "https://collector.test");
 
@@ -363,9 +363,9 @@ describe("managed resource", () => {
     expect(received).toHaveLength(1);
     expect(received[0]?.headers["content-encoding"]).toBe("gzip");
 
-    expect(received[0]?.route).toBe(
-      "POST /drain/v1/traces?public_key=interfere_pk_test",
-    );
+    expect(received[0]?.route).toBe("POST /drain/v1/traces");
+
+    expect(received[0]?.headers.authorization).toBe("Bearer interfere_pk_test");
 
     assert(received[0]);
 
@@ -503,8 +503,8 @@ describe("URL redaction", () => {
 });
 
 describe("register / flush", () => {
-  test("no-ops and leaves flush inert when no public key is set", async () => {
-    vi.stubEnv("INTERFERE_PUBLIC_KEY", "");
+  test("no-ops and leaves flush inert when no workspace API key is set", async () => {
+    vi.stubEnv("INTERFERE_API_KEY", "");
 
     const mod = await load();
 

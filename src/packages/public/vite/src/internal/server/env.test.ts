@@ -6,8 +6,19 @@ afterEach(() => {
 });
 
 describe("server env", () => {
-  test("enables server/proxy mode when a public key is configured", () => {
+  test("enables server telemetry in development when a workspace API key is configured", () => {
     vi.stubEnv("NODE_ENV", "development");
+
+    vi.stubEnv("INTERFERE_API_KEY", "interfere_secret_us_test");
+
+    expect(isEnabledOnServer()).toBe(true);
+    expect(readInterfereServerEnv().apiKey).toBe("interfere_secret_us_test");
+  });
+
+  test("falls back to the public key alias in development without a workspace API key", () => {
+    vi.stubEnv("NODE_ENV", "development");
+
+    vi.stubEnv("INTERFERE_API_KEY", "");
 
     vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "interfere_pub_us_test");
 
@@ -17,12 +28,15 @@ describe("server env", () => {
   test("stays off in production with a public key when the build disabled Interfere", () => {
     vi.stubEnv("NODE_ENV", "production");
 
+    vi.stubEnv("INTERFERE_API_KEY", "interfere_secret_us_test");
+
     vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "interfere_pub_us_test");
 
     vi.stubEnv("VITE_INTERFERE_DISABLED", "true");
 
     expect(isEnabledOnServer()).toBe(false);
     expect(readInterfereServerEnv().publicKey).toBeNull();
+    expect(readInterfereServerEnv().apiKey).toBeNull();
   });
 
   test("falls back to development when no environment signal is set", () => {

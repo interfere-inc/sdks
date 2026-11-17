@@ -19,6 +19,7 @@ import {
 } from "../test/fixtures/build.js";
 import { withInterfere } from "./config.js";
 import { log } from "./internal/logger.js";
+import { PRODUCER_VERSION } from "./internal/version.js";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 beforeEach(() => {
@@ -584,7 +585,7 @@ describe("withInterfere build pipeline", () => {
   });
 
   test("names the app with its public key and service on every release request", async () => {
-    expect.assertions(3);
+    expect.assertions(4);
 
     await withTempProject("next-config-build-selector-", async (projectDir) => {
       prepareBuildProject(projectDir, "vercel", "interfere_secret_us_test_123");
@@ -615,6 +616,12 @@ describe("withInterfere build pipeline", () => {
           request.headers.get("x-interfere-public-key"),
         ),
       ).toStrictEqual(Array.from(requests, () => "interfere_pk_next"));
+
+      expect(
+        requests.map((request) =>
+          request.headers.get("x-interfere-producer-version"),
+        ),
+      ).toStrictEqual(Array.from(requests, () => PRODUCER_VERSION));
     });
   });
 

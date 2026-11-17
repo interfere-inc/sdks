@@ -42,7 +42,7 @@ describe("onRequestError route context", () => {
 
     vi.stubEnv("NEXT_PUBLIC_INTERFERE_FORCE_ENABLE", "1");
 
-    vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test_123");
+    vi.stubEnv("INTERFERE_API_KEY", "interfere_pk_test_123");
 
     exporter = new InMemorySpanExporter();
 
@@ -264,7 +264,7 @@ describe("next control-flow sentinels are never captured as errors", () => {
 
     vi.stubEnv("NEXT_PUBLIC_INTERFERE_FORCE_ENABLE", "1");
 
-    vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test_123");
+    vi.stubEnv("INTERFERE_API_KEY", "interfere_pk_test_123");
 
     exporter = new InMemorySpanExporter();
 

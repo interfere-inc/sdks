@@ -26,7 +26,7 @@ afterEach(() => {
 test("managed mode next to a registered provider delivers a throwing request middleware error to Interfere", async () => {
   const collector = await receiver();
 
-  vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "interfere_pub_us_test_123");
+  vi.stubEnv("INTERFERE_API_KEY", "interfere_ak_test");
 
   vi.stubEnv("INTERFERE_API_URL", collector.url);
 

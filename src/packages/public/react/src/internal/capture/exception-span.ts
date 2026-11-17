@@ -28,6 +28,7 @@ import type {
 
 import { getGlobal } from "../../util/global.js";
 import { safeStringify } from "../../util/stringify.js";
+import { transportFailureAttrs } from "./transport-context.js";
 
 export interface RecordExceptionOpts {
   /**
@@ -102,6 +103,8 @@ export function buildExceptionEventAttrs(
   attrs["interfere.exception.chain"] = safeStringify(
     toExceptions(value, opts.mechanism),
   );
+
+  Object.assign(attrs, transportFailureAttrs(value));
 
   const debugIds = getGlobal("_debugIds");
 

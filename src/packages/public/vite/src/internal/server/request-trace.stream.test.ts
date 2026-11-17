@@ -26,7 +26,7 @@ let exporter: InMemorySpanExporter;
 let provider: BasicTracerProvider;
 
 beforeEach(() => {
-  vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "interfere_pub_us_test_123");
+  vi.stubEnv("INTERFERE_API_KEY", "interfere_ak_test");
 
   exporter = new InMemorySpanExporter();
 

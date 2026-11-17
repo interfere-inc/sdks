@@ -9,7 +9,7 @@ let app: Awaited<ReturnType<typeof application>>;
 let host: Awaited<ReturnType<typeof app.start>>;
 const cleanups: (() => Promise<void>)[] = [];
 
-const HOST_KEY = "interfere_secret_us_acceptance";
+const HOST_KEY = "interfere_secret_us_host";
 
 function hostTraceExports() {
   return collector.requests.filter(
@@ -22,7 +22,7 @@ function hostTraceExports() {
 function interfereTraceExports() {
   return collector.requests.filter(
     (request) =>
-      request.url.startsWith("/drain/v1/traces?public_key=") &&
+      request.url.startsWith("/drain/v1/traces") &&
       request.headers.get("content-type")?.includes("json"),
   );
 }
@@ -52,7 +52,7 @@ beforeAll(async () => {
 
   const env = {
     INTERFERE_PUBLIC_KEY: "interfere_public_us_acceptance",
-    INTERFERE_API_KEY: HOST_KEY,
+    INTERFERE_API_KEY: "interfere_secret_us_acceptance",
     INTERFERE_API_URL: collector.url,
     INTERFERE_SOURCE_ID: "0123456789abcdef0123456789abcdef01234567",
     INTERFERE_ENVIRONMENT: "preview",

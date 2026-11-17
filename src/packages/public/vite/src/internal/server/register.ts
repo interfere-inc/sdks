@@ -4,6 +4,10 @@ import { drainUrl } from "@interfere/constants/api";
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
 import { installGlobalHandlers } from "@interfere/server-core/global-handlers";
 import { startNodeRuntime } from "@interfere/server-core/node";
+import {
+  serverCredential,
+  serverCredentialHeaders,
+} from "@interfere/server-core/credential";
 import { resolveLogSourcingMode } from "@interfere/types/sdk/log-sourcing";
 import { resolveServerTracing } from "@interfere/types/sdk/server-tracing";
 import { metrics } from "@opentelemetry/api";
@@ -45,11 +49,12 @@ export async function register(opts: ServerInstrumentationOptions = {}) {
   await runtime.register(async () => {
     const env = readInterfereServerEnv();
 
-    if (!env.publicKey) {
+    const credential = serverCredential(env.apiKey, env.publicKey);
+
+    if (!credential) {
       return null;
     }
 
-    const { publicKey } = env;
     const { slug } = resolveReleaseSlug();
 
     if (!slug) {
@@ -82,7 +87,7 @@ export async function register(opts: ServerInstrumentationOptions = {}) {
 
     const ignoreUrls = [
       ...(["traces", "logs", "metrics"] as const).map((signal) =>
-        drainUrl(env.apiUrl, signal, publicKey),
+        drainUrl(env.apiUrl, signal),
       ),
       `${env.apiUrl}/v3/config`,
       ...(opts.ignoreUrls ?? []),
@@ -92,7 +97,7 @@ export async function register(opts: ServerInstrumentationOptions = {}) {
       name: "@interfere/vite",
       version: PRODUCER_VERSION,
       apiUrl: env.apiUrl,
-      publicKey,
+      credential,
       options: opts,
       drain: tracing.mode === "drain",
       logDrain:
@@ -115,8 +120,11 @@ export async function register(opts: ServerInstrumentationOptions = {}) {
           readers: [
             new PeriodicExportingMetricReader({
               exporter: new OTLPMetricExporter({
-                url: drainUrl(env.apiUrl, "metrics", publicKey),
-                headers: { "x-interfere-producer-version": PRODUCER_VERSION },
+                url: drainUrl(env.apiUrl, "metrics"),
+                headers: {
+                  ...serverCredentialHeaders(credential),
+                  "x-interfere-producer-version": PRODUCER_VERSION,
+                },
                 temporalityPreference: AggregationTemporalityPreference.DELTA,
               }),
               exportIntervalMillis: 30_000,

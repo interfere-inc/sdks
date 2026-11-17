@@ -17,6 +17,7 @@ import { SERVER_TRACING_GLOBAL } from "@interfere/types/sdk/server-tracing";
 import type { ResolvedBuildConfig } from "../../config.js";
 import type { NextConfig } from "next";
 import { log } from "../logger.js";
+import { PRODUCER_VERSION } from "../version.js";
 
 /** The surface configuration snapshot one production build resolves from `/v3/config`. */
 export type SurfaceConfig = Awaited<
@@ -85,6 +86,7 @@ function releaseBinding(config: ResolvedBuildConfig) {
       apiKey: { token: config.apiKey },
       headers: {
         [PUBLIC_KEY_HEADER]: config.publicKey,
+        "x-interfere-producer-version": PRODUCER_VERSION,
         "x-interfere-service": config.serviceName,
       },
       maxRetries: 0,

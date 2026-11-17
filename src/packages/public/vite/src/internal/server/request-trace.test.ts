@@ -33,7 +33,7 @@ describe("request-trace", () => {
   beforeEach(() => {
     vi.unstubAllEnvs();
 
-    vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "interfere_pub_us_test_123");
+    vi.stubEnv("INTERFERE_API_KEY", "interfere_ak_test");
 
     exporter = new InMemorySpanExporter();
 
@@ -152,7 +152,7 @@ describe("request-trace", () => {
   });
 
   test("runs next without a span when the SDK is disabled", async () => {
-    vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", undefined);
+    vi.stubEnv("INTERFERE_API_KEY", undefined);
 
     vi.stubEnv("NODE_ENV", "development");
 
@@ -194,7 +194,7 @@ describe("trace meta ownership", () => {
 
     vi.stubEnv("INTERFERE_API_URL", collector.url);
 
-    vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "interfere_pub_us_test_123");
+    vi.stubEnv("INTERFERE_API_KEY", "interfere_ak_test");
 
     context.setGlobalContextManager(
       new AsyncLocalStorageContextManager().enable(),

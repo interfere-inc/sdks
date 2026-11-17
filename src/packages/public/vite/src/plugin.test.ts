@@ -30,6 +30,8 @@ import {
   vi,
 } from "vitest";
 
+import { PRODUCER_VERSION } from "./version";
+
 const { interfere } = await import("./plugin.js");
 
 const server = setupServer();
@@ -1417,6 +1419,12 @@ describe("interfere vite plugin", () => {
       expect(
         requests.map((request) => request.headers.get("x-interfere-service")),
       ).toStrictEqual(Array.from(requests, () => "storefront"));
+
+      expect(
+        configRequests.map((request) =>
+          request.headers.get("x-interfere-producer-version"),
+        ),
+      ).toStrictEqual([PRODUCER_VERSION]);
     });
 
     test.each([
@@ -1684,7 +1692,7 @@ describe("interfere vite plugin", () => {
     });
   });
 
-  describe("dev-server public-key mirror", () => {
+  describe("dev-server key mirror", () => {
     let envDir: string;
     const KEY = "VITE_INTERFERE_PUBLIC_KEY";
 
@@ -1700,12 +1708,16 @@ describe("interfere vite plugin", () => {
       envDir = mkdtempSync(path.join(tmpdir(), "interfere-vite-mirror-"));
 
       delete process.env["VITE_INTERFERE_PUBLIC_KEY"];
+
+      delete process.env["INTERFERE_API_KEY"];
     });
 
     afterEach(() => {
       rmSync(envDir, { force: true, recursive: true });
 
       delete process.env["VITE_INTERFERE_PUBLIC_KEY"];
+
+      delete process.env["INTERFERE_API_KEY"];
 
       vi.unstubAllEnvs();
     });
@@ -1743,6 +1755,17 @@ describe("interfere vite plugin", () => {
       await callConfig("serve");
 
       expect(process.env[KEY]).toBe("interfere_pub_us_shell");
+    });
+
+    test("mirrors the .env workspace API key for server telemetry in the dev server", async () => {
+      writeFileSync(
+        path.join(envDir, ".env.local"),
+        "INTERFERE_API_KEY=interfere_secret_us_dev\n",
+      );
+
+      await callConfig("serve");
+
+      expect(process.env["INTERFERE_API_KEY"]).toBe("interfere_secret_us_dev");
     });
   });
 

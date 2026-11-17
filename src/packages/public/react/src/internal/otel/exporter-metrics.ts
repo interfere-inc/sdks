@@ -49,7 +49,6 @@ export class IngestMetricExporter implements PushMetricExporter {
         : metrics;
 
     this.send(
-      // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- SDK and transformer versions use identical OTLP enum values.
       JsonMetricsSerializer.serializeRequest(payload),
       this.inFlight.track(resultCallback),
     );

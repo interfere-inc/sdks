@@ -31,7 +31,7 @@ beforeAll(() => {
 beforeEach(() => {
   exporter.reset();
 
-  vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "interfere_pk_test_fake");
+  vi.stubEnv("INTERFERE_API_KEY", "interfere_pk_test_fake");
 });
 
 afterEach(() => vi.unstubAllEnvs());

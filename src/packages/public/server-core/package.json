@@ -55,6 +55,11 @@
       "monorepo": "./src/contained-span-processor.ts",
       "types": "./dist/contained-span-processor.d.mts",
       "default": "./dist/contained-span-processor.mjs"
+    },
+    "./credential": {
+      "monorepo": "./src/credential.ts",
+      "types": "./dist/credential.d.mts",
+      "default": "./dist/credential.mjs"
     }
   },
   "publishConfig": {

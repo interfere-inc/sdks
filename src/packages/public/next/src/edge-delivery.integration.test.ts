@@ -51,7 +51,7 @@ beforeAll(async () => {
     }
 
     const environment = {
-      INTERFERE_PUBLIC_KEY: "interfere_pk_test",
+      INTERFERE_API_KEY: "interfere_pk_test",
       INTERFERE_API_URL: `http://127.0.0.1:${address.port}`,
       INTERFERE_ENVIRONMENT: "preview",
       NEXT_PUBLIC_INTERFERE_FORCE_ENABLE: "1",

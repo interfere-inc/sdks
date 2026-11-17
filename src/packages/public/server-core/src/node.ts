@@ -39,6 +39,8 @@ import type {
 import { NodeTracerProvider } from "@opentelemetry/sdk-trace-node";
 
 import { bridgeConsoleToOtel } from "./console-bridge.js";
+import { serverCredentialHeaders } from "./credential.js";
+import type { ServerCredential } from "./credential.js";
 import { containSpanProcessor } from "./contained-span-processor.js";
 import {
   EXISTING_PROPAGATOR_WARNING,
@@ -80,7 +82,7 @@ export interface NodeRuntimeInput {
   name: string;
   version: string;
   apiUrl: string;
-  publicKey: string;
+  credential: ServerCredential;
   resourceAttributes: Attributes;
   options: ServerOptions;
   drain: boolean;
@@ -114,7 +116,11 @@ export async function startNodeRuntime(input: NodeRuntimeInput) {
   const attemptTimeout = input.vercel ? VERCEL_EXPORT_TIMEOUT_MS : 65_000;
   const batchTimeout = input.vercel ? VERCEL_EXPORT_TIMEOUT_MS : 70_000;
   const flushTimeout = input.vercel ? VERCEL_EXPORT_TIMEOUT_MS : 75_000;
-  const headers = { "x-interfere-producer-version": input.version };
+
+  const headers = {
+    ...serverCredentialHeaders(input.credential),
+    "x-interfere-producer-version": input.version,
+  };
 
   const spanLimits =
     (getStringFromEnv("OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT") ??
@@ -138,7 +144,7 @@ export async function startNodeRuntime(input: NodeRuntimeInput) {
               headers,
               compression,
               timeoutMillis: attemptTimeout,
-              url: drainUrl(input.apiUrl, "traces", input.publicKey),
+              url: drainUrl(input.apiUrl, "traces"),
             }),
             { exportTimeoutMillis: batchTimeout },
           ),
@@ -256,7 +262,7 @@ export async function startNodeRuntime(input: NodeRuntimeInput) {
                 headers,
                 compression,
                 timeoutMillis: attemptTimeout,
-                url: drainUrl(input.apiUrl, "logs", input.publicKey),
+                url: drainUrl(input.apiUrl, "logs"),
               }),
             }),
             ...(options._internalAdditionalLogRecordProcessors ?? []),

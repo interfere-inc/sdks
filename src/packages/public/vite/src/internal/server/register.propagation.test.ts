@@ -48,7 +48,7 @@ beforeEach(async () => {
 
   backend = await receiver();
 
-  vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "propagation-test");
+  vi.stubEnv("INTERFERE_API_KEY", "propagation-test");
 
   vi.stubEnv("INTERFERE_API_URL", collector.url);
 

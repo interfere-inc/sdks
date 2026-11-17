@@ -29,7 +29,7 @@ beforeEach(() => {
 
   registration = vi.spyOn(trace, "setGlobalTracerProvider");
 
-  vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test");
+  vi.stubEnv("INTERFERE_API_KEY", "interfere_pk_test");
 
   vi.stubEnv("INTERFERE_API_URL", "https://edge.invalid");
 
@@ -64,9 +64,11 @@ afterEach(async () => {
 
       assert.equal(request.url, "https://edge.invalid/drain/v1/traces");
 
+      assert.equal(request.headers.get("x-api-key"), "interfere_pk_test");
+
       assert.equal(
         request.headers.get("x-interfere-public-key"),
-        "interfere_pk_test",
+        process.env["INTERFERE_PUBLIC_KEY"] || null,
       );
     }
   } finally {
@@ -80,8 +82,8 @@ afterEach(async () => {
   }
 });
 
-test("leaves the global tracer non-recording without a public key", async () => {
-  vi.stubEnv("INTERFERE_PUBLIC_KEY", "");
+test("leaves the global tracer non-recording without a workspace API key", async () => {
+  vi.stubEnv("INTERFERE_API_KEY", "");
 
   const { register } = await import("./instrumentation.edge.js");
 
@@ -96,6 +98,34 @@ test("leaves the global tracer non-recording without a public key", async () => 
   expect(registration).not.toHaveBeenCalled();
   expect(requests).toStrictEqual([]);
   expect(console.warn).not.toHaveBeenCalled();
+});
+
+test("sends the public key alongside the workspace API key when both are configured", async () => {
+  vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_public_us_edge");
+
+  const { register } = await import("./instrumentation.edge.js");
+
+  const { flushServerTelemetry } =
+    await import("./internal/server/exporters/server-flush.js");
+
+  await register();
+
+  const span = trace.getTracer("edge-test").startSpan("both-keys");
+
+  span.addEvent("exception", { "exception.message": "both keys" });
+
+  span.end();
+
+  await flushServerTelemetry();
+
+  await delivered();
+
+  expect(
+    requests.map((request) => [
+      request.headers.get("x-api-key"),
+      request.headers.get("x-interfere-public-key"),
+    ]),
+  ).toStrictEqual([["interfere_pk_test", "interfere_public_us_edge"]]);
 });
 
 test("keeps one registered provider and the original service across repeated calls", async () => {

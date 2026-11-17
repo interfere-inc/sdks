@@ -83,7 +83,7 @@ beforeEach(async () => {
 
   collector.reset();
 
-  vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "key+value");
+  vi.stubEnv("INTERFERE_API_KEY", "key+value");
 
   vi.stubEnv("INTERFERE_API_URL", collector.url);
 

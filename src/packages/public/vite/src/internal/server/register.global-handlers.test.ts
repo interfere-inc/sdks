@@ -23,7 +23,7 @@ const rejected = process.listeners("unhandledRejection");
 function stubServerEnv() {
   vi.stubEnv("OTEL_SERVICE_NAME", undefined);
 
-  vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "key+value");
+  vi.stubEnv("INTERFERE_API_KEY", "key+value");
 
   vi.stubEnv("INTERFERE_API_URL", collector.url);
 

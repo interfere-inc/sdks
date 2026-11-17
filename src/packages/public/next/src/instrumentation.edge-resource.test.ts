@@ -27,7 +27,7 @@ beforeEach(() => {
 
   registration = vi.spyOn(trace, "setGlobalTracerProvider");
 
-  vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test");
+  vi.stubEnv("INTERFERE_API_KEY", "interfere_pk_test");
 
   vi.stubEnv("INTERFERE_API_URL", "https://edge.invalid");
 
@@ -72,10 +72,9 @@ afterEach(async () => {
 
       assert.equal(request.url, "https://edge.invalid/drain/v1/traces");
 
-      assert.equal(
-        request.headers.get("x-interfere-public-key"),
-        "interfere_pk_test",
-      );
+      assert.equal(request.headers.get("x-api-key"), "interfere_pk_test");
+
+      assert.equal(request.headers.get("x-interfere-public-key"), null);
     }
   } finally {
     trace.disable();

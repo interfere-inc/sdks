@@ -71,7 +71,7 @@ function raiseInsideHostSpan(message: string) {
 }
 
 beforeEach(async () => {
-  vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "interfere_pk_test_123");
+  vi.stubEnv("INTERFERE_API_KEY", "interfere_pk_test_123");
 
   vi.resetModules();
 

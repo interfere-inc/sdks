@@ -47,6 +47,8 @@ beforeEach(() => {
 
   vi.stubEnv("INTERFERE_API_URL", API);
 
+  vi.stubEnv("INTERFERE_API_KEY", "interfere_secret_us_test");
+
   vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test");
 
   setInjectedConfiguration(PLUGINS_GLOBAL, undefined);

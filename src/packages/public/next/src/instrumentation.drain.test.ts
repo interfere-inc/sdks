@@ -62,7 +62,7 @@ beforeEach(() => {
 
   hold.ms = 0;
 
-  vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test");
+  vi.stubEnv("INTERFERE_API_KEY", "interfere_pk_test");
 
   vi.stubEnv("INTERFERE_API_URL", collectorUrl);
 

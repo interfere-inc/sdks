@@ -13,7 +13,10 @@ const GLOBAL_NAME = "interfereServer";
 interface ServerEntry {
   captureError: (error: Error) => void;
   isEnabledOnServer: () => boolean;
-  readInterfereServerEnv: () => { publicKey: string | null };
+  readInterfereServerEnv: () => {
+    apiKey: string | null;
+    publicKey: string | null;
+  };
   traceMeta: () => unknown[];
   withRequestSpan: <T>(request: Request, next: () => Promise<T>) => Promise<T>;
 }
@@ -104,6 +107,7 @@ test("the bundled server entry runs on a runtime with no process global", async 
   expect(runInNewContext("typeof process", {})).toBe("undefined");
 
   expect(server.readInterfereServerEnv().publicKey).toBe(PUBLIC_KEY);
+  expect(server.readInterfereServerEnv().apiKey).toBeNull();
   expect(server.isEnabledOnServer()).toBe(true);
   expect(server.traceMeta()).toHaveLength(0);
 

@@ -16,6 +16,7 @@ import type {
   ResolvedBuildConfig,
 } from "../../config.js";
 import { log } from "../logger.js";
+import { PRODUCER_VERSION } from "../version.js";
 import { readNextMajorVersion } from "../setup-warnings.js";
 import { detectActiveBundler } from "./detect-bundler.js";
 import { resolveReleaseRequest } from "./release/index.js";
@@ -39,6 +40,7 @@ export async function runBuildPipeline(
     apiKey: { token: metadata.apiKey },
     headers: {
       [PUBLIC_KEY_HEADER]: metadata.publicKey,
+      "x-interfere-producer-version": PRODUCER_VERSION,
       "x-interfere-service": metadata.serviceName,
     },
     maxRetries: 4,

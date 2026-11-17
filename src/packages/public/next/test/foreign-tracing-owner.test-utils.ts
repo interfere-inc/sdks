@@ -19,7 +19,7 @@ import {
 
 const execute = promisify(execFile);
 
-const HOST_KEY = "interfere_secret_us_acceptance";
+const HOST_KEY = "interfere_secret_us_host";
 
 export const FOREIGN_TRACEPARENT =
   /^00-0000000000000000(?<trace>[\da-f]{16})-(?<span>[\da-f]{16})-0(?<sampled>[01])$/u;
@@ -106,7 +106,7 @@ export function foreignTracingOwnerHarness() {
 
     const env = {
       INTERFERE_PUBLIC_KEY: "interfere_public_us_acceptance",
-      INTERFERE_API_KEY: HOST_KEY,
+      INTERFERE_API_KEY: "interfere_secret_us_acceptance",
       INTERFERE_API_URL: collector.url,
       INTERFERE_SOURCE_ID: "0123456789abcdef0123456789abcdef01234567",
       INTERFERE_ENVIRONMENT: "preview",

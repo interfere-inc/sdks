@@ -14,15 +14,36 @@ afterEach(() => {
 });
 
 describe("disabled builds", () => {
-  test("stay off on the server in production with a public key", () => {
+  test("stay off on the server in production with a public key and a workspace API key", () => {
     vi.stubEnv("NODE_ENV", "production");
 
     vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_public_us_test");
+
+    vi.stubEnv("INTERFERE_API_KEY", "interfere_secret_us_test");
 
     setInjectedConfiguration(DISABLED_GLOBAL, true);
 
     expect(isEnabledOnServer()).toBe(false);
     expect(readInterfereEnv().publicKey).toBeNull();
+    expect(readInterfereEnv().apiKey).toBeNull();
+  });
+});
+
+describe(isEnabledOnServer, () => {
+  test("enables server telemetry with only a workspace API key", () => {
+    vi.stubEnv("INTERFERE_PUBLIC_KEY", "");
+
+    vi.stubEnv("INTERFERE_API_KEY", "interfere_secret_us_test");
+
+    expect(isEnabledOnServer()).toBe(true);
+  });
+
+  test("falls back to the public key alias without a workspace API key", () => {
+    vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_public_us_test");
+
+    vi.stubEnv("INTERFERE_API_KEY", "");
+
+    expect(isEnabledOnServer()).toBe(true);
   });
 });
 

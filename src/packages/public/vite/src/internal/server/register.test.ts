@@ -62,7 +62,7 @@ beforeEach(async () => {
 
   vi.stubEnv("VITE_INTERFERE_SERVICE_NAME", undefined);
 
-  vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "key+value");
+  vi.stubEnv("INTERFERE_API_KEY", "key+value");
 
   vi.stubEnv("INTERFERE_API_URL", collector.url);
 
@@ -119,7 +119,7 @@ test.each<{
 ])(
   "tracing $tracing routes each signal and excludes its own requests with ignores $ignoreUrls",
   async ({ tracing, ignoreUrls }) => {
-    expect.assertions(11);
+    expect.assertions(12);
 
     await register(
       omitUndefined({ consoleBridge: false, ignoreUrls, tracing }),
@@ -161,10 +161,16 @@ test.each<{
     );
 
     for (const signal of ["logs", "metrics", "traces"]) {
-      expect(requestUrls).toContain(
-        `${collector.url}/drain/v1/${signal}?public_key=key%2Bvalue`,
-      );
+      expect(requestUrls).toContain(`${collector.url}/drain/v1/${signal}`);
     }
+
+    expect(
+      new Set(
+        collector.requests
+          .filter((request) => request.url.startsWith("/drain/"))
+          .map((request) => request.headers.get("authorization")),
+      ),
+    ).toStrictEqual(new Set(["Bearer key+value"]));
 
     const { ignoreRequestHook } = instrumentation.getConfig();
 
@@ -173,9 +179,9 @@ test.each<{
     }
 
     for (const [url, ignored] of [
-      [`${collector.url}/drain/v1/traces?public_key=key%2Bvalue`, true],
-      [`${collector.url}/drain/v1/logs?public_key=key%2Bvalue`, true],
-      [`${collector.url}/drain/v1/metrics?public_key=key%2Bvalue`, true],
+      [`${collector.url}/drain/v1/traces`, true],
+      [`${collector.url}/drain/v1/logs`, true],
+      [`${collector.url}/drain/v1/metrics`, true],
       ["https://customer.example/orders", false],
       ["https://customer.example/custom", Boolean(ignoreUrls)],
     ] as const) {

@@ -16,7 +16,7 @@ test.each([
   async (clientIp, expectedIp) => {
     const collector = await receiver();
 
-    vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "interfere_pk_test");
+    vi.stubEnv("INTERFERE_API_KEY", "interfere_pk_test");
 
     onTestFinished(async () => {
       await runtime.shutdown();
@@ -31,7 +31,7 @@ test.each([
         name: "client-ip",
         version: "1.0.0",
         apiUrl: collector.url,
-        publicKey: "test",
+        credential: { apiKey: "test" },
         resourceAttributes: {},
         options: {
           consoleBridge: false,

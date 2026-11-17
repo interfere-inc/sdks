@@ -273,7 +273,7 @@ function announceSetup(state: PluginState) {
 
 type SourcemapSetting = boolean | "inline" | "hidden";
 
-function mirrorPublicKeyForDevServer(
+function mirrorKeysForDevServer(
   command: "build" | "serve",
   env: Record<string, string | undefined>,
 ) {
@@ -281,12 +281,14 @@ function mirrorPublicKeyForDevServer(
     return;
   }
 
-  const publicKey = env["VITE_INTERFERE_PUBLIC_KEY"];
+  for (const name of ["VITE_INTERFERE_PUBLIC_KEY", "INTERFERE_API_KEY"]) {
+    const value = env[name];
 
-  // oxlint-disable-next-line node/no-process-env
-  if (publicKey && !process.env["VITE_INTERFERE_PUBLIC_KEY"]) {
     // oxlint-disable-next-line node/no-process-env
-    process.env["VITE_INTERFERE_PUBLIC_KEY"] = publicKey;
+    if (value && !process.env[name]) {
+      // oxlint-disable-next-line node/no-process-env
+      process.env[name] = value;
+    }
   }
 }
 
@@ -511,7 +513,7 @@ export function interfere(options: InterfereViteOptions = {}) {
     async config(userConfig, { command, mode }) {
       const env = loadEnv(mode, resolveEnvDir(userConfig), "");
 
-      mirrorPublicKeyForDevServer(command, env);
+      mirrorKeysForDevServer(command, env);
 
       const browser = resolveBrowserConfig(
         options,

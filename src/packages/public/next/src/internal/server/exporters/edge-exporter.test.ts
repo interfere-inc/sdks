@@ -48,7 +48,7 @@ describe(FetchTraceExporter, () => {
         new SimpleSpanProcessor(
           new FetchTraceExporter({
             baseUrl: "https://collector.test",
-            publicKeyHeader: { apiKey: "test-key" },
+            workspaceTelemetryKeyHeader: { apiKey: "test-key" },
             headers: { "x-interfere-producer-version": "test" },
           }),
         ),
@@ -105,6 +105,8 @@ describe(FetchTraceExporter, () => {
 
     expect(headers.get("content-type")).toBe("application/json");
     expect(headers.get("x-interfere-producer-version")).toBe("test");
+    expect(headers.get("x-api-key")).toBe("test-key");
+    expect(headers.has("x-interfere-public-key")).toBe(false);
 
     await expect(new Response(init?.body).text()).resolves.toContain("edge-op");
   });
@@ -132,7 +134,7 @@ describe(FetchTraceExporter, () => {
 
       const exporter = new FetchTraceExporter({
         baseUrl: "https://collector.test",
-        publicKeyHeader: { apiKey: "test-key" },
+        workspaceTelemetryKeyHeader: { apiKey: "test-key" },
       });
 
       const result = new Promise<import("@opentelemetry/core").ExportResult>(
@@ -153,7 +155,7 @@ describe(FetchTraceExporter, () => {
   test("skips fetch when there are no spans", () => {
     const exporter = new FetchTraceExporter({
       baseUrl: "https://collector.test",
-      publicKeyHeader: { apiKey: "test-key" },
+      workspaceTelemetryKeyHeader: { apiKey: "test-key" },
       headers: {},
     });
 
@@ -170,7 +172,7 @@ describe(FetchTraceExporter, () => {
     (_label, payload) => {
       const client = new InterfereClient({
         baseUrl: "https://collector.test",
-        publicKeyHeader: { apiKey: "test-key" },
+        workspaceTelemetryKeyHeader: { apiKey: "test-key" },
       });
 
       const resultCallback = vi.fn<() => void>();
@@ -196,7 +198,7 @@ describe(FetchTraceExporter, () => {
 
     const exporter = new FetchTraceExporter({
       baseUrl: "https://collector.test",
-      publicKeyHeader: { apiKey: "test-key" },
+      workspaceTelemetryKeyHeader: { apiKey: "test-key" },
       headers: {},
     });
 
@@ -217,7 +219,7 @@ describe(FetchTraceExporter, () => {
   test("resolves forceFlush without exporting anything", async () => {
     const exporter = new FetchTraceExporter({
       baseUrl: "https://collector.test",
-      publicKeyHeader: { apiKey: "test-key" },
+      workspaceTelemetryKeyHeader: { apiKey: "test-key" },
       headers: {},
     });
 

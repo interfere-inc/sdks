@@ -69,7 +69,7 @@ describe("server", () => {
   });
 
   test("emits an exception event on a fresh span when no active span exists", () => {
-    vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test_123");
+    vi.stubEnv("INTERFERE_API_KEY", "interfere_pk_test_123");
 
     captureError(new Error("failed"));
 
@@ -87,7 +87,7 @@ describe("server", () => {
   });
 
   test("emits the exception on the active span when one is in scope", () => {
-    vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test_123");
+    vi.stubEnv("INTERFERE_API_KEY", "interfere_pk_test_123");
 
     const span = trace.getTracer("test").startSpan("request");
 
@@ -110,7 +110,7 @@ describe("server", () => {
   });
 
   test("records on a fresh span when the active span has already ended", () => {
-    vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test_123");
+    vi.stubEnv("INTERFERE_API_KEY", "interfere_pk_test_123");
 
     const ended = trace.getTracer("test").startSpan("request");
 
@@ -131,7 +131,7 @@ describe("server", () => {
   });
 
   test("onRequestError dedupes by error instance and stamps request context", async () => {
-    vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test_123");
+    vi.stubEnv("INTERFERE_API_KEY", "interfere_pk_test_123");
 
     const error = new Error("request failure") as Error & { digest?: string };
 

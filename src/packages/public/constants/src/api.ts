@@ -21,7 +21,9 @@ export function withPublicKey(url: string, publicKey: string) {
 export function drainUrl(
   apiUrl: string,
   signal: OtlpSignal,
-  publicKey: string,
+  publicKey?: string,
 ) {
-  return withPublicKey(`${apiUrl}${drainPath(signal)}`, publicKey);
+  const url = `${apiUrl}${drainPath(signal)}`;
+
+  return publicKey === undefined ? url : withPublicKey(url, publicKey);
 }

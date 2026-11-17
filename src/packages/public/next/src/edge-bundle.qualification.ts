@@ -18,7 +18,7 @@ beforeAll(async () => {
       "--conditions=edge-light,browser,monorepo",
       "--define",
       `process.env=${JSON.stringify({
-        INTERFERE_PUBLIC_KEY: "interfere_pk_test",
+        INTERFERE_API_KEY: "interfere_pk_test",
         INTERFERE_API_URL: "https://collector.test",
         INTERFERE_ENVIRONMENT: "preview",
         INTERFERE_SOURCE_ID: "abcdef1234567890abcdef1234567890abcdef1234",

@@ -34,7 +34,6 @@ export class IngestLogExporter implements LogRecordExporter {
 
     sendInKeepaliveChunks(
       logs,
-      // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- SDK and transformer versions use identical OTLP enum values.
       (chunk) => JsonLogsSerializer.serializeRequest(chunk),
       this.send,
       this.inFlight.track((result) => {
