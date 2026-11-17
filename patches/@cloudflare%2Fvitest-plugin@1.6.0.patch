@@ -1,0 +1,150 @@
+diff --git a/dist/pool/index.mjs b/dist/pool/index.mjs
+index e1a1ec4b06caf34cfcd1425dcec9dbd32afa9c3a..c851c812cc9c266bc36c747abde44c2702d6ddb5 100644
+--- a/dist/pool/index.mjs
++++ b/dist/pool/index.mjs
+@@ -53577,18 +53577,7 @@ function get_escaped_char(char) {
+ }
+ /** @param {string} str */
+ function stringify_string(str) {
+-	let result = "";
+-	let last_pos = 0;
+-	const len = str.length;
+-	for (let i = 0; i < len; i += 1) {
+-		const char = str[i];
+-		const replacement = get_escaped_char(char);
+-		if (replacement) {
+-			result += str.slice(last_pos, i) + replacement;
+-			last_pos = i + 1;
+-		}
+-	}
+-	return `"${last_pos === 0 ? str : result + str.slice(last_pos)}"`;
++	return JSON.stringify(str).replace(/[<\u2028\u2029]/g, get_escaped_char);
+ }
+ /** @param {Record<string | symbol, any>} object */
+ function enumerable_symbols(object$1) {
+@@ -70553,6 +70542,8 @@ async function parseCustomPoolOptions(project, rootPath, value, mode, envDir) {
+ 	const options = WorkersPoolOptionsSchema.parse(value);
+ 	options.miniflare ??= {};
+ 	const miniflareModuleRules = options.miniflare.modulesRules;
++	const containerEngine = options.miniflare.containerEngine;
++	const resourcePersistencePath = options.miniflare.resourcePersistencePath;
+ 	const errorRef = {};
+ 	const workers = options.miniflare?.workers;
+ 	const rootPathOption = getRootPath(options.miniflare);
+@@ -70562,6 +70553,8 @@ async function parseCustomPoolOptions(project, rootPath, value, mode, envDir) {
+ 	} catch (e) {
+ 		coalesceZodErrors(errorRef, e);
+ 	}
++	options.miniflare.containerEngine = containerEngine;
++	options.miniflare.resourcePersistencePath = resourcePersistencePath;
+ 	options.miniflare.rootPath = rootPath;
+ 	options.miniflare.workers = [];
+ 	if (workers !== void 0) options.miniflare.workers = workers.map((worker, i) => {
+@@ -70759,11 +70752,22 @@ function inlineCachedModule(module$1, cacheContents) {
+ 		code
+ 	};
+ }
++function isCachedModule(module$1) {
++	return module$1 !== null && typeof module$1 === "object" && module$1.cached === true && typeof module$1.tmp === "string";
++}
++/**
++* Byte budget for module code inlined into one `fetchWarmModules()` reply.
++* The whole reply is one WebSocket message and workerd closes the socket with
++* 1009 "Message is too large" past its limit, so modules beyond the budget are
++* left out and the runner fetches them one by one instead.
++*/
++const WARM_MODULES_INLINE_BYTES = 8 * 1024 * 1024;
+ /**
+ * `fetch()` returns one module result; `fetchWarmModules()` returns a map of
+ * module IDs to results. Vitest checks the map before calling `fetch()`, so
+ * both paths need inlining. Reuse reads within this reply because aliases in
+-* the map can reference the same cache file.
++* the map can reference the same cache file. The smallest modules are kept
++* first: each kept module saves one round trip.
+ */
+ function inlineCachedModules(response) {
+ 	const cacheContents = /* @__PURE__ */ new Map();
+@@ -70774,18 +70778,47 @@ function inlineCachedModules(response) {
+ 		return response;
+ 	}
+ 	if (inlined !== response || response === null || typeof response !== "object" || Array.isArray(response)) return inlined;
+-	let hasCachedModules = false;
++	const sizes = /* @__PURE__ */ new Map();
++	for (const module$1 of Object.values(response)) {
++		if (!isCachedModule(module$1) || sizes.has(module$1.tmp)) continue;
++		try {
++			sizes.set(module$1.tmp, fs.statSync(module$1.tmp).size);
++		} catch {
++			sizes.set(module$1.tmp, Infinity);
++		}
++	}
++	if (sizes.size === 0) return response;
++	const keep = /* @__PURE__ */ new Set();
++	let budget = WARM_MODULES_INLINE_BYTES;
++	for (const [tmp, size] of [...sizes].sort((a, b) => a[1] - b[1])) {
++		if (size > budget) break;
++		budget -= size;
++		keep.add(tmp);
++	}
+ 	const entries = Object.entries(response).flatMap(([specifier, module$1]) => {
++		if (!isCachedModule(module$1)) return [[specifier, module$1]];
++		if (!keep.has(module$1.tmp)) return [];
+ 		try {
+-			const inlinedModule = inlineCachedModule(module$1, cacheContents);
+-			hasCachedModules ||= inlinedModule !== module$1;
+-			return [[specifier, inlinedModule]];
++			return [[specifier, inlineCachedModule(module$1, cacheContents)]];
+ 		} catch {
+-			hasCachedModules = true;
+ 			return [];
+ 		}
+ 	});
+-	return hasCachedModules ? Object.fromEntries(entries) : response;
++	return Object.fromEntries(entries);
++}
++const INLINE_SOURCE_MAP = "//# sourceMappingURL=data:application/json";
++function stripDependencySourceMap(module$1) {
++	if (module$1 === null || typeof module$1 !== "object" || typeof module$1.code !== "string" || typeof module$1.file !== "string" || !module$1.file.includes("/node_modules/")) return module$1;
++	const start = module$1.code.lastIndexOf(INLINE_SOURCE_MAP);
++	return start === -1 ? module$1 : {
++		...module$1,
++		code: module$1.code.slice(0, start)
++	};
++}
++function stripDependencySourceMaps(response) {
++	if (response === null || typeof response !== "object" || Array.isArray(response) || "externalize" in response) return response;
++	if ("code" in response) return stripDependencySourceMap(response);
++	return Object.fromEntries(Object.entries(response).map(([specifier, module$1]) => [specifier, stripDependencySourceMap(module$1)]));
+ }
+ var CloudflarePoolWorker = class {
+ 	name = "cloudflare-pool";
+@@ -70863,14 +70896,17 @@ var CloudflarePoolWorker = class {
+ 			}
+ 		};
+ 		const rpcResponse = message;
+-		if (rpcResponse.t === "s" && typeof rpcResponse.i === "string" && this.moduleFetchRequestIds.delete(rpcResponse.i) && rpcResponse.r !== void 0) {
+-			const inlined = inlineCachedModules(rpcResponse.r);
++		const isModuleFetchReply = rpcResponse.t === "s" && typeof rpcResponse.i === "string" && this.moduleFetchRequestIds.delete(rpcResponse.i);
++		if (isModuleFetchReply && rpcResponse.r !== void 0) {
++			const inlined = stripDependencySourceMaps(inlineCachedModules(rpcResponse.r));
+ 			if (inlined !== rpcResponse.r) toSend = {
+ 				...message,
+ 				r: inlined
+ 			};
+ 		}
+-		this.socket.send(structuredSerializableStringify(toSend));
++		const frame = structuredSerializableStringify(toSend);
++		if (isModuleFetchReply && this.debug.enabled) this.debug("module fetch reply %s: %d bytes", toSend.i, Buffer.byteLength(frame));
++		this.socket.send(frame);
+ 	}
+ 	on(event, callback) {
+ 		assert(this.socket, "Message received from Worker before initialisation");
+@@ -71334,6 +71370,8 @@ async function buildProjectMiniflareOptions(ctx, project, customOptions, main) {
+ 	}
+ 	return {
+ 		...SHARED_MINIFLARE_OPTIONS,
++		containerEngine: customOptions.miniflare?.containerEngine,
++		resourcePersistencePath: customOptions.miniflare?.resourcePersistencePath,
+ 		verbose: customOptions.verbose ?? true,
+ 		inspectorPort,
+ 		unsafeModuleFallbackService: moduleFallbackService,

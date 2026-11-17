@@ -28,6 +28,18 @@
   ],
   "type": "module",
   "sideEffects": false,
+  "imports": {
+    "#request-flush": {
+      "workerd": {
+        "monorepo": "./src/internal/server/request-flush.workerd.ts",
+        "types": "./dist/internal/server/request-flush.workerd.d.mts",
+        "default": "./dist/internal/server/request-flush.workerd.mjs"
+      },
+      "monorepo": "./src/internal/server/request-flush.ts",
+      "types": "./dist/internal/server/request-flush.d.mts",
+      "default": "./dist/internal/server/request-flush.mjs"
+    }
+  },
   "exports": {
     "./plugin": {
       "monorepo": "./src/plugin.ts",
@@ -92,6 +104,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@cloudflare/vitest-plugin": "catalog:",
     "@interfere/test-config": "workspace:*",
     "@interfere/test-utils": "workspace:^",
     "@interfere/typescript-config": "workspace:^",

@@ -6,7 +6,7 @@ export default defineConfig({
   root: import.meta.dirname,
   test: {
     projects: [
-      node({ test: { name: "node" } }),
+      node({ test: { name: "node", exclude: ["**/*.native.test.ts"] } }),
       browser({
         optimizeDeps: {
           include: ["@opentelemetry/api"],

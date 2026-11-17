@@ -152,6 +152,26 @@ function RootComponent() {
 }
 ```
 
+### TanStack Start on Cloudflare Workers
+
+Workers allow network requests only while a request is being handled, so call `register()` inside your Worker's `fetch` handler rather than at module scope. It initializes once per isolate; later calls return straight away. Enable `nodejs_compat` with a `compatibility_date` of 2025-08-15 or later, and set `VITE_INTERFERE_PUBLIC_KEY` as a Worker variable so the server reads it from `process.env`:
+
+```ts
+// src/worker.ts
+import { register } from "@interfere/vite/server";
+import handler from "@tanstack/react-start/server-entry";
+
+export default {
+  async fetch(request) {
+    await register({ serviceName: "storefront" });
+
+    return handler.fetch(request);
+  },
+} satisfies ExportedHandler;
+```
+
+Keep the request and function middleware in `src/start.ts` as above. Each server span continues the browser's `traceparent`, so a page's browser and server spans share one trace. Cloudflare's own Workers traces cannot do this, because they start a new trace for every request. When a request span ends, its spans are exported within that request's `waitUntil`. You don't need to call `flush()` yourself.
+
 The browser guard matters for TanStack Start because prerender can evaluate the router import graph on the server, while the Interfere kernel uses browser-only APIs. For an ad-blocker-resistant setup, set `interfere({ apiHost: "https://in.yourapp.com" })` — a subdomain of your own site that resolves to Interfere via a DNS record.
 
 Render `<TraceMeta />` from `@interfere/vite/server` in the document `<head>` so the browser SDK links each page to its server render. It emits `traceparent`, `tracestate` and `baggage` meta tags for the active request span, including the freshness stamp the browser requires, and renders nothing when no span is active.
@@ -463,7 +483,7 @@ MIT
 
 ## Supported runtimes
 
-Node.js 24.x is the supported Node.js release line and is exercised in CI. Browser entry points run in the browser; Node.js is required for server execution and build tooling.
+Node.js 24.x is the supported Node.js release line and is exercised in CI. Browser entry points run in the browser. `@interfere/vite/server` runs on Node.js, and on Cloudflare Workers with `nodejs_compat` (compatibility date 2025-08-15 or later). Build tooling requires Node.js.
 
 | Integration | Supported versions                           |
 | ----------- | -------------------------------------------- |

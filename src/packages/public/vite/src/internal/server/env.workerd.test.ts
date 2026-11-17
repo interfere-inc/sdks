@@ -42,6 +42,16 @@ async function bundleWithProcessReads() {
         "import.meta.env.VITE_INTERFERE_PUBLIC_KEY": JSON.stringify(PUBLIC_KEY),
       },
       logLevel: "silent",
+      plugins: [
+        {
+          name: "workers-platform-module",
+          resolveId: (id) => (id === "cloudflare:workers" ? `\0${id}` : null),
+          load: (id) =>
+            id === "\0cloudflare:workers"
+              ? "export function waitUntil(promise) { promise.catch(() => {}); }"
+              : null,
+        },
+      ],
       root: path.join(import.meta.dirname, "../../.."),
       ssr: {
         noExternal: true,

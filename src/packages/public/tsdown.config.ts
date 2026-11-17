@@ -7,7 +7,7 @@ const baseConfig = {
   checks: { moduleLevelDirective: false },
   clean: !isWatch,
   deps: {
-    neverBundle: (id) => id.startsWith("#"),
+    neverBundle: (id) => id.startsWith("#") || id.startsWith("cloudflare:"),
   },
   dts: { sourcemap: false },
   entry: ["src/**/*.{ts,tsx}", "!**/*.{test,spec}.{ts,tsx}"],

@@ -9,6 +9,8 @@ import {
 } from "@opentelemetry/api";
 import type { Span } from "@opentelemetry/api";
 
+import { flushAfterRequest } from "#request-flush";
+
 import { captureError } from "./capture";
 import { isEnabledOnServer } from "./env";
 import { runtime } from "./runtime";
@@ -72,7 +74,7 @@ export async function withRequestSpan<T>(
           } catch (error) {
             fail(span, request, error);
 
-            span.end();
+            end(span);
 
             throw error;
           }
@@ -92,6 +94,12 @@ function extractParent(request: Request) {
   } catch {
     return context.active();
   }
+}
+
+function end(span: Span) {
+  span.end();
+
+  flushAfterRequest();
 }
 
 // oxlint-disable-next-line anti-slop/no-unknown-parameters -- Request handlers and response streams can throw any value.
@@ -114,7 +122,7 @@ function endWithBody<T>(span: Span, request: Request, result: T) {
   const response = responseOf(result);
 
   if (!response?.body) {
-    span.end();
+    end(span);
 
     return result;
   }
@@ -166,7 +174,7 @@ function observeBody(
       fail(span, request, error);
     }
 
-    span.end();
+    end(span);
   };
 
   const observed = new Response(
