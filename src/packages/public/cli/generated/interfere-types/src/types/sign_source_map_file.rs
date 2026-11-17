@@ -19,9 +19,6 @@ pub struct SignSourceMapFile {
     pub mappings_present: bool,
     #[serde(default)]
     pub path: String,
-    /// Lowercase hex SHA-256 of the file bytes. When the Company already stores these bytes, the response marks the file present and it needs no upload.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub sha256: Option<String>,
     #[serde(rename = "sizeBytes")]
     #[serde(default)]
     pub size_bytes: i64,
@@ -41,7 +38,6 @@ pub struct SignSourceMapFileBuilder {
     has_sources_content: Option<bool>,
     mappings_present: Option<bool>,
     path: Option<String>,
-    sha256: Option<String>,
     size_bytes: Option<i64>,
 }
 
@@ -71,11 +67,6 @@ impl SignSourceMapFileBuilder {
         self
     }
 
-    pub fn sha256(mut self, value: impl Into<String>) -> Self {
-        self.sha256 = Some(value.into());
-        self
-    }
-
     pub fn size_bytes(mut self, value: i64) -> Self {
         self.size_bytes = Some(value);
         self
@@ -96,7 +87,6 @@ impl SignSourceMapFileBuilder {
             has_sources_content: self.has_sources_content.ok_or_else(|| BuildError::missing_field("has_sources_content"))?,
             mappings_present: self.mappings_present.ok_or_else(|| BuildError::missing_field("mappings_present"))?,
             path: self.path.ok_or_else(|| BuildError::missing_field("path"))?,
-            sha256: self.sha256,
             size_bytes: self.size_bytes.ok_or_else(|| BuildError::missing_field("size_bytes"))?,
         })
     }

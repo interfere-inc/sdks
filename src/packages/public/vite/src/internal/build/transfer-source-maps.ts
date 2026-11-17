@@ -25,7 +25,6 @@ export async function transferSourceMaps(
   const signFiles = files.map((file) => ({
     path: file.path,
     sizeBytes: new TextEncoder().encode(file.content).byteLength,
-    sha256: file.hash,
     ...extractRichness(file.content),
   }));
 

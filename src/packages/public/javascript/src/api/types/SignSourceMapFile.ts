@@ -9,7 +9,5 @@ export interface SignSourceMapFile {
     hasSourcesContent: boolean;
     mappingsPresent: boolean;
     path: string;
-    /** Lowercase hex SHA-256 of the file bytes. When the Company already stores these bytes, the response marks the file present and it needs no upload. */
-    sha256?: string | undefined;
     sizeBytes: number;
 }
