@@ -4,6 +4,7 @@ import { resolveReleaseRequest } from "@interfere/build/release-request";
 import type { Interfere, InterfereClient } from "@interfere/javascript";
 import type { ManifestBundler } from "@interfere/types/data/source-maps";
 import { createReleaseResponse } from "@interfere/types/releases/definition";
+import type { CreateReleaseResponse } from "@interfere/types/releases/definition";
 import type { ReleaseSlug } from "@interfere/types/releases/slug";
 
 import type { DiscoveryResult } from "./source-maps";
@@ -20,6 +21,7 @@ export interface ReleasePipelineInput {
   producerVersion: string;
   releaseSlug: ReleaseSlug;
   releasesConfig: Interfere.ReleasesConfigResponse;
+  registeredRelease?: CreateReleaseResponse | undefined;
   capturePublication?: boolean;
   uploadSourceMaps: boolean;
 }
@@ -46,11 +48,13 @@ export async function runReleasePipeline(input: ReleasePipelineInput) {
 
   const start = performance.now();
 
-  const release = createReleaseResponse.parse(
-    await client.releases.createRelease(releaseRequest.request, {
-      abortSignal: AbortSignal.timeout(RELEASE_REQUEST_BUDGET_MS),
-    }),
-  );
+  const release =
+    input.registeredRelease ??
+    createReleaseResponse.parse(
+      await client.releases.createRelease(releaseRequest.request, {
+        abortSignal: AbortSignal.timeout(RELEASE_REQUEST_BUDGET_MS),
+      }),
+    );
 
   const createdAt = performance.now();
   const releaseSlug = release.destination.slug;

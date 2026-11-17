@@ -1,3 +1,4 @@
+import type { CreateReleaseResponse } from "@interfere/types/releases/definition";
 import { cleanupSourceMaps } from "@interfere/build/cleanup-source-maps";
 import { sourceMapUploadFetch } from "@interfere/build/source-map-upload-fetch";
 import { InterfereClient } from "@interfere/javascript";
@@ -46,6 +47,8 @@ export interface PluginState {
   logger: Logger;
   projectDir: string;
   publicKey: string | undefined;
+  releaseToken?: boolean;
+  registeredRelease?: CreateReleaseResponse | undefined;
   serviceName: string | undefined;
   releaseSlug: ReleaseSlug | null;
   serverBuild: boolean;
@@ -227,6 +230,7 @@ async function publishRelease(
     producerVersion: PRODUCER_VERSION,
     releaseSlug,
     releasesConfig,
+    registeredRelease: state.registeredRelease,
     capturePublication: state.receipt !== undefined,
     uploadSourceMaps: state.uploadSourceMaps,
   });

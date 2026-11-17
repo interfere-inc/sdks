@@ -1095,7 +1095,7 @@ describe("interfere vite plugin", () => {
 
       expect(configRequests).toHaveLength(1);
 
-      expect(releaseRequests).toHaveLength(0);
+      expect(releaseRequests).toHaveLength(1);
 
       expect(uploadRequests).toHaveLength(0);
 
@@ -1203,7 +1203,7 @@ describe("interfere vite plugin", () => {
           (plugin.closeBundle as () => Promise<void>)(),
         ).resolves.toBeUndefined();
 
-        expect(releaseRequests).toHaveLength(0);
+        expect(releaseRequests).toHaveLength(1);
 
         for (const chunk of ["app.js", "vendor.js"]) {
           expect(existsSync(path.join(projectDir, `dist/${chunk}.map`))).toBe(
@@ -1235,11 +1235,53 @@ describe("interfere vite plugin", () => {
 
       await closeBundle();
 
-      expect(releaseRequests).toHaveLength(0);
+      expect(releaseRequests).toHaveLength(1);
 
       expect(capture.warns).toContainEqual(
         expect.stringContaining("release remains unready"),
       );
+    });
+
+    test("bakes the release token from the build's single release registration without a public key", async () => {
+      vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", undefined);
+
+      server.use(
+        http.post(`${RELEASE_API}/v3/releases`, ({ request }) => {
+          releaseRequests.push(request.clone());
+
+          return HttpResponse.json({
+            build: { hash: gitSha },
+            destination: {
+              environment: "production",
+              id: "release_1",
+              slug: SLUG,
+            },
+            org: { id: "org_1", slug: "acme" },
+            source: { id: "source_1" },
+            surface: { id: "surface_1", slug: "vite" },
+            token: "irt_signed",
+          });
+        }),
+      );
+
+      const plugin = interfere({ sourceMaps: { upload: false } });
+
+      const config = await resolvePluginConfig(plugin);
+
+      expect(config.define).toMatchObject({
+        "import.meta.env.VITE_INTERFERE_RELEASE_TOKEN":
+          JSON.stringify("irt_signed"),
+      });
+
+      expect(releaseRequests).toHaveLength(1);
+
+      expect(
+        releaseRequests[0]?.headers.get("x-interfere-public-key"),
+      ).toBeNull();
+
+      await (plugin.closeBundle as () => Promise<void>)();
+
+      expect(releaseRequests).toHaveLength(1);
     });
 
     test("registers the release without uploading when uploads are disabled", async () => {
@@ -1463,7 +1505,7 @@ describe("interfere vite plugin", () => {
           expect.stringContaining(expectedMessage),
         );
 
-        expect(failedRequests).toHaveLength(1);
+        expect(failedRequests).toHaveLength(2);
         expect(finalizeRequests).toHaveLength(0);
 
         expect(existsSync(path.join(projectDir, "dist/app.js.map"))).toBe(
@@ -1508,7 +1550,9 @@ describe("interfere vite plugin", () => {
       (plugin.buildStart as () => void)();
 
       expect(capture.warns).toContainEqual(
-        expect.stringContaining("VITE_INTERFERE_PUBLIC_KEY is not set"),
+        expect.stringContaining(
+          "no release token and no VITE_INTERFERE_PUBLIC_KEY",
+        ),
       );
     });
 

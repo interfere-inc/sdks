@@ -6,7 +6,7 @@ import type {
 
 import { isBotUserAgent } from "../util/bot.js";
 import { createLogger } from "../util/log.js";
-import { hasPublicKey, isForceEnableActive } from "./config/config.js";
+import { hasIngestCredential, isForceEnableActive } from "./config/config.js";
 import { registerKernel, unregisterKernel } from "./kernel-registry.js";
 import { createKernel, isEnabledByEnvironment } from "./kernel.js";
 import { pinConsolePatch } from "./console-patch/console-patch.js";
@@ -244,9 +244,9 @@ export function createWrapperSingleton(input: WrapperSingletonInput) {
         return null;
       }
 
-      if (!hasPublicKey()) {
+      if (!hasIngestCredential()) {
         log.warn(
-          "No public key is configured, so the SDK is disabled. Set INTERFERE_PUBLIC_KEY (VITE_INTERFERE_PUBLIC_KEY for Vite) on builds that should send telemetry.",
+          "No release token or public key is configured, so the SDK is disabled. Build with INTERFERE_API_KEY so @interfere/vite bakes in a release token, or set INTERFERE_PUBLIC_KEY (VITE_INTERFERE_PUBLIC_KEY for Vite).",
         );
 
         return null;

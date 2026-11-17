@@ -1,4 +1,5 @@
 import { missingReleaseBinding } from "@interfere/build/release-request";
+import { registerBuildRelease } from "./internal/build/register-release";
 import {
   DIAGNOSTIC_CONTEXT,
   inferredServiceNameWarning,
@@ -136,7 +137,7 @@ function resolveBrowserConfig(
   } satisfies BrowserConfig;
 }
 
-function browserDefine(browser: BrowserConfig) {
+function browserDefine(browser: BrowserConfig, releaseToken: string | null) {
   return {
     "import.meta.env.VITE_INTERFERE_API_HOST": JSON.stringify(
       browser.apiHost ?? null,
@@ -147,6 +148,8 @@ function browserDefine(browser: BrowserConfig) {
     "import.meta.env.VITE_INTERFERE_RELEASE_SLUG": JSON.stringify(
       browser.releaseSlug,
     ),
+    "import.meta.env.VITE_INTERFERE_RELEASE_TOKEN":
+      JSON.stringify(releaseToken),
     "import.meta.env.VITE_INTERFERE_SERVICE_NAME": JSON.stringify(
       browser.serviceName ?? null,
     ),
@@ -244,9 +247,9 @@ function announceSetup(state: PluginState) {
     );
   }
 
-  if (state.isProductionBuild && !state.publicKey) {
+  if (state.isProductionBuild && !state.publicKey && !state.releaseToken) {
     state.logger.warn(
-      "[interfere] VITE_INTERFERE_PUBLIC_KEY is not set, so this build sends no events. Set it to a workspace or App key on builds that you deploy.",
+      "[interfere] This build has no release token and no VITE_INTERFERE_PUBLIC_KEY, so it sends no events. Set INTERFERE_API_KEY on builds that you deploy and the plugin bakes in a release token.",
     );
   }
 
@@ -395,6 +398,10 @@ export function interfere(options: InterfereViteOptions = {}) {
   let remoteConfigFallback = false;
   let releaseConfig: Interfere.ReleasesConfigResponse | null = null;
   let missingBinding: string | null = null;
+
+  let registeredRelease: Awaited<ReturnType<typeof registerBuildRelease>> =
+    null;
+
   let bindingWarningLogged = false;
   let serviceNameWarning: string | undefined;
 
@@ -534,8 +541,7 @@ export function interfere(options: InterfereViteOptions = {}) {
       if (
         command === "build" &&
         options.sourceMaps?.retain !== true &&
-        release.status === "ok" &&
-        browser.publicKey
+        release.status === "ok"
       ) {
         releaseConfig = await preflightViteBinding({
           apiUrl: pickEnvValue(releaseEnv, "INTERFERE_API_URL") ?? API_URL,
@@ -560,11 +566,29 @@ export function interfere(options: InterfereViteOptions = {}) {
               "import.meta.env.VITE_INTERFERE_DISABLED": '"true"',
               "import.meta.env.VITE_INTERFERE_PUBLIC_KEY": '""',
               "import.meta.env.VITE_INTERFERE_RELEASE_SLUG": "null",
+              "import.meta.env.VITE_INTERFERE_RELEASE_TOKEN": "null",
             },
             ssr: { noExternal: ["@interfere/vite"] },
           };
         }
       }
+
+      registeredRelease ??=
+        releaseConfig &&
+        release.status === "ok" &&
+        browser.commitSha &&
+        browser.releaseSlug
+          ? await registerBuildRelease({
+              apiUrl: pickEnvValue(releaseEnv, "INTERFERE_API_URL") ?? API_URL,
+              apiKey: release.apiKey,
+              publicKey: browser.publicKey,
+              serviceName: browser.serviceName,
+              commitSha: browser.commitSha,
+              environment: browser.environment,
+              releaseSlug: browser.releaseSlug,
+              releasesConfig: releaseConfig,
+            })
+          : null;
 
       overriddenSourcemap = forceSourcemapForUpload(
         userConfig,
@@ -584,7 +608,7 @@ export function interfere(options: InterfereViteOptions = {}) {
           : null;
 
       const define = omitUndefined({
-        ...browserDefine(browser),
+        ...browserDefine(browser, registeredRelease?.token ?? null),
         ...remoteConfigDefine(baked),
       });
 
@@ -612,7 +636,13 @@ export function interfere(options: InterfereViteOptions = {}) {
 
       carryOverUploadProgress(state, next);
 
-      state = { ...next, receipt, releaseConfig: releaseConfig ?? undefined };
+      state = {
+        ...next,
+        receipt,
+        releaseConfig: releaseConfig ?? undefined,
+        registeredRelease: registeredRelease ?? undefined,
+        releaseToken: Boolean(registeredRelease?.token),
+      };
 
       uploadAfterAppBuild ||= config.builder !== undefined;
 

@@ -49,7 +49,7 @@ export function inferredServiceNameWarning(
 export async function preflightViteBinding(input: {
   apiUrl: string;
   apiKey: string;
-  publicKey: string;
+  publicKey: string | undefined;
   serviceName?: string | undefined;
 }) {
   const client = new InterfereClient({

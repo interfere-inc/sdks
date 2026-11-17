@@ -13,6 +13,7 @@ import {
   PUBLIC_KEY_GLOBAL,
   RELEASE_SLUG_GLOBAL,
 } from "@interfere/types/sdk/injected-globals";
+import { RELEASE_TOKEN_GLOBAL } from "@interfere/types/sdk/release/token";
 import { PLUGINS_GLOBAL } from "@interfere/types/sdk/remote-config/plugins";
 import { ANONYMOUS_REPLAY_GLOBAL } from "@interfere/types/sdk/remote-config/anonymous-replay";
 import { SERVICE_NAME_GLOBAL } from "@interfere/types/sdk/service-name";
@@ -38,6 +39,10 @@ export function applyBrowserGlobals() {
 
   if (import.meta.env.VITE_INTERFERE_RELEASE_SLUG) {
     g[RELEASE_SLUG_GLOBAL] ??= import.meta.env.VITE_INTERFERE_RELEASE_SLUG;
+  }
+
+  if (import.meta.env.VITE_INTERFERE_RELEASE_TOKEN) {
+    g[RELEASE_TOKEN_GLOBAL] ??= import.meta.env.VITE_INTERFERE_RELEASE_TOKEN;
   }
 
   if (import.meta.env.VITE_INTERFERE_INGEST_URL) {

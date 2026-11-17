@@ -1,4 +1,4 @@
-import { hasPublicKey, isForceEnableActive } from "../config/config.js";
+import { hasIngestCredential, isForceEnableActive } from "../config/config.js";
 
 export function isEnabledByEnvironment() {
   const environment =
@@ -7,7 +7,7 @@ export function isEnabledByEnvironment() {
   return (
     environment === undefined ||
     environment === "production" ||
-    hasPublicKey() ||
+    hasIngestCredential() ||
     isForceEnableActive()
   );
 }

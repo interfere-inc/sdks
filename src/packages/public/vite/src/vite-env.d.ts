@@ -23,6 +23,7 @@ interface ImportMetaEnv {
   readonly VITE_INTERFERE_PUBLIC_KEY?: string;
   /** Build-injected release slug derived from the commit SHA. */
   readonly VITE_INTERFERE_RELEASE_SLUG?: string | null;
+  readonly VITE_INTERFERE_RELEASE_TOKEN?: string | null;
   /** Build-injected default `service.name`: the plugin option, `OTEL_SERVICE_NAME`, or the package name without its scope. */
   readonly VITE_INTERFERE_SERVICE_NAME?: string | null;
 }

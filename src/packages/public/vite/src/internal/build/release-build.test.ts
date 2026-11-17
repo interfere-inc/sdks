@@ -110,15 +110,15 @@ test("uploads source maps when the build has no public key to check the surface 
 test.each([
   {
     providers: { sourceProvider: null, destinationProvider: "cloudflare" },
-    warning: "no version control provider configured",
+    setting: "version control provider",
   },
   {
     providers: { sourceProvider: "github", destinationProvider: null },
-    warning: "no deployment target configured",
+    setting: "deployment target",
   },
 ])(
-  "skips the release, says which surface setting is missing and removes forced maps: $warning",
-  async ({ providers, warning }) => {
+  "disables the build, says which surface setting is missing and removes forced maps: $setting",
+  async ({ providers, setting }) => {
     expect.hasAssertions();
 
     const root = await project("vite-surface-unconfigured-");
@@ -135,7 +135,7 @@ test.each([
 
     expect(warnings).toContainEqual(
       expect.stringContaining(
-        `release skipped: this surface has ${warning}. Configure one at https://interfere.com/~/acme/apps/vite.`,
+        `Interfere is disabled for this build: configure the surface's ${setting} at https://interfere.com/~/acme/apps/vite`,
       ),
     );
 

@@ -1,10 +1,12 @@
 import { API_URL } from "@interfere/constants/api";
+import { omitUndefined } from "@interfere/helpers/omit-undefined";
 import {
   API_URL_GLOBAL,
   FORCE_ENABLE_GLOBAL,
   INGEST_URL_GLOBAL,
   PUBLIC_KEY_GLOBAL,
 } from "@interfere/types/sdk/injected-globals";
+import { RELEASE_TOKEN_GLOBAL } from "@interfere/types/sdk/release/token";
 
 import { getGlobal, getStringGlobal, setGlobal } from "../../util/global.js";
 
@@ -23,12 +25,16 @@ function resolvePublicKey() {
   return;
 }
 
+function resolveReleaseToken() {
+  return getStringGlobal(RELEASE_TOKEN_GLOBAL) || undefined;
+}
+
 /**
- * Every ingest route rejects keyless requests, so a kernel without a public
- * key cannot deliver anything.
+ * Every ingest route rejects requests without a credential, so a kernel with
+ * neither a public key nor a release token cannot deliver anything.
  */
-export function hasPublicKey() {
-  return Boolean(resolvePublicKey());
+export function hasIngestCredential() {
+  return Boolean(resolvePublicKey() || resolveReleaseToken());
 }
 
 /**
@@ -68,7 +74,12 @@ export function resolveTargets(
   },
 ) {
   const publicKey = resolvePublicKey();
+  const releaseToken = resolveReleaseToken();
   const headers: Record<string, string> = {};
+
+  if (releaseToken) {
+    headers["x-interfere-release-token"] = releaseToken;
+  }
 
   if (isForceEnableActive()) {
     headers["x-interfere-force-enable"] = "1";
@@ -90,12 +101,14 @@ export function resolveTargets(
     ? normalizeOrigin(resolvedIngestHost)
     : configBaseUrl;
 
-  const options = {
+  const options = omitUndefined({
     headers,
     publicKeyHeader: publicKey ? { apiKey: publicKey } : undefined,
+    releaseTokenHeader:
+      releaseToken && !publicKey ? { apiKey: releaseToken } : undefined,
     timeoutInSeconds: 10,
     maxRetries: 0,
-  };
+  });
 
   return {
     config: { ...options, baseUrl: configBaseUrl },
