@@ -87,11 +87,11 @@ With a workspace key, App resolution uses:
 
 1. The `x-interfere-service` header, with optional `x-interfere-service-namespace`.
 2. Otherwise, OTLP `service.name` and `service.namespace` resource attributes.
-3. Without a usable identity, the workspace's default App. `unknown_service` never creates an App.
+3. Without a usable identity, the workspace's default App.
 
-For a named service, an existing service-to-App association wins; otherwise a matching App name or slug is used. First sight of an unmatched service can auto-create an App, limited to **20 new Apps per request** and **50 auto-created Apps per workspace**. If creation is disabled or a budget is exhausted, routing falls back to the default App; without an eligible default, the request is rejected. A missing or deleted default falls back to the oldest eligible App.
+For a named service, an existing service-to-App association wins; otherwise a matching App name or slug is used. An unmatched service goes to the default App; without an eligible default, the request is rejected. Interfere never creates an App from telemetry. A missing or deleted default falls back to the oldest eligible App.
 
-In **Settings → Developer → Public keys**, choose **Default app** and toggle **Create apps from telemetry** (`auto_create_apps`). An App marked `explicit_only` is excluded from implicit name matching and default fallback; use an existing service association or its App key to target it.
+In **Settings → Developer → Public keys**, choose the **Default app**. An App marked `explicit_only` is excluded from implicit name matching and default fallback; use an existing service association or its App key to target it.
 
 Name an App in the dashboard when creating it, or edit its title on the App page. Keep the SDK's `serviceName` stable: renaming the dashboard title does not change an existing service association. Open **Services** to find the service linked to an App before migrating keys. SDK requests use `serviceName` for `x-interfere-service`; a configured runtime `serviceNamespace` supplies the namespace header.
 
