@@ -10,44 +10,12 @@ export namespace ApiKeyScopeProblem {
     export interface AuthAkScopeMismatch {
         code: "AUTH_AK_SCOPE_MISMATCH";
         message?: string | undefined;
-        service?: ApiKeyScopeProblemAuthAkScopeMismatch.Service | undefined;
-    }
-
-    export namespace ApiKeyScopeProblemAuthAkScopeMismatch {
-        export const Service = {
-            Collector: "collector",
-            Gateway: "gateway",
-            Operation: "operation",
-            Intelligence: "intelligence",
-            FrontierAuth: "frontier-auth",
-            FrontierDrain: "frontier-drain",
-            FrontierRuntime: "frontier-runtime",
-            FrontierBuildtime: "frontier-buildtime",
-            ApiFindings: "api-findings",
-            ApiUpdates: "api-updates",
-        } as const;
-        export type Service = (typeof Service)[keyof typeof Service];
+        service?: Interfere.ErrorService | undefined;
     }
 
     export interface NetworkAccessDenied {
         code: "NETWORK_ACCESS_DENIED";
         message?: string | undefined;
-        service?: ApiKeyScopeProblemNetworkAccessDenied.Service | undefined;
-    }
-
-    export namespace ApiKeyScopeProblemNetworkAccessDenied {
-        export const Service = {
-            Collector: "collector",
-            Gateway: "gateway",
-            Operation: "operation",
-            Intelligence: "intelligence",
-            FrontierAuth: "frontier-auth",
-            FrontierDrain: "frontier-drain",
-            FrontierRuntime: "frontier-runtime",
-            FrontierBuildtime: "frontier-buildtime",
-            ApiFindings: "api-findings",
-            ApiUpdates: "api-updates",
-        } as const;
-        export type Service = (typeof Service)[keyof typeof Service];
+        service?: Interfere.ErrorService | undefined;
     }
 }

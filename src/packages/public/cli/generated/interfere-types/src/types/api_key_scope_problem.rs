@@ -12,7 +12,7 @@ pub enum ApiKeyScopeProblem {
             #[serde(skip_serializing_if = "Option::is_none")]
             message: Option<String>,
             #[serde(skip_serializing_if = "Option::is_none")]
-            service: Option<ApiKeyScopeProblemAuthAkScopeMismatchService>,
+            service: Option<ErrorService>,
         },
 
         #[serde(rename = "NETWORK_ACCESS_DENIED")]
@@ -21,7 +21,7 @@ pub enum ApiKeyScopeProblem {
             #[serde(skip_serializing_if = "Option::is_none")]
             message: Option<String>,
             #[serde(skip_serializing_if = "Option::is_none")]
-            service: Option<ApiKeyScopeProblemNetworkAccessDeniedService>,
+            service: Option<ErrorService>,
         },
 
         /// Catch-all variant for unrecognized discriminant values.
@@ -40,19 +40,19 @@ impl ApiKeyScopeProblem {
         Self::NetworkAccessDenied { message: None, service: None }
     }
 
-    pub fn auth_ak_scope_mismatch_with_message(message: String, service: Option<ApiKeyScopeProblemAuthAkScopeMismatchService>) -> Self {
+    pub fn auth_ak_scope_mismatch_with_message(message: String, service: Option<ErrorService>) -> Self {
         Self::AuthAkScopeMismatch { message: Some(message), service }
     }
 
-    pub fn auth_ak_scope_mismatch_with_service(message: Option<String>, service: ApiKeyScopeProblemAuthAkScopeMismatchService) -> Self {
+    pub fn auth_ak_scope_mismatch_with_service(message: Option<String>, service: ErrorService) -> Self {
         Self::AuthAkScopeMismatch { message, service: Some(service) }
     }
 
-    pub fn network_access_denied_with_message(message: String, service: Option<ApiKeyScopeProblemNetworkAccessDeniedService>) -> Self {
+    pub fn network_access_denied_with_message(message: String, service: Option<ErrorService>) -> Self {
         Self::NetworkAccessDenied { message: Some(message), service }
     }
 
-    pub fn network_access_denied_with_service(message: Option<String>, service: ApiKeyScopeProblemNetworkAccessDeniedService) -> Self {
+    pub fn network_access_denied_with_service(message: Option<String>, service: ErrorService) -> Self {
         Self::NetworkAccessDenied { message, service: Some(service) }
     }
 

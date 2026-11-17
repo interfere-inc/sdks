@@ -8,7 +8,7 @@ pub struct ApiKeyAuthProblem {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub message: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub service: Option<ApiKeyAuthProblemService>,
+    pub service: Option<ErrorService>,
 }
 
 impl ApiKeyAuthProblem {
@@ -22,7 +22,7 @@ impl ApiKeyAuthProblem {
 pub struct ApiKeyAuthProblemBuilder {
     code: Option<ApiKeyAuthProblemCode>,
     message: Option<String>,
-    service: Option<ApiKeyAuthProblemService>,
+    service: Option<ErrorService>,
 }
 
 impl ApiKeyAuthProblemBuilder {
@@ -36,7 +36,7 @@ impl ApiKeyAuthProblemBuilder {
         self
     }
 
-    pub fn service(mut self, value: ApiKeyAuthProblemService) -> Self {
+    pub fn service(mut self, value: ErrorService) -> Self {
         self.service = Some(value);
         self
     }

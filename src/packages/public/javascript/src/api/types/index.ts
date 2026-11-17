@@ -17,6 +17,7 @@ export * from "./ConflictErrorBody.js";
 export * from "./ContentTooLargeErrorBody.js";
 export * from "./CreateReleaseResponse.js";
 export * from "./CustomIdentifySource.js";
+export * from "./ErrorService.js";
 export * from "./GithubReleaseSource.js";
 export * from "./IdentifyCompany.js";
 export * from "./IdentifySource.js";

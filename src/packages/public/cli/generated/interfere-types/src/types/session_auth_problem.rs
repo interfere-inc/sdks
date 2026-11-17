@@ -8,7 +8,7 @@ pub struct SessionAuthProblem {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub message: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub service: Option<SessionAuthProblemService>,
+    pub service: Option<ErrorService>,
 }
 
 impl SessionAuthProblem {
@@ -22,7 +22,7 @@ impl SessionAuthProblem {
 pub struct SessionAuthProblemBuilder {
     code: Option<SessionAuthProblemCode>,
     message: Option<String>,
-    service: Option<SessionAuthProblemService>,
+    service: Option<ErrorService>,
 }
 
 impl SessionAuthProblemBuilder {
@@ -36,7 +36,7 @@ impl SessionAuthProblemBuilder {
         self
     }
 
-    pub fn service(mut self, value: SessionAuthProblemService) -> Self {
+    pub fn service(mut self, value: ErrorService) -> Self {
         self.service = Some(value);
         self
     }

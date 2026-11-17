@@ -8,7 +8,7 @@ pub struct SignSourceMapsProblem {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub message: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub service: Option<SignSourceMapsProblemService>,
+    pub service: Option<ErrorService>,
 }
 
 impl SignSourceMapsProblem {
@@ -22,7 +22,7 @@ impl SignSourceMapsProblem {
 pub struct SignSourceMapsProblemBuilder {
     code: Option<SignSourceMapsProblemCode>,
     message: Option<String>,
-    service: Option<SignSourceMapsProblemService>,
+    service: Option<ErrorService>,
 }
 
 impl SignSourceMapsProblemBuilder {
@@ -36,7 +36,7 @@ impl SignSourceMapsProblemBuilder {
         self
     }
 
-    pub fn service(mut self, value: SignSourceMapsProblemService) -> Self {
+    pub fn service(mut self, value: ErrorService) -> Self {
         self.service = Some(value);
         self
     }

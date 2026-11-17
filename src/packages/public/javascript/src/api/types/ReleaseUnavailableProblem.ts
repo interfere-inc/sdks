@@ -10,44 +10,12 @@ export namespace ReleaseUnavailableProblem {
     export interface IngestInfraUnavailable {
         code: "INGEST_INFRA_UNAVAILABLE";
         message?: string | undefined;
-        service?: ReleaseUnavailableProblemIngestInfraUnavailable.Service | undefined;
-    }
-
-    export namespace ReleaseUnavailableProblemIngestInfraUnavailable {
-        export const Service = {
-            Collector: "collector",
-            Gateway: "gateway",
-            Operation: "operation",
-            Intelligence: "intelligence",
-            FrontierAuth: "frontier-auth",
-            FrontierDrain: "frontier-drain",
-            FrontierRuntime: "frontier-runtime",
-            FrontierBuildtime: "frontier-buildtime",
-            ApiFindings: "api-findings",
-            ApiUpdates: "api-updates",
-        } as const;
-        export type Service = (typeof Service)[keyof typeof Service];
+        service?: Interfere.ErrorService | undefined;
     }
 
     export interface NetworkAccessUnavailable {
         code: "NETWORK_ACCESS_UNAVAILABLE";
         message?: string | undefined;
-        service?: ReleaseUnavailableProblemNetworkAccessUnavailable.Service | undefined;
-    }
-
-    export namespace ReleaseUnavailableProblemNetworkAccessUnavailable {
-        export const Service = {
-            Collector: "collector",
-            Gateway: "gateway",
-            Operation: "operation",
-            Intelligence: "intelligence",
-            FrontierAuth: "frontier-auth",
-            FrontierDrain: "frontier-drain",
-            FrontierRuntime: "frontier-runtime",
-            FrontierBuildtime: "frontier-buildtime",
-            ApiFindings: "api-findings",
-            ApiUpdates: "api-updates",
-        } as const;
-        export type Service = (typeof Service)[keyof typeof Service];
+        service?: Interfere.ErrorService | undefined;
     }
 }

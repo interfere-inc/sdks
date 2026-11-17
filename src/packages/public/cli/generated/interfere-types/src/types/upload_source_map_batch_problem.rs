@@ -8,7 +8,7 @@ pub struct UploadSourceMapBatchProblem {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub message: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub service: Option<UploadSourceMapBatchProblemService>,
+    pub service: Option<ErrorService>,
 }
 
 impl UploadSourceMapBatchProblem {
@@ -22,7 +22,7 @@ impl UploadSourceMapBatchProblem {
 pub struct UploadSourceMapBatchProblemBuilder {
     code: Option<UploadSourceMapBatchProblemCode>,
     message: Option<String>,
-    service: Option<UploadSourceMapBatchProblemService>,
+    service: Option<ErrorService>,
 }
 
 impl UploadSourceMapBatchProblemBuilder {
@@ -36,7 +36,7 @@ impl UploadSourceMapBatchProblemBuilder {
         self
     }
 
-    pub fn service(mut self, value: UploadSourceMapBatchProblemService) -> Self {
+    pub fn service(mut self, value: ErrorService) -> Self {
         self.service = Some(value);
         self
     }

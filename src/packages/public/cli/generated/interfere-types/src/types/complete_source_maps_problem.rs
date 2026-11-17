@@ -8,7 +8,7 @@ pub struct CompleteSourceMapsProblem {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub message: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub service: Option<CompleteSourceMapsProblemService>,
+    pub service: Option<ErrorService>,
 }
 
 impl CompleteSourceMapsProblem {
@@ -22,7 +22,7 @@ impl CompleteSourceMapsProblem {
 pub struct CompleteSourceMapsProblemBuilder {
     code: Option<CompleteSourceMapsProblemCode>,
     message: Option<String>,
-    service: Option<CompleteSourceMapsProblemService>,
+    service: Option<ErrorService>,
 }
 
 impl CompleteSourceMapsProblemBuilder {
@@ -36,7 +36,7 @@ impl CompleteSourceMapsProblemBuilder {
         self
     }
 
-    pub fn service(mut self, value: CompleteSourceMapsProblemService) -> Self {
+    pub fn service(mut self, value: ErrorService) -> Self {
         self.service = Some(value);
         self
     }

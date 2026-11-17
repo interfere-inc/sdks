@@ -12,7 +12,7 @@ pub enum ReleaseUnavailableProblem {
             #[serde(skip_serializing_if = "Option::is_none")]
             message: Option<String>,
             #[serde(skip_serializing_if = "Option::is_none")]
-            service: Option<ReleaseUnavailableProblemIngestInfraUnavailableService>,
+            service: Option<ErrorService>,
         },
 
         #[serde(rename = "NETWORK_ACCESS_UNAVAILABLE")]
@@ -21,7 +21,7 @@ pub enum ReleaseUnavailableProblem {
             #[serde(skip_serializing_if = "Option::is_none")]
             message: Option<String>,
             #[serde(skip_serializing_if = "Option::is_none")]
-            service: Option<ReleaseUnavailableProblemNetworkAccessUnavailableService>,
+            service: Option<ErrorService>,
         },
 
         /// Catch-all variant for unrecognized discriminant values.
@@ -40,19 +40,19 @@ impl ReleaseUnavailableProblem {
         Self::NetworkAccessUnavailable { message: None, service: None }
     }
 
-    pub fn ingest_infra_unavailable_with_message(message: String, service: Option<ReleaseUnavailableProblemIngestInfraUnavailableService>) -> Self {
+    pub fn ingest_infra_unavailable_with_message(message: String, service: Option<ErrorService>) -> Self {
         Self::IngestInfraUnavailable { message: Some(message), service }
     }
 
-    pub fn ingest_infra_unavailable_with_service(message: Option<String>, service: ReleaseUnavailableProblemIngestInfraUnavailableService) -> Self {
+    pub fn ingest_infra_unavailable_with_service(message: Option<String>, service: ErrorService) -> Self {
         Self::IngestInfraUnavailable { message, service: Some(service) }
     }
 
-    pub fn network_access_unavailable_with_message(message: String, service: Option<ReleaseUnavailableProblemNetworkAccessUnavailableService>) -> Self {
+    pub fn network_access_unavailable_with_message(message: String, service: Option<ErrorService>) -> Self {
         Self::NetworkAccessUnavailable { message: Some(message), service }
     }
 
-    pub fn network_access_unavailable_with_service(message: Option<String>, service: ReleaseUnavailableProblemNetworkAccessUnavailableService) -> Self {
+    pub fn network_access_unavailable_with_service(message: Option<String>, service: ErrorService) -> Self {
         Self::NetworkAccessUnavailable { message, service: Some(service) }
     }
 

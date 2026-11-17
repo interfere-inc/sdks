@@ -8,7 +8,7 @@ pub struct FindingOccurrencesUnavailableProblemZero {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub message: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub service: Option<FindingOccurrencesUnavailableProblemZeroService>,
+    pub service: Option<ErrorService>,
 }
 
 impl FindingOccurrencesUnavailableProblemZero {
@@ -22,7 +22,7 @@ impl FindingOccurrencesUnavailableProblemZero {
 pub struct FindingOccurrencesUnavailableProblemZeroBuilder {
     code: Option<FindingOccurrencesUnavailableProblemZeroCode>,
     message: Option<String>,
-    service: Option<FindingOccurrencesUnavailableProblemZeroService>,
+    service: Option<ErrorService>,
 }
 
 impl FindingOccurrencesUnavailableProblemZeroBuilder {
@@ -36,7 +36,7 @@ impl FindingOccurrencesUnavailableProblemZeroBuilder {
         self
     }
 
-    pub fn service(mut self, value: FindingOccurrencesUnavailableProblemZeroService) -> Self {
+    pub fn service(mut self, value: ErrorService) -> Self {
         self.service = Some(value);
         self
     }

@@ -8,7 +8,7 @@ pub struct UploadSourceMapProblem {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub message: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub service: Option<UploadSourceMapProblemService>,
+    pub service: Option<ErrorService>,
 }
 
 impl UploadSourceMapProblem {
@@ -22,7 +22,7 @@ impl UploadSourceMapProblem {
 pub struct UploadSourceMapProblemBuilder {
     code: Option<UploadSourceMapProblemCode>,
     message: Option<String>,
-    service: Option<UploadSourceMapProblemService>,
+    service: Option<ErrorService>,
 }
 
 impl UploadSourceMapProblemBuilder {
@@ -36,7 +36,7 @@ impl UploadSourceMapProblemBuilder {
         self
     }
 
-    pub fn service(mut self, value: UploadSourceMapProblemService) -> Self {
+    pub fn service(mut self, value: ErrorService) -> Self {
         self.service = Some(value);
         self
     }

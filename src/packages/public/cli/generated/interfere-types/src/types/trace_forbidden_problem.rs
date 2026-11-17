@@ -12,7 +12,7 @@ pub enum TraceForbiddenProblem {
             #[serde(skip_serializing_if = "Option::is_none")]
             message: Option<String>,
             #[serde(skip_serializing_if = "Option::is_none")]
-            service: Option<TraceForbiddenProblemAuthOrgRequiredService>,
+            service: Option<ErrorService>,
         },
 
         #[serde(rename = "NETWORK_ACCESS_DENIED")]
@@ -21,7 +21,7 @@ pub enum TraceForbiddenProblem {
             #[serde(skip_serializing_if = "Option::is_none")]
             message: Option<String>,
             #[serde(skip_serializing_if = "Option::is_none")]
-            service: Option<TraceForbiddenProblemNetworkAccessDeniedService>,
+            service: Option<ErrorService>,
         },
 
         /// Catch-all variant for unrecognized discriminant values.
@@ -40,19 +40,19 @@ impl TraceForbiddenProblem {
         Self::NetworkAccessDenied { message: None, service: None }
     }
 
-    pub fn auth_org_required_with_message(message: String, service: Option<TraceForbiddenProblemAuthOrgRequiredService>) -> Self {
+    pub fn auth_org_required_with_message(message: String, service: Option<ErrorService>) -> Self {
         Self::AuthOrgRequired { message: Some(message), service }
     }
 
-    pub fn auth_org_required_with_service(message: Option<String>, service: TraceForbiddenProblemAuthOrgRequiredService) -> Self {
+    pub fn auth_org_required_with_service(message: Option<String>, service: ErrorService) -> Self {
         Self::AuthOrgRequired { message, service: Some(service) }
     }
 
-    pub fn network_access_denied_with_message(message: String, service: Option<TraceForbiddenProblemNetworkAccessDeniedService>) -> Self {
+    pub fn network_access_denied_with_message(message: String, service: Option<ErrorService>) -> Self {
         Self::NetworkAccessDenied { message: Some(message), service }
     }
 
-    pub fn network_access_denied_with_service(message: Option<String>, service: TraceForbiddenProblemNetworkAccessDeniedService) -> Self {
+    pub fn network_access_denied_with_service(message: Option<String>, service: ErrorService) -> Self {
         Self::NetworkAccessDenied { message, service: Some(service) }
     }
 

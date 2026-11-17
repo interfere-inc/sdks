@@ -12,7 +12,7 @@ pub enum SpanNotFoundProblem {
             #[serde(skip_serializing_if = "Option::is_none")]
             message: Option<String>,
             #[serde(skip_serializing_if = "Option::is_none")]
-            service: Option<SpanNotFoundProblemFindingNotFoundService>,
+            service: Option<ErrorService>,
         },
 
         #[serde(rename = "SPAN_NOT_FOUND")]
@@ -21,7 +21,7 @@ pub enum SpanNotFoundProblem {
             #[serde(skip_serializing_if = "Option::is_none")]
             message: Option<String>,
             #[serde(skip_serializing_if = "Option::is_none")]
-            service: Option<SpanNotFoundProblemSpanNotFoundService>,
+            service: Option<ErrorService>,
         },
 
         /// Catch-all variant for unrecognized discriminant values.
@@ -40,19 +40,19 @@ impl SpanNotFoundProblem {
         Self::SpanNotFound { message: None, service: None }
     }
 
-    pub fn finding_not_found_with_message(message: String, service: Option<SpanNotFoundProblemFindingNotFoundService>) -> Self {
+    pub fn finding_not_found_with_message(message: String, service: Option<ErrorService>) -> Self {
         Self::FindingNotFound { message: Some(message), service }
     }
 
-    pub fn finding_not_found_with_service(message: Option<String>, service: SpanNotFoundProblemFindingNotFoundService) -> Self {
+    pub fn finding_not_found_with_service(message: Option<String>, service: ErrorService) -> Self {
         Self::FindingNotFound { message, service: Some(service) }
     }
 
-    pub fn span_not_found_with_message(message: String, service: Option<SpanNotFoundProblemSpanNotFoundService>) -> Self {
+    pub fn span_not_found_with_message(message: String, service: Option<ErrorService>) -> Self {
         Self::SpanNotFound { message: Some(message), service }
     }
 
-    pub fn span_not_found_with_service(message: Option<String>, service: SpanNotFoundProblemSpanNotFoundService) -> Self {
+    pub fn span_not_found_with_service(message: Option<String>, service: ErrorService) -> Self {
         Self::SpanNotFound { message, service: Some(service) }
     }
 
