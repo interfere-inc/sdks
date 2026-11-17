@@ -327,7 +327,7 @@
       "requiresAuth": true,
       "response": {
         "status": 200,
-        "body": "{\n  \"build\": {\n    \"hash\": \"hash\"\n  },\n  \"destination\": {\n    \"id\": \"id\",\n    \"slug\": \"slug\",\n    \"environment\": \"environment\"\n  },\n  \"org\": {\n    \"id\": \"id\",\n    \"slug\": \"slug\"\n  },\n  \"source\": {\n    \"id\": \"id\"\n  },\n  \"surface\": {\n    \"id\": \"id\",\n    \"slug\": \"slug\"\n  }\n}"
+        "body": "{\n  \"build\": {\n    \"hash\": \"hash\"\n  },\n  \"destination\": {\n    \"id\": \"id\",\n    \"slug\": \"slug\",\n    \"environment\": \"environment\"\n  },\n  \"org\": {\n    \"id\": \"id\",\n    \"slug\": \"slug\"\n  },\n  \"source\": {\n    \"id\": \"id\"\n  },\n  \"surface\": {\n    \"id\": \"id\",\n    \"slug\": \"slug\"\n  },\n  \"token\": \"token\"\n}"
       }
     },
     {
