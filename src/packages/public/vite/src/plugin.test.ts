@@ -1834,6 +1834,18 @@ describe("interfere vite plugin", () => {
       expect(define[ENVIRONMENT_KEY]).toBe('"preview"');
     });
 
+    test("inlines the Wrangler environment a CLOUDFLARE_ENV build targets", async () => {
+      vi.stubEnv("INTERFERE_ENVIRONMENT", undefined);
+
+      vi.stubEnv("VERCEL_ENV", undefined);
+
+      vi.stubEnv("CLOUDFLARE_ENV", "preview");
+
+      const define = await callConfigDefine(interfere());
+
+      expect(define[ENVIRONMENT_KEY]).toBe('"preview"');
+    });
+
     test("prefers INTERFERE_ENVIRONMENT over VERCEL_ENV", async () => {
       vi.stubEnv("INTERFERE_ENVIRONMENT", "staging");
 

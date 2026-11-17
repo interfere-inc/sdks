@@ -15,6 +15,7 @@ interface ServerEntry {
   isEnabledOnServer: () => boolean;
   readInterfereServerEnv: () => {
     apiKey: string | null;
+    nodeEnvironment: string;
     publicKey: string | null;
   };
   traceMeta: () => unknown[];
@@ -108,6 +109,7 @@ test("the bundled server entry runs on a runtime with no process global", async 
 
   expect(server.readInterfereServerEnv().publicKey).toBe(PUBLIC_KEY);
   expect(server.readInterfereServerEnv().apiKey).toBeNull();
+  expect(server.readInterfereServerEnv().nodeEnvironment).toBe("production");
   expect(server.isEnabledOnServer()).toBe(true);
   expect(server.traceMeta()).toHaveLength(0);
 

@@ -170,6 +170,8 @@ export default {
 } satisfies ExportedHandler;
 ```
 
+A built Worker reports the `production` environment, or the Wrangler environment it was built for when the build runs with `CLOUDFLARE_ENV` set, so a `CLOUDFLARE_ENV=preview` build reports `preview`. Set `INTERFERE_ENVIRONMENT` as a Worker variable only for a non-production deploy built without `CLOUDFLARE_ENV`, such as `"preview"` or `"staging"`. To send server telemetry to an Interfere API other than production, also set `INTERFERE_API_URL`; the server does not read `VITE_INTERFERE_API_URL`.
+
 Keep the request and function middleware in `src/start.ts` as above. Each server span continues the browser's `traceparent`, so a page's browser and server spans share one trace. Cloudflare's own Workers traces cannot do this, because they start a new trace for every request. When a request span ends, its spans are exported within that request's `waitUntil`. You don't need to call `flush()` yourself.
 
 The browser guard matters for TanStack Start because prerender can evaluate the router import graph on the server, while the Interfere kernel uses browser-only APIs. For an ad-blocker-resistant setup, set `interfere({ apiHost: "https://in.yourapp.com" })` — a subdomain of your own site that resolves to Interfere via a DNS record.

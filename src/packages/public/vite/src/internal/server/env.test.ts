@@ -46,9 +46,40 @@ describe("server env", () => {
 
     vi.stubEnv("VERCEL_ENV", "");
 
+    vi.stubEnv("MODE", "");
+
     const env = readInterfereServerEnv();
 
     expect(env.nodeEnvironment).toBe("development");
+  });
+
+  test.each(["production", "development"])(
+    "reports the %s build mode when no environment variable is set",
+    (mode) => {
+      vi.stubEnv("NODE_ENV", "");
+
+      vi.stubEnv("INTERFERE_ENVIRONMENT", "");
+
+      vi.stubEnv("VERCEL_ENV", "");
+
+      vi.stubEnv("MODE", mode);
+
+      expect(readInterfereServerEnv().nodeEnvironment).toBe(mode);
+    },
+  );
+
+  test("prefers INTERFERE_ENVIRONMENT and the baked deploy environment over the build mode", () => {
+    vi.stubEnv("NODE_ENV", "");
+
+    vi.stubEnv("MODE", "production");
+
+    vi.stubEnv("INTERFERE_ENVIRONMENT", "staging");
+
+    expect(readInterfereServerEnv().nodeEnvironment).toBe("staging");
+
+    vi.stubEnv("VITE_INTERFERE_ENVIRONMENT", "preview");
+
+    expect(readInterfereServerEnv().nodeEnvironment).toBe("preview");
   });
 
   test("prefers INTERFERE_ENVIRONMENT over NODE_ENV", () => {

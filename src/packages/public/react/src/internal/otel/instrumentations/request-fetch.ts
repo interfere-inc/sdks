@@ -82,6 +82,7 @@ export function createFetchInstrumentation(
 
   const instrumentation = new FetchInstrumentation({
     enabled: false,
+    ignoreNetworkEvents: true,
     ignoreUrls: input.ignoreUrls,
     measureRequestSize: false,
     propagateTraceHeaderCorsUrls: [],

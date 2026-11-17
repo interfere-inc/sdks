@@ -13,21 +13,28 @@ export interface ResourceAttributesInput {
   serviceNamespace?: string | undefined;
 }
 
+function readBundledEnv(read: () => string | undefined) {
+  try {
+    return read();
+  } catch {
+    return;
+  }
+}
+
 /** The resource every browser export carries, shared by the tracing providers and the capture-only encoder. */
 export function buildResourceAttributes(input: ResourceAttributesInput) {
-  // WARNING: Aliasing process.env prevents bundler substitution and silently selects development in browser builds.
+  // WARNING: Aliasing process.env or guarding on `typeof process` prevents bundler substitution and silently selects development in browser builds.
   const environment = resolveEnvironment({
     explicit: getStringGlobal(ENVIRONMENT_GLOBAL),
-    env:
-      typeof process === "undefined"
-        ? {}
-        : {
-            // oxlint-disable-next-line node/no-process-env
-            INTERFERE_ENVIRONMENT: process.env["INTERFERE_ENVIRONMENT"],
-            NODE_ENV: process.env["NODE_ENV"],
-            // oxlint-disable-next-line node/no-process-env
-            VERCEL_ENV: process.env["VERCEL_ENV"],
-          },
+    env: {
+      INTERFERE_ENVIRONMENT: readBundledEnv(
+        // oxlint-disable-next-line node/no-process-env
+        () => process.env["INTERFERE_ENVIRONMENT"],
+      ),
+      NODE_ENV: readBundledEnv(() => process.env["NODE_ENV"]),
+      // oxlint-disable-next-line node/no-process-env
+      VERCEL_ENV: readBundledEnv(() => process.env["VERCEL_ENV"]),
+    },
   });
 
   return omitUndefined({

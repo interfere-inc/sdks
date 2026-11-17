@@ -712,6 +712,20 @@ describe(buildOtelProvider, () => {
     }
   });
 
+  test("reports development from a dev-server page without a stamped environment global", () => {
+    const captured = captureSpans();
+
+    handle = buildProvider({
+      additionalSpanProcessors: [captured.processor],
+    });
+
+    handle.tracerProvider.getTracer("test").startSpan("probe").end();
+
+    expect(
+      captured.spans[0]?.resource.attributes["deployment.environment.name"],
+    ).toBe("development");
+  });
+
   test("fans additional metric readers into the MeterProvider", async () => {
     const { reader, shutdownSpy } = buildReader();
 

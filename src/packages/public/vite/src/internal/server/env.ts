@@ -34,6 +34,7 @@ export function isEnabledOnServer() {
 
 export function readInterfereServerEnv() {
   const nodeEnvironment = resolveEnvironment({
+    buildMode: import.meta.env.MODE,
     env: readProcessEnv() ?? {},
     explicit: import.meta.env.VITE_INTERFERE_ENVIRONMENT,
   });

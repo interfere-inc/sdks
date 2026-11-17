@@ -30,6 +30,7 @@ export function createXhrInstrumentation(
 
   const instrumentation = new XMLHttpRequestInstrumentation({
     enabled: false,
+    ignoreNetworkEvents: true,
     ignoreUrls: input.ignoreUrls,
     measureRequestSize: true,
     propagateTraceHeaderCorsUrls: [],

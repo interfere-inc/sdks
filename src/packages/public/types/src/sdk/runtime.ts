@@ -4,12 +4,14 @@ import { inferRuntimeFromEvidence } from "../internal/runtime-inference.ts";
 export type Env = string | null;
 
 /**
- * Fallback environment when nothing is configured. `development` (not
- * `production`, which is what Sentry defaults to) because the collector has
- * an always-on per-surface environment filter — an unconfigured run is far
- * more likely a developer's laptop than a real deploy, so a filtered-by-default
- * label keeps local noise out of product data. A real deploy sets one of the
- * higher-precedence signals below.
+ * Fallback environment when no environment variable and no bundler build mode
+ * is available, such as unbundled code on a developer's laptop. `development`
+ * (not `production`, which is what Sentry defaults to) because the collector
+ * has an always-on per-surface environment filter, so a filtered-by-default
+ * label keeps local noise out of product data. Built bundles report their
+ * build mode (`production` for `vite build`) instead, so a production deploy
+ * needs no configuration and only preview or staging deploys set
+ * `INTERFERE_ENVIRONMENT`.
  */
 export const DEFAULT_ENVIRONMENT = "development";
 
@@ -23,13 +25,17 @@ const ENVIRONMENT_ENV_VARS = [
  * Resolve the deployment environment using a precedence chain modelled on
  * Sentry's: an explicit value (init option) wins, then a dedicated
  * `INTERFERE_ENVIRONMENT`, then platform signals (`VERCEL_ENV`), then
- * `NODE_ENV` as a last-resort fallback, then {@link DEFAULT_ENVIRONMENT}.
+ * `NODE_ENV`, then the bundler's build mode, then
+ * {@link DEFAULT_ENVIRONMENT}.
  *
- * `NODE_ENV` is deliberately last: it's a build-mode flag (staging, preview,
- * and prod all ship `NODE_ENV=production`), not a deploy-environment
- * identifier. The dedicated var is the real abstraction.
+ * `NODE_ENV` and the build mode come last: they say how the code was built
+ * (staging, preview and prod all ship `production`), not where it is deployed.
+ * The dedicated var is the real abstraction. The build mode is the signal a
+ * runtime without environment variables, such as a Cloudflare Worker, still
+ * has.
  */
 export function resolveEnvironment(opts?: {
+  readonly buildMode?: string | null | undefined;
   readonly explicit?: string | null | undefined;
   readonly env?: Record<string, string | undefined>;
 }) {
@@ -48,7 +54,7 @@ export function resolveEnvironment(opts?: {
     }
   }
 
-  return DEFAULT_ENVIRONMENT;
+  return normalizeEnv(opts?.buildMode) ?? DEFAULT_ENVIRONMENT;
 }
 
 /** JavaScript runtime the SDK is running in. */
