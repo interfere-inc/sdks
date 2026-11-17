@@ -1604,6 +1604,104 @@
       }
     },
     {
+      "id": "by_name",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/queries/environments.byName",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "name": "name"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"id\": \"id\",\n  \"isProduction\": true,\n  \"name\": \"name\",\n  \"organizationId\": \"organizationId\",\n  \"reportable\": true,\n  \"createdAt\": 1.1,\n  \"deletedAt\": 1.1,\n  \"updatedAt\": 1.1\n}"
+      }
+    },
+    {
+      "id": "list_5",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/queries/environments.list",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {},
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "[\n  {\n    \"id\": \"id\",\n    \"isProduction\": true,\n    \"name\": \"name\",\n    \"organizationId\": \"organizationId\",\n    \"reportable\": true,\n    \"createdAt\": 1.1,\n    \"deletedAt\": 1.1,\n    \"updatedAt\": 1.1\n  }\n]"
+      }
+    },
+    {
+      "id": "delete",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/environments.delete",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "name": "name"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true\n}"
+      }
+    },
+    {
+      "id": "set_production",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/environments.setProduction",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "name": "name",
+          "isProduction": true
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true\n}"
+      }
+    },
+    {
+      "id": "set_reportable",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/environments.setReportable",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "name": "name",
+          "reportable": true
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true\n}"
+      }
+    },
+    {
       "id": "list_by_problem",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/findings.listByProblem",
@@ -2192,7 +2290,7 @@
       }
     },
     {
-      "id": "list_5",
+      "id": "list_6",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/memberships.forOrg",
       "params": {
@@ -2445,7 +2543,7 @@
       }
     },
     {
-      "id": "list_6",
+      "id": "list_7",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/problems.list",
       "params": {
@@ -2781,7 +2879,7 @@
       }
     },
     {
-      "id": "list_7",
+      "id": "list_8",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/surfaces.list",
       "params": {
@@ -2797,7 +2895,7 @@
       }
     },
     {
-      "id": "delete",
+      "id": "delete_1",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/actions/surfaces.delete",
       "params": {
@@ -3037,7 +3135,7 @@
       }
     },
     {
-      "id": "list_8",
+      "id": "list_9",
       "method": "GET",
       "path": "/v3/workspaces/{workspace}/tiers",
       "params": {
@@ -3071,7 +3169,7 @@
       }
     },
     {
-      "id": "delete_1",
+      "id": "delete_2",
       "method": "DELETE",
       "path": "/v3/workspaces/{workspace}/tiers/{value}",
       "params": {
@@ -3249,7 +3347,7 @@
       }
     },
     {
-      "id": "list_9",
+      "id": "list_10",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/billingInvoices.forOrg",
       "params": {
@@ -3285,7 +3383,7 @@
       }
     },
     {
-      "id": "list_10",
+      "id": "list_11",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/apiKeys.forOrg",
       "params": {
@@ -3406,7 +3504,7 @@
       }
     },
     {
-      "id": "delete_2",
+      "id": "delete_3",
       "method": "DELETE",
       "path": "/v3/workspaces/{workspace}/api-keys/{apiKeyId}",
       "params": {
@@ -3631,7 +3729,7 @@
       }
     },
     {
-      "id": "delete_3",
+      "id": "delete_4",
       "method": "DELETE",
       "path": "/v3/workspaces/{workspace}/surfaces/{surfaceSlug}/publicKeys/{publicKeyId}",
       "params": {
@@ -3874,7 +3972,7 @@
       }
     },
     {
-      "id": "delete_4",
+      "id": "delete_5",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/actions/replaySessions.delete",
       "params": {
@@ -3894,7 +3992,7 @@
       }
     },
     {
-      "id": "list_11",
+      "id": "list_12",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/scimDirectories.forOrg",
       "params": {
@@ -3931,7 +4029,7 @@
       }
     },
     {
-      "id": "list_12",
+      "id": "list_13",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/scimGroups.forOrg",
       "params": {
@@ -3947,7 +4045,7 @@
       }
     },
     {
-      "id": "list_13",
+      "id": "list_14",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/enterpriseConnections.forOrg",
       "params": {
@@ -4023,7 +4121,7 @@
       }
     },
     {
-      "id": "list_14",
+      "id": "list_15",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/supportThreads.forOrg",
       "params": {
@@ -4095,7 +4193,7 @@
       }
     },
     {
-      "id": "delete_5",
+      "id": "delete_6",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/actions/surfaceEnvironments.delete",
       "params": {
@@ -4115,7 +4213,7 @@
       }
     },
     {
-      "id": "set_production",
+      "id": "set_production_1",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/actions/surfaceEnvironments.setProduction",
       "params": {
@@ -4136,7 +4234,7 @@
       }
     },
     {
-      "id": "set_reportable",
+      "id": "set_reportable_1",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/actions/surfaceEnvironments.setReportable",
       "params": {
@@ -4157,7 +4255,7 @@
       }
     },
     {
-      "id": "list_15",
+      "id": "list_16",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/tiers.list",
       "params": {
@@ -4173,7 +4271,7 @@
       }
     },
     {
-      "id": "list_16",
+      "id": "list_17",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/invitations.forOrg",
       "params": {
@@ -4286,7 +4384,7 @@
       }
     },
     {
-      "id": "list_17",
+      "id": "list_18",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/membershipRequests.forOrg",
       "params": {
@@ -6021,6 +6119,109 @@
       "expectError": true
     },
     {
+      "id": "by_name_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/queries/environments.byName",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "name": "name"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "list_5_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/queries/environments.list",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {},
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "delete_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/environments.delete",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "name": "name"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "set_production_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/environments.setProduction",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "name": "name",
+          "isProduction": true
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "set_reportable_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/environments.setReportable",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "name": "name",
+          "reportable": true
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
       "id": "list_by_problem_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/findings.listByProblem",
@@ -6641,7 +6842,7 @@
       "expectError": true
     },
     {
-      "id": "list_5_error",
+      "id": "list_6_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/memberships.forOrg",
       "params": {
@@ -6908,7 +7109,7 @@
       "expectError": true
     },
     {
-      "id": "list_6_error",
+      "id": "list_7_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/problems.list",
       "params": {
@@ -7262,7 +7463,7 @@
       "expectError": true
     },
     {
-      "id": "list_7_error",
+      "id": "list_8_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/surfaces.list",
       "params": {
@@ -7279,7 +7480,7 @@
       "expectError": true
     },
     {
-      "id": "delete_error",
+      "id": "delete_1_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/actions/surfaces.delete",
       "params": {
@@ -7531,7 +7732,7 @@
       "expectError": true
     },
     {
-      "id": "list_8_error",
+      "id": "list_9_error",
       "method": "GET",
       "path": "/v3/workspaces/{workspace}/tiers",
       "params": {
@@ -7567,7 +7768,7 @@
       "expectError": true
     },
     {
-      "id": "delete_1_error",
+      "id": "delete_2_error",
       "method": "DELETE",
       "path": "/v3/workspaces/{workspace}/tiers/{value}",
       "params": {
@@ -7754,7 +7955,7 @@
       "expectError": true
     },
     {
-      "id": "list_9_error",
+      "id": "list_10_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/billingInvoices.forOrg",
       "params": {
@@ -7792,7 +7993,7 @@
       "expectError": true
     },
     {
-      "id": "list_10_error",
+      "id": "list_11_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/apiKeys.forOrg",
       "params": {
@@ -7919,7 +8120,7 @@
       "expectError": true
     },
     {
-      "id": "delete_2_error",
+      "id": "delete_3_error",
       "method": "DELETE",
       "path": "/v3/workspaces/{workspace}/api-keys/{apiKeyId}",
       "params": {
@@ -8155,7 +8356,7 @@
       "expectError": true
     },
     {
-      "id": "delete_3_error",
+      "id": "delete_4_error",
       "method": "DELETE",
       "path": "/v3/workspaces/{workspace}/surfaces/{surfaceSlug}/publicKeys/{publicKeyId}",
       "params": {
@@ -8409,7 +8610,7 @@
       "expectError": true
     },
     {
-      "id": "delete_4_error",
+      "id": "delete_5_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/actions/replaySessions.delete",
       "params": {
@@ -8430,7 +8631,7 @@
       "expectError": true
     },
     {
-      "id": "list_11_error",
+      "id": "list_12_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/scimDirectories.forOrg",
       "params": {
@@ -8469,7 +8670,7 @@
       "expectError": true
     },
     {
-      "id": "list_12_error",
+      "id": "list_13_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/scimGroups.forOrg",
       "params": {
@@ -8486,7 +8687,7 @@
       "expectError": true
     },
     {
-      "id": "list_13_error",
+      "id": "list_14_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/enterpriseConnections.forOrg",
       "params": {
@@ -8566,7 +8767,7 @@
       "expectError": true
     },
     {
-      "id": "list_14_error",
+      "id": "list_15_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/supportThreads.forOrg",
       "params": {
@@ -8642,7 +8843,7 @@
       "expectError": true
     },
     {
-      "id": "delete_5_error",
+      "id": "delete_6_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/actions/surfaceEnvironments.delete",
       "params": {
@@ -8663,7 +8864,7 @@
       "expectError": true
     },
     {
-      "id": "set_production_error",
+      "id": "set_production_1_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/actions/surfaceEnvironments.setProduction",
       "params": {
@@ -8685,7 +8886,7 @@
       "expectError": true
     },
     {
-      "id": "set_reportable_error",
+      "id": "set_reportable_1_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/actions/surfaceEnvironments.setReportable",
       "params": {
@@ -8707,7 +8908,7 @@
       "expectError": true
     },
     {
-      "id": "list_15_error",
+      "id": "list_16_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/tiers.list",
       "params": {
@@ -8724,7 +8925,7 @@
       "expectError": true
     },
     {
-      "id": "list_16_error",
+      "id": "list_17_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/invitations.forOrg",
       "params": {
@@ -8843,7 +9044,7 @@
       "expectError": true
     },
     {
-      "id": "list_17_error",
+      "id": "list_18_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/membershipRequests.forOrg",
       "params": {

@@ -3,7 +3,7 @@ pub use crate::prelude::*;
 use super::*;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq, Eq, Hash)]
-pub struct SetProductionEnvironmentsRequestArgs {
+pub struct SetProductionEnvironmentsRequestArgs2 {
     #[serde(default)]
     pub id: String,
     #[serde(rename = "isProduction")]
@@ -11,20 +11,20 @@ pub struct SetProductionEnvironmentsRequestArgs {
     pub is_production: bool,
 }
 
-impl SetProductionEnvironmentsRequestArgs {
-    pub fn builder() -> SetProductionEnvironmentsRequestArgsBuilder {
-        <SetProductionEnvironmentsRequestArgsBuilder as Default>::default()
+impl SetProductionEnvironmentsRequestArgs2 {
+    pub fn builder() -> SetProductionEnvironmentsRequestArgs2Builder {
+        <SetProductionEnvironmentsRequestArgs2Builder as Default>::default()
     }
 }
 
 #[derive(Clone, PartialEq, Default, Debug)]
 #[non_exhaustive]
-pub struct SetProductionEnvironmentsRequestArgsBuilder {
+pub struct SetProductionEnvironmentsRequestArgs2Builder {
     id: Option<String>,
     is_production: Option<bool>,
 }
 
-impl SetProductionEnvironmentsRequestArgsBuilder {
+impl SetProductionEnvironmentsRequestArgs2Builder {
     pub fn id(mut self, value: impl Into<String>) -> Self {
         self.id = Some(value.into());
         self
@@ -35,12 +35,12 @@ impl SetProductionEnvironmentsRequestArgsBuilder {
         self
     }
 
-    /// Consumes the builder and constructs a [`SetProductionEnvironmentsRequestArgs`].
+    /// Consumes the builder and constructs a [`SetProductionEnvironmentsRequestArgs2`].
     /// This method will fail if any of the following fields are not set:
-    /// - [`id`](SetProductionEnvironmentsRequestArgsBuilder::id)
-    /// - [`is_production`](SetProductionEnvironmentsRequestArgsBuilder::is_production)
-    pub fn build(self) -> Result<SetProductionEnvironmentsRequestArgs, BuildError> {
-        Ok(SetProductionEnvironmentsRequestArgs {
+    /// - [`id`](SetProductionEnvironmentsRequestArgs2Builder::id)
+    /// - [`is_production`](SetProductionEnvironmentsRequestArgs2Builder::is_production)
+    pub fn build(self) -> Result<SetProductionEnvironmentsRequestArgs2, BuildError> {
+        Ok(SetProductionEnvironmentsRequestArgs2 {
             id: self.id.ok_or_else(|| BuildError::missing_field("id"))?,
             is_production: self.is_production.ok_or_else(|| BuildError::missing_field("is_production"))?,
         })

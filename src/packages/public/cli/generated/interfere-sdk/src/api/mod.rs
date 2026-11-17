@@ -11,10 +11,10 @@ pub mod resources;
 
 pub use resources::{
     ApiClient, AuditClient, BillingClient, ConfigurationClient, ConsumersClient, DomainsClient,
-    DrainClient, FeedbackClient, FindingsClient, IntegrationsClient, KeysClient, NetworkClient,
-    NotificationsClient, ProblemsClient, ReleasesClient, ReplayClient, ScimClient, ServicesClient,
-    SessionsClient, SsoClient, SupportClient, SurfaceKeysClient, SurfacesClient, TenantsClient,
-    TiersClient, TracesClient, UsersClient, WorkspacesClient,
+    DrainClient, EnvironmentsClient, FeedbackClient, FindingsClient, IntegrationsClient,
+    KeysClient, NetworkClient, NotificationsClient, ProblemsClient, ReleasesClient, ReplayClient,
+    ScimClient, ServicesClient, SessionsClient, SsoClient, SupportClient, SurfaceKeysClient,
+    SurfacesClient, TenantsClient, TiersClient, TracesClient, UsersClient, WorkspacesClient,
 };
 
 pub use interfere_types::*;

@@ -2,18 +2,18 @@ use crate::api::*;
 use crate::{ApiError, ClientConfig, HttpClient, RequestOptions};
 use reqwest::Method;
 
-pub struct EnvironmentsClient {
+pub struct EnvironmentsClient2 {
     pub http_client: HttpClient,
 }
 
-impl EnvironmentsClient {
+impl EnvironmentsClient2 {
     pub fn new(config: ClientConfig) -> Result<Self, ApiError> {
         Ok(Self {
             http_client: HttpClient::new(config.clone())?,
         })
     }
 
-    /// List app (surface) environments used for inbox filtering. Use returned identifiers when selecting an environment. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
+    /// Deprecated: use environments.list. List app (surface) environments used for inbox filtering. Use returned identifiers when selecting an environment. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
     ///
     /// # Arguments
     ///
@@ -80,7 +80,7 @@ impl EnvironmentsClient {
             .await
     }
 
-    /// List an app's (surface's) environments to resolve environment identifiers before filtering problems or activity. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
+    /// Deprecated: use environments.list. List an app's (surface's) environments to resolve environment identifiers before filtering problems or activity. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
     ///
     /// # Arguments
     ///
@@ -150,7 +150,7 @@ impl EnvironmentsClient {
             .await
     }
 
-    /// Delete an app (surface) environment identified from surfaces.environments.listForSurface. Verify the intended app and environment. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
+    /// Deprecated: use environments.delete, which addresses the workspace environment by name. Delete an app (surface) environment identified from surfaces.environments.listForSurface. Verify the intended app and environment. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
     ///
     /// # Arguments
     ///
@@ -221,7 +221,7 @@ impl EnvironmentsClient {
             .await
     }
 
-    /// Mark an app (surface) environment as production or not. Problems seen only in non-production environments skip workspace Slack, personal Slack and desktop push notifications. Identify the environment from surfaces.environments.listForSurface. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
+    /// Deprecated: use environments.setProduction, which addresses the workspace environment by name. Mark an app (surface) environment as production or not. Problems seen only in non-production environments skip workspace Slack, personal Slack and desktop push notifications. Identify the environment from surfaces.environments.listForSurface. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
     ///
     /// # Arguments
     ///
@@ -293,7 +293,7 @@ impl EnvironmentsClient {
             .await
     }
 
-    /// Turn Problem reporting for an app (surface) environment on or off. Off stops new Problems from that environment; existing Problems stay. Identify the environment from surfaces.environments.listForSurface. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
+    /// Deprecated: use environments.setReportable, which addresses the workspace environment by name. Turn Problem reporting for an app (surface) environment on or off. Off stops new Problems from that environment; existing Problems stay. Identify the environment from surfaces.environments.listForSurface. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
     ///
     /// # Arguments
     ///

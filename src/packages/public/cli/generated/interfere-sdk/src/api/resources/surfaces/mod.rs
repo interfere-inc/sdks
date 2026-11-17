@@ -3,17 +3,17 @@ use crate::{ApiError, ClientConfig, HttpClient, QueryBuilder, RequestOptions};
 use reqwest::Method;
 
 pub mod environments;
-pub use environments::EnvironmentsClient;
+pub use environments::EnvironmentsClient2;
 pub struct SurfacesClient {
     pub http_client: HttpClient,
-    pub environments: EnvironmentsClient,
+    pub environments: EnvironmentsClient2,
 }
 
 impl SurfacesClient {
     pub fn new(config: ClientConfig) -> Result<Self, ApiError> {
         Ok(Self {
             http_client: HttpClient::new(config.clone())?,
-            environments: EnvironmentsClient::new(config.clone())?,
+            environments: EnvironmentsClient2::new(config.clone())?,
         })
     }
 

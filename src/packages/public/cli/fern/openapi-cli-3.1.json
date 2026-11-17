@@ -126,6 +126,9 @@
       "name": "sso.connections"
     },
     {
+      "name": "environments"
+    },
+    {
       "name": "findings"
     },
     {
@@ -16621,6 +16624,107 @@
             "organizationId",
             "protocol",
             "provider",
+            "createdAt",
+            "deletedAt",
+            "updatedAt"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "Query_environments_byNameResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "isProduction": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          },
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reportable": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "number"
+          },
+          "deletedAt": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "updatedAt": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "isProduction",
+          "name",
+          "organizationId",
+          "reportable",
+          "createdAt",
+          "deletedAt",
+          "updatedAt"
+        ],
+        "additionalProperties": false
+      },
+      "Query_environments_listResponse": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "isProduction": {
+              "type": "boolean"
+            },
+            "name": {
+              "type": "string"
+            },
+            "organizationId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "reportable": {
+              "type": "boolean"
+            },
+            "createdAt": {
+              "type": "number"
+            },
+            "deletedAt": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "updatedAt": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "id",
+            "isProduction",
+            "name",
+            "organizationId",
+            "reportable",
             "createdAt",
             "deletedAt",
             "updatedAt"
@@ -53654,6 +53758,42 @@
           "success"
         ]
       },
+      "Mutation_environments_deleteResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "const": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success"
+        ]
+      },
+      "Mutation_environments_setProductionResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "const": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success"
+        ]
+      },
+      "Mutation_environments_setReportableResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "const": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success"
+        ]
+      },
       "Mutation_integrations_linkSurfaceToDestinationResponse": {
         "type": "object",
         "properties": {
@@ -65490,6 +65630,175 @@
         ]
       }
     },
+    "/v3/workspaces/{workspaceSlug}/queries/environments.byName": {
+      "post": {
+        "operationId": "environments_byName",
+        "summary": "environments byName",
+        "description": "Read one workspace environment by its name, such as production, with its production and problem-reporting flags. Discover names with environments.list. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Requires org:surfaces:read; insufficient permission returns an access-denied error. An authorized read with no matching resource returns WORKSPACE_RESOURCE_NOT_FOUND (404). Only use pagination arguments declared in the schema.",
+        "tags": [
+          "environments"
+        ],
+        "parameters": [
+          {
+            "name": "workspaceSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
+            },
+            "x-fern-parameter-name": "workspace"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "args": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 32,
+                        "description": "Workspace environment name as reported by the SDK, lowercased, such as production."
+                      }
+                    },
+                    "required": [
+                      "name"
+                    ]
+                  }
+                },
+                "required": [
+                  "args"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Query_environments_byNameResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/RpcValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse_b32e7e47d27147b78e9ca9c8927315e0c48a5a54a03868590623df7e2ff7d2af"
+          },
+          "403": {
+            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse_826c4e9f6aac70078d2e1ac5a3cba4b915c34a2fb47c584bc2e06d7f62690109"
+          },
+          "503": {
+            "$ref": "#/components/responses/ErrorResponse_a4a8a71ed4a33ddc602b7e2cf4dd0b51ef37c46db1b01870377abdbd6cbda1b5"
+          }
+        },
+        "x-fern-sdk-method-name": "by-name",
+        "x-cloudflare-labels": [
+          "cf-api-endpoint"
+        ],
+        "security": [
+          {
+            "clerkSession": []
+          }
+        ],
+        "x-interfere-read-only": true,
+        "x-internal": false,
+        "x-fern-sdk-group-name": [
+          "environments"
+        ]
+      }
+    },
+    "/v3/workspaces/{workspaceSlug}/queries/environments.list": {
+      "post": {
+        "operationId": "environments_list",
+        "summary": "environments list",
+        "description": "List the workspace environments that services report into, with their production and problem-reporting flags. Environments are shared by every service in the workspace and addressed by name. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.",
+        "tags": [
+          "environments"
+        ],
+        "parameters": [
+          {
+            "name": "workspaceSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
+            },
+            "x-fern-parameter-name": "workspace"
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "args": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Query_environments_listResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/RpcValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse_b32e7e47d27147b78e9ca9c8927315e0c48a5a54a03868590623df7e2ff7d2af"
+          },
+          "403": {
+            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
+          },
+          "503": {
+            "$ref": "#/components/responses/ErrorResponse_a4a8a71ed4a33ddc602b7e2cf4dd0b51ef37c46db1b01870377abdbd6cbda1b5"
+          }
+        },
+        "x-fern-sdk-method-name": "list",
+        "x-cloudflare-labels": [
+          "cf-api-endpoint"
+        ],
+        "security": [
+          {
+            "clerkSession": []
+          }
+        ],
+        "x-interfere-read-only": true,
+        "x-internal": false,
+        "x-fern-sdk-group-name": [
+          "environments"
+        ]
+      }
+    },
     "/v3/workspaces/{workspaceSlug}/queries/findings.listByProblem": {
       "post": {
         "operationId": "findings_listByProblem",
@@ -67902,7 +68211,7 @@
       "post": {
         "operationId": "problems_kanban",
         "summary": "problems kanban",
-        "description": "List visible problems for a board, optionally filtered by app (surface) and environment patterns. Obtain app IDs and environment identifiers from surfaces.list and surfaces.environments.listForSurface. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.",
+        "description": "List visible problems for a board, optionally filtered by app (surface) and environment patterns. Obtain app IDs from surfaces.list and environment names from environments.list. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.",
         "tags": [
           "problems"
         ],
@@ -69291,7 +69600,7 @@
       "post": {
         "operationId": "surfaces_environments_forInbox",
         "summary": "apps environments forInbox",
-        "description": "List app (surface) environments used for inbox filtering. Use returned identifiers when selecting an environment. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.",
+        "description": "Deprecated: use environments.list. List app (surface) environments used for inbox filtering. Use returned identifiers when selecting an environment. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.",
         "tags": [
           "surfaces.environments"
         ],
@@ -69358,6 +69667,7 @@
         ],
         "x-interfere-read-only": true,
         "x-internal": false,
+        "deprecated": true,
         "x-fern-sdk-group-name": [
           "surfaces",
           "environments"
@@ -69368,7 +69678,7 @@
       "post": {
         "operationId": "surfaces_environments_listForSurface",
         "summary": "apps environments listForSurface",
-        "description": "List an app's (surface's) environments to resolve environment identifiers before filtering problems or activity. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.",
+        "description": "Deprecated: use environments.list. List an app's (surface's) environments to resolve environment identifiers before filtering problems or activity. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.",
         "tags": [
           "surfaces.environments"
         ],
@@ -69447,6 +69757,7 @@
         ],
         "x-interfere-read-only": true,
         "x-internal": false,
+        "deprecated": true,
         "x-fern-sdk-group-name": [
           "surfaces",
           "environments"
@@ -69971,6 +70282,293 @@
         "x-fern-sdk-group-name": [
           "keys",
           "private"
+        ],
+        "x-fern-retries": {
+          "disabled": true
+        }
+      }
+    },
+    "/v3/workspaces/{workspaceSlug}/actions/environments.delete": {
+      "post": {
+        "operationId": "environments_delete",
+        "summary": "environments delete",
+        "description": "Delete a workspace environment by name from environments.list. It reappears with its previous flags the next time a service reports telemetry or a release for that environment. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.",
+        "tags": [
+          "environments"
+        ],
+        "parameters": [
+          {
+            "name": "workspaceSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
+            },
+            "x-fern-parameter-name": "workspace"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "args": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 32,
+                        "description": "Workspace environment name as reported by the SDK, lowercased, such as production."
+                      }
+                    },
+                    "required": [
+                      "name"
+                    ]
+                  }
+                },
+                "required": [
+                  "args"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mutation_environments_deleteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/RpcValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse_b32e7e47d27147b78e9ca9c8927315e0c48a5a54a03868590623df7e2ff7d2af"
+          },
+          "403": {
+            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
+          },
+          "503": {
+            "$ref": "#/components/responses/ErrorResponse_a4a8a71ed4a33ddc602b7e2cf4dd0b51ef37c46db1b01870377abdbd6cbda1b5"
+          }
+        },
+        "x-fern-sdk-method-name": "delete",
+        "x-cloudflare-labels": [
+          "cf-api-endpoint"
+        ],
+        "security": [
+          {
+            "clerkSession": []
+          }
+        ],
+        "x-interfere-read-only": false,
+        "x-internal": false,
+        "x-fern-sdk-group-name": [
+          "environments"
+        ],
+        "x-fern-retries": {
+          "disabled": true
+        }
+      }
+    },
+    "/v3/workspaces/{workspaceSlug}/actions/environments.setProduction": {
+      "post": {
+        "operationId": "environments_setProduction",
+        "summary": "environments setProduction",
+        "description": "Mark a workspace environment as production or not, by name from environments.list. Problems seen only in non-production environments skip workspace Slack, personal Slack and desktop push notifications. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.",
+        "tags": [
+          "environments"
+        ],
+        "parameters": [
+          {
+            "name": "workspaceSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
+            },
+            "x-fern-parameter-name": "workspace"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "args": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 32,
+                        "description": "Workspace environment name as reported by the SDK, lowercased, such as production."
+                      },
+                      "isProduction": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "isProduction"
+                    ]
+                  }
+                },
+                "required": [
+                  "args"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mutation_environments_setProductionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/RpcValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse_b32e7e47d27147b78e9ca9c8927315e0c48a5a54a03868590623df7e2ff7d2af"
+          },
+          "403": {
+            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
+          },
+          "503": {
+            "$ref": "#/components/responses/ErrorResponse_a4a8a71ed4a33ddc602b7e2cf4dd0b51ef37c46db1b01870377abdbd6cbda1b5"
+          }
+        },
+        "x-fern-sdk-method-name": "set-production",
+        "x-cloudflare-labels": [
+          "cf-api-endpoint"
+        ],
+        "security": [
+          {
+            "clerkSession": []
+          }
+        ],
+        "x-interfere-read-only": false,
+        "x-internal": false,
+        "x-fern-sdk-group-name": [
+          "environments"
+        ],
+        "x-fern-retries": {
+          "disabled": true
+        }
+      }
+    },
+    "/v3/workspaces/{workspaceSlug}/actions/environments.setReportable": {
+      "post": {
+        "operationId": "environments_setReportable",
+        "summary": "environments setReportable",
+        "description": "Turn Problem reporting for a workspace environment on or off, by name from environments.list. Off stops new Problems from that environment; existing Problems stay. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.",
+        "tags": [
+          "environments"
+        ],
+        "parameters": [
+          {
+            "name": "workspaceSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
+            },
+            "x-fern-parameter-name": "workspace"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "args": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 32,
+                        "description": "Workspace environment name as reported by the SDK, lowercased, such as production."
+                      },
+                      "reportable": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "reportable"
+                    ]
+                  }
+                },
+                "required": [
+                  "args"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mutation_environments_setReportableResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/RpcValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse_b32e7e47d27147b78e9ca9c8927315e0c48a5a54a03868590623df7e2ff7d2af"
+          },
+          "403": {
+            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
+          },
+          "503": {
+            "$ref": "#/components/responses/ErrorResponse_a4a8a71ed4a33ddc602b7e2cf4dd0b51ef37c46db1b01870377abdbd6cbda1b5"
+          }
+        },
+        "x-fern-sdk-method-name": "set-reportable",
+        "x-cloudflare-labels": [
+          "cf-api-endpoint"
+        ],
+        "security": [
+          {
+            "clerkSession": []
+          }
+        ],
+        "x-interfere-read-only": false,
+        "x-internal": false,
+        "x-fern-sdk-group-name": [
+          "environments"
         ],
         "x-fern-retries": {
           "disabled": true
@@ -73672,7 +74270,7 @@
       "post": {
         "operationId": "surfaces_environments_delete",
         "summary": "apps environments delete",
-        "description": "Delete an app (surface) environment identified from surfaces.environments.listForSurface. Verify the intended app and environment. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.",
+        "description": "Deprecated: use environments.delete, which addresses the workspace environment by name. Delete an app (surface) environment identified from surfaces.environments.listForSurface. Verify the intended app and environment. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.",
         "tags": [
           "surfaces.environments"
         ],
@@ -73751,6 +74349,7 @@
         ],
         "x-interfere-read-only": false,
         "x-internal": false,
+        "deprecated": true,
         "x-fern-sdk-group-name": [
           "surfaces",
           "environments"
@@ -73764,7 +74363,7 @@
       "post": {
         "operationId": "surfaces_environments_setProduction",
         "summary": "apps environments setProduction",
-        "description": "Mark an app (surface) environment as production or not. Problems seen only in non-production environments skip workspace Slack, personal Slack and desktop push notifications. Identify the environment from surfaces.environments.listForSurface. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.",
+        "description": "Deprecated: use environments.setProduction, which addresses the workspace environment by name. Mark an app (surface) environment as production or not. Problems seen only in non-production environments skip workspace Slack, personal Slack and desktop push notifications. Identify the environment from surfaces.environments.listForSurface. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.",
         "tags": [
           "surfaces.environments"
         ],
@@ -73847,6 +74446,7 @@
         ],
         "x-interfere-read-only": false,
         "x-internal": false,
+        "deprecated": true,
         "x-fern-sdk-group-name": [
           "surfaces",
           "environments"
@@ -73860,7 +74460,7 @@
       "post": {
         "operationId": "surfaces_environments_setReportable",
         "summary": "apps environments setReportable",
-        "description": "Turn Problem reporting for an app (surface) environment on or off. Off stops new Problems from that environment; existing Problems stay. Identify the environment from surfaces.environments.listForSurface. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.",
+        "description": "Deprecated: use environments.setReportable, which addresses the workspace environment by name. Turn Problem reporting for an app (surface) environment on or off. Off stops new Problems from that environment; existing Problems stay. Identify the environment from surfaces.environments.listForSurface. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.",
         "tags": [
           "surfaces.environments"
         ],
@@ -73943,6 +74543,7 @@
         ],
         "x-interfere-read-only": false,
         "x-internal": false,
+        "deprecated": true,
         "x-fern-sdk-group-name": [
           "surfaces",
           "environments"
@@ -83684,6 +84285,9 @@
     },
     "domains": {
       "summary": "Manage workspace domains and DNS"
+    },
+    "environments": {
+      "summary": "Manage workspace environments"
     },
     "drain": {
       "summary": "Submit telemetry"

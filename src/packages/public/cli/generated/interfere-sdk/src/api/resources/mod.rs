@@ -14,6 +14,7 @@
 //! - **Domains**
 //! - **Inspect companies using your application**
 //! - **Consumers**
+//! - **Manage workspace environments**
 //! - **Inspect findings associated with a problem**
 //! - **Integrations**
 //! - **Manage workspace members, invitations, and your profile**
@@ -38,6 +39,7 @@ pub mod configuration;
 pub mod consumers;
 pub mod domains;
 pub mod drain;
+pub mod environments;
 pub mod feedback;
 pub mod findings;
 pub mod integrations;
@@ -73,6 +75,7 @@ pub struct ApiClient {
     pub domains: DomainsClient,
     pub tenants: TenantsClient,
     pub consumers: ConsumersClient,
+    pub environments: EnvironmentsClient,
     pub findings: FindingsClient,
     pub integrations: IntegrationsClient,
     pub users: UsersClient,
@@ -106,6 +109,7 @@ impl ApiClient {
             domains: DomainsClient::new(config.clone())?,
             tenants: TenantsClient::new(config.clone())?,
             consumers: ConsumersClient::new(config.clone())?,
+            environments: EnvironmentsClient::new(config.clone())?,
             findings: FindingsClient::new(config.clone())?,
             integrations: IntegrationsClient::new(config.clone())?,
             users: UsersClient::new(config.clone())?,
@@ -131,6 +135,7 @@ pub use configuration::ConfigurationClient;
 pub use consumers::ConsumersClient;
 pub use domains::DomainsClient;
 pub use drain::DrainClient;
+pub use environments::EnvironmentsClient;
 pub use feedback::FeedbackClient;
 pub use findings::FindingsClient;
 pub use integrations::IntegrationsClient;

@@ -287,7 +287,7 @@ impl ProblemsClient {
             .await
     }
 
-    /// List visible problems for a board, optionally filtered by app (surface) and environment patterns. Obtain app IDs and environment identifiers from surfaces.list and surfaces.environments.listForSurface. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
+    /// List visible problems for a board, optionally filtered by app (surface) and environment patterns. Obtain app IDs from surfaces.list and environment names from environments.list. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
     ///
     /// # Arguments
     ///
