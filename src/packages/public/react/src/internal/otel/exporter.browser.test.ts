@@ -1236,6 +1236,132 @@ describe("trace export while the page is hidden", () => {
     ).toStrictEqual(["exception", "GET", "resource"]);
   });
 
+  test("hands a visible export still in flight without keepalive to the leave path when the page starts leaving, exception first", async () => {
+    expect.hasAssertions();
+
+    const navigation = Promise.withResolvers<null>();
+
+    onTestFinished(() => navigation.resolve(null));
+
+    worker.use(
+      collector(async ({ request }) => {
+        if (!request.keepalive) {
+          await navigation.promise;
+
+          return HttpResponse.error();
+        }
+
+        return new HttpResponse(null);
+      }),
+    );
+
+    const { callback, spy } = resultCallback();
+
+    exporterUnderTest().export(
+      [
+        { ...makeSpan(), attributes: { payload: incompressible(60_000) } },
+        {
+          ...makeSpan(),
+          events: [
+            {
+              attributes: { "exception.type": "TypeError" },
+              droppedAttributesCount: 0,
+              name: "exception",
+              time: [0, 0],
+            },
+          ],
+          name: "exception",
+        },
+      ],
+      callback,
+    );
+
+    await requestSignal.reached(1);
+
+    expect(requests.map((request) => request.keepalive)).toStrictEqual([false]);
+
+    globalThis.dispatchEvent(new Event("beforeunload"));
+
+    await requestSignal.reached(2);
+
+    navigation.resolve(null);
+
+    const [, leaving] = requests;
+
+    const body = z
+      .object({
+        resourceSpans: z.array(
+          z.object({
+            scopeSpans: z.array(
+              z.object({ spans: z.array(z.object({ name: z.string() })) }),
+            ),
+          }),
+        ),
+      })
+      .parse(await leaving?.clone().json());
+
+    expect([
+      leaving?.keepalive,
+      body.resourceSpans
+        .flatMap((resource) => resource.scopeSpans)
+        .flatMap((scope) => scope.spans)
+        .map((span) => span.name),
+    ]).toStrictEqual([true, ["exception"]]);
+
+    globalThis.dispatchEvent(
+      new PageTransitionEvent("pagehide", { persisted: true }),
+    );
+
+    globalThis.dispatchEvent(
+      new PageTransitionEvent("pageshow", { persisted: true }),
+    );
+
+    await spy.called;
+
+    await new Promise((resolve) => {
+      setTimeout(resolve, 100);
+    });
+
+    expect(spy.mock.calls).toStrictEqual([[{ code: 0 }]]);
+  });
+
+  test("leaves a visible export already sent with keepalive alone when the page starts leaving", async () => {
+    expect.hasAssertions();
+
+    const response = Promise.withResolvers<null>();
+
+    onTestFinished(() => response.resolve(null));
+
+    worker.use(
+      collector(async () => {
+        await response.promise;
+
+        return new HttpResponse(null);
+      }),
+    );
+
+    const { callback, spy } = resultCallback();
+
+    exporterUnderTest().export([makeSpan()], callback);
+
+    await requestSignal.reached(1);
+
+    globalThis.dispatchEvent(new Event("beforeunload"));
+
+    response.resolve(null);
+
+    await spy.called;
+
+    await new Promise((resolve) => {
+      setTimeout(resolve, 100);
+    });
+
+    expect([
+      requests.map((request) => request.keepalive),
+      spy.mock.calls,
+    ]).toStrictEqual([[true], [[{ code: 0 }]]]);
+  });
+
   test("carries an over-budget export over after beforeunload instead of sending it without keepalive, and delivers it once the page is shown", async () => {
     expect.hasAssertions();
 

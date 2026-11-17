@@ -191,6 +191,29 @@ test("errors and page views from the same journey carry the Interfere session th
   ).toStrictEqual([]);
 });
 
+test("an exception captured just before the page leaves is delivered by the leave flush", async () => {
+  expect.hasAssertions();
+
+  const { page, session } = await harness.openJourney();
+
+  await harness.journey(page, "leaving");
+
+  await page.getByRole("button", { name: "Capture journey error" }).click();
+
+  await flushByLeaving(page);
+
+  await expect
+    .poll(
+      () =>
+        exceptions(harness.interfereRequests(), "example-journey-error").filter(
+          (exception) =>
+            attribute(exception.attributes, "session.id") === session,
+        ).length,
+      POLL,
+    )
+    .toBe(1);
+});
+
 test("a foreign flags-00 context is continued unsampled by the backend, never exported as sampled, and Interfere still records every request", async () => {
   expect.hasAssertions();
 
@@ -345,11 +368,10 @@ test("denied analytics keeps necessary request observations, drops analytics-gat
 
   await expect
     .poll(
-      () => [
-        harness.navigations("consent=denied-a"),
-        harness.navigations("consent=denied-b"),
-        harness.navigations("consent=granted"),
-      ],
+      () =>
+        ["denied-a", "denied-b", "granted"].map((name) =>
+          harness.navigations(`consent=${name}`),
+        ),
       POLL,
     )
     .toStrictEqual([[], ["push"], ["push"]]);
@@ -358,24 +380,17 @@ test("denied analytics keeps necessary request observations, drops analytics-gat
 
   await expect
     .poll(
-      () => [
-        harness.observationsFor(denied.label).length,
-        harness.observationsFor(granted.label).length,
-      ],
+      () =>
+        [denied, granted].map(
+          (entry) => harness.observationsFor(entry.label).length,
+        ),
       POLL,
     )
     .toStrictEqual([4, 4]);
 
-  const deviceIds = (label: string) =>
-    new Set(
-      harness
-        .observationsFor(label)
-        .map((record) => attribute(record.attributes, "device.id") ?? null),
-    );
+  expect(harness.deviceIdsFor(denied.label)).toStrictEqual(new Set([null]));
 
-  expect(deviceIds(denied.label)).toStrictEqual(new Set([null]));
-
-  expect([...deviceIds(granted.label)]).toStrictEqual([
+  expect([...harness.deviceIdsFor(granted.label)]).toStrictEqual([
     expect.stringMatching(/^[\da-f-]{36}$/u),
   ]);
 });

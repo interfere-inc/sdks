@@ -14,7 +14,7 @@ const PROXIMITY_PX = 30;
 const TRACER_NAME = "@interfere/react/rage-clicks";
 
 interface Click {
-  target: Element | null;
+  target: WeakRef<Element> | null;
   ts: number;
   x: number;
   y: number;
@@ -50,7 +50,8 @@ const rageClicksPlugin: Plugin = {
       const now = Date.now();
 
       clicks.push({
-        target: event.target instanceof Element ? event.target : null,
+        target:
+          event.target instanceof Element ? new WeakRef(event.target) : null,
         ts: now,
         x: event.clientX,
         y: event.clientY,
@@ -84,7 +85,10 @@ const rageClicksPlugin: Plugin = {
         return;
       }
 
-      const target = describeTarget(last.target, ctx.privacyPolicy);
+      const target = describeTarget(
+        last.target?.deref() ?? null,
+        ctx.privacyPolicy,
+      );
 
       const span = ctx.getTracer(TRACER_NAME).startSpan("rage_click", {
         attributes: omitUndefined({

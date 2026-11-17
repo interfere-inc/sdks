@@ -173,6 +173,14 @@ export function foreignTracingOwnerHarness() {
     );
   }
 
+  function deviceIdsFor(label: string) {
+    return new Set(
+      observationsFor(label).map(
+        (record) => attribute(record.attributes, "device.id") ?? null,
+      ),
+    );
+  }
+
   function navigations(fragment: string) {
     return exportedLogRecords(interfereRequests()).flatMap((record) => {
       const type = attribute(record.attributes, "browser.navigation.type");
@@ -329,6 +337,7 @@ export function foreignTracingOwnerHarness() {
     hostSpans,
     interfereRequests,
     journey,
+    deviceIdsFor,
     navigations,
     observationsFor,
     openJourney,

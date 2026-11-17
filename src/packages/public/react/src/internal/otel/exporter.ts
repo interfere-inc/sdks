@@ -33,14 +33,18 @@ import type { GatedResourceAttributes } from "./exporter-metrics.js";
 
 export const INGEST_IGNORE_RE = /\/drain\/v1\/(?:traces|logs|metrics)(?:\?|$)/u;
 
+type ExportHooks = Omit<RetainedSend, "id"> & { id?: string };
+
 export type SignalSender = ((
   payload: Uint8Array | undefined,
   resultCallback: (result: ExportResult) => void,
   abortSignal?: AbortSignal,
-  carryover?: RetainedSend,
+  hooks?: ExportHooks,
 ) => void) & { dispose?: () => void };
 
 const CARRYOVER_HEADER = "x-interfere-carryover";
+
+const HOOKS_HEADER = "x-interfere-export-hooks";
 
 interface ExporterCommon {
   clientOptions: InterfereClient.Options;
@@ -160,7 +164,7 @@ function detectUnacceptableExport(error: InterfereError) {
 const EXPORT_KEEPALIVE_MAX_BYTES = 32_000;
 
 function makeSender(input: ExporterCommon, signal: OtlpSignal) {
-  const keepaliveHooks = new Map<string, RetainedSend>();
+  const keepaliveHooks = new Map<string, ExportHooks>();
 
   const client = new InterfereClient({
     ...input.clientOptions,
@@ -186,9 +190,9 @@ function makeSender(input: ExporterCommon, signal: OtlpSignal) {
             headers.set("content-encoding", prepared.encoding);
           }
 
-          const retained = keepaliveHooks.get(
-            headers.get(CARRYOVER_HEADER) ?? "",
-          );
+          const retained = keepaliveHooks.get(headers.get(HOOKS_HEADER) ?? "");
+
+          headers.delete(HOOKS_HEADER);
 
           const dispatch = async (
             abortSignal: AbortSignal,
@@ -255,7 +259,7 @@ function makeSender(input: ExporterCommon, signal: OtlpSignal) {
     ),
   });
 
-  const send = ((payload, resultCallback, abortSignal, carryover) => {
+  const send = ((payload, resultCallback, abortSignal, hooks) => {
     if (!payload || payload.byteLength === 0) {
       resultCallback({ code: ExportResultCode.SUCCESS });
 
@@ -273,9 +277,11 @@ function makeSender(input: ExporterCommon, signal: OtlpSignal) {
       return;
     }
 
+    const hooksKey = hooks ? crypto.randomUUID() : undefined;
+
     void (async () => {
-      if (carryover) {
-        keepaliveHooks.set(carryover.id, carryover);
+      if (hooks && hooksKey) {
+        keepaliveHooks.set(hooksKey, hooks);
       }
 
       try {
@@ -289,7 +295,8 @@ function makeSender(input: ExporterCommon, signal: OtlpSignal) {
             abortSignal,
             headers: omitUndefined({
               "x-interfere-producer-version": PRODUCER_VERSION,
-              [CARRYOVER_HEADER]: carryover?.id,
+              [CARRYOVER_HEADER]: hooks?.id,
+              [HOOKS_HEADER]: hooksKey,
             }),
           },
         );
@@ -307,8 +314,8 @@ function makeSender(input: ExporterCommon, signal: OtlpSignal) {
           error: toError(error),
         });
       } finally {
-        if (carryover) {
-          keepaliveHooks.delete(carryover.id);
+        if (hooksKey) {
+          keepaliveHooks.delete(hooksKey);
         }
       }
     })();
@@ -334,14 +341,20 @@ function makeSender(input: ExporterCommon, signal: OtlpSignal) {
   );
 
   // WARNING: a beforeunload flush runs while the page still looks visible and the navigation tears it down before navigator.locks grants a drain, so it must deliver (retain and dispatch at once) rather than send.
-  const leaveAware = ((payload, resultCallback) => {
-    if (isPageLeaving() && !isPageHidden()) {
+  const leaveAware = ((payload, resultCallback, abortSignal, hooks) => {
+    if (isPageHidden()) {
+      carryover.send(payload, resultCallback);
+
+      return;
+    }
+
+    if (isPageLeaving()) {
       carryover.deliver(payload, resultCallback);
 
       return;
     }
 
-    carryover.send(payload, resultCallback);
+    send(payload, resultCallback, abortSignal, hooks);
   }) satisfies SignalSender;
 
   return Object.assign(leaveAware, { dispose: () => carryover.dispose() });
@@ -357,11 +370,9 @@ function leavePriority(span: ReadableSpan) {
 
 // WARNING: A leave-time export larger than the keepalive budget is split and the tail is retained for the next page; exception spans, then request spans, go first so a bounced visit still delivers them.
 function leaveOrder(spans: ReadableSpan[]) {
-  return isPageHidden() || isPageLeaving()
-    ? [0, 1, 2].flatMap((priority) =>
-        spans.filter((span) => leavePriority(span) === priority),
-      )
-    : spans;
+  return [0, 1, 2].flatMap((priority) =>
+    spans.filter((span) => leavePriority(span) === priority),
+  );
 }
 
 const serialize = (chunk: ReadableSpan[]) =>
@@ -390,10 +401,11 @@ class IngestTraceExporter implements SpanExporter {
 
     if (!gate || !(isPageHidden() || isPageLeaving())) {
       sendInKeepaliveChunks(
-        leaveOrder(spans),
+        spans,
         serialize,
         this.send,
         this.inFlight.track(resultCallback),
+        leaveOrder,
       );
 
       return;
@@ -419,14 +431,20 @@ class IngestTraceExporter implements SpanExporter {
     };
 
     if (exceptions.length > 0) {
-      sendInKeepaliveChunks(exceptions, serialize, this.send, settle);
+      sendInKeepaliveChunks(
+        exceptions,
+        serialize,
+        this.send,
+        settle,
+        leaveOrder,
+      );
     }
 
     if (rest.length > 0) {
       void (async () => {
         await gate.wait();
 
-        sendInKeepaliveChunks(leaveOrder(rest), serialize, this.send, settle);
+        sendInKeepaliveChunks(rest, serialize, this.send, settle, leaveOrder);
       })();
     }
   }

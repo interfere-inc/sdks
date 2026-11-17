@@ -1,3 +1,4 @@
+import { commands } from "@interfere/test-config/browser-platform";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
@@ -175,6 +176,48 @@ describe("rage-clicks plugin", () => {
     });
 
     plain.remove();
+  });
+
+  test("lets a clicked element be collected once it leaves the document", async () => {
+    cleanup = rageClicksPlugin.setup(ctx);
+
+    const clickThenDetach = () => {
+      const button = document.createElement("button");
+
+      document.body.append(button);
+
+      simulateClick(button, 100, 100);
+
+      simulateClick(button, 100, 100);
+
+      button.remove();
+
+      return new WeakRef(button);
+    };
+
+    const collected = clickThenDetach();
+
+    await commands.collectGarbage();
+
+    expect(collected.deref()).toBeUndefined();
+  });
+
+  test("reports an unknown selector when the clicks have no element target", () => {
+    cleanup = rageClicksPlugin.setup(ctx);
+
+    for (let click = 0; click < 3; click += 1) {
+      document.dispatchEvent(
+        new MouseEvent("click", { clientX: 100, clientY: 100 }),
+      );
+    }
+
+    const spans = rageClickSpans();
+
+    expect(spans).toHaveLength(1);
+
+    expect(spans[0]?.attributes).toMatchObject({
+      "ui.rage_click.selector": "unknown",
+    });
   });
 
   describe("cleanup", () => {

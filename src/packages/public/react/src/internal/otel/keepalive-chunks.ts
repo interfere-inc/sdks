@@ -1,7 +1,10 @@
 import type { ExportResult } from "@opentelemetry/core";
 import { ExportResultCode } from "@opentelemetry/core";
 
-import { isPageHidden } from "../page-lifecycle/page-lifecycle.js";
+import {
+  isPageHidden,
+  onPageUnloading,
+} from "../page-lifecycle/page-lifecycle.js";
 import { isPageLeaving } from "../page-lifecycle/unloading.js";
 import type { SignalSender } from "./exporter.js";
 
@@ -13,7 +16,7 @@ function splitPayloads<T>(
   serialize: (items: T[]) => Uint8Array | undefined,
   maxBytes: number,
 ) {
-  const chunks: (Uint8Array | undefined)[] = [];
+  const chunks: { items: T[]; payload: Uint8Array | undefined }[] = [];
 
   const fits = (payload: Uint8Array | undefined) =>
     (payload?.byteLength ?? 0) <= maxBytes;
@@ -38,7 +41,7 @@ function splitPayloads<T>(
       }
     }
 
-    chunks.push(payload);
+    chunks.push({ items: items.slice(start, end), payload });
 
     start = end;
   }
@@ -46,19 +49,20 @@ function splitPayloads<T>(
   return chunks;
 }
 
-/** Splits exports below the ingest body cap, using smaller requests while hidden, and reports one aggregate result. */
+/** Splits exports below the ingest body cap, using smaller requests in `leaveOrder` while hidden or leaving, and reports one aggregate result. A visible request still unacknowledged and not sent with keepalive when the page starts leaving is cancelled and its items are sent again through the leave path. */
 export function sendInKeepaliveChunks<T>(
   items: T[],
   serialize: (items: T[]) => Uint8Array | undefined,
   send: SignalSender,
   resultCallback: (result: ExportResult) => void,
+  leaveOrder: (items: T[]) => T[] = (unordered) => unordered,
 ) {
+  const leaving = isPageHidden() || isPageLeaving();
+
   const chunks = splitPayloads(
-    items,
+    leaving ? leaveOrder(items) : items,
     serialize,
-    isPageHidden() || isPageLeaving()
-      ? UNLOAD_REQUEST_MAX_BYTES
-      : REQUEST_MAX_BYTES,
+    leaving ? UNLOAD_REQUEST_MAX_BYTES : REQUEST_MAX_BYTES,
   );
 
   let pending = chunks.length;
@@ -76,14 +80,42 @@ export function sendInKeepaliveChunks<T>(
     }
   };
 
-  for (const payload of chunks) {
-    if ((payload?.byteLength ?? 0) > REQUEST_MAX_BYTES) {
+  for (const chunk of chunks) {
+    if ((chunk.payload?.byteLength ?? 0) > REQUEST_MAX_BYTES) {
       settle({
         code: ExportResultCode.FAILED,
         error: new Error("A telemetry record exceeds the export body limit"),
       });
+    } else if (leaving) {
+      send(chunk.payload, settle);
     } else {
-      send(payload, settle);
+      const controller = new AbortController();
+      let handedOver = false;
+
+      // WARNING: a navigation cancels a request that is not keepalive, and the leave-time flush no longer holds these items, so the page's unloading signal must resend them through the leave path.
+      const unsubscribe = onPageUnloading(() => {
+        unsubscribe();
+
+        handedOver = true;
+
+        controller.abort();
+
+        sendInKeepaliveChunks(chunk.items, serialize, send, settle, leaveOrder);
+      });
+
+      send(
+        chunk.payload,
+        (result) => {
+          unsubscribe();
+
+          if (!handedOver) {
+            settle(result);
+          }
+        },
+        controller.signal,
+        // oxlint-disable-next-line eslint/no-empty-function -- A visible export is not retained, so there is no custody to release when the keepalive budget is exhausted.
+        { onKeepalive: unsubscribe, onBudgetExhausted: () => {} },
+      );
     }
   }
 }

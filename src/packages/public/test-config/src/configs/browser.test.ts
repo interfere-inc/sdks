@@ -111,6 +111,19 @@ test("lifts the simulated quota with the test that filled it", () => {
     );
 
     await writeFile(
+      join(directory, "gc.browser.test.ts"),
+      `
+import { expect, test } from "vitest";
+import { commands } from "@interfere/test-config/browser-platform";
+test("collectGarbage frees an object nothing references", async () => {
+  const collected = (() => new WeakRef({ payload: new Array(1024).fill(0) }))();
+  await commands.collectGarbage();
+  expect(collected.deref()).toBeUndefined();
+});
+`,
+    );
+
+    await writeFile(
       join(directory, "startup.browser.test.ts"),
       `
 import { expect, inject, test } from "vitest";
@@ -185,6 +198,12 @@ test("collects the browser test after global setup and applies viewport override
   expect(run.unhandledErrors).toStrictEqual([]);
 
   expect(run.modules).toStrictEqual([
+    {
+      name: "gc.browser.test.ts",
+      state: "passed",
+      errors: [],
+      tests: 1,
+    },
     {
       name: "isolation.browser.test.ts",
       state: "passed",

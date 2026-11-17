@@ -23,6 +23,7 @@ declare module "vitest/browser" {
       automaticPresenceSimulation?: boolean,
     ) => Promise<void>;
     closeBrowserPopups: () => Promise<void>;
+    collectGarbage: () => Promise<void>;
     observePageEvents: (running: boolean) => Promise<void>;
     parkPointer: () => Promise<void>;
     setBrowserMetadata: (

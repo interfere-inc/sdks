@@ -7,6 +7,7 @@ import type { Plugin, ViteUserConfig } from "vitest/config";
 import { base } from "./base.ts";
 import { browserNetworkPlugin } from "../browser/browser-network-plugin.ts";
 import { observePageEvents } from "../browser/browser-page-events.commands.ts";
+import { collectGarbage } from "../browser/browser-gc.commands.ts";
 import { parkPointer } from "../browser/browser-pointer.commands.ts";
 import {
   closeBrowserPopups,
@@ -59,6 +60,7 @@ export const browser = (
           browser: {
             commands: {
               closeBrowserPopups,
+              collectGarbage,
               observePageEvents,
               parkPointer,
               printDocument,
