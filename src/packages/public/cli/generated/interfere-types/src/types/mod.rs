@@ -5,7 +5,7 @@
 //!
 //! ## Type Categories
 //!
-//! - **Request/Response Types**: 2193 types for API operations
+//! - **Request/Response Types**: 2196 types for API operations
 //! - **Model Types**: 602 types for data representation
 
 pub mod drain_drain_otlp_export_request_signal;
@@ -76,6 +76,7 @@ pub mod users_update_role_users_request_args_role;
 pub mod users_update_role_users_request_args;
 pub mod users_update_locale_users_request_args;
 pub mod users_update_name_users_request_args;
+pub mod users_update_open_links_in_desktop_users_request_args;
 pub mod users_update_timezone_users_request_args;
 pub mod problems_editable_properties_problems_request_args;
 pub mod problems_previous_accounts_problems_request_args;
@@ -2346,6 +2347,7 @@ pub mod mutation_timeline_events_toggle_reaction_response;
 pub mod mutation_timeline_events_update_comment_response;
 pub mod mutation_users_update_locale_response;
 pub mod mutation_users_update_name_response;
+pub mod mutation_users_update_open_links_in_desktop_response;
 pub mod mutation_users_update_timezone_response;
 pub mod create_workspace_api_key_response_api_key;
 pub mod create_workspace_api_key_response;
@@ -2697,6 +2699,7 @@ pub mod remove_users_request;
 pub mod update_role_users_request;
 pub mod update_locale_users_request;
 pub mod update_name_users_request;
+pub mod update_open_links_in_desktop_users_request;
 pub mod update_timezone_users_request;
 pub mod editable_properties_problems_request;
 pub mod action_requests_problems_request;
@@ -2872,6 +2875,7 @@ pub use users_update_role_users_request_args_role::UpdateRoleUsersRequestArgsRol
 pub use users_update_role_users_request_args::UpdateRoleUsersRequestArgs;
 pub use users_update_locale_users_request_args::UpdateLocaleUsersRequestArgs;
 pub use users_update_name_users_request_args::UpdateNameUsersRequestArgs;
+pub use users_update_open_links_in_desktop_users_request_args::UpdateOpenLinksInDesktopUsersRequestArgs;
 pub use users_update_timezone_users_request_args::UpdateTimezoneUsersRequestArgs;
 pub use problems_editable_properties_problems_request_args::EditablePropertiesProblemsRequestArgs;
 pub use problems_previous_accounts_problems_request_args::PreviousAccountsProblemsRequestArgs;
@@ -5142,6 +5146,7 @@ pub use mutation_timeline_events_toggle_reaction_response::MutationTimelineEvent
 pub use mutation_timeline_events_update_comment_response::MutationTimelineEventsUpdateCommentResponse;
 pub use mutation_users_update_locale_response::MutationUsersUpdateLocaleResponse;
 pub use mutation_users_update_name_response::MutationUsersUpdateNameResponse;
+pub use mutation_users_update_open_links_in_desktop_response::MutationUsersUpdateOpenLinksInDesktopResponse;
 pub use mutation_users_update_timezone_response::MutationUsersUpdateTimezoneResponse;
 pub use create_workspace_api_key_response_api_key::CreateWorkspaceApiKeyResponseApiKey;
 pub use create_workspace_api_key_response::CreateWorkspaceApiKeyResponse;
@@ -5493,6 +5498,7 @@ pub use remove_users_request::RemoveUsersRequest;
 pub use update_role_users_request::UpdateRoleUsersRequest;
 pub use update_locale_users_request::UpdateLocaleUsersRequest;
 pub use update_name_users_request::UpdateNameUsersRequest;
+pub use update_open_links_in_desktop_users_request::UpdateOpenLinksInDesktopUsersRequest;
 pub use update_timezone_users_request::UpdateTimezoneUsersRequest;
 pub use editable_properties_problems_request::EditablePropertiesProblemsRequest;
 pub use action_requests_problems_request::ActionRequestsProblemsRequest;

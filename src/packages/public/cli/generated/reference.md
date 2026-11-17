@@ -2326,6 +2326,17 @@ Change the authenticated Interfere user's name. This does not change a tracked a
 | `--workspace-slug` | `string` | Yes |  |
 | `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
 
+#### `interfere users update-open-links-in-desktop`
+
+Turn on or off whether dashboard links the authenticated user opens in a browser are redirected to the Interfere desktop app. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
+
+`POST /v3/workspaces/{workspaceSlug}/actions/users.updateOpenLinksInDesktop`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
+
 #### `interfere users update-role`
 
 Change a member's workspace role and permissions. Read users.list and verify the selected person and role first. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.

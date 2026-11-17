@@ -27,6 +27,11 @@ pub struct QueryUsersMeResponse {
     pub deactivated_at: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub department: Option<String>,
+    #[serde(rename = "desktopAppSeenAt")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
+    #[serde(with = "crate::core::number_serializers::option")]
+    pub desktop_app_seen_at: Option<f64>,
     #[serde(rename = "displayName")]
     #[serde(default)]
     pub display_name: String,
@@ -48,6 +53,9 @@ pub struct QueryUsersMeResponse {
     pub last_name: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub locale: Option<String>,
+    #[serde(rename = "openLinksInDesktop")]
+    #[serde(default)]
+    pub open_links_in_desktop: bool,
     pub source: QueryUsersMeResponseSource,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub timezone: Option<String>,
@@ -70,6 +78,7 @@ pub struct QueryUsersMeResponseBuilder {
     clerk_user_id: Option<String>,
     deactivated_at: Option<f64>,
     department: Option<String>,
+    desktop_app_seen_at: Option<f64>,
     display_name: Option<String>,
     email_primary: Option<String>,
     first_name: Option<String>,
@@ -78,6 +87,7 @@ pub struct QueryUsersMeResponseBuilder {
     initials: Option<String>,
     last_name: Option<String>,
     locale: Option<String>,
+    open_links_in_desktop: Option<bool>,
     source: Option<QueryUsersMeResponseSource>,
     timezone: Option<String>,
     title: Option<String>,
@@ -111,6 +121,11 @@ impl QueryUsersMeResponseBuilder {
 
     pub fn department(mut self, value: impl Into<String>) -> Self {
         self.department = Some(value.into());
+        self
+    }
+
+    pub fn desktop_app_seen_at(mut self, value: f64) -> Self {
+        self.desktop_app_seen_at = Some(value);
         self
     }
 
@@ -154,6 +169,11 @@ impl QueryUsersMeResponseBuilder {
         self
     }
 
+    pub fn open_links_in_desktop(mut self, value: bool) -> Self {
+        self.open_links_in_desktop = Some(value);
+        self
+    }
+
     pub fn source(mut self, value: QueryUsersMeResponseSource) -> Self {
         self.source = Some(value);
         self
@@ -178,6 +198,7 @@ impl QueryUsersMeResponseBuilder {
     /// - [`email_primary`](QueryUsersMeResponseBuilder::email_primary)
     /// - [`id`](QueryUsersMeResponseBuilder::id)
     /// - [`initials`](QueryUsersMeResponseBuilder::initials)
+    /// - [`open_links_in_desktop`](QueryUsersMeResponseBuilder::open_links_in_desktop)
     /// - [`source`](QueryUsersMeResponseBuilder::source)
     pub fn build(self) -> Result<QueryUsersMeResponse, BuildError> {
         Ok(QueryUsersMeResponse {
@@ -187,6 +208,7 @@ impl QueryUsersMeResponseBuilder {
             clerk_user_id: self.clerk_user_id.ok_or_else(|| BuildError::missing_field("clerk_user_id"))?,
             deactivated_at: self.deactivated_at,
             department: self.department,
+            desktop_app_seen_at: self.desktop_app_seen_at,
             display_name: self.display_name.ok_or_else(|| BuildError::missing_field("display_name"))?,
             email_primary: self.email_primary.ok_or_else(|| BuildError::missing_field("email_primary"))?,
             first_name: self.first_name,
@@ -195,6 +217,7 @@ impl QueryUsersMeResponseBuilder {
             initials: self.initials.ok_or_else(|| BuildError::missing_field("initials"))?,
             last_name: self.last_name,
             locale: self.locale,
+            open_links_in_desktop: self.open_links_in_desktop.ok_or_else(|| BuildError::missing_field("open_links_in_desktop"))?,
             source: self.source.ok_or_else(|| BuildError::missing_field("source"))?,
             timezone: self.timezone,
             title: self.title,

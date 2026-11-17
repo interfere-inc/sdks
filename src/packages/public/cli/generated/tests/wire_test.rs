@@ -1676,6 +1676,11 @@ async fn wire_update_name() {
 }
 
 #[tokio::test]
+async fn wire_update_open_links_in_desktop() {
+    run_case("update_open_links_in_desktop").await;
+}
+
+#[tokio::test]
 async fn wire_update_timezone() {
     run_case("update_timezone").await;
 }
@@ -2808,6 +2813,11 @@ async fn wire_update_locale_error() {
 #[tokio::test]
 async fn wire_update_name_error() {
     run_case("update_name_error").await;
+}
+
+#[tokio::test]
+async fn wire_update_open_links_in_desktop_error() {
+    run_case("update_open_links_in_desktop_error").await;
 }
 
 #[tokio::test]

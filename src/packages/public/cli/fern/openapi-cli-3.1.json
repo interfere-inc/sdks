@@ -11134,6 +11134,16 @@
                         }
                       ]
                     },
+                    "desktopAppSeenAt": {
+                      "anyOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "displayName": {
                       "type": "string"
                     },
@@ -11215,6 +11225,9 @@
                         }
                       ]
                     },
+                    "openLinksInDesktop": {
+                      "type": "boolean"
+                    },
                     "source": {
                       "enum": [
                         "clerk",
@@ -11264,6 +11277,7 @@
                     "clerkUserId",
                     "deactivatedAt",
                     "department",
+                    "desktopAppSeenAt",
                     "displayName",
                     "emailPrimary",
                     "firstName",
@@ -11272,6 +11286,7 @@
                     "initials",
                     "lastName",
                     "locale",
+                    "openLinksInDesktop",
                     "source",
                     "timezone",
                     "title"
@@ -11484,6 +11499,16 @@
                           }
                         ]
                       },
+                      "desktopAppSeenAt": {
+                        "anyOf": [
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
                       "displayName": {
                         "type": "string"
                       },
@@ -11565,6 +11590,9 @@
                           }
                         ]
                       },
+                      "openLinksInDesktop": {
+                        "type": "boolean"
+                      },
                       "source": {
                         "enum": [
                           "clerk",
@@ -11614,6 +11642,7 @@
                       "clerkUserId",
                       "deactivatedAt",
                       "department",
+                      "desktopAppSeenAt",
                       "displayName",
                       "emailPrimary",
                       "firstName",
@@ -11622,6 +11651,7 @@
                       "initials",
                       "lastName",
                       "locale",
+                      "openLinksInDesktop",
                       "source",
                       "timezone",
                       "title"
@@ -21611,6 +21641,16 @@
                         }
                       ]
                     },
+                    "desktopAppSeenAt": {
+                      "anyOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "displayName": {
                       "type": "string"
                     },
@@ -21692,6 +21732,9 @@
                         }
                       ]
                     },
+                    "openLinksInDesktop": {
+                      "type": "boolean"
+                    },
                     "source": {
                       "enum": [
                         "clerk",
@@ -21741,6 +21784,7 @@
                     "clerkUserId",
                     "deactivatedAt",
                     "department",
+                    "desktopAppSeenAt",
                     "displayName",
                     "emailPrimary",
                     "firstName",
@@ -21749,6 +21793,7 @@
                     "initials",
                     "lastName",
                     "locale",
+                    "openLinksInDesktop",
                     "source",
                     "timezone",
                     "title"
@@ -28923,6 +28968,16 @@
                         }
                       ]
                     },
+                    "desktopAppSeenAt": {
+                      "anyOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "displayName": {
                       "type": "string"
                     },
@@ -29004,6 +29059,9 @@
                         }
                       ]
                     },
+                    "openLinksInDesktop": {
+                      "type": "boolean"
+                    },
                     "source": {
                       "enum": [
                         "clerk",
@@ -29053,6 +29111,7 @@
                     "clerkUserId",
                     "deactivatedAt",
                     "department",
+                    "desktopAppSeenAt",
                     "displayName",
                     "emailPrimary",
                     "firstName",
@@ -29061,6 +29120,7 @@
                     "initials",
                     "lastName",
                     "locale",
+                    "openLinksInDesktop",
                     "source",
                     "timezone",
                     "title"
@@ -33211,6 +33271,16 @@
                         }
                       ]
                     },
+                    "desktopAppSeenAt": {
+                      "anyOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "displayName": {
                       "type": "string"
                     },
@@ -33292,6 +33362,9 @@
                         }
                       ]
                     },
+                    "openLinksInDesktop": {
+                      "type": "boolean"
+                    },
                     "source": {
                       "enum": [
                         "clerk",
@@ -33341,6 +33414,7 @@
                     "clerkUserId",
                     "deactivatedAt",
                     "department",
+                    "desktopAppSeenAt",
                     "displayName",
                     "emailPrimary",
                     "firstName",
@@ -33349,6 +33423,7 @@
                     "initials",
                     "lastName",
                     "locale",
+                    "openLinksInDesktop",
                     "source",
                     "timezone",
                     "title"
@@ -40379,6 +40454,16 @@
                           }
                         ]
                       },
+                      "desktopAppSeenAt": {
+                        "anyOf": [
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
                       "displayName": {
                         "type": "string"
                       },
@@ -40460,6 +40545,9 @@
                           }
                         ]
                       },
+                      "openLinksInDesktop": {
+                        "type": "boolean"
+                      },
                       "source": {
                         "enum": [
                           "clerk",
@@ -40509,6 +40597,7 @@
                       "clerkUserId",
                       "deactivatedAt",
                       "department",
+                      "desktopAppSeenAt",
                       "displayName",
                       "emailPrimary",
                       "firstName",
@@ -40517,6 +40606,7 @@
                       "initials",
                       "lastName",
                       "locale",
+                      "openLinksInDesktop",
                       "source",
                       "timezone",
                       "title"
@@ -45645,6 +45735,16 @@
                         }
                       ]
                     },
+                    "desktopAppSeenAt": {
+                      "anyOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "displayName": {
                       "type": "string"
                     },
@@ -45726,6 +45826,9 @@
                         }
                       ]
                     },
+                    "openLinksInDesktop": {
+                      "type": "boolean"
+                    },
                     "source": {
                       "enum": [
                         "clerk",
@@ -45775,6 +45878,7 @@
                     "clerkUserId",
                     "deactivatedAt",
                     "department",
+                    "desktopAppSeenAt",
                     "displayName",
                     "emailPrimary",
                     "firstName",
@@ -45783,6 +45887,7 @@
                     "initials",
                     "lastName",
                     "locale",
+                    "openLinksInDesktop",
                     "source",
                     "timezone",
                     "title"
@@ -46428,6 +46533,16 @@
                         }
                       ]
                     },
+                    "desktopAppSeenAt": {
+                      "anyOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "displayName": {
                       "type": "string"
                     },
@@ -46509,6 +46624,9 @@
                         }
                       ]
                     },
+                    "openLinksInDesktop": {
+                      "type": "boolean"
+                    },
                     "source": {
                       "enum": [
                         "clerk",
@@ -46558,6 +46676,7 @@
                     "clerkUserId",
                     "deactivatedAt",
                     "department",
+                    "desktopAppSeenAt",
                     "displayName",
                     "emailPrimary",
                     "firstName",
@@ -46566,6 +46685,7 @@
                     "initials",
                     "lastName",
                     "locale",
+                    "openLinksInDesktop",
                     "source",
                     "timezone",
                     "title"
@@ -47204,6 +47324,16 @@
                         }
                       ]
                     },
+                    "desktopAppSeenAt": {
+                      "anyOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "displayName": {
                       "type": "string"
                     },
@@ -47285,6 +47415,9 @@
                         }
                       ]
                     },
+                    "openLinksInDesktop": {
+                      "type": "boolean"
+                    },
                     "source": {
                       "enum": [
                         "clerk",
@@ -47334,6 +47467,7 @@
                     "clerkUserId",
                     "deactivatedAt",
                     "department",
+                    "desktopAppSeenAt",
                     "displayName",
                     "emailPrimary",
                     "firstName",
@@ -47342,6 +47476,7 @@
                     "initials",
                     "lastName",
                     "locale",
+                    "openLinksInDesktop",
                     "source",
                     "timezone",
                     "title"
@@ -51875,6 +52010,16 @@
                         }
                       ]
                     },
+                    "desktopAppSeenAt": {
+                      "anyOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "displayName": {
                       "type": "string"
                     },
@@ -51956,6 +52101,9 @@
                         }
                       ]
                     },
+                    "openLinksInDesktop": {
+                      "type": "boolean"
+                    },
                     "source": {
                       "enum": [
                         "clerk",
@@ -52005,6 +52153,7 @@
                     "clerkUserId",
                     "deactivatedAt",
                     "department",
+                    "desktopAppSeenAt",
                     "displayName",
                     "emailPrimary",
                     "firstName",
@@ -52013,6 +52162,7 @@
                     "initials",
                     "lastName",
                     "locale",
+                    "openLinksInDesktop",
                     "source",
                     "timezone",
                     "title"
@@ -53585,6 +53735,16 @@
                   }
                 ]
               },
+              "desktopAppSeenAt": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
               "displayName": {
                 "type": "string"
               },
@@ -53666,6 +53826,9 @@
                   }
                 ]
               },
+              "openLinksInDesktop": {
+                "type": "boolean"
+              },
               "source": {
                 "enum": [
                   "clerk",
@@ -53715,6 +53878,7 @@
               "clerkUserId",
               "deactivatedAt",
               "department",
+              "desktopAppSeenAt",
               "displayName",
               "emailPrimary",
               "firstName",
@@ -53723,6 +53887,7 @@
               "initials",
               "lastName",
               "locale",
+              "openLinksInDesktop",
               "source",
               "timezone",
               "title"
@@ -54419,6 +54584,18 @@
         ]
       },
       "Mutation_users_updateNameResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "const": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success"
+        ]
+      },
+      "Mutation_users_updateOpenLinksInDesktopResponse": {
         "type": "object",
         "properties": {
           "success": {
@@ -75835,6 +76012,96 @@
           }
         },
         "x-fern-sdk-method-name": "update-name",
+        "x-cloudflare-labels": [
+          "cf-api-endpoint"
+        ],
+        "security": [
+          {
+            "clerkSession": []
+          }
+        ],
+        "x-interfere-read-only": false,
+        "x-internal": false,
+        "x-fern-sdk-group-name": [
+          "users"
+        ],
+        "x-fern-retries": {
+          "disabled": true
+        }
+      }
+    },
+    "/v3/workspaces/{workspaceSlug}/actions/users.updateOpenLinksInDesktop": {
+      "post": {
+        "operationId": "users_updateOpenLinksInDesktop",
+        "summary": "members updateOpenLinksInDesktop",
+        "description": "Turn on or off whether dashboard links the authenticated user opens in a browser are redirected to the Interfere desktop app. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.",
+        "tags": [
+          "users"
+        ],
+        "parameters": [
+          {
+            "name": "workspaceSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
+            },
+            "x-fern-parameter-name": "workspace"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "args": {
+                    "type": "object",
+                    "properties": {
+                      "openLinksInDesktop": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "openLinksInDesktop"
+                    ]
+                  }
+                },
+                "required": [
+                  "args"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mutation_users_updateOpenLinksInDesktopResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/RpcValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse_b32e7e47d27147b78e9ca9c8927315e0c48a5a54a03868590623df7e2ff7d2af"
+          },
+          "403": {
+            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
+          },
+          "503": {
+            "$ref": "#/components/responses/ErrorResponse_a4a8a71ed4a33ddc602b7e2cf4dd0b51ef37c46db1b01870377abdbd6cbda1b5"
+          }
+        },
+        "x-fern-sdk-method-name": "update-open-links-in-desktop",
         "x-cloudflare-labels": [
           "cf-api-endpoint"
         ],
