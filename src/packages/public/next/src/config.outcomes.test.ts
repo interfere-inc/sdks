@@ -229,7 +229,7 @@ test("reports cleanup_failed through the production compile hook", async () => {
   });
 });
 
-test("links the org when the release has no app", async () => {
+test("links the services page when the release has no app", async () => {
   expect.hasAssertions();
 
   await withTempProject("next-outcome-", async (projectDir) => {
@@ -309,7 +309,7 @@ test("links the org when the release has no app", async () => {
     });
 
     expect(info).toHaveBeenCalledWith("Completed", [
-      "https://interfere.com/~/acme",
+      "https://interfere.com/~/acme/services",
       `Release: ${RELEASE_SLUG}`,
       expect.stringContaining("Build: "),
       "Artifacts: 1 source maps",

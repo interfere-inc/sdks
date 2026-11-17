@@ -166,6 +166,23 @@ describe(diagnoseRelease, () => {
     },
   );
 
+  test.each([
+    "AUTH_MISSING",
+    "AUTH_AK_INVALID",
+    "AUTH_AK_SCOPE_MISMATCH",
+    "AUTH_AK_SURFACE_REQUIRED",
+    "RELEASE_SERVICE_REQUIRED",
+    "NETWORK_ACCESS_DENIED",
+  ])("names services, never Apps, in %s diagnostics", (code) => {
+    const { title, details } = diagnoseRelease(NEXT_CONTEXT, {
+      body: { code },
+    });
+
+    expect([title, ...details].join("\n")).not.toMatch(
+      /\b(?:Apps?|surface)\b/u,
+    );
+  });
+
   test("reports other failures as a warning with the underlying message", () => {
     const diagnostic = diagnoseRelease(
       NEXT_CONTEXT,

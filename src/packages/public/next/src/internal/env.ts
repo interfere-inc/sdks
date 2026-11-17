@@ -16,10 +16,6 @@ interface InterfereEnv {
   readonly publicKey: string | null;
   readonly releaseToken: string | null;
   readonly serviceName: string | null;
-  readonly release: {
-    readonly sourceId: string | null;
-    readonly destinationId: string | null;
-  };
 }
 
 /** Enable server telemetry when a server credential (workspace API key, baked release token or public key alias) is configured and the build has not disabled it. */
@@ -53,12 +49,6 @@ export function readInterfereEnv() {
       ? null
       : parseEnvValue(process.env["INTERFERE_PUBLIC_KEY"]),
     releaseToken: interfereDisabled() ? null : bakedReleaseToken(),
-    release: {
-      destinationId: parseEnvValue(
-        process.env["NEXT_PUBLIC_INTERFERE_RELEASE_ID"],
-      ),
-      sourceId: parseEnvValue(process.env["NEXT_PUBLIC_INTERFERE_BUILD_ID"]),
-    },
   } satisfies InterfereEnv;
 }
 

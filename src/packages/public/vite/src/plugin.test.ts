@@ -489,16 +489,13 @@ describe("interfere vite plugin", () => {
   });
 
   describe("mode resolution", () => {
-    const expectedWarning =
-      '[interfere] The inferred service name "storefront" differs from the key\'s App "vite". With workspace keys, changing the service name can select or create a different App. To preserve your existing service name, set serviceName in interfere({ serviceName: "your-existing-service-name" }), browser init(), and server register(). Copy the name from the dashboard Services page.';
-
     test.each([
       {
         name: "@acme/storefront",
         option: undefined,
         env: undefined,
         unresolved: false,
-        warnings: [expectedWarning],
+        warnings: [],
       },
       {
         name: "@acme/vite",
@@ -526,7 +523,7 @@ describe("interfere vite plugin", () => {
         option: " ",
         env: " ",
         unresolved: false,
-        warnings: [expectedWarning],
+        warnings: [],
       },
       {
         name: "@acme/",
@@ -543,7 +540,7 @@ describe("interfere vite plugin", () => {
         warnings: [],
       },
     ])(
-      "checks inferred service identity: $name / $option / $env / $unresolved",
+      "never warns about an App for the inferred service name: $name / $option / $env / $unresolved",
       async ({ name, option, env, unresolved, warnings: expected }) => {
         writeFileSync(
           path.join(projectDir, "package.json"),
@@ -578,8 +575,10 @@ describe("interfere vite plugin", () => {
           config.define?.["import.meta.env.VITE_INTERFERE_DISABLED"],
         ).not.toBe('"true"');
 
-        const warnings = capture.warns.filter((message) =>
-          message.includes("inferred service name"),
+        const warnings = capture.warns.filter(
+          (message) =>
+            message.includes("inferred service name") ||
+            /\bApp\b/u.test(message),
         );
 
         expect(warnings).toStrictEqual(expected);

@@ -246,7 +246,7 @@ export function createWrapperSingleton(input: WrapperSingletonInput) {
 
       if (!hasIngestCredential()) {
         log.warn(
-          "No release token or public key is configured, so the SDK is disabled. Build with INTERFERE_API_KEY so @interfere/vite bakes in a release token, or set INTERFERE_PUBLIC_KEY (VITE_INTERFERE_PUBLIC_KEY for Vite).",
+          "No release token is configured, so the SDK is disabled. Build with INTERFERE_API_KEY set so withInterfere() (Next.js) or interfere() (Vite) bakes in a release token.",
         );
 
         return null;

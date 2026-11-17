@@ -90,8 +90,6 @@ async function injectedValues(rule: Awaited<ReturnType<typeof injectionRule>>) {
 
 const REMOVED_BUILD_ID_RE = /Removed: interfere\.buildId/u;
 
-const MISSING_INSTRUMENTATION_CLIENT_RE = /Missing instrumentation client/u;
-
 beforeEach(() => {
   releaseNetwork.use(
     http.get("*/v3/releases/config", () => HttpResponse.error()),
@@ -256,8 +254,8 @@ describe(withInterfere, () => {
     });
   });
 
-  test("fatals when a public key is set but no instrumentation client exists", async () => {
-    expect.assertions(1);
+  test("warns instead of failing when a public key is set but no instrumentation client exists", async () => {
+    expect.assertions(2);
 
     await withTempProject("next-config-", async (projectDir) => {
       vi.stubEnv("INTERFERE_API_KEY", "interfere_ak_test_xxx");
@@ -266,9 +264,16 @@ describe(withInterfere, () => {
 
       process.chdir(projectDir);
 
+      const warn = vi.spyOn(log, "warn");
+
       expect(() => {
         void withInterfere()(PHASE_DEVELOPMENT_SERVER);
-      }).toThrow(MISSING_INSTRUMENTATION_CLIENT_RE);
+      }).not.toThrow();
+
+      expect(warn).toHaveBeenCalledWith(
+        "Missing instrumentation client",
+        expect.any(Array),
+      );
     });
   });
 

@@ -1,7 +1,6 @@
 import { registerBuildRelease } from "./internal/build/register-release";
 import {
   DIAGNOSTIC_CONTEXT,
-  inferredServiceNameWarning,
   preflightViteBinding,
   warnBuildPreflight,
 } from "./internal/build/preflight";
@@ -403,8 +402,6 @@ export function interfere(options: InterfereViteOptions = {}) {
   let registeredRelease: Awaited<ReturnType<typeof registerBuildRelease>> =
     null;
 
-  let serviceNameWarning: string | undefined;
-
   const resolveBuildConfig = createBuildConfigResolver((result) => {
     receipt?.observeConfig(result);
 
@@ -475,11 +472,7 @@ export function interfere(options: InterfereViteOptions = {}) {
 
         warnForcedSourcemap(state.logger, overriddenSourcemap);
 
-        warnBuildPreflight(
-          state.logger,
-          serviceNameWarning,
-          remoteConfigFallback,
-        );
+        warnBuildPreflight(state.logger, remoteConfigFallback);
 
         announced = true;
       }
@@ -550,12 +543,6 @@ export function interfere(options: InterfereViteOptions = {}) {
           publicKey: browser.publicKey,
           serviceName: browser.serviceName,
         });
-
-        serviceNameWarning = inferredServiceNameWarning(
-          releaseConfig,
-          browser.serviceName,
-          options.serviceName?.trim() || env["OTEL_SERVICE_NAME"]?.trim(),
-        );
       }
 
       registeredRelease ??=

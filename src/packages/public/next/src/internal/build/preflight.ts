@@ -136,20 +136,6 @@ function preflightBuild(config: ResolvedBuildConfig) {
         )
       : undefined,
   ]).then(async ([releaseConfig, publicKeyConfig]) => {
-    const surfaceSlug = releaseConfig?.surface?.slug;
-
-    if (
-      config.serviceNameInferred &&
-      config.serviceName &&
-      surfaceSlug &&
-      config.serviceName !== surfaceSlug
-    ) {
-      log.warn("Inferred service name differs from the App", [
-        `The inferred service name ${JSON.stringify(config.serviceName)} differs from the key's App ${JSON.stringify(surfaceSlug)}. With workspace keys, changing the service name can select or create a different App.`,
-        'To preserve your existing service name, set serviceName in withInterfere({ serviceName: "your-existing-service-name" }, nextConfig). Copy the name from the dashboard Services page.',
-      ]);
-    }
-
     const registeredRelease =
       client && (releaseConfig || !config.publicKey)
         ? await registerRelease(client, config, releaseConfig ?? null)

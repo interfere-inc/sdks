@@ -155,7 +155,7 @@ function detectUnacceptableExport(error: InterfereError) {
     authHaltExpiresAt = Date.now() + AUTH_INVALID_HALT_COOLDOWN_MS;
 
     console.warn(
-      `[interfere] the ingest endpoint rejected this page's public key ${consecutiveAuthRejections} times in a row — telemetry export is paused for ${AUTH_INVALID_HALT_COOLDOWN_MS / 60_000} minutes, then retried once. Check that INTERFERE_PUBLIC_KEY matches an active surface; a deleted surface's key stays rejected until the page is rebuilt with the new key.`,
+      `[interfere] the ingest endpoint rejected this page's public key ${consecutiveAuthRejections} times in a row — telemetry export is paused for ${AUTH_INVALID_HALT_COOLDOWN_MS / 60_000} minutes, then retried once. A revoked key stays rejected until the page is rebuilt; build with INTERFERE_API_KEY set so the build plugin bakes in a current release token.`,
     );
   }
 }

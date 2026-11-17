@@ -668,18 +668,13 @@ describe("withInterfere build pipeline", () => {
 });
 
 describe("release binding preflight", () => {
-  const expectedWarning = [
-    'The inferred service name "storefront" differs from the key\'s App "frontend". With workspace keys, changing the service name can select or create a different App.',
-    'To preserve your existing service name, set serviceName in withInterfere({ serviceName: "your-existing-service-name" }, nextConfig). Copy the name from the dashboard Services page.',
-  ];
-
   test.each([
     {
       name: "@acme/storefront",
       option: undefined,
       env: undefined,
       failure: false,
-      warnings: [expectedWarning],
+      warnings: [],
     },
     {
       name: "@acme/frontend",
@@ -707,7 +702,7 @@ describe("release binding preflight", () => {
       option: " ",
       env: " ",
       failure: false,
-      warnings: [expectedWarning],
+      warnings: [],
     },
     {
       name: "@acme/",
@@ -724,7 +719,7 @@ describe("release binding preflight", () => {
       warnings: [],
     },
   ])(
-    "checks inferred service identity: $name / $option / $env / $failure",
+    "never warns about an App for the inferred service name: $name / $option / $env / $failure",
     async ({ name, option, env, failure, warnings: expected }) => {
       expect.hasAssertions();
 
@@ -761,8 +756,8 @@ describe("release binding preflight", () => {
           "__INTERFERE_DISABLED__",
         );
 
-        const warnings = warn.mock.calls.filter(
-          ([title]) => title === "Inferred service name differs from the App",
+        const warnings = warn.mock.calls.filter(([title, details]) =>
+          /\bApp\b/u.test([title, ...details].join(" ")),
         );
 
         expect(warnings.map(([, details]) => details)).toStrictEqual(expected);

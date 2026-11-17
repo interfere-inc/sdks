@@ -148,7 +148,7 @@ const CATALOG: Record<
     title: "Service needed for a workspace secret key",
     details: [
       "INTERFERE_API_KEY is a workspace secret key, so the build must name the service it publishes for, and register that service's release before uploading source maps.",
-      `Set \`serviceName\` (or \`OTEL_SERVICE_NAME\`) to that service. Setting \`${ctx.publicKeyEnvVar}\` to an App's public key also works.`,
+      `Set \`serviceName\` (or \`OTEL_SERVICE_NAME\`) to that service, or set \`${ctx.publicKeyEnvVar}\` on the build machine.`,
       BUILD_CONTINUES,
     ],
   }),

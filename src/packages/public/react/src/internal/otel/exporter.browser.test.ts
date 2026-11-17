@@ -808,7 +808,7 @@ describe("release-not-found halt", () => {
     expect(isIngestHalted()).toBe(true);
 
     expect(console.warn).toHaveBeenCalledWith(
-      expect.stringContaining("INTERFERE_PUBLIC_KEY"),
+      expect.stringContaining("INTERFERE_API_KEY"),
     );
 
     exporter.export([makeSpan()], vi.fn());
@@ -850,9 +850,17 @@ describe("release-not-found halt", () => {
     test("stays halted until five minutes pass", async () => {
       worker.use(collector(authInvalid));
 
+      const warn = vi.spyOn(console, "warn");
       const exporter = exporterUnderTest();
 
       await haltOnAuth(exporter);
+
+      const rejections = warn.mock.calls
+        .map(([message]) => String(message))
+        .filter((message) => message.includes("rejected this page"));
+
+      expect(rejections).toHaveLength(1);
+      expect(rejections[0]).not.toMatch(/\bsurface\b|\bApps?\b/u);
 
       vi.advanceTimersByTime(5 * 60 * 1000 - 1);
 

@@ -48,44 +48,12 @@ describe(isEnabledOnServer, () => {
 });
 
 describe(readInterfereEnv, () => {
-  test("reads NEXT_PUBLIC_INTERFERE_BUILD_ID as release.sourceId", () => {
-    vi.stubEnv("NEXT_PUBLIC_INTERFERE_BUILD_ID", "build_abc123");
-
-    const env = readInterfereEnv();
-
-    expect(env.release.sourceId).toBe("build_abc123");
-  });
-
-  test("returns null sourceId when NEXT_PUBLIC_INTERFERE_BUILD_ID is not set", () => {
-    vi.stubEnv("NEXT_PUBLIC_INTERFERE_BUILD_ID", "");
-
-    const env = readInterfereEnv();
-
-    expect(env.release.sourceId).toBeNull();
-  });
-
-  test("reads NEXT_PUBLIC_INTERFERE_RELEASE_ID as release.destinationId", () => {
-    vi.stubEnv("NEXT_PUBLIC_INTERFERE_RELEASE_ID", "release_xyz");
-
-    const env = readInterfereEnv();
-
-    expect(env.release.destinationId).toBe("release_xyz");
-  });
-
-  test("returns null destinationId when not set", () => {
-    vi.stubEnv("NEXT_PUBLIC_INTERFERE_RELEASE_ID", "");
-
-    const env = readInterfereEnv();
-
-    expect(env.release.destinationId).toBeNull();
-  });
-
   test("trims whitespace-only values to null", () => {
-    vi.stubEnv("NEXT_PUBLIC_INTERFERE_BUILD_ID", "   ");
+    vi.stubEnv("INTERFERE_API_KEY", "   ");
 
     const env = readInterfereEnv();
 
-    expect(env.release.sourceId).toBeNull();
+    expect(env.apiKey).toBeNull();
   });
 
   test("falls back to development when no environment signal is set", () => {

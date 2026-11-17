@@ -114,7 +114,6 @@ export interface ResolvedBuildConfig {
    */
   readonly registeredRelease?: CreateReleaseResponse | undefined;
   readonly serviceName?: string | undefined;
-  readonly serviceNameInferred?: boolean | undefined;
   /**
    * When `true` (default), the build pipeline deletes source maps from the
    * build output whether uploading succeeds, fails, or is disabled.
@@ -331,16 +330,9 @@ function buildResolvedInterfereConfig(
   const browserCredential =
     config.publicKey !== null || Boolean(config.registeredRelease?.token);
 
-  if (config.publicKey !== null && !build.clientInstrumentationApplies) {
-    return log.fatal("Missing instrumentation client", [
-      "INTERFERE_PUBLIC_KEY is set but no instrumentation-client file was found.",
-      "Create an instrumentation-client.ts file in your project root or src/ directory.",
-    ]);
-  }
-
   if (browserCredential && !build.clientInstrumentationApplies) {
     log.warn("Missing instrumentation client", [
-      "This build has a release token but no instrumentation-client file, so it sends no browser events.",
+      "This build has no instrumentation-client file, so it sends no browser events.",
       "Create an instrumentation-client.ts file in your project root or src/ directory.",
     ]);
   }
@@ -403,10 +395,6 @@ function resolveBuildConfig(settings: NextPluginConfig, phase: string) {
       root: process.cwd(),
       option: settings.serviceName,
     }),
-    serviceNameInferred:
-      !settings.serviceName?.trim() &&
-      // oxlint-disable-next-line node/no-process-env
-      !process.env["OTEL_SERVICE_NAME"]?.trim(),
     purgeSourceMaps: settings.sourceMaps?.purge ?? true,
     uploadSourceMaps: settings.sourceMaps?.upload ?? true,
     releaseSlug:
@@ -479,12 +467,8 @@ async function runBuildReleasePipeline(
       return;
     }
 
-    const orgUrl = `https://interfere.com/~/${result.release.org.slug}`;
-
     log.info("Completed", [
-      result.release.surface
-        ? `${orgUrl}/apps/${result.release.surface.slug}`
-        : orgUrl,
+      `https://interfere.com/~/${result.release.org.slug}/services`,
       `Release: ${result.release.destination.slug}`,
       `Build: ${result.buildId}`,
       config.uploadSourceMaps
