@@ -57312,6 +57312,74 @@
           "success"
         ]
       },
+      "ProblemAffectedServicesResponse": {
+        "type": "object",
+        "properties": {
+          "availability": {
+            "enum": [
+              "available",
+              "unavailable"
+            ],
+            "type": "string"
+          },
+          "sampledTraces": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "services": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "namespace": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "unclassified",
+                    "other",
+                    "backend",
+                    "website"
+                  ],
+                  "type": "string"
+                },
+                "traces": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                }
+              },
+              "required": [
+                "id",
+                "namespace",
+                "name",
+                "type",
+                "traces"
+              ]
+            }
+          }
+        },
+        "required": [
+          "availability",
+          "sampledTraces",
+          "services"
+        ]
+      },
       "AffectedByProblemResponse": {
         "type": "object",
         "properties": {
@@ -81473,6 +81541,74 @@
         "x-fern-retries": {
           "disabled": true
         }
+      }
+    },
+    "/v3/workspaces/{workspaceSlug}/problems/{problemId}/affectedServices": {
+      "get": {
+        "operationId": "problemAffectedServices",
+        "summary": "List affected website services",
+        "description": "Returns the website services whose spans share a trace with the problem's newest occurrences in its last seven days. availability is unavailable when the problem has no owner to sample.",
+        "tags": [
+          "Problems"
+        ],
+        "parameters": [
+          {
+            "name": "workspaceSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
+            },
+            "x-fern-parameter-name": "workspace"
+          },
+          {
+            "name": "problemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemAffectedServicesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/RpcValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse_d7174de43f943d10193d5f31cc4615acb6d01e6a15ef9a1a861235cb9792319b"
+          },
+          "403": {
+            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse_2d362a4dcfdc8c518b10b2e559d310a0e755e37ef284408e24e0d620e2481b70"
+          },
+          "503": {
+            "$ref": "#/components/responses/ErrorResponse_b7d254f6bd68a887b2398a1b58fb8fe3913110d7236a6e4540d7d2aa990fb12b"
+          }
+        },
+        "x-cloudflare-labels": [
+          "cf-api-endpoint"
+        ],
+        "security": [
+          {
+            "clerkSession": []
+          }
+        ],
+        "x-interfere-read-only": true
       }
     },
     "/v3/workspaces/{workspaceSlug}/problems/{problemId}/affectedUsers": {

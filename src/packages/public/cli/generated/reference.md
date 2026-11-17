@@ -1166,6 +1166,17 @@ Read archived investigation accounts preceding a Problem, scoped to the current 
 | `--workspace-slug` | `string` | Yes |  |
 | `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
 
+#### `interfere problems problem-affected-services`
+
+Returns the website services whose spans share a trace with the problem's newest occurrences in its last seven days. availability is unavailable when the problem has no owner to sample.
+
+`GET /v3/workspaces/{workspaceSlug}/problems/{problemId}/affectedServices`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+| `--problem-id` | `string (uuid)` | Yes |  |
+
 #### `interfere problems problem-evidence`
 
 Returns the findings grouped into a problem with their fingerprints, representative occurrences with their exception messages, and the investigator's Observations with the evidence each one cited, such as source files and lines, Facts, spans and logs.

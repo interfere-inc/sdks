@@ -2723,6 +2723,23 @@
       }
     },
     {
+      "id": "problemaffectedservices",
+      "method": "GET",
+      "path": "/v3/workspaces/{workspace}/problems/{problemId}/affectedServices",
+      "params": {
+        "workspace": "workspaceSlug",
+        "problemId": "problemId"
+      },
+      "body": null,
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"availability\": \"available\",\n  \"sampledTraces\": 1,\n  \"services\": [\n    {\n      \"id\": \"id\",\n      \"namespace\": \"namespace\",\n      \"name\": \"name\",\n      \"type\": \"unclassified\",\n      \"traces\": 1\n    }\n  ]\n}"
+      }
+    },
+    {
       "id": "affectedbyproblem",
       "method": "GET",
       "path": "/v3/workspaces/{workspace}/problems/{problemId}/affectedUsers",
@@ -7308,6 +7325,24 @@
           "timelineEventId": "timelineEventId"
         }
       },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "problemaffectedservices_error",
+      "method": "GET",
+      "path": "/v3/workspaces/{workspace}/problems/{problemId}/affectedServices",
+      "params": {
+        "workspace": "workspaceSlug",
+        "problemId": "problemId"
+      },
+      "body": null,
       "queryMatchers": [],
       "headerMatchers": [],
       "requiresAuth": true,

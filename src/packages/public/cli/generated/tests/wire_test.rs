@@ -1751,6 +1751,11 @@ async fn wire_update_priority() {
 }
 
 #[tokio::test]
+async fn wire_problemaffectedservices() {
+    run_case("problemaffectedservices").await;
+}
+
+#[tokio::test]
 async fn wire_affectedbyproblem() {
     run_case("affectedbyproblem").await;
 }
@@ -2888,6 +2893,11 @@ async fn wire_update_details_error() {
 #[tokio::test]
 async fn wire_update_priority_error() {
     run_case("update_priority_error").await;
+}
+
+#[tokio::test]
+async fn wire_problemaffectedservices_error() {
+    run_case("problemaffectedservices_error").await;
 }
 
 #[tokio::test]

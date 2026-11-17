@@ -217,7 +217,7 @@ The SDK splits its credentials by concern: a **public key** travels with the bro
 
 1. **Install** `@interfere/vite` and add the plugin (above).
 2. **Public key** — copy the dashboard's regional public key (`interfere_public_us_*` or `interfere_public_eu_*`) into `.env.local` as `VITE_INTERFERE_PUBLIC_KEY=...`. Public by design; safe to commit to a public repo.
-3. **Secret key** — create a workspace secret key with the **Source maps** (`release:write`) permission, plus **Send telemetry** (`org:telemetry:write`) for server telemetry, and put the regional value (`interfere_secret_us_*` or `interfere_secret_eu_*`) in `.env.local` as `INTERFERE_API_KEY=...`. One key publishes releases for every app in the workspace; the plugin resolves the App using `VITE_INTERFERE_PUBLIC_KEY` and `serviceName`. **Server-side; never commit.**
+3. **Secret key** — create a workspace secret key with the **Source maps** (`release:write`) permission, plus **Send telemetry** (`org:telemetry:write`) for server telemetry, and put the regional value (`interfere_secret_us_*` or `interfere_secret_eu_*`) in `.env.local` as `INTERFERE_API_KEY=...`. One key publishes releases for every service in the workspace; each release belongs to the service named by `serviceName`. **Server-side; never commit.**
 4. **First build** — run `bun run build`. The plugin's `closeBundle` hook publishes release metadata and preflight-confirms the release. After this the commit's slug is accepted at ingest.
 5. **Dev cycle** — `bun run dev` then exercises the bundle in your browser. Events flow with the commit's preflight-confirmed slug (the build did the work). New commit? Re-run `bun run build` so the new commit's slug is preflighted.
 
@@ -231,21 +231,21 @@ Remote plugin settings can disable shipped plugins; they cannot override local d
 
 Remote `backendHosts` become discovered HTTPS origins. They receive no trace header on any request until Interfere's own credentialed `HEAD` check to that origin passes CORS in this browser session, and then only the headers that passed (`baggage` is dropped when only the check without it passes). Explicit `tracing.propagateTo` origins and their header lists are declared in application code and take precedence over discovered hosts. `tracing.headers: false` disables SDK header writes everywhere. Remote configuration cannot override either setting.
 
-## Workspace keys
+## Services and workspace keys
 
-Every workspace receives a **Default** workspace public key. Use one workspace key across its Apps; additional keys can be created or rotated in **Settings → Developer → Public keys**. App keys (formerly surface keys) are deprecated but still accepted, with no removal date announced. An App key stays bound to its App and bypasses workspace routing.
+Interfere organizes telemetry by service. `serviceName`, with an optional `serviceNamespace`, names the service, and every request carries it: SDK requests send `x-interfere-service` and `x-interfere-service-namespace`, and OTLP requests use the `service.name` and `service.namespace` resource attributes. Interfere records a service the first time it sees one, within the workspace's service limit.
 
-With a workspace key, App resolution uses:
+Every workspace receives a **Default** workspace public key. Use one workspace key for all of the workspace's services; additional keys can be created or rotated in **Settings → Developer → Public keys**. Servers, CI and collectors use a workspace secret key with **Send telemetry** (`org:telemetry:write`) and name the service the same way.
 
-1. The `x-interfere-service` header, with optional `x-interfere-service-namespace`.
-2. Otherwise, OTLP `service.name` and `service.namespace` resource attributes.
-3. Without a usable identity, the workspace's default App.
+Apps are being folded into services, one website service per App. Until that finishes, each service also resolves to an App, which holds its website settings:
 
-For a named service, an existing service-to-App association wins; otherwise a matching App name or slug is used. An unmatched service goes to the default App; without an eligible default, the request is rejected. Interfere never creates an App from telemetry. A missing or deleted default falls back to the oldest eligible App.
+1. An existing service-to-App association wins.
+2. Otherwise, an App whose name or slug matches the service is used.
+3. Otherwise, the request goes to the workspace's **Default app** (choose it in **Settings → Developer → Public keys**). Without an eligible default, the request is rejected. A missing or deleted default falls back to the oldest eligible App. A request without a service identity also goes to the default App.
 
-In **Settings → Developer → Public keys**, choose the **Default app**. An App marked `explicit_only` is excluded from implicit name matching and default fallback; use an existing service association or its App key to target it.
+Interfere never creates an App from telemetry. An App marked `explicit_only` is excluded from name matching and the default fallback; target it through an existing service association or its App key. App keys (formerly surface keys) are deprecated but still accepted, with no removal date announced. An App key stays bound to its App and skips this resolution.
 
-Name an App in the dashboard when creating it, or edit its title on the App page. Keep the SDK's `serviceName` stable: renaming the dashboard title does not change an existing service association. Open **Services** to find the service linked to an App before migrating keys. SDK requests use `serviceName` for `x-interfere-service`; a configured runtime `serviceNamespace` supplies the namespace header.
+Keep `serviceName` stable: renaming an App's dashboard title does not change an existing service association. Open **Services** to find the service linked to an App before migrating keys.
 
 Set the same name in `interfere({ serviceName: "storefront" })`, browser `init({ serviceName: "storefront" })`, and server `register({ serviceName: "storefront" })`. Build identity uses the explicit option, then `OTEL_SERVICE_NAME`, then the package name without its scope. Keep an application-owned OpenTelemetry provider aligned too.
 

@@ -5,7 +5,7 @@
 //!
 //! ## Type Categories
 //!
-//! - **Request/Response Types**: 2196 types for API operations
+//! - **Request/Response Types**: 2200 types for API operations
 //! - **Model Types**: 602 types for data representation
 
 pub mod drain_drain_otlp_export_request_signal;
@@ -2471,6 +2471,10 @@ pub mod create_integration_install_url_response_register_url_kind;
 pub mod create_integration_install_url_response_register_url;
 pub mod create_integration_install_url_response;
 pub mod uninstall_integration_response;
+pub mod problem_affected_services_response_availability;
+pub mod problem_affected_services_response_services_item_type;
+pub mod problem_affected_services_response_services_item;
+pub mod problem_affected_services_response;
 pub mod affected_by_problem_response_coverage_zero_completeness;
 pub mod affected_by_problem_response_coverage_zero_counts;
 pub mod affected_by_problem_response_coverage_zero_scope;
@@ -5270,6 +5274,10 @@ pub use create_integration_install_url_response_register_url_kind::CreateIntegra
 pub use create_integration_install_url_response_register_url::CreateIntegrationInstallUrlResponseRegisterUrl;
 pub use create_integration_install_url_response::CreateIntegrationInstallUrlResponse;
 pub use uninstall_integration_response::UninstallIntegrationResponse;
+pub use problem_affected_services_response_availability::ProblemAffectedServicesResponseAvailability;
+pub use problem_affected_services_response_services_item_type::ProblemAffectedServicesResponseServicesItemType;
+pub use problem_affected_services_response_services_item::ProblemAffectedServicesResponseServicesItem;
+pub use problem_affected_services_response::ProblemAffectedServicesResponse;
 pub use affected_by_problem_response_coverage_zero_completeness::AffectedByProblemResponseCoverageZeroCompleteness;
 pub use affected_by_problem_response_coverage_zero_counts::AffectedByProblemResponseCoverageZeroCounts;
 pub use affected_by_problem_response_coverage_zero_scope::AffectedByProblemResponseCoverageZeroScope;

@@ -895,6 +895,66 @@ impl ProblemsClient {
             .await
     }
 
+    /// Returns the website services whose spans share a trace with the problem's newest occurrences in its last seven days. availability is unavailable when the problem has no owner to sample.
+    ///
+    /// # Arguments
+    ///
+    /// * `workspace` - Workspace URL slug, using lowercase letters, numbers, and hyphens.
+    /// * `options` - Additional request options such as headers, timeout, etc.
+    ///
+    /// # Returns
+    ///
+    /// JSON response from the API
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use interfere_sdk::prelude::*;
+    ///
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     let config = ClientConfig {
+    ///         api_key: Some("<value>".to_string()),
+    ///         ..Default::default()
+    ///     };
+    ///     let client = InterfereClient::new(config).expect("Failed to build client");
+    ///     client
+    ///         .problems
+    ///         .problem_affected_services(&"workspaceSlug".to_string(), &"problemId".to_string(), None)
+    ///         .await;
+    /// }
+    /// ```
+    pub async fn problem_affected_services(
+        &self,
+        workspace: &str,
+        problem_id: &str,
+        options: Option<RequestOptions>,
+    ) -> Result<ProblemAffectedServicesResponse, ApiError> {
+        let endpoint_auth_headers = self
+            .http_client
+            .resolve_endpoint_auth_headers(&options, &[&["clerkSession"] as &[&str]])
+            .await?;
+        let options = {
+            let mut o = options.unwrap_or_default();
+            for (header_key, header_value) in endpoint_auth_headers {
+                o.additional_headers.insert(header_key, header_value);
+            }
+            Some(o)
+        };
+        self.http_client
+            .execute_request(
+                Method::GET,
+                &format!(
+                    "v3/workspaces/{}/problems/{}/affectedServices",
+                    workspace, problem_id
+                ),
+                None,
+                None,
+                options,
+            )
+            .await
+    }
+
     /// Returns users affected by a problem within the requested time range.
     ///
     /// # Arguments

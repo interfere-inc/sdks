@@ -79,23 +79,23 @@ Company IDs come from `interfere companies list`. Reading context requires surfa
 
 Set `INTERFERE_WORKSPACE` or pass `--workspace` for workspace operations. Named profiles can store workspace defaults and credentials. Use `interfere profiles --help` for profile commands. Explicit flags override profile values, and profile values override environment variables.
 
-## Workspace keys
+## Services and workspace keys
 
-Every workspace receives a **Default** workspace public key. Use one workspace key across its Apps; additional keys can be created or rotated in **Settings → Developer → Public keys**. App keys (formerly surface keys) are deprecated but still accepted, with no removal date announced. An App key stays bound to its App and bypasses workspace routing.
+Interfere organizes telemetry by service. `serviceName`, with an optional `serviceNamespace`, names the service, and every request carries it: SDK requests send `x-interfere-service` and `x-interfere-service-namespace`, and OTLP requests use the `service.name` and `service.namespace` resource attributes. Interfere records a service the first time it sees one, within the workspace's service limit.
 
-With a workspace key, App resolution uses:
+Every workspace receives a **Default** workspace public key. Use one workspace key for all of the workspace's services; additional keys can be created or rotated in **Settings → Developer → Public keys**. Servers, CI and collectors use a workspace secret key with **Send telemetry** (`org:telemetry:write`) and name the service the same way.
 
-1. The `x-interfere-service` header, with optional `x-interfere-service-namespace`.
-2. Otherwise, OTLP `service.name` and `service.namespace` resource attributes.
-3. Without a usable identity, the workspace's default App.
+Apps are being folded into services, one website service per App. Until that finishes, each service also resolves to an App, which holds its website settings:
 
-For a named service, an existing service-to-App association wins; otherwise a matching App name or slug is used. An unmatched service goes to the default App; without an eligible default, the request is rejected. Interfere never creates an App from telemetry. A missing or deleted default falls back to the oldest eligible App.
+1. An existing service-to-App association wins.
+2. Otherwise, an App whose name or slug matches the service is used.
+3. Otherwise, the request goes to the workspace's **Default app** (choose it in **Settings → Developer → Public keys**). Without an eligible default, the request is rejected. A missing or deleted default falls back to the oldest eligible App. A request without a service identity also goes to the default App.
 
-In **Settings → Developer → Public keys**, choose the **Default app**. An App marked `explicit_only` is excluded from implicit name matching and default fallback; use an existing service association or its App key to target it.
+Interfere never creates an App from telemetry. An App marked `explicit_only` is excluded from name matching and the default fallback; target it through an existing service association or its App key. App keys (formerly surface keys) are deprecated but still accepted, with no removal date announced. An App key stays bound to its App and skips this resolution.
 
-Name an App in the dashboard when creating it, or edit its title on the App page. Keep the SDK's `serviceName` stable: renaming the dashboard title does not change an existing service association. Open **Services** to find the service linked to an App before migrating keys. SDK requests use `serviceName` for `x-interfere-service`; a configured runtime `serviceNamespace` supplies the namespace header.
+Keep `serviceName` stable: renaming an App's dashboard title does not change an existing service association. Open **Services** to find the service linked to an App before migrating keys.
 
-Name the instrumented App in SDK code with `serviceName: "storefront"`, keeping browser initialization, the build plugin and server registration aligned. This is telemetry configuration, separate from the CLI's `--workspace` selection. Use `interfere keys public --help` and the operation's `--schema` to discover key commands.
+Name the service in SDK code with `serviceName: "storefront"`, keeping browser initialization, the build plugin and server registration aligned. This is telemetry configuration, separate from the CLI's `--workspace` selection. Use `interfere keys public --help` and the operation's `--schema` to discover key commands.
 
 ### Environment variables
 
