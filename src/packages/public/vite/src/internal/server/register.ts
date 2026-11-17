@@ -49,7 +49,11 @@ export async function register(opts: ServerInstrumentationOptions = {}) {
   await runtime.register(async () => {
     const env = readInterfereServerEnv();
 
-    const credential = serverCredential(env.apiKey, env.publicKey);
+    const credential = serverCredential(
+      env.apiKey,
+      env.releaseToken,
+      env.publicKey,
+    );
 
     if (!credential) {
       return null;

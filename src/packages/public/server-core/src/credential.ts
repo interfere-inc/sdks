@@ -1,12 +1,15 @@
 import { PUBLIC_KEY_HEADER } from "@interfere/constants/api";
+import { RELEASE_TOKEN_HEADER } from "@interfere/types/sdk/release/token";
 
 export type ServerCredential =
   | { readonly apiKey: string; readonly publicKey?: string }
+  | { readonly releaseToken: string; readonly publicKey?: string }
   | { readonly publicKey: string };
 
-/** Selects the server credential: the workspace API key, else the legacy public key alias. */
+/** Selects the server credential: the workspace API key, else the release token baked into the bundle, else the legacy public key alias. */
 export function serverCredential(
   apiKey: string | null,
+  releaseToken: string | null,
   publicKey: string | null,
 ) {
   if (apiKey) {
@@ -15,10 +18,25 @@ export function serverCredential(
     ) satisfies ServerCredential;
   }
 
+  if (releaseToken) {
+    return (
+      publicKey ? { releaseToken, publicKey } : { releaseToken }
+    ) satisfies ServerCredential;
+  }
+
   return publicKey ? ({ publicKey } satisfies ServerCredential) : null;
 }
 
 export function serverCredentialHeaders(credential: ServerCredential) {
+  if ("releaseToken" in credential) {
+    return credential.publicKey === undefined
+      ? { [RELEASE_TOKEN_HEADER]: credential.releaseToken }
+      : {
+          [RELEASE_TOKEN_HEADER]: credential.releaseToken,
+          [PUBLIC_KEY_HEADER]: credential.publicKey,
+        };
+  }
+
   if (!("apiKey" in credential)) {
     return { [PUBLIC_KEY_HEADER]: credential.publicKey };
   }

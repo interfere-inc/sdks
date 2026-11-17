@@ -9,11 +9,49 @@ let host: Awaited<ReturnType<typeof app.start>>;
 const cleanups: (() => Promise<void>)[] = [];
 
 const WORKSPACE_KEY = "interfere_secret_us_server_auth";
+const PUBLIC_KEY = "interfere_public_us_server_auth";
+
+const BUILD_ENV = {
+  INTERFERE_SOURCE_ID: "0123456789abcdef0123456789abcdef01234567",
+  INTERFERE_ENVIRONMENT: "preview",
+};
 
 function drainRequests() {
   return collector.requests.filter((request) =>
     request.url.startsWith("/drain/"),
   );
+}
+
+async function failOnNodeAndEdge(url: string) {
+  for (const path of ["/api/failure", "/api/edge-failure"]) {
+    // oxlint-disable-next-line eslint/no-await-in-loop -- Each route fails on its own runtime before export is checked.
+    const response = await fetch(url + path);
+
+    expect(response.status).toBe(500);
+
+    // oxlint-disable-next-line eslint/no-await-in-loop -- Consume each response before continuing.
+    await response.text();
+  }
+
+  await expect
+    .poll(
+      () =>
+        [
+          exceptions(drainRequests(), "next-route-error").length,
+          exceptions(drainRequests(), "next-edge-route-error").length,
+        ].every((count) => count > 0),
+      { timeout: 15_000 },
+    )
+    .toBe(true);
+
+  return {
+    node: drainRequests().filter(
+      (request) => exceptions([request], "next-route-error").length > 0,
+    ),
+    edge: drainRequests().filter(
+      (request) => exceptions([request], "next-edge-route-error").length > 0,
+    ),
+  };
 }
 
 beforeAll(async () => {
@@ -38,16 +76,14 @@ beforeAll(async () => {
 
   await app.copyFixture("server-auth");
 
-  const env = {
-    INTERFERE_API_URL: collector.url,
-    INTERFERE_SOURCE_ID: "0123456789abcdef0123456789abcdef01234567",
-    INTERFERE_ENVIRONMENT: "preview",
-  };
-
-  await app.buildNext(env, "turbopack");
+  await app.buildNext(
+    { ...BUILD_ENV, INTERFERE_API_URL: collector.url },
+    "turbopack",
+  );
 
   host = await app.start("serve.ts", {
-    ...env,
+    ...BUILD_ENV,
+    INTERFERE_API_URL: collector.url,
     INTERFERE_API_KEY: WORKSPACE_KEY,
     OTEL_BSP_SCHEDULE_DELAY: "250",
   });
@@ -65,34 +101,7 @@ afterAll(async () => {
 test("server runtimes on Node and Edge send telemetry with the workspace API key and no public key", async () => {
   expect.hasAssertions();
 
-  for (const path of ["/api/failure", "/api/edge-failure"]) {
-    // oxlint-disable-next-line eslint/no-await-in-loop -- Each route fails on its own runtime before export is checked.
-    const response = await fetch(host.url + path);
-
-    expect(response.status).toBe(500);
-
-    // oxlint-disable-next-line eslint/no-await-in-loop -- Consume each response before continuing.
-    await response.text();
-  }
-
-  await expect
-    .poll(
-      () =>
-        [
-          exceptions(drainRequests(), "next-route-error").length,
-          exceptions(drainRequests(), "next-edge-route-error").length,
-        ].every((count) => count > 0),
-      { timeout: 15_000 },
-    )
-    .toBe(true);
-
-  const node = drainRequests().filter(
-    (request) => exceptions([request], "next-route-error").length > 0,
-  );
-
-  const edge = drainRequests().filter(
-    (request) => exceptions([request], "next-edge-route-error").length > 0,
-  );
+  const { node, edge } = await failOnNodeAndEdge(host.url);
 
   expect(
     node.map((request) => request.headers.get("authorization")),
@@ -109,4 +118,30 @@ test("server runtimes on Node and Edge send telemetry with the workspace API key
         request.headers.has("x-interfere-public-key"),
     ),
   ).toStrictEqual([]);
+});
+
+test("with neither an API key nor a baked release token the Node and Edge server runtimes send the public key header", async () => {
+  expect.hasAssertions();
+
+  await host.close();
+
+  collector.reset();
+
+  host = await app.start("serve.ts", {
+    ...BUILD_ENV,
+    INTERFERE_API_URL: collector.url,
+    INTERFERE_PUBLIC_KEY: PUBLIC_KEY,
+    OTEL_BSP_SCHEDULE_DELAY: "250",
+  });
+
+  const { node, edge } = await failOnNodeAndEdge(host.url);
+
+  expect(
+    [...node, ...edge].map((request) => [
+      request.headers.get("x-interfere-public-key"),
+      request.headers.get("authorization"),
+      request.headers.get("x-api-key"),
+      request.headers.get("x-interfere-release-token"),
+    ]),
+  ).toStrictEqual([...node, ...edge].map(() => [PUBLIC_KEY, null, null, null]));
 });

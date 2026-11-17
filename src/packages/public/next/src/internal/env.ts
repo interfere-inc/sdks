@@ -2,6 +2,7 @@ import { API_URL } from "@interfere/constants/api";
 import { getStringGlobal } from "@interfere/react/util/global";
 import { parseEnvValue } from "@interfere/types/sdk/env";
 import { ENVIRONMENT_GLOBAL } from "@interfere/types/sdk/injected-globals";
+import { RELEASE_TOKEN_GLOBAL } from "@interfere/types/sdk/release/token";
 import { resolveEnvironment } from "@interfere/types/sdk/runtime";
 import { SERVICE_NAME_GLOBAL } from "@interfere/types/sdk/service-name";
 
@@ -13,6 +14,7 @@ interface InterfereEnv {
   readonly nextRuntime: string | null;
   readonly nodeEnvironment: string;
   readonly publicKey: string | null;
+  readonly releaseToken: string | null;
   readonly serviceName: string | null;
   readonly release: {
     readonly sourceId: string | null;
@@ -20,7 +22,7 @@ interface InterfereEnv {
   };
 }
 
-/** Enable server telemetry when a server credential (workspace API key or public key alias) is configured and the build has not disabled it. */
+/** Enable server telemetry when a server credential (workspace API key, baked release token or public key alias) is configured and the build has not disabled it. */
 export function isEnabledOnServer() {
   if (interfereDisabled()) {
     return false;
@@ -28,6 +30,7 @@ export function isEnabledOnServer() {
 
   return Boolean(
     parseEnvValue(process.env["INTERFERE_API_KEY"]) ??
+    bakedReleaseToken() ??
     parseEnvValue(process.env["INTERFERE_PUBLIC_KEY"]),
   );
 }
@@ -49,6 +52,7 @@ export function readInterfereEnv() {
     publicKey: interfereDisabled()
       ? null
       : parseEnvValue(process.env["INTERFERE_PUBLIC_KEY"]),
+    releaseToken: interfereDisabled() ? null : bakedReleaseToken(),
     release: {
       destinationId: parseEnvValue(
         process.env["NEXT_PUBLIC_INTERFERE_RELEASE_ID"],
@@ -56,4 +60,8 @@ export function readInterfereEnv() {
       sourceId: parseEnvValue(process.env["NEXT_PUBLIC_INTERFERE_BUILD_ID"]),
     },
   } satisfies InterfereEnv;
+}
+
+function bakedReleaseToken() {
+  return getStringGlobal(RELEASE_TOKEN_GLOBAL) || null;
 }

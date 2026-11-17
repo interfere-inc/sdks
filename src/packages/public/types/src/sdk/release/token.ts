@@ -4,3 +4,5 @@
  * and starts without a public key when it is present.
  */
 export const RELEASE_TOKEN_GLOBAL = "__INTERFERE_RELEASE_TOKEN__";
+
+export const RELEASE_TOKEN_HEADER = "x-interfere-release-token";

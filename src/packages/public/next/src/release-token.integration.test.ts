@@ -68,6 +68,8 @@ beforeAll(async () => {
 
   await app.copyFixture("acceptance");
 
+  await app.copyFixture("server-auth");
+
   const env = {
     INTERFERE_API_URL: collector.url,
     INTERFERE_SOURCE_ID: "0123456789abcdef0123456789abcdef01234567",
@@ -154,4 +156,44 @@ test("the build bakes its SDK config with the release token it registered", () =
 
   expect(configs[0]?.headers.get("x-interfere-release-token")).toBe(TOKEN);
   expect(configs[0]?.headers.get("x-interfere-public-key")).toBeNull();
+});
+
+test("without INTERFERE_API_KEY the Node and Edge server runtimes send telemetry with the baked release token", async () => {
+  expect.hasAssertions();
+
+  for (const path of ["/api/failure", "/api/edge-failure"]) {
+    // oxlint-disable-next-line eslint/no-await-in-loop -- Each route fails on its own runtime before export is checked.
+    const response = await fetch(host.url + path);
+
+    expect(response.status).toBe(500);
+
+    // oxlint-disable-next-line eslint/no-await-in-loop -- Consume each response before continuing.
+    await response.text();
+  }
+
+  await expect
+    .poll(
+      () =>
+        [
+          exceptions(drainRequests(), "next-route-error").length,
+          exceptions(drainRequests(), "next-edge-route-error").length,
+        ].every((count) => count > 0),
+      { timeout: 15_000 },
+    )
+    .toBe(true);
+
+  const server = drainRequests().filter(
+    (request) =>
+      exceptions([request], "next-route-error").length > 0 ||
+      exceptions([request], "next-edge-route-error").length > 0,
+  );
+
+  expect(
+    server.map((request) => [
+      request.headers.get("x-interfere-release-token"),
+      request.headers.get("authorization"),
+      request.headers.get("x-api-key"),
+      request.headers.get("x-interfere-public-key"),
+    ]),
+  ).toStrictEqual(server.map(() => [TOKEN, null, null, null]));
 });

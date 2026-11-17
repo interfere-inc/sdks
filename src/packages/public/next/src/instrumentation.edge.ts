@@ -36,6 +36,7 @@ import {
 } from "@interfere/server-core/ownership";
 import { PRODUCER_VERSION } from "./internal/version.js";
 import { serverCredential } from "@interfere/server-core/credential";
+import type { ServerCredential } from "@interfere/server-core/credential";
 import { PUBLIC_KEY_HEADER } from "@interfere/constants/api";
 
 export { onRequestError } from "./internal/server/capture/capture.js";
@@ -45,6 +46,18 @@ export { correlationSpanProcessor } from "@interfere/types/sdk/correlation-span-
 export type { ServerInstrumentationOptions } from "./internal/server/instrumentation-options.js";
 
 let registered = false;
+
+function edgeExportCredential(credential: ServerCredential) {
+  if ("apiKey" in credential) {
+    return { workspaceTelemetryKeyHeader: { apiKey: credential.apiKey } };
+  }
+
+  if ("releaseToken" in credential) {
+    return { releaseTokenHeader: { apiKey: credential.releaseToken } };
+  }
+
+  return { publicKeyHeader: { apiKey: credential.publicKey } };
+}
 
 /**
  * Edge-runtime bootstrap for `@interfere/next/instrumentation`. Selected by
@@ -76,7 +89,12 @@ function start(opts: ServerInstrumentationOptions) {
   }
 
   const env = readInterfereEnv();
-  const credential = serverCredential(env.apiKey, env.publicKey);
+
+  const credential = serverCredential(
+    env.apiKey,
+    env.releaseToken,
+    env.publicKey,
+  );
 
   if (!credential) {
     return;
@@ -125,13 +143,13 @@ function start(opts: ServerInstrumentationOptions) {
         new SimpleSpanProcessor(
           new FetchTraceExporter({
             baseUrl: env.apiUrl,
-            ...("apiKey" in credential
-              ? { workspaceTelemetryKeyHeader: { apiKey: credential.apiKey } }
-              : { publicKeyHeader: { apiKey: credential.publicKey } }),
+            ...edgeExportCredential(credential),
             headers: omitUndefined({
               "x-interfere-producer-version": PRODUCER_VERSION,
               [PUBLIC_KEY_HEADER]:
-                "apiKey" in credential ? credential.publicKey : undefined,
+                "apiKey" in credential || "releaseToken" in credential
+                  ? credential.publicKey
+                  : undefined,
             }),
           }),
         ),

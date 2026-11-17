@@ -10,14 +10,15 @@ interface InterfereServerEnv {
   readonly apiUrl: string;
   readonly nodeEnvironment: string;
   readonly publicKey: string | null;
+  readonly releaseToken: string | null;
 }
 
 /**
  * Server-side gate for the `captureError` / `onRequestError` helpers, request
  * tracing and the OTel register path. Server telemetry authenticates with the
  * workspace API key (`INTERFERE_API_KEY`, `org:telemetry:write`), read from the
- * runtime environment and never baked into a bundle, else with the public key
- * alias. Collector ingress remains the authority on whether local / unknown /
+ * runtime environment and never baked into a bundle, else with the release token
+ * the build baked into the bundle, else with the public key alias. Collector ingress remains the authority on whether local / unknown /
  * production events are allowed.
  */
 export function isEnabledOnServer() {
@@ -29,7 +30,11 @@ export function isEnabledOnServer() {
     return true;
   }
 
-  return readApiKey() !== null || readPublicKey() !== null;
+  return (
+    readApiKey() !== null ||
+    readReleaseToken() !== null ||
+    readPublicKey() !== null
+  );
 }
 
 export function readInterfereServerEnv() {
@@ -46,11 +51,16 @@ export function readInterfereServerEnv() {
     apiUrl: parseEnvValue(readProcessEnv()?.["INTERFERE_API_URL"]) ?? API_URL,
     nodeEnvironment,
     publicKey: disabled ? null : readPublicKey(),
+    releaseToken: disabled ? null : readReleaseToken(),
   } satisfies InterfereServerEnv;
 }
 
 function readApiKey() {
   return parseEnvValue(readProcessEnv()?.["INTERFERE_API_KEY"]);
+}
+
+function readReleaseToken() {
+  return import.meta.env.VITE_INTERFERE_RELEASE_TOKEN || null;
 }
 
 function readPublicKey() {

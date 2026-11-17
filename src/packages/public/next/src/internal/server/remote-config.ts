@@ -1,24 +1,19 @@
 import { InterfereClient } from "@interfere/javascript";
 import { remoteConfigInputSchema } from "@interfere/types/sdk/remote-config";
 import type { RemotePluginConfig } from "@interfere/types/sdk/remote-config";
-import { getStringGlobal } from "@interfere/react/util/global";
 import { readBakedPlugins } from "@interfere/types/sdk/remote-config/plugins";
-import { RELEASE_TOKEN_GLOBAL } from "@interfere/types/sdk/release/token";
 
 import { isEnabledOnServer, readInterfereEnv } from "../env.js";
 
 let cachedConfig: RemotePluginConfig | null = null;
 
-function bakedReleaseToken() {
-  return getStringGlobal(RELEASE_TOKEN_GLOBAL) || null;
-}
-
-function serverCredential(publicKey: string | null) {
+function serverCredential(
+  publicKey: string | null,
+  releaseToken: string | null,
+) {
   if (publicKey) {
     return { publicKeyHeader: { apiKey: publicKey } };
   }
-
-  const releaseToken = bakedReleaseToken();
 
   return releaseToken ? { releaseTokenHeader: { apiKey: releaseToken } } : null;
 }
@@ -37,7 +32,7 @@ export async function fetchAndCacheRemoteConfig(service?: {
 
   const env = readInterfereEnv();
 
-  const credential = serverCredential(env.publicKey);
+  const credential = serverCredential(env.publicKey, env.releaseToken);
 
   if (credential === null) {
     return;

@@ -43,7 +43,12 @@ export async function register(opts: ServerInstrumentationOptions = {}) {
 
     const env = readInterfereEnv();
     const tracing = readServerTracing();
-    const credential = serverCredential(env.apiKey, env.publicKey);
+
+    const credential = serverCredential(
+      env.apiKey,
+      env.releaseToken,
+      env.publicKey,
+    );
 
     if (
       !credential ||
