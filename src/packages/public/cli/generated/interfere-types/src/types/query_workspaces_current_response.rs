@@ -40,6 +40,9 @@ pub struct QueryWorkspacesCurrentResponse {
     #[serde(rename = "enabledAuthMethods")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub enabled_auth_methods: Option<Vec<QueryWorkspacesCurrentResponseEnabledAuthMethodsItem>>,
+    #[serde(rename = "environmentFiltering")]
+    #[serde(default)]
+    pub environment_filtering: bool,
     #[serde(default)]
     pub id: String,
     #[serde(rename = "imageUrl")]
@@ -102,6 +105,7 @@ pub struct QueryWorkspacesCurrentResponseBuilder {
     demo_reset_status: Option<QueryWorkspacesCurrentResponseDemoResetStatus>,
     demo_workspace: Option<bool>,
     enabled_auth_methods: Option<Vec<QueryWorkspacesCurrentResponseEnabledAuthMethodsItem>>,
+    environment_filtering: Option<bool>,
     id: Option<String>,
     image_url: Option<String>,
     impersonation_expires_at: Option<f64>,
@@ -169,6 +173,11 @@ impl QueryWorkspacesCurrentResponseBuilder {
 
     pub fn enabled_auth_methods(mut self, value: Vec<QueryWorkspacesCurrentResponseEnabledAuthMethodsItem>) -> Self {
         self.enabled_auth_methods = Some(value);
+        self
+    }
+
+    pub fn environment_filtering(mut self, value: bool) -> Self {
+        self.environment_filtering = Some(value);
         self
     }
 
@@ -240,6 +249,7 @@ impl QueryWorkspacesCurrentResponseBuilder {
     /// - [`clerk_org_id`](QueryWorkspacesCurrentResponseBuilder::clerk_org_id)
     /// - [`data_residency_location`](QueryWorkspacesCurrentResponseBuilder::data_residency_location)
     /// - [`demo_workspace`](QueryWorkspacesCurrentResponseBuilder::demo_workspace)
+    /// - [`environment_filtering`](QueryWorkspacesCurrentResponseBuilder::environment_filtering)
     /// - [`id`](QueryWorkspacesCurrentResponseBuilder::id)
     /// - [`image_url`](QueryWorkspacesCurrentResponseBuilder::image_url)
     /// - [`impersonation_granted`](QueryWorkspacesCurrentResponseBuilder::impersonation_granted)
@@ -261,6 +271,7 @@ impl QueryWorkspacesCurrentResponseBuilder {
             demo_reset_status: self.demo_reset_status,
             demo_workspace: self.demo_workspace.ok_or_else(|| BuildError::missing_field("demo_workspace"))?,
             enabled_auth_methods: self.enabled_auth_methods,
+            environment_filtering: self.environment_filtering.ok_or_else(|| BuildError::missing_field("environment_filtering"))?,
             id: self.id.ok_or_else(|| BuildError::missing_field("id"))?,
             image_url: self.image_url.ok_or_else(|| BuildError::missing_field("image_url"))?,
             impersonation_expires_at: self.impersonation_expires_at,

@@ -32180,6 +32180,9 @@
                         }
                       ]
                     },
+                    "environmentFiltering": {
+                      "type": "boolean"
+                    },
                     "id": {
                       "type": "string",
                       "format": "uuid"
@@ -32270,6 +32273,7 @@
                     "demoResetStatus",
                     "demoWorkspace",
                     "enabledAuthMethods",
+                    "environmentFiltering",
                     "id",
                     "imageUrl",
                     "impersonationExpiresAt",
@@ -32689,6 +32693,9 @@
                         }
                       ]
                     },
+                    "environmentFiltering": {
+                      "type": "boolean"
+                    },
                     "id": {
                       "type": "string",
                       "format": "uuid"
@@ -32779,6 +32786,7 @@
                     "demoResetStatus",
                     "demoWorkspace",
                     "enabledAuthMethods",
+                    "environmentFiltering",
                     "id",
                     "imageUrl",
                     "impersonationExpiresAt",
@@ -33333,6 +33341,9 @@
                         }
                       ]
                     },
+                    "environmentFiltering": {
+                      "type": "boolean"
+                    },
                     "id": {
                       "type": "string",
                       "format": "uuid"
@@ -33423,6 +33434,7 @@
                     "demoResetStatus",
                     "demoWorkspace",
                     "enabledAuthMethods",
+                    "environmentFiltering",
                     "id",
                     "imageUrl",
                     "impersonationExpiresAt",
@@ -33907,6 +33919,9 @@
               }
             ]
           },
+          "environmentFiltering": {
+            "type": "boolean"
+          },
           "id": {
             "type": "string",
             "format": "uuid"
@@ -33997,6 +34012,7 @@
           "demoResetStatus",
           "demoWorkspace",
           "enabledAuthMethods",
+          "environmentFiltering",
           "id",
           "imageUrl",
           "impersonationExpiresAt",

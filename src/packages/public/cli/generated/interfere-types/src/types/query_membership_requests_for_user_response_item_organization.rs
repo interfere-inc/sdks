@@ -40,6 +40,9 @@ pub struct QueryMembershipRequestsForUserResponseItemOrganization {
     #[serde(rename = "enabledAuthMethods")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub enabled_auth_methods: Option<Vec<QueryMembershipRequestsForUserResponseItemOrganizationEnabledAuthMethodsItem>>,
+    #[serde(rename = "environmentFiltering")]
+    #[serde(default)]
+    pub environment_filtering: bool,
     #[serde(default)]
     pub id: String,
     #[serde(rename = "imageUrl")]
@@ -102,6 +105,7 @@ pub struct QueryMembershipRequestsForUserResponseItemOrganizationBuilder {
     demo_reset_status: Option<QueryMembershipRequestsForUserResponseItemOrganizationDemoResetStatus>,
     demo_workspace: Option<bool>,
     enabled_auth_methods: Option<Vec<QueryMembershipRequestsForUserResponseItemOrganizationEnabledAuthMethodsItem>>,
+    environment_filtering: Option<bool>,
     id: Option<String>,
     image_url: Option<String>,
     impersonation_expires_at: Option<f64>,
@@ -169,6 +173,11 @@ impl QueryMembershipRequestsForUserResponseItemOrganizationBuilder {
 
     pub fn enabled_auth_methods(mut self, value: Vec<QueryMembershipRequestsForUserResponseItemOrganizationEnabledAuthMethodsItem>) -> Self {
         self.enabled_auth_methods = Some(value);
+        self
+    }
+
+    pub fn environment_filtering(mut self, value: bool) -> Self {
+        self.environment_filtering = Some(value);
         self
     }
 
@@ -240,6 +249,7 @@ impl QueryMembershipRequestsForUserResponseItemOrganizationBuilder {
     /// - [`clerk_org_id`](QueryMembershipRequestsForUserResponseItemOrganizationBuilder::clerk_org_id)
     /// - [`data_residency_location`](QueryMembershipRequestsForUserResponseItemOrganizationBuilder::data_residency_location)
     /// - [`demo_workspace`](QueryMembershipRequestsForUserResponseItemOrganizationBuilder::demo_workspace)
+    /// - [`environment_filtering`](QueryMembershipRequestsForUserResponseItemOrganizationBuilder::environment_filtering)
     /// - [`id`](QueryMembershipRequestsForUserResponseItemOrganizationBuilder::id)
     /// - [`image_url`](QueryMembershipRequestsForUserResponseItemOrganizationBuilder::image_url)
     /// - [`impersonation_granted`](QueryMembershipRequestsForUserResponseItemOrganizationBuilder::impersonation_granted)
@@ -261,6 +271,7 @@ impl QueryMembershipRequestsForUserResponseItemOrganizationBuilder {
             demo_reset_status: self.demo_reset_status,
             demo_workspace: self.demo_workspace.ok_or_else(|| BuildError::missing_field("demo_workspace"))?,
             enabled_auth_methods: self.enabled_auth_methods,
+            environment_filtering: self.environment_filtering.ok_or_else(|| BuildError::missing_field("environment_filtering"))?,
             id: self.id.ok_or_else(|| BuildError::missing_field("id"))?,
             image_url: self.image_url.ok_or_else(|| BuildError::missing_field("image_url"))?,
             impersonation_expires_at: self.impersonation_expires_at,
