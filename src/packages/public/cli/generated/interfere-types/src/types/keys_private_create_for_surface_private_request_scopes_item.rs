@@ -36,7 +36,6 @@ pub enum CreateForSurfacePrivateRequestScopesItem {
     OrgWorkspaceDestroy,
     OrgWorkspaceTransferOwnership,
     ReleaseWrite,
-    IngestWrite,
     /// This variant is used for forward compatibility.
     /// If the server sends a value not recognized by the current SDK version,
     /// it will be captured here with the raw string value.
@@ -76,7 +75,6 @@ impl Serialize for CreateForSurfacePrivateRequestScopesItem {
             Self::OrgWorkspaceDestroy => serializer.serialize_str("org:workspace:destroy"),
             Self::OrgWorkspaceTransferOwnership => serializer.serialize_str("org:workspace:transfer_ownership"),
             Self::ReleaseWrite => serializer.serialize_str("release:write"),
-            Self::IngestWrite => serializer.serialize_str("ingest:write"),
             Self::__Unknown(val) => serializer.serialize_str(val),
         }
     }
@@ -117,7 +115,6 @@ impl<'de> Deserialize<'de> for CreateForSurfacePrivateRequestScopesItem {
             "org:workspace:destroy" => Ok(Self::OrgWorkspaceDestroy),
             "org:workspace:transfer_ownership" => Ok(Self::OrgWorkspaceTransferOwnership),
             "release:write" => Ok(Self::ReleaseWrite),
-            "ingest:write" => Ok(Self::IngestWrite),
             _ => Ok(Self::__Unknown(value)),
         }
     }
@@ -157,7 +154,6 @@ impl fmt::Display for CreateForSurfacePrivateRequestScopesItem {
             Self::OrgWorkspaceDestroy => write!(f, "org:workspace:destroy"),
             Self::OrgWorkspaceTransferOwnership => write!(f, "org:workspace:transfer_ownership"),
             Self::ReleaseWrite => write!(f, "release:write"),
-            Self::IngestWrite => write!(f, "ingest:write"),
             Self::__Unknown(val) => write!(f, "{}", val),
         }
     }

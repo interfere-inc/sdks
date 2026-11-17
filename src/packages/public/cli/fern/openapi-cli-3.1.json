@@ -76369,8 +76369,7 @@
                         "org:workspace_auth:write",
                         "org:workspace:destroy",
                         "org:workspace:transfer_ownership",
-                        "release:write",
-                        "ingest:write"
+                        "release:write"
                       ],
                       "type": "string"
                     },
@@ -83577,8 +83576,7 @@
                         "org:workspace_auth:write",
                         "org:workspace:destroy",
                         "org:workspace:transfer_ownership",
-                        "release:write",
-                        "ingest:write"
+                        "release:write"
                       ],
                       "type": "string"
                     },
@@ -83866,8 +83864,7 @@
                             "org:workspace_auth:write",
                             "org:workspace:destroy",
                             "org:workspace:transfer_ownership",
-                            "release:write",
-                            "ingest:write"
+                            "release:write"
                           ],
                           "type": "string"
                         },
