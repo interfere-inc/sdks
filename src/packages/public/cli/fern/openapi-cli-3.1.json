@@ -229,7 +229,7 @@
         "type": "apiKey"
       },
       "apiKey": {
-        "description": "Build-time secret key, as issued in the Interfere dashboard. Workspace secret keys also need the target App's public key (or a workspace public key with SDK service headers when workspace-key routing is enabled) in the `x-interfere-public-key` header; legacy surface secret keys don't.",
+        "description": "Build-time secret key, as issued in the Interfere dashboard. Workspace secret keys also name the service the build publishes for in the `x-interfere-service` header (with `x-interfere-service-namespace` when it has one), or send the target App's public key in the `x-interfere-public-key` header; legacy surface secret keys need neither.",
         "scheme": "bearer",
         "type": "http"
       },

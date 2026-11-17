@@ -33,6 +33,7 @@ describe(classifyReleasePipelineError, () => {
     ["AUTH_AK_SCOPE_MISMATCH", "API_KEY_SCOPE_MISMATCH"],
     ["AUTH_AK_SURFACE_REQUIRED", "API_KEY_SURFACE_REQUIRED"],
     ["NETWORK_ACCESS_DENIED", "API_KEY_NETWORK_DENIED"],
+    ["RELEASE_SERVICE_REQUIRED", "API_KEY_SURFACE_REQUIRED"],
   ] as const)("maps %s to %s", (code, expected) => {
     expect(
       classifyReleasePipelineError({ body: { code }, statusCode: 401 }),
@@ -144,10 +145,7 @@ describe(diagnoseRelease, () => {
     ["AUTH_MISSING", "Secret key could not be read"],
     ["AUTH_AK_INVALID", "Secret key rejected by server"],
     ["AUTH_AK_SCOPE_MISMATCH", "Secret key missing release scope"],
-    [
-      "AUTH_AK_SURFACE_REQUIRED",
-      "Public key needed for a workspace secret key",
-    ],
+    ["AUTH_AK_SURFACE_REQUIRED", "Service needed for a workspace secret key"],
     ["NETWORK_ACCESS_DENIED", "Build machine blocked by network policy"],
   ])("reports %s as a non-fatal error", (code, title) => {
     const diagnostic = diagnoseRelease(VITE_CONTEXT, { body: { code } });

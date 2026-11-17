@@ -1473,10 +1473,7 @@ describe("interfere vite plugin", () => {
       ["AUTH_MISSING", "Secret key could not be read"],
       ["AUTH_AK_INVALID", "Secret key rejected by server"],
       ["AUTH_AK_SCOPE_MISMATCH", "Secret key missing release scope"],
-      [
-        "AUTH_AK_SURFACE_REQUIRED",
-        "Public key needed for a workspace secret key",
-      ],
+      ["AUTH_AK_SURFACE_REQUIRED", "Service needed for a workspace secret key"],
     ] as const)(
       "logs an error and continues the build for %s release pipeline responses",
       async (code, expectedMessage) => {

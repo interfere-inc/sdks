@@ -145,10 +145,10 @@ const CATALOG: Record<
   API_KEY_SURFACE_REQUIRED: (ctx) => ({
     code: "API_KEY_SURFACE_REQUIRED",
     severity: "error",
-    title: "Public key needed for a workspace secret key",
+    title: "Service needed for a workspace secret key",
     details: [
-      "INTERFERE_API_KEY is a workspace secret key, so the build must also name the app it publishes for.",
-      `Set \`${ctx.publicKeyEnvVar}\` to this app's public key on the build machine.`,
+      "INTERFERE_API_KEY is a workspace secret key, so the build must name a service that is linked to an App in Interfere.",
+      `Set \`serviceName\` (or \`OTEL_SERVICE_NAME\`) to that service, or link this service to an App. Setting \`${ctx.publicKeyEnvVar}\` to the App's public key also works.`,
       BUILD_CONTINUES,
     ],
   }),
@@ -184,6 +184,7 @@ const API_CODE_TO_DIAGNOSTIC = new Map(
     AUTH_AK_SURFACE_REQUIRED: "API_KEY_SURFACE_REQUIRED",
     AUTH_MISSING: "API_KEY_UNREADABLE",
     NETWORK_ACCESS_DENIED: "API_KEY_NETWORK_DENIED",
+    RELEASE_SERVICE_REQUIRED: "API_KEY_SURFACE_REQUIRED",
   } satisfies Record<string, ReleaseDiagnosticCode>),
 );
 

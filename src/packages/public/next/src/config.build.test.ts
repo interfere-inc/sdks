@@ -267,7 +267,7 @@ describe("withInterfere build pipeline", () => {
     [
       "AUTH_AK_SURFACE_REQUIRED",
       401,
-      "Public key needed for a workspace secret key",
+      "Service needed for a workspace secret key",
       "api_key_surface_required",
     ],
   ] as const)(
