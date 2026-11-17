@@ -38953,6 +38953,16 @@
                                             }
                                           ]
                                         },
+                                        "revokedAt": {
+                                          "anyOf": [
+                                            {
+                                              "type": "number"
+                                            },
+                                            {
+                                              "type": "null"
+                                            }
+                                          ]
+                                        },
                                         "createdAt": {
                                           "type": "number"
                                         },
@@ -38986,6 +38996,7 @@
                                         "sourceFileCount",
                                         "sourceMapCount",
                                         "deployedAt",
+                                        "revokedAt",
                                         "createdAt",
                                         "deletedAt",
                                         "updatedAt"
@@ -44569,6 +44580,16 @@
                                               }
                                             ]
                                           },
+                                          "revokedAt": {
+                                            "anyOf": [
+                                              {
+                                                "type": "number"
+                                              },
+                                              {
+                                                "type": "null"
+                                              }
+                                            ]
+                                          },
                                           "createdAt": {
                                             "type": "number"
                                           },
@@ -44602,6 +44623,7 @@
                                           "sourceFileCount",
                                           "sourceMapCount",
                                           "deployedAt",
+                                          "revokedAt",
                                           "createdAt",
                                           "deletedAt",
                                           "updatedAt"
@@ -47854,6 +47876,16 @@
                 }
               ]
             },
+            "revokedAt": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "createdAt": {
               "type": "number"
             },
@@ -48469,6 +48501,7 @@
             "sourceFileCount",
             "sourceMapCount",
             "deployedAt",
+            "revokedAt",
             "createdAt",
             "deletedAt",
             "updatedAt",
@@ -49108,6 +49141,16 @@
                   }
                 ]
               },
+              "revokedAt": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
               "createdAt": {
                 "type": "number"
               },
@@ -49723,6 +49766,7 @@
               "sourceFileCount",
               "sourceMapCount",
               "deployedAt",
+              "revokedAt",
               "createdAt",
               "deletedAt",
               "updatedAt",
@@ -50366,6 +50410,16 @@
                 }
               ]
             },
+            "revokedAt": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "createdAt": {
               "type": "number"
             },
@@ -50981,6 +51035,7 @@
             "sourceFileCount",
             "sourceMapCount",
             "deployedAt",
+            "revokedAt",
             "createdAt",
             "deletedAt",
             "updatedAt",

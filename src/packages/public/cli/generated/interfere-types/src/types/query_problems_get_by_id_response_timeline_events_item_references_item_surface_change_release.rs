@@ -46,6 +46,11 @@ pub struct QueryProblemsGetByIdResponseTimelineEventsItemReferencesItemSurfaceCh
     #[serde(default)]
     #[serde(with = "crate::core::number_serializers::option")]
     pub deployed_at: Option<f64>,
+    #[serde(rename = "revokedAt")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
+    #[serde(with = "crate::core::number_serializers::option")]
+    pub revoked_at: Option<f64>,
     #[serde(rename = "createdAt")]
     #[serde(default)]
     #[serde(with = "crate::core::number_serializers")]
@@ -85,6 +90,7 @@ pub struct QueryProblemsGetByIdResponseTimelineEventsItemReferencesItemSurfaceCh
     source_file_count: Option<i64>,
     source_map_count: Option<i64>,
     deployed_at: Option<f64>,
+    revoked_at: Option<f64>,
     created_at: Option<f64>,
     deleted_at: Option<f64>,
     updated_at: Option<f64>,
@@ -166,6 +172,11 @@ impl QueryProblemsGetByIdResponseTimelineEventsItemReferencesItemSurfaceChangeRe
         self
     }
 
+    pub fn revoked_at(mut self, value: f64) -> Self {
+        self.revoked_at = Some(value);
+        self
+    }
+
     pub fn created_at(mut self, value: f64) -> Self {
         self.created_at = Some(value);
         self
@@ -207,6 +218,7 @@ impl QueryProblemsGetByIdResponseTimelineEventsItemReferencesItemSurfaceChangeRe
             source_file_count: self.source_file_count,
             source_map_count: self.source_map_count,
             deployed_at: self.deployed_at,
+            revoked_at: self.revoked_at,
             created_at: self.created_at.ok_or_else(|| BuildError::missing_field("created_at"))?,
             deleted_at: self.deleted_at,
             updated_at: self.updated_at.ok_or_else(|| BuildError::missing_field("updated_at"))?,
