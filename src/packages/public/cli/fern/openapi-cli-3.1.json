@@ -1971,7 +1971,10 @@
         "type": "object",
         "properties": {
           "surface": {
-            "type": "object",
+            "type": [
+              "object",
+              "null"
+            ],
             "properties": {
               "id": {
                 "type": "string",
@@ -2076,7 +2079,7 @@
           "surface",
           "org"
         ],
-        "description": "Surface and organization a build-time API key resolves to, with the source provider collapsed to the family the build tooling understands."
+        "description": "Surface and organization a build-time API key resolves to, with the source provider collapsed to the family the build tooling understands. The surface is null when a workspace secret key builds for a service that has no App."
       },
       "ConfiguredSourceProvider": {
         "type": [

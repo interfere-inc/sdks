@@ -208,6 +208,7 @@ async function publishRelease(
     producerVersion: PRODUCER_VERSION,
     releaseSlug,
     releasesConfig,
+    service: state.serviceName ? { name: state.serviceName } : undefined,
     registeredRelease: state.registeredRelease,
     capturePublication: state.receipt !== undefined,
     uploadSourceMaps: state.uploadSourceMaps,

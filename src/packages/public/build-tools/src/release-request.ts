@@ -47,7 +47,7 @@ function buildEnvironmentProvider() {
 
 function destinationProvider(config: Interfere.ReleasesConfigResponse | null) {
   const configured = releaseDestinationProviderSchema.safeParse(
-    config?.surface.destinationProvider,
+    config?.surface?.destinationProvider,
   );
 
   return configured.success ? configured.data : buildEnvironmentProvider();
@@ -60,6 +60,7 @@ export function resolveReleaseRequest(input: {
   releaseSlug: ReleaseSlug;
   producerVersion: string;
   config: Interfere.ReleasesConfigResponse | null;
+  service?: CreateReleaseRequest["service"];
 }) {
   const destinations = {
     // oxlint-disable-next-line node/no-process-env
@@ -75,6 +76,7 @@ export function resolveReleaseRequest(input: {
       input.environment,
     ),
     producerVersion: input.producerVersion,
+    service: input.service,
     slug: input.releaseSlug,
     // oxlint-disable-next-line node/no-process-env
     source: resolveGithubReleaseSource(process.env, git),

@@ -163,6 +163,7 @@ export async function releaseBuildOutput(options: ReleaseBuildOutputOptions) {
       producerVersion: PRODUCER_VERSION,
       releaseSlug,
       releasesConfig,
+      service: build.serviceName ? { name: build.serviceName } : undefined,
       uploadSourceMaps: true,
     });
   };

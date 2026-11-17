@@ -74,6 +74,7 @@ beforeAll(async () => {
     INTERFERE_API_URL: collector.url,
     INTERFERE_SOURCE_ID: "0123456789abcdef0123456789abcdef01234567",
     INTERFERE_ENVIRONMENT: "preview",
+    OTEL_SERVICE_NAME: "keyless-next",
   };
 
   await app.buildNext(
@@ -196,4 +197,19 @@ test("without INTERFERE_API_KEY the Node and Edge server runtimes send telemetry
       request.headers.get("x-interfere-public-key"),
     ]),
   ).toStrictEqual(server.map(() => [TOKEN, null, null, null]));
+});
+
+test("the key-only build registers its service in the release body", () => {
+  const registrations = buildRequests.filter(
+    (request) =>
+      request.method === "POST" &&
+      new URL(request.url, "http://receiver").pathname === "/v3/releases",
+  );
+
+  expect(registrations).toHaveLength(1);
+  expect(registrations[0]?.headers.get("x-interfere-public-key")).toBeNull();
+
+  expect(JSON.parse(registrations[0]?.body ?? "{}")).toMatchObject({
+    service: { name: "keyless-next" },
+  });
 });

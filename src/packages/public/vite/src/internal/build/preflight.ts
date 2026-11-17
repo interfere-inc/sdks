@@ -32,7 +32,7 @@ export function inferredServiceNameWarning(
   serviceName: string | undefined,
   explicitName: string | undefined,
 ) {
-  const surfaceSlug = config?.surface.slug;
+  const surfaceSlug = config?.surface?.slug;
 
   if (
     explicitName ||

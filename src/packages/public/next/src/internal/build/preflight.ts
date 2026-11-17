@@ -103,6 +103,7 @@ async function registerRelease(
     environment: config.environment,
     producerVersion: PRODUCER_VERSION,
     releaseSlug: config.releaseSlug,
+    service: config.serviceName ? { name: config.serviceName } : undefined,
   });
 
   try {
@@ -135,7 +136,7 @@ function preflightBuild(config: ResolvedBuildConfig) {
         )
       : undefined,
   ]).then(async ([releaseConfig, publicKeyConfig]) => {
-    const surfaceSlug = releaseConfig?.surface.slug;
+    const surfaceSlug = releaseConfig?.surface?.slug;
 
     if (
       config.serviceNameInferred &&

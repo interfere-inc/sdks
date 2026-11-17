@@ -23,6 +23,7 @@ export async function registerBuildRelease(input: {
     environment: input.environment,
     producerVersion: PRODUCER_VERSION,
     releaseSlug: input.releaseSlug,
+    service: input.serviceName ? { name: input.serviceName } : undefined,
   });
 
   const client = new InterfereClient({

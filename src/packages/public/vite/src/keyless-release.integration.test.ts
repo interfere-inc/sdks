@@ -59,6 +59,7 @@ beforeAll(async () => {
     ACCEPTANCE_INGEST_URL: collector.url,
     INTERFERE_ENVIRONMENT: "preview",
     INTERFERE_SOURCE_ID: "0123456789abcdef0123456789abcdef01234567",
+    OTEL_SERVICE_NAME: "keyless-web",
   });
 }, 120_000);
 
@@ -82,6 +83,7 @@ test("a build whose workspace secret has no App config still registers its relea
   expect(JSON.parse(registrations[0]?.body ?? "{}")).toMatchObject({
     buildId: "0123456789abcdef0123456789abcdef01234567",
     destination: { environment: "preview", provider: "cli" },
+    service: { name: "keyless-web" },
   });
 
   const assets = join(app.root, "dist", "assets");

@@ -34,8 +34,13 @@ describe("resolveReleaseRequest", () => {
           null,
           releaseSlug,
           config({ [provider]: null }),
+          { name: "website", namespace: "shop" },
         ),
-      ).toMatchObject({ buildId: "build_123", slug: releaseSlug });
+      ).toMatchObject({
+        buildId: "build_123",
+        slug: releaseSlug,
+        service: { name: "website", namespace: "shop" },
+      });
     },
   );
 });

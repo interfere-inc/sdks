@@ -139,6 +139,7 @@ test("uploads the canonical release and cleans its artifacts", async () => {
       producerVersion: "@interfere/vite@11.2.1",
       uploadSourceMaps: true,
       releaseSlug: slug,
+      service: { name: "web", namespace: "shop" },
       releasesConfig: {
         org: { id: "org", slug: "acme" },
         surface: {
@@ -163,6 +164,10 @@ test("uploads the canonical release and cleans its artifacts", async () => {
     expect(
       registrations.map((call) => new URL(call.url).pathname),
     ).toStrictEqual(["/v3/releases"]);
+
+    await expect(registrations[0]?.json()).resolves.toMatchObject({
+      service: { name: "web", namespace: "shop" },
+    });
 
     await expect(access(absolute)).rejects.toMatchObject({ code: "ENOENT" });
 

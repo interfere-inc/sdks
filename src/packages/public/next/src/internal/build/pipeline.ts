@@ -97,6 +97,7 @@ export async function runBuildPipeline(
         (metadata.registeredRelease
           ? null
           : await preflightReleaseBinding(client)),
+      metadata.serviceName ? { name: metadata.serviceName } : undefined,
     );
 
     if (metadata.uploadSourceMaps && files.length === 0) {

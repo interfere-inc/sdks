@@ -9,6 +9,7 @@ export function resolveReleaseRequest(
   environment: string | null,
   releaseSlug: ReleaseSlug,
   config: Parameters<typeof resolve>[0]["config"],
+  service?: Parameters<typeof resolve>[0]["service"],
 ) {
   return resolve({
     buildId,
@@ -16,5 +17,6 @@ export function resolveReleaseRequest(
     environment,
     producerVersion: PRODUCER_VERSION,
     releaseSlug,
+    service,
   });
 }

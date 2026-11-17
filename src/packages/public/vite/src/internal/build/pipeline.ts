@@ -4,7 +4,10 @@ import { resolveReleaseRequest } from "@interfere/build/release-request";
 import type { Interfere, InterfereClient } from "@interfere/javascript";
 import type { ManifestBundler } from "@interfere/types/data/source-maps";
 import { createReleaseResponse } from "@interfere/types/releases/definition";
-import type { CreateReleaseResponse } from "@interfere/types/releases/definition";
+import type {
+  CreateReleaseRequest,
+  CreateReleaseResponse,
+} from "@interfere/types/releases/definition";
 import type { ReleaseSlug } from "@interfere/types/releases/slug";
 
 import type { DiscoveryResult } from "./source-maps";
@@ -20,6 +23,7 @@ export interface ReleasePipelineInput {
   environment: string | null;
   producerVersion: string;
   releaseSlug: ReleaseSlug;
+  service?: CreateReleaseRequest["service"];
   releasesConfig: Interfere.ReleasesConfigResponse;
   registeredRelease?: CreateReleaseResponse | undefined;
   capturePublication?: boolean;

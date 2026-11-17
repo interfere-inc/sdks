@@ -19,7 +19,12 @@ import { releaseBuildOutput } from "./release";
 
 const RELEASE_API = "https://vite-release-output.test";
 
-const requests: { environment: string | null; path: string }[] = [];
+const requests: {
+  environment: string | null;
+  path: string;
+  service?: { name: string } | undefined;
+}[] = [];
+
 const serviceHeaders: (string | null)[] = [];
 
 const server = setupServer(
@@ -41,11 +46,13 @@ const server = setupServer(
 
     const body = (await request.json()) as {
       destination: { environment?: string };
+      service?: { name: string };
     };
 
     requests.push({
       environment: body.destination.environment ?? null,
       path: "releases",
+      service: body.service,
     });
 
     return HttpResponse.json({
@@ -233,6 +240,7 @@ test("releases the retained output per environment and deletes the maps", async 
   ]);
 
   expect(serviceHeaders.at(-1)).toBe("retained-web");
+  expect(requests[0]?.service).toStrictEqual({ name: "retained-web" });
   expect(requests[0]?.environment).toBe("preview");
   expect(requests[1]?.environment).toBe("preview");
 

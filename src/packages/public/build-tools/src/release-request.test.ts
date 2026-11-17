@@ -99,6 +99,15 @@ const input = {
   releaseSlug: releaseSlugSchema.parse("rel_aaaaaaaaaaaaaaaa"),
 };
 
+test.each([{ name: "web" }, { name: "web", namespace: "shop" }])(
+  "targets the service %j without an App config",
+  (service) => {
+    expect(
+      resolveReleaseRequest({ ...input, config: null, service }),
+    ).toMatchObject({ service });
+  },
+);
+
 test.each([
   { field: "sourceProvider", provider: "vercel" },
   { field: "destinationProvider", provider: "cli" },

@@ -3,10 +3,10 @@
 import type * as Interfere from "../index.js";
 
 /**
- * Surface and organization a build-time API key resolves to, with the source provider collapsed to the family the build tooling understands.
+ * Surface and organization a build-time API key resolves to, with the source provider collapsed to the family the build tooling understands. The surface is null when a workspace secret key builds for a service that has no App.
  */
 export interface ReleasesConfigResponse {
-    surface: ReleasesConfigResponse.Surface;
+    surface: ReleasesConfigResponse.Surface | null;
     org: ReleasesConfigResponse.Org;
 }
 

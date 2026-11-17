@@ -147,8 +147,8 @@ const CATALOG: Record<
     severity: "error",
     title: "Service needed for a workspace secret key",
     details: [
-      "INTERFERE_API_KEY is a workspace secret key, so the build must name a service that is linked to an App in Interfere.",
-      `Set \`serviceName\` (or \`OTEL_SERVICE_NAME\`) to that service, or link this service to an App. Setting \`${ctx.publicKeyEnvVar}\` to the App's public key also works.`,
+      "INTERFERE_API_KEY is a workspace secret key, so the build must name the service it publishes for, and register that service's release before uploading source maps.",
+      `Set \`serviceName\` (or \`OTEL_SERVICE_NAME\`) to that service. Setting \`${ctx.publicKeyEnvVar}\` to an App's public key also works.`,
       BUILD_CONTINUES,
     ],
   }),
