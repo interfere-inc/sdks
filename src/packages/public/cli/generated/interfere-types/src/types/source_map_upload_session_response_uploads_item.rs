@@ -6,6 +6,9 @@ use super::*;
 pub struct SourceMapUploadSessionResponseUploadsItem {
     #[serde(default)]
     pub path: String,
+    /// True when the Company already stores the bytes of the declared sha256. Skip uploading this file and still list it at finalize.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub present: Option<bool>,
 }
 
 impl SourceMapUploadSessionResponseUploadsItem {
@@ -18,11 +21,17 @@ impl SourceMapUploadSessionResponseUploadsItem {
 #[non_exhaustive]
 pub struct SourceMapUploadSessionResponseUploadsItemBuilder {
     path: Option<String>,
+    present: Option<bool>,
 }
 
 impl SourceMapUploadSessionResponseUploadsItemBuilder {
     pub fn path(mut self, value: impl Into<String>) -> Self {
         self.path = Some(value.into());
+        self
+    }
+
+    pub fn present(mut self, value: bool) -> Self {
+        self.present = Some(value);
         self
     }
 
@@ -32,6 +41,7 @@ impl SourceMapUploadSessionResponseUploadsItemBuilder {
     pub fn build(self) -> Result<SourceMapUploadSessionResponseUploadsItem, BuildError> {
         Ok(SourceMapUploadSessionResponseUploadsItem {
             path: self.path.ok_or_else(|| BuildError::missing_field("path"))?,
+            present: self.present,
         })
     }
 }
