@@ -1,7 +1,7 @@
 import { attribute, exportedSpans } from "@interfere/test-utils/vitest/otlp";
 import { receiver } from "@interfere/test-utils/vitest/telemetry-receiver";
 import { setInjectedConfiguration } from "@interfere/test-config/injected-configuration";
-import { PLUGINS_GLOBAL } from "@interfere/types/sdk/remote-config";
+import { PLUGINS_GLOBAL } from "@interfere/types/sdk/remote-config/plugins";
 import { expect, onTestFinished, test, vi } from "vitest";
 
 import { onRequestError, register } from "./instrumentation.js";

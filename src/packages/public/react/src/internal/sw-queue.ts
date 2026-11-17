@@ -5,7 +5,7 @@ import { Queue } from "workbox-background-sync";
 
 import {
   answerIngestQueueQuery,
-  ingestQueueQuerySchema,
+  isIngestQueueQuery,
 } from "./sw-queue-protocol.js";
 
 declare const self: ServiceWorkerGlobalScope;
@@ -187,13 +187,13 @@ export function installIngestQueue(options: InstallIngestQueueOptions = {}) {
   self.addEventListener("message", (event) => {
     const [port] = event.ports;
 
-    const query = ingestQueueQuerySchema.safeParse(event.data);
+    const query: unknown = event.data;
 
-    if (!port || !query.success) {
+    if (!port || !isIngestQueueQuery(query)) {
       return;
     }
 
-    answerIngestQueueQuery(query.data, port, matches);
+    answerIngestQueueQuery(query, port, matches);
   });
 
   self.addEventListener("fetch", (event) => {

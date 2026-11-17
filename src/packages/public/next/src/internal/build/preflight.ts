@@ -11,7 +11,7 @@ import { InterfereClient } from "@interfere/javascript";
 import { isInterfereApiKey } from "@interfere/types/sdk/build-diagnostics";
 import { INGEST_URL_GLOBAL } from "@interfere/types/sdk/injected-globals";
 import { LOG_SOURCING_GLOBAL } from "@interfere/types/sdk/log-sourcing";
-import { PLUGINS_GLOBAL } from "@interfere/types/sdk/remote-config";
+import { PLUGINS_GLOBAL } from "@interfere/types/sdk/remote-config/plugins";
 import { PLATFORM_GLOBAL } from "@interfere/types/integrations/platforms/hosting";
 import { SERVER_TRACING_GLOBAL } from "@interfere/types/sdk/server-tracing";
 import type { ResolvedBuildConfig } from "../../config.js";

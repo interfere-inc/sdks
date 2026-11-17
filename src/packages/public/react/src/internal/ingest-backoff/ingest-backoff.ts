@@ -1,6 +1,6 @@
 import {
   INGEST_QUEUE_QUERY,
-  ingestQueueAnswerSchema,
+  isIngestQueueAnswer,
 } from "../sw-queue-protocol.js";
 import type {
   IngestQueueController,
@@ -85,11 +85,11 @@ async function askIngestQueue(state: IngestQueueState, url: string) {
     const channel = new MessageChannel();
 
     channel.port1.addEventListener("message", (event) => {
-      const answer = ingestQueueAnswerSchema.safeParse(event.data);
+      const answer: unknown = event.data;
 
       state.responsive = true;
 
-      resolve(answer.success && answer.data.accepted);
+      resolve(isIngestQueueAnswer(answer) && answer.accepted);
 
       channel.port1.close();
     });

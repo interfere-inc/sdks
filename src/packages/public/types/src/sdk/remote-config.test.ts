@@ -5,11 +5,8 @@ import {
 import { setInjectedConfiguration } from "@interfere/test-config/injected-configuration";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { PLUGIN_MANIFEST } from "./plugins/manifest.ts";
-import {
-  PLUGINS_GLOBAL,
-  readBakedPlugins,
-  remoteConfigInputSchema,
-} from "./remote-config.ts";
+import { remoteConfigInputSchema } from "./remote-config.ts";
+import { PLUGINS_GLOBAL, readBakedPlugins } from "./remote-config/plugins.ts";
 
 function fullPluginConfig(overrides: Record<string, boolean> = {}) {
   return Object.fromEntries(

@@ -1,6 +1,6 @@
 import { setInjectedConfiguration } from "@interfere/test-config/injected-configuration";
 import { PLUGIN_MANIFEST } from "@interfere/types/sdk/plugins/manifest";
-import { PLUGINS_GLOBAL } from "@interfere/types/sdk/remote-config";
+import { PLUGINS_GLOBAL } from "@interfere/types/sdk/remote-config/plugins";
 import { setupServer } from "msw/node";
 import { HttpResponse, http } from "msw";
 import {

@@ -1,13 +1,20 @@
 import type { Attributes } from "@opentelemetry/api";
-import { z } from "zod";
+import { isPlainRecord } from "@interfere/types/sdk/guards/json";
 
-const evidenceSchema = z.object({
-  cancellationInitiator: z.enum(["user", "navigation", "unload", "timeout"]),
-});
+const CANCELLATION_INITIATORS = [
+  "user",
+  "navigation",
+  "unload",
+  "timeout",
+] as const;
 
-type CancellationInitiator = z.infer<
-  typeof evidenceSchema
->["cancellationInitiator"];
+type CancellationInitiator = (typeof CANCELLATION_INITIATORS)[number];
+
+function isCancellationInitiator(
+  value: unknown,
+): value is CancellationInitiator {
+  return CANCELLATION_INITIATORS.some((initiator) => initiator === value);
+}
 
 const recoveryReports = new WeakMap<
   DOMException,
@@ -63,14 +70,16 @@ export function bindRequestRecovery(reason: unknown, report: () => void) {
 
 // oxlint-disable-next-line anti-slop/no-unknown-parameters -- AbortSignal.reason is application-controlled and must be validated before recording.
 export function cancellationEvidence(reason: unknown) {
-  const parsed = evidenceSchema.safeParse(reason);
+  const initiator = isPlainRecord(reason)
+    ? reason["cancellationInitiator"]
+    : undefined;
 
-  if (!parsed.success) {
+  if (!isCancellationInitiator(initiator)) {
     return null;
   }
 
   const attributes: Attributes = {
-    "interfere.http.cancellation_initiator": parsed.data.cancellationInitiator,
+    "interfere.http.cancellation_initiator": initiator,
   };
 
   return attributes;

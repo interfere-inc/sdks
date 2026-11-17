@@ -157,10 +157,10 @@ describe(createUrlRedactionSpanProcessor, () => {
       "interfere.exception.chain": JSON.stringify([
         {
           stack: `Error: ${redactedFailure}\n    at f`,
-          value: redactedFailure,
           type: "Error",
+          value: redactedFailure,
         },
-        { value: "cause https://api.test/b?secret=REDACTED", type: "Error" },
+        { type: "Error", value: "cause https://api.test/b?secret=REDACTED" },
         { type: "Error" },
       ]),
       "interfere.exception.serialized": JSON.stringify({

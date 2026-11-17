@@ -1,13 +1,26 @@
 import type { ExportResult } from "@opentelemetry/core";
 import { InterfereError } from "@interfere/javascript";
-import { z } from "zod";
+import { isPlainRecord } from "@interfere/types/sdk/guards/json";
 
-export const entrySchema = z.object({
-  body: z.string(),
-  created: z.number(),
-  dispatched: z.number().optional(),
-  scope: z.string(),
-});
+/** A retained export as it is stored under its carryover key. */
+export interface CarryoverEntry {
+  body: string;
+  created: number;
+  dispatched?: number;
+  scope: string;
+}
+
+/** Whether a value read back from storage is a carryover entry. */
+export function isCarryoverEntry(value: unknown): value is CarryoverEntry {
+  return (
+    isPlainRecord(value) &&
+    typeof value["body"] === "string" &&
+    typeof value["created"] === "number" &&
+    (value["dispatched"] === undefined ||
+      typeof value["dispatched"] === "number") &&
+    typeof value["scope"] === "string"
+  );
+}
 
 export function isTerminal(result: ExportResult) {
   return (
@@ -29,12 +42,10 @@ export interface RetainedSend {
 
 export function markDispatched(key: string, dispatched: number | undefined) {
   try {
-    const entry = entrySchema.safeParse(
-      JSON.parse(localStorage.getItem(key) ?? "null"),
-    );
+    const entry: unknown = JSON.parse(localStorage.getItem(key) ?? "null");
 
-    if (entry.success) {
-      localStorage.setItem(key, JSON.stringify({ ...entry.data, dispatched }));
+    if (isCarryoverEntry(entry)) {
+      localStorage.setItem(key, JSON.stringify({ ...entry, dispatched }));
     }
   } catch {
     return;

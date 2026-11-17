@@ -2,25 +2,35 @@ import { omitUndefined } from "@interfere/helpers/omit-undefined";
 import { InterfereError } from "@interfere/javascript";
 import { ExportResultCode } from "@opentelemetry/core";
 import { toError } from "@interfere/types/sdk/errors";
-import { z } from "zod";
+import { isPlainRecord, isString } from "@interfere/types/sdk/guards/json";
 
 import type { resolveTargets } from "../../../internal/config/config.js";
 import { withExportCarryover } from "../../../internal/otel/export-carryover.js";
 import { uploadReplayChunk } from "./upload.js";
 import { reserveKeepaliveBody } from "../../../internal/page-lifecycle/page-lifecycle.js";
 
-const envelopeSchema = z.object({
-  id: z.string(),
-  body: z
-    .string()
-    .regex(/^[A-Za-z0-9+/]*={0,2}$/u)
-    .refine((value) => value.length % 4 === 0),
-  sessionId: z.string(),
-  meta: z.string(),
-  encoding: z.enum(["gzip"]).nullable(),
-});
+interface Envelope {
+  id: string;
+  body: string;
+  sessionId: string;
+  meta: string;
+  encoding: "gzip" | null;
+}
 
-type Envelope = z.infer<typeof envelopeSchema>;
+const base64Pattern = /^[A-Za-z0-9+/]*={0,2}$/u;
+
+function isEnvelope(value: unknown): value is Envelope {
+  return (
+    isPlainRecord(value) &&
+    isString(value["id"]) &&
+    isString(value["body"]) &&
+    base64Pattern.test(value["body"]) &&
+    value["body"].length % 4 === 0 &&
+    isString(value["sessionId"]) &&
+    isString(value["meta"]) &&
+    (value["encoding"] === "gzip" || value["encoding"] === null)
+  );
+}
 
 interface PendingUpload {
   response?: Response;
@@ -52,16 +62,14 @@ export function createReplayCarryover(
           });
         }
 
-        const parsed = envelopeSchema.safeParse(value);
-
-        if (!parsed.success) {
+        if (!isEnvelope(value)) {
           throw new InterfereError({
             statusCode: 400,
             message: "Invalid replay carryover",
           });
         }
 
-        const envelope = parsed.data;
+        const envelope = value;
 
         const body = Uint8Array.from(
           atob(envelope.body),

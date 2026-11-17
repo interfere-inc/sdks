@@ -1,9 +1,7 @@
 import { InterfereClient } from "@interfere/javascript";
-import {
-  readBakedPlugins,
-  remoteConfigInputSchema,
-} from "@interfere/types/sdk/remote-config";
+import { remoteConfigInputSchema } from "@interfere/types/sdk/remote-config";
 import type { RemotePluginConfig } from "@interfere/types/sdk/remote-config";
+import { readBakedPlugins } from "@interfere/types/sdk/remote-config/plugins";
 
 import { isEnabledOnServer, readInterfereServerEnv } from "./env";
 

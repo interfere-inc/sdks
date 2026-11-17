@@ -1,5 +1,6 @@
 import { InterfereClient } from "@interfere/javascript";
-import { remoteConfigInputSchema } from "@interfere/types/sdk/remote-config";
+import { parseRemoteConfigInput } from "@interfere/types/sdk/remote-config/input";
+import type { RemoteConfigInput } from "@interfere/types/sdk/remote-config/input";
 import type { RemotePluginConfig } from "@interfere/types/sdk/remote-config";
 import { readBakedBackendHosts } from "@interfere/types/sdk/remote-config/backend-hosts";
 import { readBakedAnonymousReplayPolicy } from "@interfere/types/sdk/remote-config/anonymous-replay";
@@ -13,6 +14,8 @@ async function fetchRemoteConfig(
   configTarget: InterfereClient.Options,
   fetcher: typeof globalThis.fetch,
 ) {
+  let config: RemoteConfigInput | null;
+
   try {
     const client = new InterfereClient({
       ...configTarget,
@@ -25,12 +28,16 @@ async function fetchRemoteConfig(
       ),
     });
 
-    return remoteConfigInputSchema.parse(await client.config.getSdkConfig());
+    config = parseRemoteConfigInput(await client.config.getSdkConfig());
   } catch {
-    log.warn("remote config fetch failed, using local defaults");
-
-    return null;
+    config = null;
   }
+
+  if (!config) {
+    log.warn("remote config fetch failed, using local defaults");
+  }
+
+  return config;
 }
 
 export async function resolveRemoteConfig(

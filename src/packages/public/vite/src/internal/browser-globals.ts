@@ -3,7 +3,7 @@
 
 import {
   BACKEND_HOSTS_GLOBAL,
-  backendHostsSchema,
+  isBackendHosts,
 } from "@interfere/types/sdk/remote-config/backend-hosts";
 
 import {
@@ -13,7 +13,7 @@ import {
   PUBLIC_KEY_GLOBAL,
   RELEASE_SLUG_GLOBAL,
 } from "@interfere/types/sdk/injected-globals";
-import { PLUGINS_GLOBAL } from "@interfere/types/sdk/remote-config";
+import { PLUGINS_GLOBAL } from "@interfere/types/sdk/remote-config/plugins";
 import { ANONYMOUS_REPLAY_GLOBAL } from "@interfere/types/sdk/remote-config/anonymous-replay";
 import { SERVICE_NAME_GLOBAL } from "@interfere/types/sdk/service-name";
 
@@ -97,7 +97,7 @@ function parseBakedHosts(raw: string | null | undefined) {
   try {
     const parsed: unknown = JSON.parse(raw);
 
-    return backendHostsSchema.safeParse(parsed).data;
+    return isBackendHosts(parsed) ? parsed : undefined;
   } catch {
     return;
   }

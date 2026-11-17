@@ -1,6 +1,6 @@
 import type { Span } from "@opentelemetry/api";
 import { RandomIdGenerator } from "@opentelemetry/sdk-trace-base";
-import { z } from "zod";
+import { isPlainRecord } from "@interfere/types/sdk/guards/json";
 
 import type {
   HeaderSet,
@@ -30,24 +30,33 @@ function parse(url: string) {
   }
 }
 
-const provenSchema = z.record(
-  z.string(),
-  z.array(z.enum(["traceparent", "tracestate", "baggage"])),
-);
+type ProvenMemo = Record<string, TraceHeaderName[]>;
 
-type ProvenMemo = z.infer<typeof provenSchema>;
+function isHeaderName(value: unknown): value is TraceHeaderName {
+  return HEADER_NAMES.some((name) => name === value);
+}
 
 function readProven() {
   try {
-    const parsed = provenSchema.safeParse(
-      JSON.parse(sessionStorage.getItem(PROVEN_KEY) ?? "{}"),
+    const parsed: unknown = JSON.parse(
+      sessionStorage.getItem(PROVEN_KEY) ?? "{}",
     );
 
-    return new Map<string, HeaderSet>(
-      Object.entries(parsed.success ? parsed.data : {}).map(
-        ([origin, names]) => [origin, new Set(names)],
-      ),
-    );
+    const memo = new Map<string, HeaderSet>();
+
+    if (!isPlainRecord(parsed)) {
+      return memo;
+    }
+
+    for (const [origin, names] of Object.entries(parsed)) {
+      if (!Array.isArray(names) || !names.every((name) => isHeaderName(name))) {
+        return new Map<string, HeaderSet>();
+      }
+
+      memo.set(origin, new Set<TraceHeaderName>(names));
+    }
+
+    return memo;
   } catch {
     return new Map<string, HeaderSet>();
   }

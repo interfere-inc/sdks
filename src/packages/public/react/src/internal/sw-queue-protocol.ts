@@ -1,24 +1,40 @@
-import { z } from "zod/mini";
+import { isPlainRecord } from "@interfere/types/sdk/guards/json";
 
 export const INGEST_QUEUE_QUERY = "interfere.sw.accepts";
 
 const INGEST_QUEUE_ANSWER = "interfere.sw.accepted";
 
 /** Message a page posts to its controlling service worker to ask whether the ingest queue would durably queue a POST to `url`. */
-export const ingestQueueQuerySchema = z.object({
-  type: z.literal(INGEST_QUEUE_QUERY),
-  url: z.string(),
-});
+export interface IngestQueueQuery {
+  type: typeof INGEST_QUEUE_QUERY;
+  url: string;
+}
 
 /** Reply the ingest queue posts on the query's port. */
-export const ingestQueueAnswerSchema = z.object({
-  accepted: z.boolean(),
-  type: z.literal(INGEST_QUEUE_ANSWER),
-});
+interface IngestQueueAnswer {
+  accepted: boolean;
+  type: typeof INGEST_QUEUE_ANSWER;
+}
 
-export type IngestQueueQuery = z.infer<typeof ingestQueueQuerySchema>;
+/** Whether a message posted to the service worker is an ingest queue query. */
+export function isIngestQueueQuery(value: unknown): value is IngestQueueQuery {
+  return (
+    isPlainRecord(value) &&
+    value["type"] === INGEST_QUEUE_QUERY &&
+    typeof value["url"] === "string"
+  );
+}
 
-type IngestQueueAnswer = z.infer<typeof ingestQueueAnswerSchema>;
+/** Whether a message on the query's port is the ingest queue's answer. */
+export function isIngestQueueAnswer(
+  value: unknown,
+): value is IngestQueueAnswer {
+  return (
+    isPlainRecord(value) &&
+    value["type"] === INGEST_QUEUE_ANSWER &&
+    typeof value["accepted"] === "boolean"
+  );
+}
 
 /** Page-side handle to the service worker that may run the ingest queue. */
 export interface IngestQueueController {

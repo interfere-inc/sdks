@@ -1,7 +1,7 @@
 import { SpanStatusCode } from "@opentelemetry/api";
 import type { Span } from "@opentelemetry/api";
 import { FetchInstrumentation } from "@opentelemetry/instrumentation-fetch";
-import { z } from "zod";
+import { isPlainRecord, isString } from "@interfere/types/sdk/guards/json";
 
 import { rememberFailedRequest } from "../request-observer/failed-requests.js";
 import { statusMatches } from "./failure-policy.js";
@@ -13,6 +13,7 @@ import type {
   RequestState,
 } from "./request-core.js";
 import { captureRequestEvidence } from "./request-callsite.js";
+import { spanStringAttribute } from "../request-observer/span-attributes.js";
 import {
   ATTR_HTTP_REQUEST_PREFETCH,
   applyFetchSpanAttrs,
@@ -25,21 +26,19 @@ import {
   skipFetchHeaderInjection,
 } from "./upstream-request-members.js";
 
-const spanAttributesSchema = z.object({
-  attributes: z.record(z.string(), z.unknown()),
-});
-
 function spanUrl(span: Span) {
-  const attributes = spanAttributesSchema.safeParse(span).data?.attributes;
+  return spanStringAttribute(span, "url.full");
+}
 
-  return z.string().safeParse(attributes?.["url.full"]).data ?? null;
+function requestInitMethod(request: FetchSpanRequest) {
+  return isPlainRecord(request) && isString(request["method"])
+    ? request["method"]
+    : undefined;
 }
 
 function requestMethod(request: FetchSpanRequest) {
   const method =
-    request instanceof Request
-      ? request.method
-      : z.object({ method: z.string() }).safeParse(request).data?.method;
+    request instanceof Request ? request.method : requestInitMethod(request);
 
   return (method ?? "GET").toUpperCase();
 }
@@ -54,11 +53,9 @@ function bodySize(body: BodyInit | null | undefined) {
     return body.byteLength;
   }
 
-  const text = z
-    .string()
-    .safeParse(body instanceof URLSearchParams ? body.toString() : body).data;
+  const text = body instanceof URLSearchParams ? body.toString() : body;
 
-  return text === undefined ? 0 : new TextEncoder().encode(text).byteLength;
+  return isString(text) ? new TextEncoder().encode(text).byteLength : 0;
 }
 
 /** The upstream fetch instrumentation with Interfere's header policy, failed-request evidence and correlation attached through its hooks. */

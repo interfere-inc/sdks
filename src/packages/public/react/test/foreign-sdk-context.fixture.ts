@@ -3,7 +3,7 @@ import {
   FORCE_ENABLE_GLOBAL,
   PUBLIC_KEY_GLOBAL,
 } from "@interfere/types/sdk/injected-globals";
-import { PLUGINS_GLOBAL } from "@interfere/types/sdk/remote-config";
+import { PLUGINS_GLOBAL } from "@interfere/types/sdk/remote-config/plugins";
 import { propagation } from "@opentelemetry/api";
 import type {
   Context,

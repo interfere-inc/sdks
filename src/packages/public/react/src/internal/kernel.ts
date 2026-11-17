@@ -1,7 +1,7 @@
 import { clearExportCarryover } from "./otel/export-carryover.js";
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
 import type { PageSessionId, SessionId } from "@interfere/types/data/session";
-import { releaseSlugSchema } from "@interfere/types/releases/slug";
+import { toReleaseSlug } from "@interfere/types/releases/slug-guard";
 import {
   isNonErrorException,
   shouldDropBrowserExtensionNoise,
@@ -20,7 +20,7 @@ import type {
   ConsentState,
   PluginKey,
 } from "@interfere/types/sdk/plugins/manifest";
-import { readBakedPlugins } from "@interfere/types/sdk/remote-config";
+import { readBakedPlugins } from "@interfere/types/sdk/remote-config/plugins";
 import type { AnonymousReplayPolicy } from "@interfere/types/sdk/remote-config/anonymous-replay";
 import { SERVICE_NAME_GLOBAL } from "@interfere/types/sdk/service-name";
 import {
@@ -908,5 +908,5 @@ export function readReleaseSlugFromGlobals() {
     return null;
   }
 
-  return releaseSlugSchema.parse(value);
+  return toReleaseSlug(value);
 }

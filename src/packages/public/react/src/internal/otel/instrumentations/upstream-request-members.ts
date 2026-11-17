@@ -1,7 +1,6 @@
 import type { Span } from "@opentelemetry/api";
 import type { FetchInstrumentation } from "@opentelemetry/instrumentation-fetch";
 import type { XMLHttpRequestInstrumentation } from "@opentelemetry/instrumentation-xml-http-request";
-import { z } from "zod";
 
 type FetchFunction = typeof globalThis.fetch;
 
@@ -19,23 +18,30 @@ type Instrumentation = FetchInstrumentation | XMLHttpRequestInstrumentation;
 
 type PatchMethod<T> = (this: Instrumentation) => (original: T) => T;
 
-// oxlint-disable-next-line anti-slop/no-runtime-typeof, anti-slop/no-unknown-parameters -- Upstream instrumentation members are read at runtime; only a function can be composed.
-const isFunction = (value: unknown) => typeof value === "function";
+function isPatch<T>(value: unknown): value is PatchMethod<T> {
+  return typeof value === "function";
+}
 
-const fetchPatchSchema = z.custom<PatchMethod<FetchFunction>>(isFunction);
-const xhrOpenPatchSchema = z.custom<PatchMethod<XhrOpen>>(isFunction);
-const xhrSendPatchSchema = z.custom<PatchMethod<XhrSend>>(isFunction);
-
-const xhrMemorySchema = z.instanceof(WeakMap<XMLHttpRequest, { span?: Span }>);
+function isXhrMemory(
+  value: unknown,
+): value is WeakMap<XMLHttpRequest, { span?: Span }> {
+  return value instanceof WeakMap;
+}
 
 // WARNING: These are private members of @opentelemetry/instrumentation-fetch and -xml-http-request 0.223.0, which offer no fetch response hook and no XHR request hook; upstream-request-contract.browser.test.ts fails when they change.
-function readMember<S extends z.ZodType>(
+function readMember<T>(
   instrumentation: Instrumentation,
   name: string,
-  schema: S,
+  guard: (value: unknown) => value is T,
 ) {
   // oxlint-disable-next-line anti-slop/no-reflect-get -- The member is private in the upstream typings and composed at runtime.
-  return schema.parse(Reflect.get(instrumentation, name)) satisfies z.output<S>;
+  const member: unknown = Reflect.get(instrumentation, name);
+
+  if (!guard(member)) {
+    throw new TypeError(`Upstream instrumentation member  changed shape`);
+  }
+
+  return member;
 }
 
 function composePatch<T>(
@@ -61,7 +67,7 @@ export function composeFetchPatch(
   composePatch(
     instrumentation,
     "_patchConstructor",
-    readMember(instrumentation, "_patchConstructor", fetchPatchSchema),
+    readMember(instrumentation, "_patchConstructor", isPatch<FetchFunction>),
     wrap,
   );
 }
@@ -75,14 +81,14 @@ export function composeXhrPatches(
   composePatch(
     instrumentation,
     "_patchOpen",
-    readMember(instrumentation, "_patchOpen", xhrOpenPatchSchema),
+    readMember(instrumentation, "_patchOpen", isPatch<XhrOpen>),
     wrapOpen,
   );
 
   composePatch(
     instrumentation,
     "_patchSend",
-    readMember(instrumentation, "_patchSend", xhrSendPatchSchema),
+    readMember(instrumentation, "_patchSend", isPatch<XhrSend>),
     wrapSend,
   );
 }
@@ -103,7 +109,7 @@ export function replaceXhrHeaderInjection(
     instrumentation,
     "_addHeaders",
     (xhr: XMLHttpRequest, url: string) => {
-      const span = readMember(instrumentation, "_xhrMem", xhrMemorySchema).get(
+      const span = readMember(instrumentation, "_xhrMem", isXhrMemory).get(
         xhr,
       )?.span;
 

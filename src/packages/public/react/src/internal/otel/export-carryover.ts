@@ -1,15 +1,15 @@
 import { TELEMETRY_EXPORT_TIMEOUT_MS } from "@interfere/helpers/retry-telemetry";
 import type { ExportResult } from "@opentelemetry/core";
 import { ExportResultCode } from "@opentelemetry/core";
-import { z } from "zod";
 import { toError } from "@interfere/types/sdk/errors";
+import { isPlainRecord } from "@interfere/types/sdk/guards/json";
 
 import { isPageHidden, onPageShown } from "../page-lifecycle/page-lifecycle.js";
 import { isPageLeaving } from "../page-lifecycle/unloading.js";
 import { onKeepaliveBodyReleased } from "../page-lifecycle/keepalive-budget.js";
 import type { SignalSender } from "./exporter.js";
 import {
-  entrySchema,
+  isCarryoverEntry,
   isTerminal,
   markDispatched,
 } from "./transport/carryover-entry.js";
@@ -79,15 +79,13 @@ function entries() {
       continue;
     }
 
-    const entry = entrySchema.safeParse(value);
-
-    if (!entry.success || Date.now() - entry.data.created > MAX_AGE_MS) {
+    if (!isCarryoverEntry(value) || Date.now() - value.created > MAX_AGE_MS) {
       localStorage.removeItem(key);
 
       continue;
     }
 
-    result.push({ ...entry.data, key });
+    result.push({ ...value, key });
   }
 
   // oxlint-disable-next-line unicorn/no-array-sort -- Sort this private array in place; toSorted is outside the shipped browser baseline.
@@ -117,6 +115,10 @@ function cancelPending(scopePrefix = "") {
   }
 }
 
+function isCarryoverReset(value: unknown): value is { scopePrefix: string } {
+  return isPlainRecord(value) && typeof value["scopePrefix"] === "string";
+}
+
 // oxlint-disable-next-line anti-slop/no-runtime-typeof -- Server hosts have no browser storage events.
 if (typeof globalThis.addEventListener === "function") {
   globalThis.addEventListener("storage", (event: StorageEvent) => {
@@ -124,12 +126,10 @@ if (typeof globalThis.addEventListener === "function") {
       let scopePrefix = "";
 
       try {
-        const reset = z
-          .object({ scopePrefix: z.string() })
-          .safeParse(JSON.parse(event.newValue));
+        const reset: unknown = JSON.parse(event.newValue);
 
-        if (reset.success) {
-          ({ scopePrefix } = reset.data);
+        if (isCarryoverReset(reset)) {
+          ({ scopePrefix } = reset);
         }
       } catch {
         scopePrefix = "";

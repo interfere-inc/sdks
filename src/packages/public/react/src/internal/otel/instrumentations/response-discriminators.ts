@@ -1,25 +1,23 @@
-import { z } from "zod";
+import { isPlainRecord, isString } from "@interfere/types/sdk/guards/json";
 
-const code = z.string().regex(/^[A-Za-z0-9_.:-]{1,64}$/u);
+const codePattern = /^[A-Za-z0-9_.:-]{1,64}$/u;
 
-const applicationCode = code.refine(
-  (value) =>
-    !["0", "none", "null", "false", "ok", "success"].includes(
-      value.toLowerCase(),
-    ),
-);
+const NON_ERROR_CODES = new Set([
+  "0",
+  "none",
+  "null",
+  "false",
+  "ok",
+  "success",
+]);
 
-const nestedCode = z.object({ code: z.unknown().optional() });
-const graphqlCode = z.object({ extensions: nestedCode.optional() });
+function isCode(value: unknown): value is string {
+  return isString(value) && codePattern.test(value);
+}
 
-const codesSchema = z.object({
-  code: z.unknown().optional(),
-  error_code: z.unknown().optional(),
-  errorCode: z.unknown().optional(),
-  error: z.unknown().optional(),
-  errors: z.unknown().optional(),
-  data: z.unknown().optional(),
-});
+function isApplicationCode(value: unknown): value is string {
+  return isCode(value) && !NON_ERROR_CODES.has(value.toLowerCase());
+}
 
 export interface ResponseEvidence {
   status: "captured" | "skipped";
@@ -39,42 +37,37 @@ export function skippedResponseEvidence(reason: string) {
 
 // oxlint-disable-next-line anti-slop/no-unknown-parameters -- This boundary validates untrusted JSON from fetch or XHR before retaining only protocol discriminators.
 export function responseDiscriminators(body: unknown, status: number) {
-  const parsed = codesSchema.safeParse(body);
-
-  if (!parsed.success) {
+  if (!isPlainRecord(body)) {
     return skippedResponseEvidence("unsupported-shape");
   }
 
-  const { data } = parsed;
-  const nested = nestedCode.safeParse(data.error);
+  const { code, data, error, errors, error_code, errorCode } = body;
 
   const errorCandidates = [
-    ...(status === 200 ? [] : [data.code]),
-    data.error_code,
-    data.errorCode,
-    ...(nested.success ? [nested.data.code] : []),
-    ...((status !== 200 || data.data === null || data.data === undefined) &&
-    Array.isArray(data.errors)
-      ? data.errors.slice(0, 5)
+    ...(status === 200 ? [] : [code]),
+    error_code,
+    errorCode,
+    ...(isPlainRecord(error) ? [error["code"]] : []),
+    ...((status !== 200 || data === null || data === undefined) &&
+    Array.isArray(errors)
+      ? errors.slice(0, 5)
       : []
     ).flatMap((item) => {
-      const result = graphqlCode.safeParse(item);
+      const extensions = isPlainRecord(item) ? item["extensions"] : undefined;
 
-      return result.success ? [result.data.extensions?.code] : [];
+      return isPlainRecord(extensions) ? [extensions["code"]] : [];
     }),
   ];
 
-  const discriminator = status === 200 ? applicationCode : code;
+  const discriminator = status === 200 ? isApplicationCode : isCode;
 
-  const errors = errorCandidates.flatMap((value) => {
-    const result = discriminator.safeParse(value);
-
-    return result.success ? [result.data] : [];
-  });
+  const codes = errorCandidates.filter((value): value is string =>
+    discriminator(value),
+  );
 
   return {
     status: "captured",
-    codes: [...new Set(errors)],
-    applicationError: status === 200 && errors.length > 0,
+    codes: [...new Set(codes)],
+    applicationError: status === 200 && codes.length > 0,
   } satisfies ResponseEvidence;
 }

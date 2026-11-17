@@ -1,8 +1,9 @@
 import type { PageSessionId, SessionId } from "@interfere/types/data/session";
 import {
-  pageSessionIdSchema,
-  sessionIdSchema,
-} from "@interfere/types/data/session";
+  isSessionId,
+  toPageSessionId,
+  toSessionId,
+} from "@interfere/types/data/session-id";
 
 import { v4 as uuidv4, v7 as uuidv7 } from "uuid";
 
@@ -131,12 +132,11 @@ export class SessionManager {
   private restore() {
     const stored = this.local?.getItem(SESSION_ID_KEY);
     const startedRaw = this.local?.getItem(SESSION_STARTED_KEY);
-    const parsed = sessionIdSchema.safeParse(stored);
 
     this.sessionStartedMs = startedRaw ? Number(startedRaw) : 0;
 
-    if (parsed.success && !this.isExpired()) {
-      this.sessionId = parsed.data;
+    if (isSessionId(stored) && !this.isExpired()) {
+      this.sessionId = stored;
 
       this.touch();
     } else {
@@ -146,8 +146,8 @@ export class SessionManager {
 
   private rotate() {
     this.sessionId = this.persistent
-      ? sessionIdSchema.parse(uuidv7())
-      : pageSessionIdSchema.parse(`page_${uuidv7()}`);
+      ? toSessionId(uuidv7())
+      : toPageSessionId(`page_${uuidv7()}`);
 
     this.sessionStartedMs = Date.now();
 

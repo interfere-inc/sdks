@@ -1,16 +1,15 @@
-import { z } from "zod";
-
 /** Global stamped into the bundle at build time from the surface's remote config. */
 export const ANONYMOUS_REPLAY_GLOBAL = "__INTERFERE_ANONYMOUS_REPLAY__";
 
-export const anonymousReplayPolicySchema = z
-  .enum(["always", "on_error", "never"])
-  .describe(
-    "When sessions without an identified user record replay: always, only once an error occurs, or never.",
-  );
+/** Values the anonymous replay policy takes; the zod contract lives in `anonymousReplayPolicySchema`. */
+export const ANONYMOUS_REPLAY_POLICIES = [
+  "always",
+  "on_error",
+  "never",
+] as const;
 
 /** When the surface records session replay for visitors that have not been identified. */
-export type AnonymousReplayPolicy = z.infer<typeof anonymousReplayPolicySchema>;
+export type AnonymousReplayPolicy = (typeof ANONYMOUS_REPLAY_POLICIES)[number];
 
 /** Policy assumed when neither the remote config nor the build supplies one. */
 export const DEFAULT_ANONYMOUS_REPLAY_POLICY =
@@ -23,6 +22,12 @@ export function defaultAnonymousReplayPolicy(anonymousUserTracking: boolean) {
   ) satisfies AnonymousReplayPolicy;
 }
 
+function isAnonymousReplayPolicy(
+  value: unknown,
+): value is AnonymousReplayPolicy {
+  return ANONYMOUS_REPLAY_POLICIES.some((policy) => policy === value);
+}
+
 /** Reads the build-injected {@link ANONYMOUS_REPLAY_GLOBAL}, or null when the build supplied none. */
 export function readBakedAnonymousReplayPolicy() {
   const scope = globalThis;
@@ -32,5 +37,5 @@ export function readBakedAnonymousReplayPolicy() {
       ? scope[ANONYMOUS_REPLAY_GLOBAL]
       : undefined;
 
-  return anonymousReplayPolicySchema.safeParse(injected).data ?? null;
+  return isAnonymousReplayPolicy(injected) ? injected : null;
 }

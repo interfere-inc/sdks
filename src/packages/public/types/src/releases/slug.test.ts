@@ -1,4 +1,5 @@
-import { deriveReleaseSlug } from "./slug.ts";
+import { toReleaseSlug } from "./slug-guard.ts";
+import { deriveReleaseSlug, releaseSlugSchema } from "./slug.ts";
 import { describe, expect, test } from "vitest";
 
 const SLUG_RE = /^rel_[0-9a-f]{16}$/u;
@@ -29,4 +30,28 @@ describe(deriveReleaseSlug, () => {
       deriveReleaseSlug(SHA_A),
     );
   });
+});
+
+test.each([
+  "rel_0123456789abcdef",
+  "rel_0123456789ABCDEF",
+  "rel_0123456789abcde",
+  "rel_0123456789abcdef0",
+  "0123456789abcdef",
+  "",
+])("toReleaseSlug agrees with releaseSlugSchema for %j", (value) => {
+  let minted: boolean;
+
+  try {
+    minted = toReleaseSlug(value) === value;
+  } catch {
+    minted = false;
+  }
+
+  expect(minted).toBe(releaseSlugSchema.safeParse(value).success);
+});
+
+test("toReleaseSlug rejects a malformed slug", () => {
+  expect(toReleaseSlug("rel_0123456789abcdef")).toBe("rel_0123456789abcdef");
+  expect(() => toReleaseSlug("rel_nothex")).toThrow(TypeError);
 });

@@ -5,13 +5,13 @@ import {
 import { InterfereClient, InterfereError } from "@interfere/javascript";
 import type { OtlpSignal } from "@interfere/constants/api";
 import { toError } from "@interfere/types/sdk/errors";
+import { isPlainRecord } from "@interfere/types/sdk/guards/json";
 
 import type { ExportResult } from "@opentelemetry/core";
 import { SpanKind } from "@opentelemetry/api";
 import { ExportResultCode } from "@opentelemetry/core";
 import { JsonTraceSerializer } from "@opentelemetry/otlp-transformer";
 import type { ReadableSpan, SpanExporter } from "@opentelemetry/sdk-trace-base";
-import { z } from "zod";
 
 import { fetchIngest, stampSentAt } from "../ingest-backoff/ingest-backoff.js";
 import {
@@ -285,9 +285,11 @@ function makeSender(input: ExporterCommon, signal: OtlpSignal) {
       }
 
       try {
-        const body = z
-          .record(z.string(), z.unknown())
-          .parse(JSON.parse(new TextDecoder().decode(payload)));
+        const body: unknown = JSON.parse(new TextDecoder().decode(payload));
+
+        if (!isPlainRecord(body)) {
+          throw new TypeError("OTLP export body is not a JSON object");
+        }
 
         await client.drain.otlpExport(
           { signal, body },

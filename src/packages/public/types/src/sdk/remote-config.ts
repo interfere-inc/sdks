@@ -1,13 +1,20 @@
-import { backendHostsSchema } from "./remote-config/backend-hosts.ts";
 import { catch as catchSchema, z } from "zod";
 
-import { anonymousReplayPolicySchema } from "./remote-config/anonymous-replay.ts";
+import { ANONYMOUS_REPLAY_POLICIES } from "./remote-config/anonymous-replay.ts";
 import { protocolVersionSchema } from "./remote-config/protocol.ts";
 import { logSourcingModeSchema } from "./log-sourcing.ts";
 import { PLUGIN_MANIFEST } from "./plugins/manifest.ts";
 import type { PluginKey } from "./plugins/manifest.ts";
 import { hostingPlatformSchema } from "../integrations/platforms/hosting.ts";
 import { serverTracingModeSchema } from "./server-tracing.ts";
+
+export const anonymousReplayPolicySchema = z
+  .enum(ANONYMOUS_REPLAY_POLICIES)
+  .describe(
+    "When sessions without an identified user record replay: always, only once an error occurs, or never.",
+  );
+
+export const backendHostsSchema = z.array(z.string()).optional();
 
 export type RemotePluginConfig = z.infer<
   typeof partialRemotePluginConfigSchema
@@ -48,21 +55,3 @@ export const remoteConfigInputSchema = remoteConfigSchema.extend({
   plugins: partialRemotePluginConfigSchema.optional(),
   protocolVersion: catchSchema(protocolVersionSchema.optional(), undefined),
 });
-
-/** Plugin settings resolved for the application at build time. */
-export const PLUGINS_GLOBAL = "__INTERFERE_PLUGINS__";
-
-export function readBakedPlugins() {
-  const scope = globalThis;
-  const injected = PLUGINS_GLOBAL in scope ? scope[PLUGINS_GLOBAL] : undefined;
-
-  if (injected === undefined || injected === null) {
-    return null;
-  }
-
-  const parsed = partialRemotePluginConfigSchema.safeParse(injected);
-
-  return (
-    parsed.success ? parsed.data : null
-  ) satisfies RemotePluginConfig | null;
-}

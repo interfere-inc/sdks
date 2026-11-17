@@ -1,92 +1,81 @@
 import { propagation } from "@opentelemetry/api";
-import { z } from "zod";
+import { isPlainRecord, isString } from "@interfere/types/sdk/guards/json";
 
 import { getGlobal } from "../../../util/global.js";
 
-function callable<T>() {
-  return z.custom<T>(
-    // oxlint-disable-next-line anti-slop/no-runtime-typeof -- Vendor globals expose methods and URL matchers as functions; only a callable can be one.
-    (value) => typeof value === "function",
+type UrlMatcher = string | RegExp | ((url: string) => boolean);
+
+interface TracingUrlOption {
+  match: UrlMatcher;
+  propagatorTypes?: string[];
+}
+
+function isGetter(value: unknown): value is () => object | undefined {
+  return typeof value === "function";
+}
+
+function isUrlMatcher(value: unknown): value is UrlMatcher {
+  return (
+    isString(value) || value instanceof RegExp || typeof value === "function"
   );
 }
 
-const urlMatcherSchema = z.union([
-  z.string().transform((text) => ({ kind: "text" as const, text })),
-  z
-    .instanceof(RegExp)
-    .transform((pattern) => ({ kind: "pattern" as const, pattern })),
-  callable<(url: string) => boolean>().transform((test) => ({
-    kind: "function" as const,
-    test,
-  })),
-]);
-
-const datadogRumSchema = z.object({
-  getInitConfiguration: callable<() => object | undefined>(),
-});
-
-const datadogConfigSchema = z.object({
-  allowedTracingUrls: z
-    .array(
-      z.union([
-        z.object({
-          match: urlMatcherSchema,
-          propagatorTypes: z.array(z.string()).optional(),
-        }),
-        urlMatcherSchema.transform((match) => ({
-          match,
-          propagatorTypes: undefined,
-        })),
-      ]),
-    )
-    .optional(),
-});
-
-const sentryCarrierSchema = z.looseObject({ version: z.string() });
-
-const sentryHubSchema = z.object({
-  defaultCurrentScope: z.object({
-    getClient: callable<() => object | undefined>(),
-  }),
-});
-
-const sentryClientSchema = z.object({
-  getOptions: callable<() => object | undefined>(),
-});
-
-const sentryOptionsSchema = z.object({
-  propagateTraceparent: z.boolean().optional(),
-  tracePropagationTargets: z.array(urlMatcherSchema).optional(),
-});
-
-function matches(
-  matcher: z.output<typeof urlMatcherSchema>,
-  url: string,
-  prefix: boolean,
-) {
-  if (matcher.kind === "pattern") {
-    return matcher.pattern.test(url);
+function isTracingUrlOption(value: unknown): value is TracingUrlOption {
+  if (!isPlainRecord(value) || !isUrlMatcher(value["match"])) {
+    return false;
   }
 
-  if (matcher.kind === "text") {
-    return prefix ? url.startsWith(matcher.text) : url.includes(matcher.text);
+  const types = value["propagatorTypes"];
+
+  return (
+    types === undefined ||
+    (Array.isArray(types) && types.every((type) => isString(type)))
+  );
+}
+
+function matches(matcher: UrlMatcher, url: string, prefix: boolean) {
+  if (matcher instanceof RegExp) {
+    return matcher.test(url);
+  }
+
+  if (isString(matcher)) {
+    return prefix ? url.startsWith(matcher) : url.includes(matcher);
   }
 
   try {
-    return matcher.test(url);
+    return matcher(url);
   } catch {
     return false;
   }
 }
 
 function datadogWrites(url: string) {
-  const rum = datadogRumSchema.safeParse(getGlobal("DD_RUM")).data;
+  const rum = getGlobal("DD_RUM");
 
-  const config = datadogConfigSchema.safeParse(
-    rum?.getInitConfiguration(),
-  ).data;
+  const config =
+    isPlainRecord(rum) && isGetter(rum["getInitConfiguration"])
+      ? rum["getInitConfiguration"]()
+      : undefined;
 
-  return (config?.allowedTracingUrls ?? []).some(
+  const urls = isPlainRecord(config) ? config["allowedTracingUrls"] : undefined;
+
+  if (!Array.isArray(urls)) {
+    return false;
+  }
+
+  const options: TracingUrlOption[] = [];
+
+  for (const entry of urls) {
+    if (isTracingUrlOption(entry)) {
+      options.push(entry);
+    } else if (isUrlMatcher(entry)) {
+      options.push({ match: entry });
+    } else {
+      return false;
+    }
+  }
+
+  return options.some(
     (option) =>
       (option.propagatorTypes?.includes("tracecontext") ?? true) &&
       matches(option.match, url, true),
@@ -94,29 +83,40 @@ function datadogWrites(url: string) {
 }
 
 function sentryWrites(url: string) {
-  const carrier = sentryCarrierSchema.safeParse(getGlobal("__SENTRY__")).data;
+  const carrier = getGlobal("__SENTRY__");
 
-  const hub = sentryHubSchema.safeParse(
-    carrier ? carrier[carrier.version] : undefined,
-  ).data;
+  const hub =
+    isPlainRecord(carrier) && isString(carrier["version"])
+      ? carrier[carrier["version"]]
+      : undefined;
 
-  const client = sentryClientSchema.safeParse(
-    hub?.defaultCurrentScope.getClient(),
-  ).data;
+  const scope = isPlainRecord(hub) ? hub["defaultCurrentScope"] : undefined;
 
-  const options = sentryOptionsSchema.safeParse(client?.getOptions()).data;
+  const client =
+    isPlainRecord(scope) && isGetter(scope["getClient"])
+      ? scope["getClient"]()
+      : undefined;
 
-  if (!options?.propagateTraceparent) {
+  const options =
+    isPlainRecord(client) && isGetter(client["getOptions"])
+      ? client["getOptions"]()
+      : undefined;
+
+  if (!isPlainRecord(options) || options["propagateTraceparent"] !== true) {
     return false;
   }
 
-  const targets = options.tracePropagationTargets;
+  const targets = options["tracePropagationTargets"];
 
-  if (!targets) {
+  if (targets === undefined) {
     return new URL(url).origin === globalThis.location.origin;
   }
 
-  return targets.some((target) => matches(target, url, false));
+  return (
+    Array.isArray(targets) &&
+    targets.every((target) => isUrlMatcher(target)) &&
+    targets.some((target: UrlMatcher) => matches(target, url, false))
+  );
 }
 
 /**

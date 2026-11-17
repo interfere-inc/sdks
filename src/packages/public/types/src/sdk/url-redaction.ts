@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { isPlainRecord } from "./guards/json.ts";
 
 /** Query parameters and fragments to redact in SDK telemetry. Parameter names match case-insensitively. */
 export interface UrlRedactionOptions {
@@ -178,13 +178,34 @@ function redactSpanName(name: string, policy: UrlRedactionPolicy) {
     .join(" ");
 }
 
-const exceptionChainSchema = z.array(
-  z.looseObject({ stack: z.string().optional(), value: z.string().optional() }),
-);
+interface ExceptionChainEntry {
+  stack?: string | undefined;
+  value?: string | undefined;
+}
+
+function isOptionalString(value: unknown): value is string | undefined {
+  return value === undefined || typeof value === "string";
+}
+
+function isExceptionChain(value: unknown): value is ExceptionChainEntry[] {
+  return (
+    Array.isArray(value) &&
+    value.every(
+      (entry) =>
+        isPlainRecord(entry) &&
+        isOptionalString(entry["stack"]) &&
+        isOptionalString(entry["value"]),
+    )
+  );
+}
 
 function redactExceptionChain(chain: string, policy: UrlRedactionPolicy) {
   try {
-    const entries = exceptionChainSchema.parse(JSON.parse(chain));
+    const entries: unknown = JSON.parse(chain);
+
+    if (!isExceptionChain(entries)) {
+      return chain;
+    }
 
     for (const entry of entries) {
       if (entry.value !== undefined) {

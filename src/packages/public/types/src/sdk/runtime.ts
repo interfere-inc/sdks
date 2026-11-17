@@ -1,14 +1,7 @@
-import { z } from "zod";
 import { inferRuntimeFromEvidence } from "../internal/runtime-inference.ts";
 
-export const envSchema = z.string().min(1).nullable().meta({
-  description:
-    "Deployment environment the SDK is running in. Free-form label (e.g. `production`, `preview`, `staging`, `development`).",
-  id: "Environment",
-  title: "Environment",
-});
-
-export type Env = z.infer<typeof envSchema>;
+/** Deployment environment the SDK is running in: a free-form label such as `production`, `preview`, `staging` or `development`. */
+export type Env = string | null;
 
 /**
  * Fallback environment when nothing is configured. `development` (not
@@ -58,16 +51,8 @@ export function resolveEnvironment(opts?: {
   return DEFAULT_ENVIRONMENT;
 }
 
-export const runtimeSchema = z
-  .enum(["browser", "node", "edge"])
-  .nullable()
-  .meta({
-    description: "JavaScript runtime the SDK is running in.",
-    id: "Runtime",
-    title: "Runtime",
-  });
-
-export type Runtime = z.infer<typeof runtimeSchema>;
+/** JavaScript runtime the SDK is running in. */
+export type Runtime = "browser" | "node" | "edge" | null;
 
 const globalScope = globalThis as {
   readonly EdgeRuntime?: unknown;
