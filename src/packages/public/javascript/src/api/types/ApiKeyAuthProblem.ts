@@ -11,6 +11,7 @@ export namespace ApiKeyAuthProblem {
         AuthMissing: "AUTH_MISSING",
         AuthAkInvalid: "AUTH_AK_INVALID",
         AuthAkSurfaceRequired: "AUTH_AK_SURFACE_REQUIRED",
+        ReleaseServiceRequired: "RELEASE_SERVICE_REQUIRED",
     } as const;
     export type Code = (typeof Code)[keyof typeof Code];
     export const Service = {

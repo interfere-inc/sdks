@@ -19,6 +19,7 @@ export interface CreateReleaseRequest {
     buildId: string;
     destination: Interfere.ReleaseDestination | null;
     producerVersion?: string | undefined;
+    service?: Interfere.ReleaseService | undefined;
     slug?: string | undefined;
     source: Interfere.ReleaseSource;
 }

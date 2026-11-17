@@ -1762,7 +1762,8 @@
             "enum": [
               "AUTH_MISSING",
               "AUTH_AK_INVALID",
-              "AUTH_AK_SURFACE_REQUIRED"
+              "AUTH_AK_SURFACE_REQUIRED",
+              "RELEASE_SERVICE_REQUIRED"
             ]
           },
           "message": {
@@ -2482,6 +2483,9 @@
           "producerVersion": {
             "type": "string"
           },
+          "service": {
+            "$ref": "#/components/schemas/ReleaseService"
+          },
           "slug": {
             "type": "string",
             "pattern": "^rel_[0-9a-f]{16}$"
@@ -2691,6 +2695,24 @@
           "provider"
         ],
         "description": "Release destination metadata from the Interfere CLI."
+      },
+      "ReleaseService": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 255,
+            "pattern": "\\S"
+          },
+          "namespace": {
+            "type": "string",
+            "maxLength": 255
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "description": "ReleaseService"
       },
       "ReleaseSource": {
         "oneOf": [
@@ -62852,7 +62874,7 @@
             "$ref": "#/components/responses/ErrorResponse_d8af65c0c470b099b469fd50598c7936eda3e7f2498c1f6725ec78bb22a021eb"
           },
           "409": {
-            "description": "The Worker deploy tool named a Cloudflare Worker that is not linked to this App",
+            "description": "The named Worker or service is not linked to an App",
             "content": {
               "application/json": {
                 "schema": {
@@ -62861,7 +62883,8 @@
                     "code": {
                       "type": "string",
                       "enum": [
-                        "RELEASE_DESTINATION_UNLINKED"
+                        "RELEASE_DESTINATION_UNLINKED",
+                        "RELEASE_SERVICE_UNLINKED"
                       ]
                     },
                     "message": {

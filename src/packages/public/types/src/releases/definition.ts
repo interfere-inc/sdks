@@ -26,11 +26,19 @@ const surfaceRefSchema = z
   })
   .meta({ id: "SurfaceRef", title: "SurfaceRef" });
 
+const releaseServiceSchema = z
+  .object({
+    name: z.string().max(255).regex(/\S/u),
+    namespace: z.string().max(255).optional(),
+  })
+  .meta({ id: "ReleaseService", title: "ReleaseService" });
+
 export const createReleaseRequest = z
   .object({
     buildId: z.string(),
     destination: releaseDestinationMetadataSchema.nullable(),
     producerVersion: z.string().optional(),
+    service: releaseServiceSchema.optional(),
     /** Release slug derived from the commit SHA; when omitted, the server derives it from buildId. */
     slug: z.string().optional(),
     source: releaseSourceMetadataSchema,

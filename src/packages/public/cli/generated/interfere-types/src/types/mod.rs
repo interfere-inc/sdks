@@ -6,7 +6,7 @@
 //! ## Type Categories
 //!
 //! - **Request/Response Types**: 2167 types for API operations
-//! - **Model Types**: 631 types for data representation
+//! - **Model Types**: 632 types for data representation
 
 pub mod drain_drain_otlp_export_request_signal;
 pub mod traces_trace_activity_request_occurred_at;
@@ -328,6 +328,7 @@ pub mod cloudflare_release_destination_provider;
 pub mod cloudflare_release_destination;
 pub mod cli_release_destination_provider;
 pub mod cli_release_destination;
+pub mod release_service;
 pub mod release_source;
 pub mod source_map_upload_session_response_uploads_item;
 pub mod source_map_upload_session_response;
@@ -3127,6 +3128,7 @@ pub use cloudflare_release_destination_provider::CloudflareReleaseDestinationPro
 pub use cloudflare_release_destination::CloudflareReleaseDestination;
 pub use cli_release_destination_provider::CliReleaseDestinationProvider;
 pub use cli_release_destination::CliReleaseDestination;
+pub use release_service::ReleaseService;
 pub use release_source::ReleaseSource;
 pub use source_map_upload_session_response_uploads_item::SourceMapUploadSessionResponseUploadsItem;
 pub use source_map_upload_session_response::SourceMapUploadSessionResponse;

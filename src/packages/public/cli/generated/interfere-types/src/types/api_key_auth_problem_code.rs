@@ -8,6 +8,7 @@ pub enum ApiKeyAuthProblemCode {
     AuthMissing,
     AuthAkInvalid,
     AuthAkSurfaceRequired,
+    ReleaseServiceRequired,
     /// This variant is used for forward compatibility.
     /// If the server sends a value not recognized by the current SDK version,
     /// it will be captured here with the raw string value.
@@ -19,6 +20,7 @@ impl Serialize for ApiKeyAuthProblemCode {
             Self::AuthMissing => serializer.serialize_str("AUTH_MISSING"),
             Self::AuthAkInvalid => serializer.serialize_str("AUTH_AK_INVALID"),
             Self::AuthAkSurfaceRequired => serializer.serialize_str("AUTH_AK_SURFACE_REQUIRED"),
+            Self::ReleaseServiceRequired => serializer.serialize_str("RELEASE_SERVICE_REQUIRED"),
             Self::__Unknown(val) => serializer.serialize_str(val),
         }
     }
@@ -31,6 +33,7 @@ impl<'de> Deserialize<'de> for ApiKeyAuthProblemCode {
             "AUTH_MISSING" => Ok(Self::AuthMissing),
             "AUTH_AK_INVALID" => Ok(Self::AuthAkInvalid),
             "AUTH_AK_SURFACE_REQUIRED" => Ok(Self::AuthAkSurfaceRequired),
+            "RELEASE_SERVICE_REQUIRED" => Ok(Self::ReleaseServiceRequired),
             _ => Ok(Self::__Unknown(value)),
         }
     }
@@ -42,6 +45,7 @@ impl fmt::Display for ApiKeyAuthProblemCode {
             Self::AuthMissing => write!(f, "AUTH_MISSING"),
             Self::AuthAkInvalid => write!(f, "AUTH_AK_INVALID"),
             Self::AuthAkSurfaceRequired => write!(f, "AUTH_AK_SURFACE_REQUIRED"),
+            Self::ReleaseServiceRequired => write!(f, "RELEASE_SERVICE_REQUIRED"),
             Self::__Unknown(val) => write!(f, "{}", val),
         }
     }

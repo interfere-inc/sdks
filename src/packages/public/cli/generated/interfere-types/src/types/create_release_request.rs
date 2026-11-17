@@ -13,6 +13,8 @@ pub struct CreateReleaseRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub producer_version: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub service: Option<ReleaseService>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub slug: Option<String>,
     pub source: ReleaseSource,
 }
@@ -29,6 +31,7 @@ pub struct CreateReleaseRequestBuilder {
     build_id: Option<String>,
     destination: Option<ReleaseDestination>,
     producer_version: Option<String>,
+    service: Option<ReleaseService>,
     slug: Option<String>,
     source: Option<ReleaseSource>,
 }
@@ -46,6 +49,11 @@ impl CreateReleaseRequestBuilder {
 
     pub fn producer_version(mut self, value: impl Into<String>) -> Self {
         self.producer_version = Some(value.into());
+        self
+    }
+
+    pub fn service(mut self, value: ReleaseService) -> Self {
+        self.service = Some(value);
         self
     }
 
@@ -68,6 +76,7 @@ impl CreateReleaseRequestBuilder {
             build_id: self.build_id.ok_or_else(|| BuildError::missing_field("build_id"))?,
             destination: self.destination,
             producer_version: self.producer_version,
+            service: self.service,
             slug: self.slug,
             source: self.source.ok_or_else(|| BuildError::missing_field("source"))?,
         })

@@ -278,6 +278,7 @@ impl ReleasesClient {
     ///                 },
     ///                 destination: None,
     ///                 producer_version: None,
+    ///                 service: None,
     ///                 slug: None,
     ///             },
     ///             None,
