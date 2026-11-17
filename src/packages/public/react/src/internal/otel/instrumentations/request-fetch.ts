@@ -103,7 +103,7 @@ export function createFetchInstrumentation(
         request.headers = headers;
       }
 
-      sending = core.begin(span, url, requestMethod(request), headers);
+      sending = core.begin(span, url, headers);
 
       const size = request instanceof Request ? 0 : bodySize(request.body);
 

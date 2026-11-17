@@ -1,7 +1,7 @@
 import { setInjectedConfiguration } from "@interfere/test-config/injected-configuration";
 import { context, propagation, trace } from "@opentelemetry/api";
 import { HttpResponse, http } from "msw";
-import { afterEach, beforeEach, expect, test } from "vitest";
+import { afterEach, beforeEach, expect, test, vi } from "vitest";
 
 import { DISABLE_ALL_PLUGINS } from "../../../test/fixtures/disable-all-plugins.js";
 import { worker } from "../../../test/msw.js";
@@ -63,8 +63,10 @@ test.each([false, true])(
         () => new HttpResponse(null, { status: 204 }),
       ),
       ...[backendUrl, thirdPartyUrl].map((url) =>
-        http.get(url, ({ request }) => {
-          headers.set(url, request.headers.get("traceparent"));
+        http.all(url, ({ request }) => {
+          if (request.method !== "HEAD") {
+            headers.set(url, request.headers.get("traceparent"));
+          }
 
           return new HttpResponse(null, { status: 204 });
         }),
@@ -76,6 +78,16 @@ test.each([false, true])(
         created.consent.set(true);
       },
       opts: { apiHost: "https://kernel.invalid" },
+    });
+
+    await fetch(backendUrl);
+
+    expect(headers.get(backendUrl)).toBeNull();
+
+    await vi.waitFor(() => {
+      expect(sessionStorage.getItem("interfere:propagation_proven")).toContain(
+        "https://backend.example.test",
+      );
     });
 
     await fetch(backendUrl);

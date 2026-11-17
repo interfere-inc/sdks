@@ -352,12 +352,12 @@ void init({
 });
 ```
 
-| Origin                                      | Headers it receives                        | When                                                                                        |
-| ------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------- |
-| Your page's origin                          | `tracing.headers` (all three by default)   | Always                                                                                      |
-| A `tracing.propagateTo` origin              | `tracing.headers`, or the entry's own list | Always                                                                                      |
-| A backend host from your workspace settings | `tracing.headers`                          | On `GET` and `HEAD` at first; on other methods once one of those has succeeded this session |
-| Anything else                               | None                                       | Never                                                                                       |
+| Origin                                      | Headers it receives                        | When                                                                                                        |
+| ------------------------------------------- | ------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| Your page's origin                          | `tracing.headers` (all three by default)   | Always                                                                                                      |
+| A `tracing.propagateTo` origin              | `tracing.headers`, or the entry's own list | Always                                                                                                      |
+| A backend host from your workspace settings | `tracing.headers`                          | Only after Interfere's own `HEAD` check to that host passes CORS this session, with the headers that passed |
+| Anything else                               | None                                       | Never                                                                                                       |
 
 If a request carrying these headers fails at the network level, and that origin has never answered one, Interfere logs one warning naming the origin. It then stops sending headers there for the rest of the browser session. It never retries your request.
 

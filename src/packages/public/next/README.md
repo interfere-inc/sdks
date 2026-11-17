@@ -414,7 +414,7 @@ void init({
 
 If a request carrying these headers fails at the network level, and that origin has never answered one, Interfere logs one warning naming the origin. It then stops sending headers there for the rest of the browser session. It never retries your request.
 
-For a backend host from your workspace settings, Interfere starts with `GET` and `HEAD` requests. It adds headers to other methods only after one of those succeeds, so a strict CORS policy can't break a `POST`.
+For a backend host from your workspace settings, Interfere adds no headers until its own credentialed `HEAD` check to that host passes CORS in this browser session, and then only the headers that passed, so a strict CORS policy can't break your requests.
 
 ### No data arrives
 

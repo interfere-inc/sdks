@@ -1,3 +1,4 @@
+import { browserStorage } from "@interfere/test-config/browser-storage";
 import { WebTracerProvider } from "@opentelemetry/sdk-trace-web";
 import { HttpResponse, http } from "msw";
 import { expect, onTestFinished, test } from "vitest";
@@ -7,6 +8,17 @@ import { w3cTraceHeaders } from "../../../../test/trace-headers.test-utils.js";
 import { registerBundledInstrumentations } from "./instrumentations.js";
 
 function install(options: { propagateTo?: string[] } = {}) {
+  browserStorage.session.set(
+    "interfere:propagation_proven",
+    JSON.stringify({
+      "https://discovered.backend.test": [
+        "traceparent",
+        "tracestate",
+        "baggage",
+      ],
+    }),
+  );
+
   const provider = new WebTracerProvider();
 
   const handle = registerBundledInstrumentations({

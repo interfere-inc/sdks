@@ -1,26 +1,63 @@
 import type { Span } from "@opentelemetry/api";
+import { RandomIdGenerator } from "@opentelemetry/sdk-trace-base";
+import { z } from "zod";
 
-import type { HeaderSet, OriginPolicy } from "./header-policy.js";
+import type {
+  HeaderSet,
+  OriginPolicy,
+  TraceHeaderName,
+} from "./header-policy.js";
 
 const PROVEN_KEY = "interfere:propagation_proven";
 
 const DENIED_KEY = "interfere:propagation_denied";
 
-const SAFE_METHODS = new Set(["GET", "HEAD"]);
+const HEADER_NAMES: readonly TraceHeaderName[] = [
+  "traceparent",
+  "tracestate",
+  "baggage",
+];
 
 const NONE: HeaderSet = new Set();
 
-function originOf(url: string) {
+const ids = new RandomIdGenerator();
+
+function parse(url: string) {
   try {
-    return new URL(url, globalThis.location.href).origin;
+    return new URL(url, globalThis.location.href);
   } catch {
     return null;
   }
 }
 
-function readOrigins(key: string) {
+const provenSchema = z.record(
+  z.string(),
+  z.array(z.enum(["traceparent", "tracestate", "baggage"])),
+);
+
+type ProvenMemo = z.infer<typeof provenSchema>;
+
+function readProven() {
   try {
-    const parsed: unknown = JSON.parse(sessionStorage.getItem(key) ?? "[]");
+    const parsed = provenSchema.safeParse(
+      JSON.parse(sessionStorage.getItem(PROVEN_KEY) ?? "{}"),
+    );
+
+    return new Map<string, HeaderSet>(
+      Object.entries(parsed.success ? parsed.data : {}).map(
+        ([origin, names]) => [origin, new Set(names)],
+      ),
+    );
+  } catch {
+    return new Map<string, HeaderSet>();
+  }
+}
+
+function readDenied() {
+  try {
+    const parsed: unknown = JSON.parse(
+      sessionStorage.getItem(DENIED_KEY) ?? "[]",
+    );
 
     return new Set(
       Array.isArray(parsed)
@@ -32,53 +69,186 @@ function readOrigins(key: string) {
   }
 }
 
-function writeOrigins(key: string, origins: ReadonlySet<string>) {
+function write(key: string, value: ProvenMemo | string[]) {
   try {
-    sessionStorage.setItem(key, JSON.stringify([...origins]));
+    sessionStorage.setItem(key, JSON.stringify(value));
   } catch {
     return;
   }
 }
 
+function ordered(names: HeaderSet) {
+  return HEADER_NAMES.filter((name) => names.has(name));
+}
+
+function intersect(headers: HeaderSet, proof: HeaderSet) {
+  return new Set(
+    ordered(headers).filter((name) => proof.has(name)),
+  ) satisfies HeaderSet;
+}
+
+function probeHeaders(names: HeaderSet) {
+  const headers = new Headers();
+
+  if (names.has("traceparent")) {
+    headers.set(
+      "traceparent",
+      `00-${ids.generateTraceId()}-${ids.generateSpanId()}-00`,
+    );
+  }
+
+  if (names.has("tracestate")) {
+    headers.set("tracestate", "interfere=probe");
+  }
+
+  if (names.has("baggage")) {
+    headers.set("baggage", "interfere.probe=1");
+  }
+
+  return headers;
+}
+
+function candidates(names: HeaderSet) {
+  const withoutBaggage = new Set(
+    ordered(names).filter((name) => name !== "baggage"),
+  ) satisfies HeaderSet;
+
+  return withoutBaggage.size > 0 && withoutBaggage.size < names.size
+    ? [names, withoutBaggage]
+    : [names];
+}
+
 /**
- * Decides per request whether a discovered origin may carry trace headers
- * yet, remembers which origins answered a header-bearing request and which
- * rejected one, and logs the one CORS diagnostic per origin. Explicit
- * origins (page origin, `propagateTo`) always carry their
- * headers; a discovered origin carries them on GET and HEAD from the
- * start, and on other methods only after one header-bearing GET or HEAD
- * received a response in this browser session, so an unmodified CORS
- * policy never breaks a first POST. An origin whose header-bearing request
- * failed at the network layer before any response was seen is marked
- * header-less for the session; nothing is retried. The memo lives in
- * `sessionStorage` when available and `canPersist` allows it, else in this page.
+ * Decides per request which trace headers an allowed origin may carry,
+ * proves discovered origins safe before any application request carries
+ * one, and logs one CORS diagnostic per origin. Explicit origins (page
+ * origin, `propagateTo`) always carry their headers. A discovered origin
+ * carries none, on any method, until Interfere's own credentialed `HEAD`
+ * probe to the path of its first request received a response while
+ * carrying that origin's header set, or the set without baggage when the
+ * full set was rejected; the origin then carries exactly the proven
+ * headers. A rejected probe, or a later header-bearing request to the
+ * origin failing at the network layer, marks it header-less for the
+ * session. Application requests are never retried. The probe goes through
+ * the `fetch` present when this was created, before Interfere patched it,
+ * so it is not observed. The memo lives in `sessionStorage` when
+ * available and `canPersist` allows it, else in this page.
  */
 export function propagationDiagnostics(
   pageOrigin: string,
   canPersist: () => boolean = () => true,
 ) {
+  const fetchOnce = globalThis.fetch.bind(globalThis);
   const persisted = canPersist();
-  const proven = persisted ? readOrigins(PROVEN_KEY) : new Set<string>();
-  const denied = persisted ? readOrigins(DENIED_KEY) : new Set<string>();
+  const proven = persisted ? readProven() : new Map<string, HeaderSet>();
+  const denied = persisted ? readDenied() : new Set<string>();
+  const discovered = new Set<string>();
+  const explicitHeaders = new Map<string, HeaderSet>();
+  const probing = new Set<string>();
   const warned = new Set<string>();
 
   let active = true;
 
-  return {
-    allowed(entry: OriginPolicy, url: string, method: string) {
-      const origin = originOf(url);
+  function prove(origin: string, names: HeaderSet) {
+    proven.set(origin, names);
 
-      if (!origin || denied.has(origin)) {
+    if (canPersist()) {
+      write(
+        PROVEN_KEY,
+        Object.fromEntries(
+          [...proven].map(([key, value]) => [key, ordered(value)]),
+        ),
+      );
+    }
+  }
+
+  function deny(origin: string, message: string) {
+    if (!denied.has(origin)) {
+      denied.add(origin);
+
+      if (canPersist()) {
+        write(DENIED_KEY, [...denied]);
+      }
+    }
+
+    if (!warned.has(origin)) {
+      warned.add(origin);
+
+      console.warn(`[interfere] ${message}`);
+    }
+  }
+
+  async function probe(
+    origin: string,
+    path: string,
+    [candidate, ...rest]: HeaderSet[],
+  ) {
+    if (!candidate) {
+      return;
+    }
+
+    try {
+      await fetchOnce(`${origin}${path}`, {
+        cache: "no-store",
+        credentials: "include",
+        headers: probeHeaders(candidate),
+        method: "HEAD",
+        mode: "cors",
+        redirect: "manual",
+        referrerPolicy: "no-referrer",
+      });
+
+      if (active) {
+        prove(origin, candidate);
+      }
+    } catch {
+      if (rest.length > 0) {
+        await probe(origin, path, rest);
+
+        return;
+      }
+
+      if (active) {
+        deny(
+          origin,
+          `${origin} is a backend host configured for this workspace, but a CORS check carrying trace headers failed, so its requests carry none in this browser session and its server traces are not linked to the browser. Allow "traceparent, tracestate, baggage" in ${origin}'s Access-Control-Allow-Headers, or list ${origin} in tracing.propagateTo with the headers it allows.`,
+        );
+      }
+    }
+  }
+
+  return {
+    allowed(entry: OriginPolicy, url: string) {
+      const target = parse(url);
+
+      if (!target || denied.has(target.origin)) {
         return NONE;
       }
 
-      if (
-        !entry.discovered ||
-        origin === pageOrigin ||
-        proven.has(origin) ||
-        SAFE_METHODS.has(method.toUpperCase())
-      ) {
+      const { origin } = target;
+
+      if (origin === pageOrigin) {
         return entry.headers;
+      }
+
+      if (!entry.discovered) {
+        explicitHeaders.set(origin, entry.headers);
+
+        return entry.headers;
+      }
+
+      discovered.add(origin);
+
+      const proof = proven.get(origin);
+
+      if (proof) {
+        return intersect(entry.headers, proof);
+      }
+
+      if (active && entry.headers.size > 0 && !probing.has(origin)) {
+        probing.add(origin);
+
+        void probe(origin, target.pathname, candidates(entry.headers));
       }
 
       return NONE;
@@ -87,14 +257,11 @@ export function propagationDiagnostics(
       warned.clear();
     },
     success(url: string) {
-      const origin = originOf(url);
+      const origin = parse(url)?.origin;
+      const carried = origin ? explicitHeaders.get(origin) : undefined;
 
-      if (active && origin && !proven.has(origin)) {
-        proven.add(origin);
-
-        if (canPersist()) {
-          writeOrigins(PROVEN_KEY, proven);
-        }
+      if (active && origin && carried && !proven.has(origin)) {
+        prove(origin, carried);
       }
     },
     failure(
@@ -104,36 +271,32 @@ export function propagationDiagnostics(
       aborted: boolean,
       span?: Span,
     ) {
-      const origin = originOf(url);
+      const origin = parse(url)?.origin;
 
       if (
         !active ||
         !origin ||
         !(error instanceof TypeError) ||
         aborted ||
-        origin === pageOrigin ||
-        proven.has(origin)
+        origin === pageOrigin
       ) {
+        return;
+      }
+
+      const carriedHeaders = discovered.has(origin)
+        ? (proven.get(origin)?.size ?? 0) > 0
+        : !proven.has(origin);
+
+      if (!carriedHeaders) {
         return;
       }
 
       span?.setAttribute("interfere.propagation.suspect_cors", true);
 
-      if (!denied.has(origin)) {
-        denied.add(origin);
-
-        if (canPersist()) {
-          writeOrigins(DENIED_KEY, denied);
-        }
-      }
-
-      if (!warned.has(origin)) {
-        warned.add(origin);
-
-        console.warn(
-          `[interfere] Requests to ${origin} fail at the network layer while carrying trace headers. If ${origin} does not allow "traceparent, tracestate, baggage" in Access-Control-Allow-Headers, add them there or give ${origin} a narrower headers list in tracing.propagateTo. Interfere did not retry the request and sends no trace headers to ${origin} for the rest of this browser session.`,
-        );
-      }
+      deny(
+        origin,
+        `Requests to ${origin} fail at the network layer while carrying trace headers. If ${origin} does not allow "traceparent, tracestate, baggage" in Access-Control-Allow-Headers, add them there or give ${origin} a narrower headers list in tracing.propagateTo. Interfere did not retry the request and sends no trace headers to ${origin} for the rest of this browser session.`,
+      );
     },
     dispose() {
       active = false;

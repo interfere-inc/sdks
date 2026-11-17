@@ -189,7 +189,7 @@ With no registered tracer provider, the default `tracing: "auto"` registers Inte
 
 ### Browser trace headers
 
-The browser SDK writes `traceparent`, `tracestate` and `baggage` to the page origin and to the exact origins in `init({ tracing: { propagateTo } })` on every request, and to the backend hosts configured for your workspace on `GET` and `HEAD` from the first request and on other methods once one header-bearing `GET` or `HEAD` to that host has answered in this browser session. `tracing.headers` restricts the set or, as `false`, turns header writes off everywhere; a `propagateTo` entry `{ origin, headers }` names exactly the headers one origin receives. Cross-origin APIs must allow `traceparent, tracestate, baggage` in `Access-Control-Allow-Headers`. The SDK never resends an application request.
+The browser SDK writes `traceparent`, `tracestate` and `baggage` to the page origin and to the exact origins in `init({ tracing: { propagateTo } })` on every request, and to the backend hosts configured for your workspace only after Interfere's own credentialed `HEAD` check to that host passes CORS in this browser session, with only the headers that passed. `tracing.headers` restricts the set or, as `false`, turns header writes off everywhere; a `propagateTo` entry `{ origin, headers }` names exactly the headers one origin receives. Cross-origin APIs must allow `traceparent, tracestate, baggage` in `Access-Control-Allow-Headers`. The SDK never resends an application request.
 
 ## First-Time Setup
 
@@ -209,7 +209,7 @@ The SDK config response contains `plugins` and `protocolVersion`, plus optional 
 
 Remote plugin settings can disable shipped plugins; they cannot override local disables or consent. Lazy plugins load through dynamic imports of code-split chunks shipped in the installed package, not executable code fetched from an Interfere CDN; core error capture is bundled eagerly. Remote configuration cannot enable code the installed version does not ship.
 
-Remote `backendHosts` become discovered HTTPS origins. They receive trace headers on `GET`/`HEAD` initially; other methods receive them only after a header-bearing `GET`/`HEAD` to that origin receives a response in this browser session. Explicit `tracing.propagateTo` origins and their header lists are declared in application code and take precedence over discovered hosts. `tracing.headers: false` disables SDK header writes everywhere. Remote configuration cannot override either setting.
+Remote `backendHosts` become discovered HTTPS origins. They receive no trace header on any request until Interfere's own credentialed `HEAD` check to that origin passes CORS in this browser session, and then only the headers that passed (`baggage` is dropped when only the check without it passes). Explicit `tracing.propagateTo` origins and their header lists are declared in application code and take precedence over discovered hosts. `tracing.headers: false` disables SDK header writes everywhere. Remote configuration cannot override either setting.
 
 ## Workspace keys
 

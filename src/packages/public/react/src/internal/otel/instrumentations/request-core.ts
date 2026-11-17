@@ -113,14 +113,14 @@ export function createRequestCore(input: RequestInstrumentationsInput) {
     isTracked: (url: string) => originPolicy(targets, url) !== undefined,
     pageExit: createPageExitWatch(),
     states,
-    allowedHeaders(url: string, method: string) {
+    allowedHeaders(url: string) {
       const entry = originPolicy(targets, url);
 
       if (!entry) {
         return;
       }
 
-      const allowed = diagnostics.allowed(entry, url, method);
+      const allowed = diagnostics.allowed(entry, url);
 
       if (!allowed.has("traceparent") || !input.defersTraceContext?.(url)) {
         return allowed;
@@ -130,7 +130,7 @@ export function createRequestCore(input: RequestInstrumentationsInput) {
         [...allowed].filter((name) => !TRACE_CONTEXT_HEADERS.has(name)),
       ) satisfies typeof allowed;
     },
-    begin(span: Span, url: string, method: string, carrier: HeaderCarrier) {
+    begin(span: Span, url: string, carrier: HeaderCarrier) {
       const ctx = input.captureContext?.(context.active()) ?? context.active();
 
       const state: RequestState = {
@@ -153,7 +153,7 @@ export function createRequestCore(input: RequestInstrumentationsInput) {
         }
       };
 
-      const allowed = core.allowedHeaders(url, method);
+      const allowed = core.allowedHeaders(url);
 
       state.left =
         traceHeaders && allowed

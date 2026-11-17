@@ -1,6 +1,5 @@
 import type { Span } from "@opentelemetry/api";
 import { XMLHttpRequestInstrumentation } from "@opentelemetry/instrumentation-xml-http-request";
-import { z } from "zod";
 
 import { ATTR_REQUEST_TRACE_ID } from "../request-observer/request-observer-events.js";
 import { readTraceContext } from "../trace-headers.js";
@@ -18,16 +17,6 @@ import {
 import type { XhrOpen, XhrSend } from "./upstream-request-members.js";
 
 const CANCELLATIONS = ["abort", "timeout"] as const;
-
-function spanMethod(span: Span) {
-  const attributes = z
-    .object({ attributes: z.record(z.string(), z.unknown()) })
-    .safeParse(span).data?.attributes;
-
-  return (
-    z.string().safeParse(attributes?.["http.request.method"]).data ?? "GET"
-  );
-}
 
 /** The upstream XMLHttpRequest instrumentation with Interfere's header writer and failed-request evidence attached. */
 export function createXhrInstrumentation(
@@ -88,7 +77,7 @@ export function createXhrInstrumentation(
     const headers = recorded.get(xhr);
     const seen = headers ?? new Map<string, string>();
 
-    core.begin(span, url, spanMethod(span), {
+    core.begin(span, url, {
       append: (name, value) => {
         if (!headers) {
           seen.set(name, value);
