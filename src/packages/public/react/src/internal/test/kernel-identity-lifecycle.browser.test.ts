@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { HttpResponse, http } from "msw";
 
 import { DISABLE_ALL_PLUGINS } from "../../../test/fixtures/disable-all-plugins.js";
+import { EXPIRE_AFTER_MS } from "../activity/activity.js";
 import { worker } from "../../../test/msw.js";
 import {
   identifies,
@@ -78,6 +79,8 @@ beforeEach(() => {
 });
 
 afterEach(async () => {
+  vi.useRealTimers();
+
   await Promise.all([...kernels].map(async (kernel) => kernel.dispose()));
 
   kernels.clear();
@@ -218,6 +221,118 @@ describe("A54 identify before analytics consent is granted", () => {
       identifier: "user-a54",
       sessionId: kernel.session.getId(),
     });
+  });
+});
+
+describe("A07 account switch before analytics consent is granted", () => {
+  test("sends only the latest user once consent is granted", async () => {
+    expect.hasAssertions();
+
+    const kernel = await kernelWith();
+
+    await kernel.identity.set({ identifier: "user-first", source: SOURCE });
+
+    await kernel.identity.set({ identifier: "user-second", source: SOURCE });
+
+    kernel.consent.set({ replay: false });
+
+    await withinASecond(identifiesArrived(1));
+
+    await settle();
+
+    expect(identifies()).toHaveLength(1);
+
+    expect(identifies()[0]).toMatchObject({
+      identifier: "user-second",
+      sessionId: kernel.session.getId(),
+    });
+  });
+});
+
+describe("A07 account switch after analytics consent is granted", () => {
+  test("attaches the new user to the same persisted session", async () => {
+    expect.hasAssertions();
+
+    const kernel = await kernelWith({ replay: false });
+
+    await kernel.identity.set({ identifier: "user-first", source: SOURCE });
+
+    await identifiesArrived(1);
+
+    await kernel.identity.set({ identifier: "user-second", source: SOURCE });
+
+    await withinASecond(identifiesArrived(2));
+
+    expect(identifies().map((body) => body.identifier)).toStrictEqual([
+      "user-first",
+      "user-second",
+    ]);
+
+    expect(identifies()[1]?.sessionId).toBe(identifies()[0]?.sessionId);
+    expect(kernel.identity.get()).toMatchObject({ identifier: "user-second" });
+  });
+});
+
+describe("A12 identity after idle rotation with consent granted", () => {
+  test("the identified user is attached to the persisted session that replaces an expired one", async () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers({ toFake: ["Date", "performance"] });
+
+    const kernel = await kernelWith({ replay: false });
+
+    await kernel.identity.set({ identifier: "user-a12", source: SOURCE });
+
+    await identifiesArrived(1);
+
+    const original = kernel.session.getId();
+
+    vi.advanceTimersByTime(EXPIRE_AFTER_MS + 1000);
+
+    globalThis.dispatchEvent(new PointerEvent("pointerdown"));
+
+    const rotated = kernel.session.getId();
+
+    expect(rotated).toMatch(SESSION_ID);
+    expect(rotated).not.toBe(original);
+
+    await withinASecond(identifiesArrived(2));
+
+    expect(identifies()[1]).toMatchObject({
+      deviceId: kernel.device.getDeviceId(),
+      identifier: "user-a12",
+      sessionId: rotated,
+    });
+  });
+});
+
+describe("A12 identity after consent is revoked and re-granted", () => {
+  test("the identified user is attached to the new persisted session", async () => {
+    expect.hasAssertions();
+
+    const kernel = await kernelWith({ replay: false });
+
+    await kernel.identity.set({ identifier: "user-regrant", source: SOURCE });
+
+    await identifiesArrived(1);
+
+    kernel.consent.set(false);
+
+    kernel.consent.set({ replay: false });
+
+    await withinASecond(identifiesArrived(2));
+
+    await vi.waitFor(
+      () =>
+        expect(identifies().at(-1)).toMatchObject({
+          deviceId: kernel.device.getDeviceId(),
+          identifier: "user-regrant",
+          sessionId: kernel.session.getId(),
+        }),
+      WAIT,
+    );
+
+    expect(identifies().at(-1)?.sessionId).not.toBe(identifies()[0]?.sessionId);
   });
 });
 

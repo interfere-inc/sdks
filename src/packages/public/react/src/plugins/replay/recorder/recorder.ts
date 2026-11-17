@@ -1,8 +1,8 @@
 import type { eventWithTime, listenerHandler } from "@rrweb/types";
-import type { record as rrwebRecord } from "rrweb";
 
 import { createLogger } from "../../../util/log.js";
 import type { ReplayRecordOptions } from "../config.js";
+import type { record as rrwebRecord } from "./rrweb-record.js";
 
 const log = createLogger("replay");
 
@@ -87,7 +87,7 @@ export async function startReplayRecorder({
   let record: typeof rrwebRecord;
 
   try {
-    ({ record } = await import("rrweb"));
+    ({ record } = await import("./rrweb-record.js"));
   } catch {
     log.error("rrweb failed to load, replay disabled");
 
