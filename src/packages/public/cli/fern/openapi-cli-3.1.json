@@ -32123,6 +32123,54 @@
                         }
                       ]
                     },
+                    "defaultWebsiteSettings": {
+                      "type": "object",
+                      "properties": {
+                        "anonymousReplayPolicy": {
+                          "enum": [
+                            "always",
+                            "on_error",
+                            "never"
+                          ],
+                          "type": "string",
+                          "description": "When sessions without an identified user record replay: always, only once an error occurs, or never."
+                        },
+                        "anonymousUserTracking": {
+                          "type": "boolean"
+                        },
+                        "environmentFiltering": {
+                          "type": "boolean"
+                        },
+                        "plugins": {
+                          "type": "object",
+                          "properties": {
+                            "errors": {
+                              "type": "boolean"
+                            },
+                            "device": {
+                              "type": "boolean"
+                            },
+                            "pageEvents": {
+                              "type": "boolean"
+                            },
+                            "rageClick": {
+                              "type": "boolean"
+                            },
+                            "replay": {
+                              "type": "boolean"
+                            },
+                            "logs": {
+                              "type": "boolean"
+                            }
+                          }
+                        }
+                      },
+                      "required": [
+                        "anonymousReplayPolicy",
+                        "anonymousUserTracking",
+                        "environmentFiltering"
+                      ]
+                    },
                     "demoResetAt": {
                       "anyOf": [
                         {
@@ -32269,6 +32317,7 @@
                     "clerkUpdatedAt",
                     "dataResidencyLocation",
                     "defaultSurfaceId",
+                    "defaultWebsiteSettings",
                     "demoResetAt",
                     "demoResetStatus",
                     "demoWorkspace",
@@ -32636,6 +32685,54 @@
                         }
                       ]
                     },
+                    "defaultWebsiteSettings": {
+                      "type": "object",
+                      "properties": {
+                        "anonymousReplayPolicy": {
+                          "enum": [
+                            "always",
+                            "on_error",
+                            "never"
+                          ],
+                          "type": "string",
+                          "description": "When sessions without an identified user record replay: always, only once an error occurs, or never."
+                        },
+                        "anonymousUserTracking": {
+                          "type": "boolean"
+                        },
+                        "environmentFiltering": {
+                          "type": "boolean"
+                        },
+                        "plugins": {
+                          "type": "object",
+                          "properties": {
+                            "errors": {
+                              "type": "boolean"
+                            },
+                            "device": {
+                              "type": "boolean"
+                            },
+                            "pageEvents": {
+                              "type": "boolean"
+                            },
+                            "rageClick": {
+                              "type": "boolean"
+                            },
+                            "replay": {
+                              "type": "boolean"
+                            },
+                            "logs": {
+                              "type": "boolean"
+                            }
+                          }
+                        }
+                      },
+                      "required": [
+                        "anonymousReplayPolicy",
+                        "anonymousUserTracking",
+                        "environmentFiltering"
+                      ]
+                    },
                     "demoResetAt": {
                       "anyOf": [
                         {
@@ -32782,6 +32879,7 @@
                     "clerkUpdatedAt",
                     "dataResidencyLocation",
                     "defaultSurfaceId",
+                    "defaultWebsiteSettings",
                     "demoResetAt",
                     "demoResetStatus",
                     "demoWorkspace",
@@ -33284,6 +33382,54 @@
                         }
                       ]
                     },
+                    "defaultWebsiteSettings": {
+                      "type": "object",
+                      "properties": {
+                        "anonymousReplayPolicy": {
+                          "enum": [
+                            "always",
+                            "on_error",
+                            "never"
+                          ],
+                          "type": "string",
+                          "description": "When sessions without an identified user record replay: always, only once an error occurs, or never."
+                        },
+                        "anonymousUserTracking": {
+                          "type": "boolean"
+                        },
+                        "environmentFiltering": {
+                          "type": "boolean"
+                        },
+                        "plugins": {
+                          "type": "object",
+                          "properties": {
+                            "errors": {
+                              "type": "boolean"
+                            },
+                            "device": {
+                              "type": "boolean"
+                            },
+                            "pageEvents": {
+                              "type": "boolean"
+                            },
+                            "rageClick": {
+                              "type": "boolean"
+                            },
+                            "replay": {
+                              "type": "boolean"
+                            },
+                            "logs": {
+                              "type": "boolean"
+                            }
+                          }
+                        }
+                      },
+                      "required": [
+                        "anonymousReplayPolicy",
+                        "anonymousUserTracking",
+                        "environmentFiltering"
+                      ]
+                    },
                     "demoResetAt": {
                       "anyOf": [
                         {
@@ -33430,6 +33576,7 @@
                     "clerkUpdatedAt",
                     "dataResidencyLocation",
                     "defaultSurfaceId",
+                    "defaultWebsiteSettings",
                     "demoResetAt",
                     "demoResetStatus",
                     "demoWorkspace",
@@ -33862,6 +34009,54 @@
               }
             ]
           },
+          "defaultWebsiteSettings": {
+            "type": "object",
+            "properties": {
+              "anonymousReplayPolicy": {
+                "enum": [
+                  "always",
+                  "on_error",
+                  "never"
+                ],
+                "type": "string",
+                "description": "When sessions without an identified user record replay: always, only once an error occurs, or never."
+              },
+              "anonymousUserTracking": {
+                "type": "boolean"
+              },
+              "environmentFiltering": {
+                "type": "boolean"
+              },
+              "plugins": {
+                "type": "object",
+                "properties": {
+                  "errors": {
+                    "type": "boolean"
+                  },
+                  "device": {
+                    "type": "boolean"
+                  },
+                  "pageEvents": {
+                    "type": "boolean"
+                  },
+                  "rageClick": {
+                    "type": "boolean"
+                  },
+                  "replay": {
+                    "type": "boolean"
+                  },
+                  "logs": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "required": [
+              "anonymousReplayPolicy",
+              "anonymousUserTracking",
+              "environmentFiltering"
+            ]
+          },
           "demoResetAt": {
             "anyOf": [
               {
@@ -34008,6 +34203,7 @@
           "clerkUpdatedAt",
           "dataResidencyLocation",
           "defaultSurfaceId",
+          "defaultWebsiteSettings",
           "demoResetAt",
           "demoResetStatus",
           "demoWorkspace",

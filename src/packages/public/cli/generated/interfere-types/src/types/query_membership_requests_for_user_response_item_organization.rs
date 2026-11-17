@@ -26,6 +26,8 @@ pub struct QueryMembershipRequestsForUserResponseItemOrganization {
     #[serde(rename = "defaultSurfaceId")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub default_surface_id: Option<String>,
+    #[serde(rename = "defaultWebsiteSettings")]
+    pub default_website_settings: QueryMembershipRequestsForUserResponseItemOrganizationDefaultWebsiteSettings,
     #[serde(rename = "demoResetAt")]
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(default)]
@@ -101,6 +103,7 @@ pub struct QueryMembershipRequestsForUserResponseItemOrganizationBuilder {
     clerk_updated_at: Option<f64>,
     data_residency_location: Option<QueryMembershipRequestsForUserResponseItemOrganizationDataResidencyLocation>,
     default_surface_id: Option<String>,
+    default_website_settings: Option<QueryMembershipRequestsForUserResponseItemOrganizationDefaultWebsiteSettings>,
     demo_reset_at: Option<f64>,
     demo_reset_status: Option<QueryMembershipRequestsForUserResponseItemOrganizationDemoResetStatus>,
     demo_workspace: Option<bool>,
@@ -153,6 +156,11 @@ impl QueryMembershipRequestsForUserResponseItemOrganizationBuilder {
 
     pub fn default_surface_id(mut self, value: impl Into<String>) -> Self {
         self.default_surface_id = Some(value.into());
+        self
+    }
+
+    pub fn default_website_settings(mut self, value: QueryMembershipRequestsForUserResponseItemOrganizationDefaultWebsiteSettings) -> Self {
+        self.default_website_settings = Some(value);
         self
     }
 
@@ -248,6 +256,7 @@ impl QueryMembershipRequestsForUserResponseItemOrganizationBuilder {
     /// - [`auto_create_apps`](QueryMembershipRequestsForUserResponseItemOrganizationBuilder::auto_create_apps)
     /// - [`clerk_org_id`](QueryMembershipRequestsForUserResponseItemOrganizationBuilder::clerk_org_id)
     /// - [`data_residency_location`](QueryMembershipRequestsForUserResponseItemOrganizationBuilder::data_residency_location)
+    /// - [`default_website_settings`](QueryMembershipRequestsForUserResponseItemOrganizationBuilder::default_website_settings)
     /// - [`demo_workspace`](QueryMembershipRequestsForUserResponseItemOrganizationBuilder::demo_workspace)
     /// - [`environment_filtering`](QueryMembershipRequestsForUserResponseItemOrganizationBuilder::environment_filtering)
     /// - [`id`](QueryMembershipRequestsForUserResponseItemOrganizationBuilder::id)
@@ -267,6 +276,7 @@ impl QueryMembershipRequestsForUserResponseItemOrganizationBuilder {
             clerk_updated_at: self.clerk_updated_at,
             data_residency_location: self.data_residency_location.ok_or_else(|| BuildError::missing_field("data_residency_location"))?,
             default_surface_id: self.default_surface_id,
+            default_website_settings: self.default_website_settings.ok_or_else(|| BuildError::missing_field("default_website_settings"))?,
             demo_reset_at: self.demo_reset_at,
             demo_reset_status: self.demo_reset_status,
             demo_workspace: self.demo_workspace.ok_or_else(|| BuildError::missing_field("demo_workspace"))?,

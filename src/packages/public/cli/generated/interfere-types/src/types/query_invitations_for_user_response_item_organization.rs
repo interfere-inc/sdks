@@ -26,6 +26,8 @@ pub struct QueryInvitationsForUserResponseItemOrganization {
     #[serde(rename = "defaultSurfaceId")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub default_surface_id: Option<String>,
+    #[serde(rename = "defaultWebsiteSettings")]
+    pub default_website_settings: QueryInvitationsForUserResponseItemOrganizationDefaultWebsiteSettings,
     #[serde(rename = "demoResetAt")]
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(default)]
@@ -101,6 +103,7 @@ pub struct QueryInvitationsForUserResponseItemOrganizationBuilder {
     clerk_updated_at: Option<f64>,
     data_residency_location: Option<QueryInvitationsForUserResponseItemOrganizationDataResidencyLocation>,
     default_surface_id: Option<String>,
+    default_website_settings: Option<QueryInvitationsForUserResponseItemOrganizationDefaultWebsiteSettings>,
     demo_reset_at: Option<f64>,
     demo_reset_status: Option<QueryInvitationsForUserResponseItemOrganizationDemoResetStatus>,
     demo_workspace: Option<bool>,
@@ -153,6 +156,11 @@ impl QueryInvitationsForUserResponseItemOrganizationBuilder {
 
     pub fn default_surface_id(mut self, value: impl Into<String>) -> Self {
         self.default_surface_id = Some(value.into());
+        self
+    }
+
+    pub fn default_website_settings(mut self, value: QueryInvitationsForUserResponseItemOrganizationDefaultWebsiteSettings) -> Self {
+        self.default_website_settings = Some(value);
         self
     }
 
@@ -248,6 +256,7 @@ impl QueryInvitationsForUserResponseItemOrganizationBuilder {
     /// - [`auto_create_apps`](QueryInvitationsForUserResponseItemOrganizationBuilder::auto_create_apps)
     /// - [`clerk_org_id`](QueryInvitationsForUserResponseItemOrganizationBuilder::clerk_org_id)
     /// - [`data_residency_location`](QueryInvitationsForUserResponseItemOrganizationBuilder::data_residency_location)
+    /// - [`default_website_settings`](QueryInvitationsForUserResponseItemOrganizationBuilder::default_website_settings)
     /// - [`demo_workspace`](QueryInvitationsForUserResponseItemOrganizationBuilder::demo_workspace)
     /// - [`environment_filtering`](QueryInvitationsForUserResponseItemOrganizationBuilder::environment_filtering)
     /// - [`id`](QueryInvitationsForUserResponseItemOrganizationBuilder::id)
@@ -267,6 +276,7 @@ impl QueryInvitationsForUserResponseItemOrganizationBuilder {
             clerk_updated_at: self.clerk_updated_at,
             data_residency_location: self.data_residency_location.ok_or_else(|| BuildError::missing_field("data_residency_location"))?,
             default_surface_id: self.default_surface_id,
+            default_website_settings: self.default_website_settings.ok_or_else(|| BuildError::missing_field("default_website_settings"))?,
             demo_reset_at: self.demo_reset_at,
             demo_reset_status: self.demo_reset_status,
             demo_workspace: self.demo_workspace.ok_or_else(|| BuildError::missing_field("demo_workspace"))?,
