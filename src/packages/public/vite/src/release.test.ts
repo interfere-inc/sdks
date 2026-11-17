@@ -65,6 +65,7 @@ const server = setupServer(
       org: { id: "org_1", slug: "acme" },
       source: { id: "source_1" },
       surface: { id: "surface_1", slug: "vite" },
+      token: "irt_retained_web",
     });
   }),
   http.post(
@@ -228,6 +229,7 @@ test("releases the retained output per environment and deletes the maps", async 
   expect(result).toStrictEqual({
     fileCount: 1,
     releaseSlug: "rel_deadbeef12345678",
+    releaseToken: "irt_retained_web",
     status: "released",
   });
 
@@ -277,7 +279,7 @@ test("only deletes the retained maps when no API key is available", async () => 
     receipt: ".cache/receipt.json",
   });
 
-  expect(result).toMatchObject({ status: "skipped" });
+  expect(result).toMatchObject({ releaseToken: null, status: "skipped" });
 
   expect(requests).toStrictEqual([]);
 
@@ -328,6 +330,7 @@ test("skips when the release already holds source maps from another build of the
 
   expect(result).toMatchObject({
     reason: expect.stringContaining("already holds source maps") as string,
+    releaseToken: "irt_retained_web",
     status: "skipped",
   });
 
@@ -373,6 +376,7 @@ test("retries a bundle once when a release request fails transiently", async () 
   expect(result).toStrictEqual({
     fileCount: 1,
     releaseSlug: "rel_deadbeef12345678",
+    releaseToken: "irt_retained_web",
     status: "released",
   });
 

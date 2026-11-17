@@ -1,7 +1,9 @@
 import { cleanupSourceMaps } from "@interfere/build/cleanup-source-maps";
+import { resolveReleaseRequest } from "@interfere/build/release-request";
 import { sourceMapUploadFetch } from "@interfere/build/source-map-upload-fetch";
 import { InterfereClient, InterfereError } from "@interfere/javascript";
 import { API_URL, PUBLIC_KEY_HEADER } from "@interfere/constants/api";
+import { createReleaseResponse } from "@interfere/types/releases/definition";
 import { releaseSlugSchema } from "@interfere/types/releases/slug";
 import { resolveDeployEnvironment } from "@interfere/types/sdk/deploy-environment";
 
@@ -51,9 +53,15 @@ export interface ReleaseBuildOutputOptions {
   receipt: string;
 }
 
+/** `releaseToken` is the token POST /v3/releases returned for this release, for the release step to put into the page; null when no release was registered or the release has no service. */
 export type ReleaseBuildOutputResult =
-  | { fileCount: number; releaseSlug: string; status: "released" }
-  | { reason: string; status: "skipped" }
+  | {
+      fileCount: number;
+      releaseSlug: string;
+      releaseToken: string | null;
+      status: "released";
+    }
+  | { reason: string; releaseToken: string | null; status: "skipped" }
   | { message: string; status: "failed" };
 
 const releaseUploadConflictSchema = z.object({
@@ -107,6 +115,7 @@ export async function releaseBuildOutput(options: ReleaseBuildOutputOptions) {
     return finish({
       reason:
         "INTERFERE_API_KEY is not set; retained source maps were deleted without a release.",
+      releaseToken: null,
       status: "skipped",
     });
   }
@@ -117,6 +126,7 @@ export async function releaseBuildOutput(options: ReleaseBuildOutputOptions) {
     return finish({
       reason:
         "the build receipt has no release identity (no commit SHA at build time).",
+      releaseToken: null,
       status: "skipped",
     });
   }
@@ -124,6 +134,7 @@ export async function releaseBuildOutput(options: ReleaseBuildOutputOptions) {
   if (discovered.files.length === 0) {
     return finish({
       reason: `no source maps paired with chunks under ${options.distDir}.`,
+      releaseToken: null,
       status: "skipped",
     });
   }
@@ -149,10 +160,28 @@ export async function releaseBuildOutput(options: ReleaseBuildOutputOptions) {
   const buildId = build.buildId ?? build.commitSha;
   const { releaseSlug } = build;
 
+  let releaseToken: string | null = null;
+
   const release = async () => {
     const releasesConfig = await client.releases.getReleasesConfig({
       abortSignal: AbortSignal.timeout(RELEASE_REQUEST_BUDGET_MS),
     });
+
+    const registeredRelease = createReleaseResponse.parse(
+      await client.releases.createRelease(
+        resolveReleaseRequest({
+          buildId,
+          config: releasesConfig,
+          environment,
+          producerVersion: PRODUCER_VERSION,
+          releaseSlug,
+          service: build.serviceName ? { name: build.serviceName } : undefined,
+        }),
+        { abortSignal: AbortSignal.timeout(RELEASE_REQUEST_BUDGET_MS) },
+      ),
+    );
+
+    releaseToken = registeredRelease.token ?? null;
 
     return runReleasePipeline({
       buildId,
@@ -161,6 +190,7 @@ export async function releaseBuildOutput(options: ReleaseBuildOutputOptions) {
       discovery: discovered,
       environment,
       producerVersion: PRODUCER_VERSION,
+      registeredRelease,
       releaseSlug,
       releasesConfig,
       service: build.serviceName ? { name: build.serviceName } : undefined,
@@ -204,6 +234,7 @@ export async function releaseBuildOutput(options: ReleaseBuildOutputOptions) {
     return {
       fileCount: result.fileCount,
       releaseSlug: result.releaseSlug,
+      releaseToken,
       status: "released",
     } satisfies ReleaseBuildOutputResult;
   } catch (error) {
@@ -214,6 +245,7 @@ export async function releaseBuildOutput(options: ReleaseBuildOutputOptions) {
     ) {
       return await finish({
         reason: `release ${build.releaseSlug} for ${environment ?? "no environment"} already holds source maps from another build of this bundle (receipt commit ${build.commitSha}); keeping the existing release.`,
+        releaseToken,
         status: "skipped",
       });
     }
