@@ -52,7 +52,9 @@ export class SessionsClient {
         request: Interfere.CreateSessionRequest,
         requestOptions?: SessionsClient.RequestOptions,
     ): Promise<core.WithRawResponse<Interfere.SessionResponse>> {
-        const _metadata: core.EndpointMetadata = { security: [{ publicKeyHeader: [] }, { publicKey: [] }] };
+        const _metadata: core.EndpointMetadata = {
+            security: [{ releaseTokenHeader: [] }, { publicKeyHeader: [] }, { publicKey: [] }],
+        };
         const _authRequest: core.AuthRequest = await this._options.authProvider.getAuthRequest({
             endpointMetadata: _metadata,
         });
@@ -135,7 +137,9 @@ export class SessionsClient {
         request: Interfere.IdentifySessionRequest,
         requestOptions?: SessionsClient.RequestOptions,
     ): Promise<core.WithRawResponse<Interfere.SessionResponse>> {
-        const _metadata: core.EndpointMetadata = { security: [{ publicKeyHeader: [] }, { publicKey: [] }] };
+        const _metadata: core.EndpointMetadata = {
+            security: [{ releaseTokenHeader: [] }, { publicKeyHeader: [] }, { publicKey: [] }],
+        };
         const _authRequest: core.AuthRequest = await this._options.authProvider.getAuthRequest({
             endpointMetadata: _metadata,
         });

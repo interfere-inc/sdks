@@ -118,33 +118,11 @@ function shouldWaitForServerOutput(state: UploadReadyPluginState) {
   );
 }
 
-type ReleasePipelineFailure = Extract<
-  Awaited<ReturnType<typeof runReleasePipeline>>,
-  { ok: false }
->["failure"];
-
-type ReleasePipelineSuccess = Extract<
-  Awaited<ReturnType<typeof runReleasePipeline>>,
-  { ok: true }
->;
-
-function logSkippedRelease(logger: Logger, failure: ReleasePipelineFailure) {
-  if (failure.kind === "missing_source_provider") {
-    logger.warn(
-      `[interfere] release skipped: this surface has no version control provider configured. Configure one at https://interfere.com/~/${failure.config.org.slug}/apps/${failure.config.surface.slug}.`,
-    );
-
-    return;
-  }
-
-  logger.warn(
-    `[interfere] release skipped: this surface has no deployment target configured. Configure one at https://interfere.com/~/${failure.config.org.slug}/apps/${failure.config.surface.slug}.`,
-  );
-}
+type ReleasePipelineResult = Awaited<ReturnType<typeof runReleasePipeline>>;
 
 function logCleanupFailures(
   logger: Logger,
-  failures: ReleasePipelineSuccess["data"]["cleanupFailures"],
+  failures: ReleasePipelineResult["cleanupFailures"],
 ) {
   for (const failure of failures) {
     logger.warn(
@@ -235,34 +213,28 @@ async function publishRelease(
     uploadSourceMaps: state.uploadSourceMaps,
   });
 
-  if (!result.ok) {
-    logSkippedRelease(logger, result.failure);
+  logCleanupFailures(logger, result.cleanupFailures);
 
-    return;
+  if (result.publication) {
+    state.receipt?.recordPublication(result.publication);
   }
 
-  logCleanupFailures(logger, result.data.cleanupFailures);
-
-  if (result.data.publication) {
-    state.receipt?.recordPublication(result.data.publication);
-  }
-
-  if (!result.data.timing) {
+  if (!result.timing) {
     logger.info(
-      `[interfere] release ${result.data.releaseSlug} registered without source maps.`,
+      `[interfere] release ${result.releaseSlug} registered without source maps.`,
     );
 
     return;
   }
 
   logger.info(
-    `[interfere] source-map stages (ms): create=${result.data.timing.createRelease}, sign=${result.data.timing.sign}, session=${result.data.timing.session}, upload=${result.data.timing.upload}, finalize=${result.data.timing.finalize}, receipt=${result.data.timing.receipt}, cleanup=${result.data.timing.cleanup}; bytes=${result.data.timing.totalBytes}.`,
+    `[interfere] source-map stages (ms): create=${result.timing.createRelease}, sign=${result.timing.sign}, session=${result.timing.session}, upload=${result.timing.upload}, finalize=${result.timing.finalize}, receipt=${result.timing.receipt}, cleanup=${result.timing.cleanup}; bytes=${result.timing.totalBytes}.`,
   );
 
   state.uploadComplete = true;
 
   logger.info(
-    `[interfere] release ${result.data.releaseSlug} confirmed — ${result.data.fileCount} maps, ${result.data.timing.total}ms.`,
+    `[interfere] release ${result.releaseSlug} confirmed — ${result.fileCount} maps, ${result.timing.total}ms.`,
   );
 }
 

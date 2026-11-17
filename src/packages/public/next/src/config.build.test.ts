@@ -1,6 +1,6 @@
 import { http } from "msw";
 import { releaseSourceIdEnvKeys } from "@interfere/types/integrations";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import {
   PHASE_DEVELOPMENT_SERVER,
@@ -14,7 +14,6 @@ import {
   parseFetchCall,
   releaseNetwork,
   releaseRequests,
-  sdkConfigRequests,
   withTempProject,
 } from "../test/fixtures/build.js";
 import { withInterfere } from "./config.js";
@@ -315,9 +314,9 @@ describe("withInterfere build pipeline", () => {
 
         expect(error).toHaveBeenCalledWith(expectedMessage, expect.any(Array));
 
-        expect(fetchSpy).toHaveBeenCalledTimes(2);
+        expect(fetchSpy).toHaveBeenCalledTimes(3);
 
-        const telemetryRequest = capturedReleaseRequest(1);
+        const telemetryRequest = capturedReleaseRequest(2);
 
         expect(telemetryRequest.url).toBe(
           "https://in.example.com/v3/releases/rel_abc0123456789def/telemetry",
@@ -772,7 +771,7 @@ describe("release binding preflight", () => {
   );
 
   test.each(["destinationProvider", "sourceProvider"] as const)(
-    "does not stamp instrumentation when %s is missing",
+    "keeps instrumentation and registers the release when %s is missing",
     async (provider) => {
       expect.hasAssertions();
 
@@ -787,42 +786,145 @@ describe("release binding preflight", () => {
 
         createReleaseFixture(projectDir, { [provider]: null });
 
-        const warn = vi.spyOn(log, "warn");
-        const upstreamCompile = vi.fn<() => Promise<void>>();
-
-        const config = await withInterfere({
-          compiler: { runAfterProductionCompile: upstreamCompile },
-        })(PHASE_PRODUCTION_BUILD);
+        const config = await withInterfere()(PHASE_PRODUCTION_BUILD);
 
         const baked = JSON.stringify(config.turbopack);
 
-        expect(baked).toContain("__INTERFERE_DISABLED__");
-        expect(baked).not.toContain("__INTERFERE_PUBLIC_KEY__");
-        expect(baked).not.toContain("__INTERFERE_RELEASE_SLUG__");
+        expect(baked).not.toContain("__INTERFERE_DISABLED__");
+        expect(baked).toContain("__INTERFERE_PUBLIC_KEY__");
+        expect(baked).toContain("__INTERFERE_RELEASE_SLUG__");
         expect(baked).not.toContain("interfere_secret_us_test_123");
 
-        expect(warn).toHaveBeenCalledExactlyOnceWith(
-          expect.stringContaining("https://interfere.com/~/acme/apps/frontend"),
-          [],
-        );
-
-        await config.compiler?.runAfterProductionCompile?.({
-          distDir: ".next",
-          projectDir,
-        });
-
-        expect(upstreamCompile).toHaveBeenCalledTimes(1);
-
         expect(
-          releaseRequests.map((request) => new URL(request.url).pathname),
-        ).toStrictEqual(["/v3/releases/config"]);
-
-        expect(
-          sdkConfigRequests.map((request) => new URL(request.url).pathname),
-        ).toStrictEqual(["/v3/config"]);
+          releaseRequests
+            .filter((request) => request.method === "POST")
+            .map((request) => new URL(request.url).pathname),
+        ).toStrictEqual(["/v3/releases"]);
       });
     },
   );
+
+  test("bakes the release token for a workspace secret whose release config is refused", async () => {
+    expect.hasAssertions();
+
+    await withTempProject("next-keyless-", async (projectDir) => {
+      prepareBuildProject(projectDir, "cli", "interfere_secret_us_test_123");
+
+      vi.stubEnv("INTERFERE_PUBLIC_KEY", undefined);
+
+      createReleaseFixture(projectDir, {
+        failure: "config",
+        releaseToken: "irt_next_keyless",
+      });
+
+      const config = await withInterfere()(PHASE_PRODUCTION_BUILD);
+
+      expect(JSON.stringify(config.turbopack)).toContain(
+        String.raw`\"__INTERFERE_RELEASE_TOKEN__\":\"irt_next_keyless\"`,
+      );
+
+      await config.compiler?.runAfterProductionCompile?.({
+        distDir: ".next",
+        projectDir,
+      });
+
+      const registrations = releaseRequests.filter(
+        (request) =>
+          request.method === "POST" &&
+          new URL(request.url).pathname === "/v3/releases",
+      );
+
+      expect(registrations).toHaveLength(1);
+
+      await expect(registrations[0]?.json()).resolves.toMatchObject({
+        destination: { provider: "cli" },
+      });
+
+      expect(
+        releaseRequests.filter((request) =>
+          request.headers.has("x-interfere-public-key"),
+        ),
+      ).toStrictEqual([]);
+    });
+  });
+
+  test("bakes the registered release token without a public key and creates the release once across config evaluations", async () => {
+    expect.hasAssertions();
+
+    await withTempProject("next-release-token-", async (projectDir) => {
+      prepareBuildProject(projectDir, "cli", "interfere_ak_test_123");
+
+      vi.stubEnv("INTERFERE_PUBLIC_KEY", undefined);
+
+      createReleaseFixture(projectDir, { releaseToken: "irt_next_build" });
+
+      const nextConfig = withInterfere();
+
+      await nextConfig(PHASE_PRODUCTION_BUILD);
+
+      const config = await nextConfig(PHASE_PRODUCTION_BUILD);
+
+      const baked = JSON.stringify(config.turbopack);
+
+      expect(baked).toContain(
+        String.raw`\"__INTERFERE_RELEASE_TOKEN__\":\"irt_next_build\"`,
+      );
+
+      expect(baked).toContain(
+        String.raw`\"__INTERFERE_API_URL__\":\"https://in.example.com\"`,
+      );
+
+      expect(baked).not.toContain("__INTERFERE_PUBLIC_KEY__");
+      expect(baked).not.toContain("__INTERFERE_DISABLED__");
+      expect(config.experimental?.clientTraceMetadata).toContain("traceparent");
+
+      await config.compiler?.runAfterProductionCompile?.({
+        distDir: ".next",
+        projectDir,
+      });
+
+      expect(
+        releaseRequests
+          .filter((request) => request.method === "POST")
+          .map((request) => new URL(request.url).pathname)
+          .filter((pathname) => pathname === "/v3/releases"),
+      ).toStrictEqual(["/v3/releases"]);
+
+      expect(
+        releaseRequests.filter((request) =>
+          request.headers.has("x-interfere-public-key"),
+        ),
+      ).toStrictEqual([]);
+    });
+  });
+
+  test("warns instead of failing a release-token build that has no instrumentation-client file", async () => {
+    expect.hasAssertions();
+
+    await withTempProject(
+      "next-release-token-server-only-",
+      async (projectDir) => {
+        prepareBuildProject(projectDir, "cli", "interfere_ak_test_123");
+
+        vi.stubEnv("INTERFERE_PUBLIC_KEY", undefined);
+
+        rmSync(path.join(projectDir, "instrumentation-client.ts"));
+
+        createReleaseFixture(projectDir, { releaseToken: "irt_next_build" });
+
+        const warn = vi.spyOn(log, "warn");
+
+        await expect(
+          withInterfere()(PHASE_PRODUCTION_BUILD),
+        ).resolves.toBeDefined();
+
+        expect(warn).toHaveBeenCalledWith(
+          "Missing instrumentation client",
+          expect.any(Array),
+        );
+      },
+    );
+  });
 
   test("keeps instrumentation enabled when the binding lookup fails", async () => {
     expect.hasAssertions();

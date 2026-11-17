@@ -1,13 +1,12 @@
 import { z } from "zod";
 import type { Interfere, InterfereClient } from "@interfere/javascript";
-import {
-  configuredSourceProviderSchema,
-  releaseDestinationProviderSchema,
-} from "@interfere/types/integrations";
+import { releaseDestinationProviderSchema } from "@interfere/types/integrations";
+import type { ReleaseDestinationProvider } from "@interfere/types/integrations";
 import type { CreateReleaseRequest } from "@interfere/types/releases/definition";
 import type { ReleaseSlug } from "@interfere/types/releases/slug";
 import { resolveCliReleaseDestination } from "@interfere/types/sdk/cli-destination";
 import { applyDeployEnvironment } from "@interfere/types/sdk/deploy-environment";
+import { parseEnvValue } from "@interfere/types/sdk/env";
 import { resolveGithubReleaseSource } from "@interfere/types/sdk/github-source";
 
 import { execSync } from "node:child_process";
@@ -28,39 +27,40 @@ function git(command: string) {
   }
 }
 
+function buildEnvironmentProvider() {
+  // oxlint-disable-next-line node/no-process-env
+  if (parseEnvValue(process.env["VERCEL"])) {
+    return "vercel" satisfies ReleaseDestinationProvider;
+  }
+
+  if (
+    // oxlint-disable-next-line node/no-process-env
+    parseEnvValue(process.env["WORKERS_CI"]) ??
+    // oxlint-disable-next-line node/no-process-env
+    parseEnvValue(process.env["CF_PAGES"])
+  ) {
+    return "cloudflare" satisfies ReleaseDestinationProvider;
+  }
+
+  return "cli" satisfies ReleaseDestinationProvider;
+}
+
+function destinationProvider(config: Interfere.ReleasesConfigResponse | null) {
+  const configured = releaseDestinationProviderSchema.safeParse(
+    config?.surface.destinationProvider,
+  );
+
+  return configured.success ? configured.data : buildEnvironmentProvider();
+}
+
+/** Builds the release request for any build. The deploy target comes from the App when it names one, otherwise from the build environment; a missing repository link only leaves commit metadata to the build environment. */
 export function resolveReleaseRequest(input: {
   buildId: string;
   environment: string | null;
   releaseSlug: ReleaseSlug;
   producerVersion: string;
-  config: Interfere.ReleasesConfigResponse;
+  config: Interfere.ReleasesConfigResponse | null;
 }) {
-  if (
-    !configuredSourceProviderSchema.safeParse(
-      input.config.surface.sourceProvider,
-    ).success
-  ) {
-    return { ok: false, reason: "missing_source_provider" } satisfies
-      | { ok: true; request: CreateReleaseRequest }
-      | {
-          ok: false;
-          reason: "missing_source_provider" | "missing_destination_provider";
-        };
-  }
-
-  const provider = releaseDestinationProviderSchema.safeParse(
-    input.config.surface.destinationProvider,
-  );
-
-  if (!provider.success) {
-    return { ok: false, reason: "missing_destination_provider" } satisfies
-      | { ok: true; request: CreateReleaseRequest }
-      | {
-          ok: false;
-          reason: "missing_source_provider" | "missing_destination_provider";
-        };
-  }
-
   const destinations = {
     // oxlint-disable-next-line node/no-process-env
     cli: () => resolveCliReleaseDestination(process.env, input.releaseSlug),
@@ -71,7 +71,7 @@ export function resolveReleaseRequest(input: {
   const request: CreateReleaseRequest = {
     buildId: input.buildId,
     destination: applyDeployEnvironment(
-      destinations[provider.data](),
+      destinations[destinationProvider(input.config)](),
       input.environment,
     ),
     producerVersion: input.producerVersion,
@@ -80,12 +80,7 @@ export function resolveReleaseRequest(input: {
     source: resolveGithubReleaseSource(process.env, git),
   };
 
-  return { ok: true, request } satisfies
-    | { ok: true; request: CreateReleaseRequest }
-    | {
-        ok: false;
-        reason: "missing_source_provider" | "missing_destination_provider";
-      };
+  return request;
 }
 
 const releaseBindingSchema = z.object({
@@ -109,23 +104,4 @@ export async function preflightReleaseBinding(client: InterfereClient) {
   } catch {
     return null;
   }
-}
-
-/** Describe a confirmed incomplete surface without exposing credentials. */
-export function missingReleaseBinding(
-  config: Interfere.ReleasesConfigResponse,
-) {
-  const source = configuredSourceProviderSchema.safeParse(
-    config.surface.sourceProvider,
-  );
-
-  const destination = releaseDestinationProviderSchema.safeParse(
-    config.surface.destinationProvider,
-  );
-
-  if (source.success && destination.success) {
-    return null;
-  }
-
-  return `Interfere is disabled for this build: configure the surface's ${source.success ? "deployment target" : "version control provider"} at https://interfere.com/~/${config.org.slug}/apps/${config.surface.slug}`;
 }

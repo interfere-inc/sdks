@@ -655,7 +655,7 @@ describe(withInterfere, () => {
     });
   });
 
-  test("warns without failing when a production build has no public key", async () => {
+  test("warns without failing when a production build has no browser credential", async () => {
     expect.assertions(1);
 
     await withTempProject("next-config-", async (projectDir) => {
@@ -672,7 +672,7 @@ describe(withInterfere, () => {
       ).compiler?.runAfterProductionCompile?.({ distDir: ".next", projectDir });
 
       expect(warn).toHaveBeenCalledWith(
-        "Public key not set",
+        "No browser credential",
         expect.any(Array),
       );
     });

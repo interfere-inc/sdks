@@ -2,8 +2,8 @@
 import type { Interfere } from "@interfere/javascript";
 import { resolveBuildReleaseSlug } from "@interfere/build/release-slug";
 import { resolveBuildServiceName } from "@interfere/build/service-name";
-import { API_URL } from "@interfere/constants/api";
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
+import type { CreateReleaseResponse } from "@interfere/types/releases/definition";
 import type { ReleaseSlug } from "@interfere/types/releases/slug";
 import {
   checkReleaseConfig,
@@ -20,15 +20,15 @@ import type { NextConfig } from "next";
 import { PHASE_PRODUCTION_BUILD } from "next/constants.js";
 
 import {
+  createBuildPreflight,
   surfaceGlobals,
-  withBuildPreflight,
 } from "./internal/build/preflight.js";
+import { resolveBrowserApiHost } from "./internal/build/browser-api-host.js";
 import type { SurfaceConfig } from "./internal/build/preflight.js";
 import { configureBuild } from "./internal/build/configure-build.js";
 import { interfereCompilerConfig } from "./internal/build/production-publication.js";
 import { withLegacyWebpackPublication } from "./internal/build/legacy-webpack-publication.js";
 import {
-  emitsClientTraceMetadata,
   interfereExperimentalConfig,
   needsInstrumentationHookFlag,
 } from "./internal/build/experimental-config.js";
@@ -107,6 +107,12 @@ export interface ResolvedBuildConfig {
    */
   readonly environment: string | null;
   readonly publicKey: string | null;
+  /**
+   * The release a production build registered during preflight. Its token is
+   * stamped into the bundle as `__INTERFERE_RELEASE_TOKEN__` and the build
+   * pipeline reuses it, so a build creates its release once.
+   */
+  readonly registeredRelease?: CreateReleaseResponse | undefined;
   readonly serviceName?: string | undefined;
   readonly serviceNameInferred?: boolean | undefined;
   /**
@@ -180,6 +186,8 @@ export function withInterfere(
   const [settings, nextConfig] =
     args.length === 2 ? [args[0], args[1]] : [{}, args[0] ?? {}];
 
+  const withBuildPreflight = createBuildPreflight();
+
   const returnValue: (
     phase: string,
     context?: { defaultConfig: NextConfig },
@@ -193,11 +201,11 @@ export function withInterfere(
 
     if (isThenable(resolved)) {
       return Promise.resolve(resolved).then(async (config) =>
-        buildInterfereConfig(phase, settings, config),
+        buildInterfereConfig(phase, settings, config, withBuildPreflight),
       );
     }
 
-    return buildInterfereConfig(phase, settings, resolved);
+    return buildInterfereConfig(phase, settings, resolved, withBuildPreflight);
   };
 
   return returnValue;
@@ -248,6 +256,7 @@ function buildInterfereConfig(
   phase: string,
   settings: NextPluginConfig,
   nextConfig: NextConfigWithInterfere,
+  withBuildPreflight: ReturnType<typeof createBuildPreflight>,
 ) {
   const config = resolveBuildConfig(settings, phase);
 
@@ -259,7 +268,6 @@ function buildInterfereConfig(
         ...config,
         ...preflight,
       }),
-    () => disabledInterfereConfig(nextConfig),
   );
 }
 
@@ -320,6 +328,9 @@ function buildResolvedInterfereConfig(
     },
   });
 
+  const browserCredential =
+    config.publicKey !== null || Boolean(config.registeredRelease?.token);
+
   if (config.publicKey !== null && !build.clientInstrumentationApplies) {
     return log.fatal("Missing instrumentation client", [
       "INTERFERE_PUBLIC_KEY is set but no instrumentation-client file was found.",
@@ -327,14 +338,21 @@ function buildResolvedInterfereConfig(
     ]);
   }
 
-  if (config.publicKey !== null) {
+  if (browserCredential && !build.clientInstrumentationApplies) {
+    log.warn("Missing instrumentation client", [
+      "This build has a release token but no instrumentation-client file, so it sends no browser events.",
+      "Create an instrumentation-client.ts file in your project root or src/ directory.",
+    ]);
+  }
+
+  if (browserCredential) {
     warnIfServerInstrumentationMissing(projectDir);
   }
 
   const experimental = interfereExperimentalConfig({
     existing: rest.experimental,
     instrumentationHook: needsInstrumentationHookFlag(nextMajor),
-    traceMetadata: emitsClientTraceMetadata({ publicKey: config.publicKey }),
+    traceMetadata: browserCredential,
     sourceMaps: config.apiKey !== null && config.uploadSourceMaps,
   });
 
@@ -363,27 +381,6 @@ function buildResolvedInterfereConfig(
 
     experimental,
   });
-}
-
-function resolveBrowserApiHost(apiHost: string | undefined, apiUrl: string) {
-  const host = apiHost ?? apiUrl;
-
-  if (host === API_URL) {
-    return;
-  }
-
-  return normalizeHost(host);
-}
-
-function normalizeHost(host: string) {
-  try {
-    return new URL(host).origin;
-  } catch {
-    return log.fatal("Invalid apiHost", [
-      `interfere.apiHost must be a full URL, e.g. "https://in.yourapp.com".`,
-      `Received: ${host}`,
-    ]);
-  }
 }
 
 function resolveBuildConfig(settings: NextPluginConfig, phase: string) {
@@ -482,8 +479,12 @@ async function runBuildReleasePipeline(
       return;
     }
 
+    const orgUrl = `https://interfere.com/~/${result.release.org.slug}`;
+
     log.info("Completed", [
-      `https://interfere.com/~/${result.config.org.slug}/apps/${result.config.surface.slug}`,
+      result.release.surface
+        ? `${orgUrl}/apps/${result.release.surface.slug}`
+        : orgUrl,
       `Release: ${result.release.destination.slug}`,
       `Build: ${result.buildId}`,
       config.uploadSourceMaps

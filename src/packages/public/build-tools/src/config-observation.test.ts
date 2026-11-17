@@ -26,10 +26,9 @@ test.each([
     const observe =
       vi.fn<NonNullable<Parameters<typeof createBuildConfigResolver>[0]>>();
 
-    await createBuildConfigResolver(observe)(
-      "https://config.test",
-      "public-key",
-    );
+    await createBuildConfigResolver(observe)("https://config.test", {
+      publicKey: "public-key",
+    });
 
     expect(observe).toHaveBeenCalledWith({ config, status: "fallback" });
   },
@@ -43,7 +42,9 @@ test("distinguishes a valid empty config from a failed fetch", async () => {
   const observe =
     vi.fn<NonNullable<Parameters<typeof createBuildConfigResolver>[0]>>();
 
-  await createBuildConfigResolver(observe)("https://config.test", "public-key");
+  await createBuildConfigResolver(observe)("https://config.test", {
+    publicKey: "public-key",
+  });
 
   expect(observe).toHaveBeenCalledWith({
     config: { platform: null },

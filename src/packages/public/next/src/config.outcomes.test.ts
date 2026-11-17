@@ -228,3 +228,91 @@ test("reports cleanup_failed through the production compile hook", async () => {
     );
   });
 });
+
+test("links the org when the release has no app", async () => {
+  expect.hasAssertions();
+
+  await withTempProject("next-outcome-", async (projectDir) => {
+    vi.stubEnv("INTERFERE_API_KEY", "interfere_ak_test");
+
+    vi.stubEnv("INTERFERE_API_URL", "https://build.test");
+
+    vi.stubEnv("NEXT_PUBLIC_INTERFERE_BUILD_ID", "a".repeat(40));
+
+    vi.stubEnv("INTERFERE_ENVIRONMENT", "production");
+
+    process.chdir(projectDir);
+
+    const info = vi.spyOn(log, "info");
+
+    await writeFile(path.join(projectDir, "instrumentation-client.ts"), "");
+
+    server.use(
+      http.post("https://build.test/v3/releases", () =>
+        HttpResponse.json(
+          { ...RELEASE_RESPONSE, surface: null },
+          { status: 200 },
+        ),
+      ),
+    );
+
+    server.use(
+      http.post("https://build.test/v3/releases/:slug/telemetry", () =>
+        HttpResponse.json({ ok: true }, { status: 200 }),
+      ),
+    );
+
+    const mapPath = path.join(projectDir, ".next/static/chunks/app.js.map");
+
+    await mkdir(path.dirname(mapPath), { recursive: true });
+
+    await writeFile(mapPath.slice(0, -4), "//# sourceMappingURL=app.js.map");
+
+    await writeFile(
+      mapPath,
+      JSON.stringify({ mappings: "", sources: ["app.ts"], version: 3 }),
+    );
+
+    server.use(
+      http.post(
+        `https://build.test/v3/releases/${RELEASE_SLUG}/source-maps/sign`,
+        () =>
+          HttpResponse.json(
+            {
+              expiresAt: Math.floor(Date.now() / 1000) + 600,
+              uploads: [{ path: "_next/static/chunks/app.js.map" }],
+            },
+            { status: 200 },
+          ),
+      ),
+    );
+
+    server.use(
+      http.put(
+        "https://build.test/v3/releases/:slug/source-maps",
+        () => new HttpResponse(null),
+      ),
+    );
+
+    server.use(
+      http.post(
+        "https://build.test/v3/releases/:slug/source-maps/finalize",
+        () => HttpResponse.json({ fileCount: 1, ok: true }),
+      ),
+    );
+
+    const config = await withInterfere()(PHASE_DEVELOPMENT_SERVER);
+
+    await config.compiler?.runAfterProductionCompile?.({
+      distDir: ".next",
+      projectDir,
+    });
+
+    expect(info).toHaveBeenCalledWith("Completed", [
+      "https://interfere.com/~/acme",
+      `Release: ${RELEASE_SLUG}`,
+      expect.stringContaining("Build: "),
+      "Artifacts: 1 source maps",
+    ]);
+  });
+});

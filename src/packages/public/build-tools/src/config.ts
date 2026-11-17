@@ -2,6 +2,23 @@ import { InterfereClient } from "@interfere/javascript";
 import { buildConfigSchema } from "@interfere/types/sdk/build-config";
 import { remoteConfigInputSchema } from "@interfere/types/sdk/remote-config";
 
+export type BuildConfigCredential =
+  | { readonly publicKey: string }
+  | { readonly releaseToken: string };
+
+export function buildConfigCredential(
+  publicKey: string | null | undefined,
+  releaseToken: string | null | undefined,
+) {
+  if (publicKey) {
+    return { publicKey } satisfies BuildConfigCredential;
+  }
+
+  return releaseToken
+    ? ({ releaseToken } satisfies BuildConfigCredential)
+    : null;
+}
+
 export function createBuildConfigResolver(
   observe?: (result: Awaited<ReturnType<typeof fetchBuildConfig>>) => void,
 ) {
@@ -9,7 +26,7 @@ export function createBuildConfigResolver(
 
   return async (
     apiUrl: string,
-    publicKey: string,
+    credential: BuildConfigCredential,
     buildScope = "",
     service?: {
       serviceName?: string | undefined;
@@ -19,7 +36,10 @@ export function createBuildConfigResolver(
     const key = JSON.stringify([
       buildScope,
       apiUrl,
-      publicKey,
+      "publicKey" in credential ? "publicKey" : "releaseToken",
+      "publicKey" in credential
+        ? credential.publicKey
+        : credential.releaseToken,
       service?.serviceName ?? "",
       service?.serviceNamespace ?? "",
     ]);
@@ -27,7 +47,7 @@ export function createBuildConfigResolver(
     let config = pending.get(key);
 
     if (!config) {
-      config = fetchBuildConfig(apiUrl, publicKey, service);
+      config = fetchBuildConfig(apiUrl, credential, service);
 
       pending.set(key, config);
     }
@@ -42,7 +62,7 @@ export function createBuildConfigResolver(
 
 async function fetchBuildConfig(
   apiUrl: string,
-  publicKey: string,
+  credential: BuildConfigCredential,
   service?: {
     serviceName?: string | undefined;
     serviceNamespace?: string | undefined;
@@ -51,7 +71,9 @@ async function fetchBuildConfig(
   try {
     const client = new InterfereClient({
       baseUrl: apiUrl,
-      publicKeyHeader: { apiKey: publicKey },
+      ...("publicKey" in credential
+        ? { publicKeyHeader: { apiKey: credential.publicKey } }
+        : { releaseTokenHeader: { apiKey: credential.releaseToken } }),
       headers: {
         "x-interfere-service": service?.serviceName || undefined,
         "x-interfere-service-namespace": service?.serviceName

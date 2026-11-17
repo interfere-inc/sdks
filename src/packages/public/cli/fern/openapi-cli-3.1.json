@@ -2205,7 +2205,10 @@
         "description": "ReleaseSourceRef"
       },
       "SurfaceRef": {
-        "type": "object",
+        "type": [
+          "object",
+          "null"
+        ],
         "properties": {
           "id": {
             "type": "string"
@@ -62150,6 +62153,9 @@
         ],
         "security": [
           {
+            "releaseTokenHeader": []
+          },
+          {
             "publicKeyHeader": []
           }
         ],
@@ -63378,7 +63384,7 @@
             "$ref": "#/components/responses/ErrorResponse_d8af65c0c470b099b469fd50598c7936eda3e7f2498c1f6725ec78bb22a021eb"
           },
           "409": {
-            "description": "The named Worker or service is not linked to an App",
+            "description": "The named Worker is not linked to the key's App, or the workspace has reached its service limit",
             "content": {
               "application/json": {
                 "schema": {
@@ -63717,6 +63723,9 @@
         ],
         "security": [
           {
+            "releaseTokenHeader": []
+          },
+          {
             "publicKeyHeader": []
           }
         ],
@@ -63773,6 +63782,9 @@
           "Sessions"
         ],
         "security": [
+          {
+            "releaseTokenHeader": []
+          },
           {
             "publicKeyHeader": []
           }

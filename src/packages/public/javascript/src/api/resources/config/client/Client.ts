@@ -46,7 +46,9 @@ export class ConfigClient {
     private async __getSdkConfig(
         requestOptions?: ConfigClient.RequestOptions,
     ): Promise<core.WithRawResponse<Interfere.SdkConfigResponse>> {
-        const _metadata: core.EndpointMetadata = { security: [{ publicKeyHeader: [] }, { publicKey: [] }] };
+        const _metadata: core.EndpointMetadata = {
+            security: [{ releaseTokenHeader: [] }, { publicKeyHeader: [] }, { publicKey: [] }],
+        };
         const _authRequest: core.AuthRequest = await this._options.authProvider.getAuthRequest({
             endpointMetadata: _metadata,
         });

@@ -31,8 +31,8 @@ describe("build config", () => {
     const resolve = createBuildConfigResolver();
 
     const results = await Promise.all([
-      resolve(url, "first"),
-      resolve(url, "first"),
+      resolve(url, { publicKey: "first" }),
+      resolve(url, { publicKey: "first" }),
     ]);
 
     expect(results[0]).toStrictEqual({
@@ -46,15 +46,15 @@ describe("build config", () => {
     expect(results[1]).toStrictEqual(results[0]);
     expect(calls).toHaveLength(1);
 
-    await resolve(url, "second");
+    await resolve(url, { publicKey: "second" });
 
     expect(calls).toHaveLength(2);
 
-    await createBuildConfigResolver()(url, "first");
+    await createBuildConfigResolver()(url, { publicKey: "first" });
 
     expect(calls).toHaveLength(3);
 
-    await resolve(url, "first", "another-build");
+    await resolve(url, { publicKey: "first" }, "another-build");
 
     expect(calls).toHaveLength(4);
   });
@@ -103,7 +103,7 @@ describe("build config", () => {
     );
 
     await expect(
-      createBuildConfigResolver()(url, "first"),
+      createBuildConfigResolver()(url, { publicKey: "first" }),
     ).resolves.toStrictEqual(expected);
   });
 
@@ -115,7 +115,7 @@ describe("build config", () => {
     );
 
     await expect(
-      createBuildConfigResolver()(url, "first"),
+      createBuildConfigResolver()(url, { publicKey: "first" }),
     ).resolves.toStrictEqual({});
 
     server.use(
@@ -123,7 +123,7 @@ describe("build config", () => {
     );
 
     await expect(
-      createBuildConfigResolver()(url, "first"),
+      createBuildConfigResolver()(url, { publicKey: "first" }),
     ).resolves.toStrictEqual({});
   });
 });
@@ -158,22 +158,22 @@ test("isolates workspace config by service name and namespace", async () => {
   const resolve = createBuildConfigResolver();
 
   const [web, api] = await Promise.all([
-    resolve(url, "workspace", "build", {
+    resolve(url, { publicKey: "workspace" }, "build", {
       serviceName: "web",
       serviceNamespace: "shop",
     }),
-    resolve(url, "workspace", "build", {
+    resolve(url, { publicKey: "workspace" }, "build", {
       serviceName: "api",
       serviceNamespace: "shop",
     }),
   ]);
 
-  await resolve(url, "workspace", "build", {
+  await resolve(url, { publicKey: "workspace" }, "build", {
     serviceName: "web",
     serviceNamespace: "shop",
   });
 
-  await resolve(url, "workspace", "build", {
+  await resolve(url, { publicKey: "workspace" }, "build", {
     serviceName: "web",
     serviceNamespace: "admin",
   });
@@ -191,5 +191,37 @@ test("isolates workspace config by service name and namespace", async () => {
     ["workspace", "web", "shop"],
     ["workspace", "api", "shop"],
     ["workspace", "web", "admin"],
+  ]);
+});
+
+test("authenticates with a release token when the build has no public key", async () => {
+  const calls: Request[] = [];
+
+  server.use(
+    http.get("https://config.test/v3/config", ({ request }) => {
+      calls.push(request);
+
+      return HttpResponse.json({ plugins: { errors: false } });
+    }),
+  );
+
+  const resolve = createBuildConfigResolver();
+
+  await expect(
+    resolve(url, { releaseToken: "token" }, "build", { serviceName: "web" }),
+  ).resolves.toStrictEqual({ platform: null, plugins: { errors: false } });
+
+  await resolve(url, { publicKey: "token" }, "build", { serviceName: "web" });
+
+  expect(
+    calls.map((request) => [
+      request.headers.get("x-interfere-release-token"),
+      request.headers.get("x-interfere-public-key"),
+      new URL(request.url).searchParams.get("public_key"),
+      request.headers.get("x-interfere-service"),
+    ]),
+  ).toStrictEqual([
+    ["token", null, null, "web"],
+    [null, "token", null, "web"],
   ]);
 });

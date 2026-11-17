@@ -1,4 +1,5 @@
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
+import { RELEASE_TOKEN_GLOBAL } from "@interfere/types/sdk/release/token";
 
 import { existsSync } from "node:fs";
 import { basename, join, normalize, resolve } from "node:path";
@@ -15,6 +16,7 @@ interface InterfereInjectedValues {
   readonly __INTERFERE_ENVIRONMENT__?: string;
   readonly __INTERFERE_PUBLIC_KEY__?: string;
   readonly __INTERFERE_RELEASE_SLUG__?: string | null;
+  readonly __INTERFERE_RELEASE_TOKEN__?: string;
   readonly __INTERFERE_SERVICE_NAME__?: string;
 }
 
@@ -71,7 +73,8 @@ export function configureBuild({
 
   const hasMetadata =
     Boolean(values.__INTERFERE_RELEASE_SLUG__) ||
-    values.__INTERFERE_PUBLIC_KEY__ !== undefined;
+    values.__INTERFERE_PUBLIC_KEY__ !== undefined ||
+    values[RELEASE_TOKEN_GLOBAL] !== undefined;
 
   const injectionApplies = targets.length > 0;
   const clientInstrumentationApplies = Boolean(clientPath) && hasMetadata;

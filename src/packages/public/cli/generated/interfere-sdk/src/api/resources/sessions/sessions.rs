@@ -57,7 +57,13 @@ impl SessionsClient {
     ) -> Result<SessionResponse, ApiError> {
         let endpoint_auth_headers = self
             .http_client
-            .resolve_endpoint_auth_headers(&options, &[&["publicKeyHeader"] as &[&str]])
+            .resolve_endpoint_auth_headers(
+                &options,
+                &[
+                    &["releaseTokenHeader"] as &[&str],
+                    &["publicKeyHeader"] as &[&str],
+                ],
+            )
             .await?;
         let options = {
             let mut o = options.unwrap_or_default();
@@ -134,7 +140,13 @@ impl SessionsClient {
     ) -> Result<SessionResponse, ApiError> {
         let endpoint_auth_headers = self
             .http_client
-            .resolve_endpoint_auth_headers(&options, &[&["publicKeyHeader"] as &[&str]])
+            .resolve_endpoint_auth_headers(
+                &options,
+                &[
+                    &["releaseTokenHeader"] as &[&str],
+                    &["publicKeyHeader"] as &[&str],
+                ],
+            )
             .await?;
         let options = {
             let mut o = options.unwrap_or_default();

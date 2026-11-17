@@ -141,7 +141,7 @@ test.each([
         },
       });
 
-      expect(result.ok && result.data.publication).toMatchObject({
+      expect(result.publication).toMatchObject({
         releaseSlug: slug,
         buildId: "registered-build",
         batchDigest,

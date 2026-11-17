@@ -15,7 +15,7 @@ export async function registerBuildRelease(input: {
   commitSha: string;
   environment: string | null;
   releaseSlug: ReleaseSlug;
-  releasesConfig: Interfere.ReleasesConfigResponse;
+  releasesConfig: Interfere.ReleasesConfigResponse | null;
 }) {
   const request = resolveReleaseRequest({
     buildId: input.commitSha,
@@ -24,10 +24,6 @@ export async function registerBuildRelease(input: {
     producerVersion: PRODUCER_VERSION,
     releaseSlug: input.releaseSlug,
   });
-
-  if (!request.ok) {
-    return null;
-  }
 
   const client = new InterfereClient({
     baseUrl: input.apiUrl,
@@ -43,7 +39,7 @@ export async function registerBuildRelease(input: {
 
   try {
     return createReleaseResponse.parse(
-      await client.releases.createRelease(request.request, {
+      await client.releases.createRelease(request, {
         abortSignal: AbortSignal.timeout(RELEASE_REQUEST_BUDGET_MS),
       }),
     );

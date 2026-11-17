@@ -98,8 +98,29 @@ describe("source-map pipeline cleanup", () => {
     });
   });
 
+  test("registers under the build environment's deploy target when the config lookup fails", async () => {
+    expect.hasAssertions();
+
+    await withTempProject("pipeline-keyless-", async (projectDir) => {
+      createReleaseFixture(projectDir, { failure: "config" });
+
+      await expect(
+        runBuildPipeline({ distDir: ".next", projectDir }, metadata),
+      ).resolves.toMatchObject({ accepted: true });
+
+      const registration = releaseRequests.find(
+        (request) =>
+          request.method === "POST" &&
+          new URL(request.url).pathname === "/v3/releases",
+      );
+
+      await expect(registration?.json()).resolves.toMatchObject({
+        destination: { provider: "cli" },
+      });
+    });
+  });
+
   test.each([
-    "config",
     "register",
     "sign",
     "upload",
@@ -309,37 +330,26 @@ describe("disabled source-map uploads", () => {
 });
 
 describe("incomplete Surface setup", () => {
-  test.each([
-    ["sourceProvider", "missing_source_provider"],
-    ["destinationProvider", "missing_destination_provider"],
-  ] as const)("continues the build without %s", async (provider, reason) => {
-    expect.hasAssertions();
+  test.each(["sourceProvider", "destinationProvider"] as const)(
+    "registers the release and uploads source maps without %s",
+    async (provider) => {
+      expect.hasAssertions();
 
-    await withTempProject("pipeline-unmapped-", async (projectDir) => {
-      const { chunk, map } = createReleaseFixture(projectDir, {
-        [provider]: null,
+      await withTempProject("pipeline-unmapped-", async (projectDir) => {
+        const { map } = createReleaseFixture(projectDir, {
+          [provider]: null,
+        });
+
+        await expect(
+          runBuildPipeline({ distDir: ".next", projectDir }, metadata),
+        ).resolves.toMatchObject({ accepted: true, fileCount: 1 });
+
+        expect(
+          releaseRequests.map((request) => new URL(request.url).pathname),
+        ).toContain("/v3/releases");
+
+        expect(existsSync(map)).toBe(false);
       });
-
-      const warning = vi.spyOn(log, "warn");
-
-      await expect(
-        runBuildPipeline({ distDir: ".next", projectDir }, metadata),
-      ).resolves.toStrictEqual({ accepted: false, fileCount: 0, reason });
-
-      expect(warning).toHaveBeenCalledWith(
-        expect.stringContaining("Release skipped"),
-        expect.arrayContaining([
-          expect.stringContaining("https://interfere.com/~/acme/apps/frontend"),
-        ]),
-      );
-
-      expect(
-        releaseRequests.map((request) => new URL(request.url).pathname),
-      ).toStrictEqual(["/v3/releases/config"]);
-
-      expect(existsSync(map)).toBe(false);
-      expect(readFileSync(chunk, "utf8")).toContain("console.log('app')");
-      expect(readFileSync(chunk, "utf8")).not.toContain("sourceMappingURL");
-    });
-  });
+    },
+  );
 });

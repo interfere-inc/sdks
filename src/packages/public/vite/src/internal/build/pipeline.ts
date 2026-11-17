@@ -30,18 +30,6 @@ export async function runReleasePipeline(input: ReleasePipelineInput) {
   const { client, discovery, releasesConfig } = input;
   const { files } = discovery;
 
-  const releaseRequest = resolveReleaseRequest({
-    ...input,
-    config: releasesConfig,
-  });
-
-  if (!releaseRequest.ok) {
-    return {
-      failure: { config: releasesConfig, kind: releaseRequest.reason },
-      ok: false as const,
-    };
-  }
-
   if (input.uploadSourceMaps && files.length === 0) {
     throw new Error("Source maps are required to prepare a release");
   }
@@ -51,9 +39,12 @@ export async function runReleasePipeline(input: ReleasePipelineInput) {
   const release =
     input.registeredRelease ??
     createReleaseResponse.parse(
-      await client.releases.createRelease(releaseRequest.request, {
-        abortSignal: AbortSignal.timeout(RELEASE_REQUEST_BUDGET_MS),
-      }),
+      await client.releases.createRelease(
+        resolveReleaseRequest({ ...input, config: releasesConfig }),
+        {
+          abortSignal: AbortSignal.timeout(RELEASE_REQUEST_BUDGET_MS),
+        },
+      ),
     );
 
   const createdAt = performance.now();
@@ -61,14 +52,11 @@ export async function runReleasePipeline(input: ReleasePipelineInput) {
 
   if (!input.uploadSourceMaps) {
     return {
-      data: {
-        cleanupFailures: [],
-        fileCount: 0,
-        releaseSlug,
-        publication: undefined,
-        timing: undefined,
-      },
-      ok: true as const,
+      cleanupFailures: [],
+      fileCount: 0,
+      releaseSlug,
+      publication: undefined,
+      timing: undefined,
     };
   }
 
@@ -96,19 +84,16 @@ export async function runReleasePipeline(input: ReleasePipelineInput) {
   const cleanupFailures = await cleanupSourceMaps(files);
 
   return {
-    data: {
-      cleanupFailures,
-      fileCount: files.length,
-      releaseSlug,
-      publication,
-      timing: {
-        createRelease: Math.round(createdAt - start),
-        ...transfer.timing,
-        receipt: Math.round(publicationReadAt - acceptedAt),
-        cleanup: Math.round(performance.now() - publicationReadAt),
-        total: Math.round(performance.now() - start),
-      },
+    cleanupFailures,
+    fileCount: files.length,
+    releaseSlug,
+    publication,
+    timing: {
+      createRelease: Math.round(createdAt - start),
+      ...transfer.timing,
+      receipt: Math.round(publicationReadAt - acceptedAt),
+      cleanup: Math.round(performance.now() - publicationReadAt),
+      total: Math.round(performance.now() - start),
     },
-    ok: true as const,
   };
 }

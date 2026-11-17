@@ -27,7 +27,6 @@ interfere problems --help
 interfere problems get --schema
 interfere problems get --args.problem-id PROBLEM_ID
 interfere audit list
-interfere keys public --help
 interfere keys private --help
 interfere billing invoices list
 interfere users invitations list
@@ -71,11 +70,11 @@ interfere companies update-contexts \
 
 Use `--json` to set the tier; `"tier":null` clears it. Tier names are trimmed, case-sensitive and unique within the workspace; assigning a new name creates that tier with the gray shade. Manage tier names and shades with the tiers endpoints (`GET|POST /v3/workspaces/{slug}/tiers`, `PATCH|DELETE /v3/workspaces/{slug}/tiers/{value}`). Bulk updates accept up to 100 distinct existing companies and either all succeed or all fail.
 
-Company IDs come from `interfere companies list`. Reading context requires surface read permission; updating it requires surface write permission.
+Company IDs come from `interfere companies list`. Reading and updating company context require the corresponding workspace permissions.
 
 ## Credentials and workspaces
 
-`INTERFERE_ACCESS_TOKEN` supplies a user access token for noninteractive runs. `INTERFERE_SECRET_KEY` supplies a build secret for build API operations, and `INTERFERE_PUBLIC_KEY` supplies an ingestion public key. Each credential applies only to the API operations that accept it.
+`INTERFERE_ACCESS_TOKEN` supplies a user access token for noninteractive runs. Build API operations use a workspace secret. The CLI currently reads it from `INTERFERE_SECRET_KEY`; the SDK build plugins read the same kind of credential from `INTERFERE_API_KEY`. Each credential applies only to API operations that accept it. Never put workspace secrets in browser code.
 
 Set `INTERFERE_WORKSPACE` or pass `--workspace` for workspace operations. Named profiles can store workspace defaults and credentials. Use `interfere profiles --help` for profile commands. Explicit flags override profile values, and profile values override environment variables.
 
@@ -83,28 +82,24 @@ Set `INTERFERE_WORKSPACE` or pass `--workspace` for workspace operations. Named 
 
 Interfere organizes telemetry by service. `serviceName`, with an optional `serviceNamespace`, names the service, and every request carries it: SDK requests send `x-interfere-service` and `x-interfere-service-namespace`, and OTLP requests use the `service.name` and `service.namespace` resource attributes. Interfere records a service the first time it sees one, within the workspace's service limit.
 
-Every workspace receives a **Default** workspace public key. Use one workspace key for all of the workspace's services; additional keys can be created or rotated in **Settings → Developer → Public keys**. Servers, CI and collectors use a workspace secret key with **Send telemetry** (`org:telemetry:write`) and name the service the same way.
+Build plugins use a workspace secret with `release:write` and a service name to register releases and bake release tokens into browser bundles. Servers and collectors use a workspace secret with `org:telemetry:write`. Source-map publication is automatic in the framework plugins.
 
-Apps are being folded into services, one website service per App. Until that finishes, each service also resolves to an App, which holds its website settings:
+Keep the service name aligned between the build plugin, browser initialization and server registration. This is telemetry identity, separate from the CLI's `--workspace` selection.
 
-1. An existing service-to-App association wins.
-2. Otherwise, an App whose name or slug matches the service is used.
-3. Otherwise, the request goes to the workspace's **Default app** (choose it in **Settings → Developer → Public keys**). Without an eligible default, the request is rejected. A missing or deleted default falls back to the oldest eligible App. A request without a service identity also goes to the default App.
+### Legacy credentials
 
-Interfere never creates an App from telemetry. An App marked `explicit_only` is excluded from name matching and the default fallback; target it through an existing service association or its App key. App keys (formerly surface keys) are deprecated but still accepted, with no removal date announced. An App key stays bound to its App and skips this resolution.
+`--public-key` and `INTERFERE_PUBLIC_KEY` are deprecated legacy inputs for older API operations. They remain documented for compatibility, not for new SDK setup. Per-App keys are deprecated; migrate builds to workspace secrets and release tokens.
 
-Keep `serviceName` stable: renaming an App's dashboard title does not change an existing service association. Open **Services** to find the service linked to an App before migrating keys.
-
-Name the service in SDK code with `serviceName: "storefront"`, keeping browser initialization, the build plugin and server registration aligned. This is telemetry configuration, separate from the CLI's `--workspace` selection. Use `interfere keys public --help` and the operation's `--schema` to discover key commands.
+Use `interfere keys public --help` to inspect the legacy key-management commands.
 
 ### Environment variables
 
-| Variable                 | Description                                                                       |
-| ------------------------ | --------------------------------------------------------------------------------- |
-| `INTERFERE_PUBLIC_KEY`   | Public workspace or App key for API operations that accept ingestion credentials. |
-| `INTERFERE_SECRET_KEY`   | Server-side secret for build API operations that accept it.                       |
-| `INTERFERE_ACCESS_TOKEN` | User access token for noninteractive API commands.                                |
-| `INTERFERE_WORKSPACE`    | Default workspace for workspace operations.                                       |
+| Variable                 | Description                                                                             |
+| ------------------------ | --------------------------------------------------------------------------------------- |
+| `INTERFERE_PUBLIC_KEY`   | Deprecated legacy public key for older API operations; not used in new SDK setup.       |
+| `INTERFERE_SECRET_KEY`   | CLI credential source for a workspace build secret; SDKs use INTERFERE_API_KEY instead. |
+| `INTERFERE_ACCESS_TOKEN` | User access token for noninteractive API commands.                                      |
+| `INTERFERE_WORKSPACE`    | Default workspace for workspace operations.                                             |
 
 ## Preview environment
 

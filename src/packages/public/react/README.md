@@ -43,7 +43,9 @@ This README covers what they share: the browser options, privacy, consent and th
 npm install @interfere/vite
 ```
 
-Set `VITE_INTERFERE_PUBLIC_KEY` to your workspace public key, from **Settings → Developer** in the Interfere dashboard. Then:
+Set `INTERFERE_API_KEY` in the build environment to a workspace secret with `release:write`, from **Settings → Developer**. Keep it out of browser code and `VITE_` variables. The Vite plugin registers a release, bakes the release token into the browser bundle and handles source maps automatically. The service name defaults to the unscoped `package.json` name; set `serviceName` in the build plugin to choose another stable name.
+
+`VITE_INTERFERE_PUBLIC_KEY` and `INTERFERE_PUBLIC_KEY` are deprecated legacy configuration. New setup uses the build-minted release token. Then:
 
 **1. Add the Vite plugin.**
 
@@ -303,7 +305,7 @@ Pass these to `init()`. Most apps need none of them.
 | `denyUrls`                      | None               | Drops errors thrown from scripts whose URL matches, such as browser extensions or third-party widgets.                                  |
 | `errors.sampleRate`             | `1`                | Sends this fraction of errors, from `0` to `1`.                                                                                         |
 | `beforeSend`                    | None               | Runs last on each error. Edit it, return a replacement, or return `null` to drop it.                                                    |
-| `serviceName`                   | Set by the build   | Names this app in Interfere. The build plugin sets it from your `package.json` name.                                                    |
+| `serviceName`                   | Set by the build   | Names the service in Interfere. The build plugin sets it from your unscoped `package.json` name.                                        |
 
 `ignoreErrors`, `denyUrls`, `errors.sampleRate` and `beforeSend` apply to every error source except failed requests, which `tracing.captureFailedRequests` controls.
 
@@ -363,7 +365,7 @@ If a request carrying these headers fails at the network level, and that origin 
 
 ### No data arrives
 
-- Check that the public key is set on the build: `VITE_INTERFERE_PUBLIC_KEY` for Vite, `INTERFERE_PUBLIC_KEY` for Next.js. Without it the SDK logs a warning and stays off.
+- Check that `INTERFERE_API_KEY` is available during the build and release registration succeeds. Rebuild after changing it so the plugin bakes a release token into the bundle.
 - Look for `[interfere]` warnings in the browser console. They name the cause.
 - `init()` must run before your app renders.
 - Ad blockers can block telemetry. Serve it from your own domain with the `apiHost` option and the DNS record shown in the dashboard.

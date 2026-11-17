@@ -2,12 +2,14 @@ import { BACKEND_HOSTS_GLOBAL } from "@interfere/types/sdk/remote-config/backend
 import { ANONYMOUS_REPLAY_GLOBAL } from "@interfere/types/sdk/remote-config/anonymous-replay";
 import { createBuildConfigResolver } from "@interfere/build/config";
 import {
-  missingReleaseBinding,
   preflightReleaseBinding,
+  resolveReleaseRequest,
 } from "@interfere/build/release-request";
 import { PUBLIC_KEY_HEADER } from "@interfere/constants/api";
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
 import { InterfereClient } from "@interfere/javascript";
+import type { Interfere } from "@interfere/javascript";
+import { createReleaseResponse } from "@interfere/types/releases/definition";
 import { isInterfereApiKey } from "@interfere/types/sdk/build-diagnostics";
 import { INGEST_URL_GLOBAL } from "@interfere/types/sdk/injected-globals";
 import { LOG_SOURCING_GLOBAL } from "@interfere/types/sdk/log-sourcing";
@@ -24,20 +26,15 @@ export type SurfaceConfig = Awaited<
   ReturnType<ReturnType<typeof createBuildConfigResolver>>
 >;
 
-/** What the production preflight learned about the surface before the Next config is finalised. */
-export interface BuildPreflight {
+interface BuildPreflight {
   readonly releaseConfig: ResolvedBuildConfig["releaseConfig"];
-  /**
-   * One snapshot of the App configuration, fetched by public key and service.
-   * Every build-time decision (trace-meta gate, baked server globals) reads
-   * this same object, so they cannot disagree. Absent for the dev server and
-   * for builds without a public key.
-   */
   readonly surfaceConfig: SurfaceConfig | undefined;
+  readonly registeredRelease: ResolvedBuildConfig["registeredRelease"];
 }
 
 const WITHOUT_PREFLIGHT: BuildPreflight = {
   releaseConfig: undefined,
+  registeredRelease: undefined,
   surfaceConfig: undefined,
 };
 
@@ -68,45 +65,76 @@ export function surfaceGlobals(config: SurfaceConfig | undefined) {
   });
 }
 
-// oxlint-disable-next-line typescript/promise-function-async -- Builds that cannot bind a release return null synchronously.
-function releaseBinding(config: ResolvedBuildConfig) {
+function releaseClient(config: ResolvedBuildConfig) {
   if (
     !config.apiKey ||
     !isInterfereApiKey(config.apiKey) ||
-    !config.publicKey ||
     !config.buildId ||
     !config.releaseSlug
   ) {
     return null;
   }
 
-  return preflightReleaseBinding(
-    new InterfereClient({
-      baseUrl: config.apiUrl,
-      apiKey: { token: config.apiKey },
-      headers: {
-        [PUBLIC_KEY_HEADER]: config.publicKey,
-        "x-interfere-producer-version": PRODUCER_VERSION,
-        "x-interfere-service": config.serviceName,
-      },
-      maxRetries: 0,
-      timeoutInSeconds: 10,
-    }),
-  );
+  return new InterfereClient({
+    baseUrl: config.apiUrl,
+    apiKey: { token: config.apiKey },
+    headers: {
+      [PUBLIC_KEY_HEADER]: config.publicKey ?? undefined,
+      "x-interfere-producer-version": PRODUCER_VERSION,
+      "x-interfere-service": config.serviceName,
+    },
+    maxRetries: 0,
+    timeoutInSeconds: 10,
+  });
+}
+
+async function registerRelease(
+  client: InterfereClient,
+  config: ResolvedBuildConfig,
+  releaseConfig: Interfere.ReleasesConfigResponse | null,
+) {
+  if (!config.buildId || !config.releaseSlug) {
+    return;
+  }
+
+  const request = resolveReleaseRequest({
+    buildId: config.buildId,
+    config: releaseConfig,
+    environment: config.environment,
+    producerVersion: PRODUCER_VERSION,
+    releaseSlug: config.releaseSlug,
+  });
+
+  try {
+    return createReleaseResponse.parse(
+      await client.releases.createRelease(request, {
+        abortSignal: AbortSignal.timeout(60_000),
+      }),
+    );
+  } catch {
+    return;
+  }
 }
 
 // oxlint-disable-next-line typescript/promise-function-async -- Ineligible builds do not start asynchronous preflight work.
 function preflightBuild(config: ResolvedBuildConfig) {
-  if (!config.publicKey) {
+  const client = releaseClient(config);
+
+  if (!client && !config.publicKey) {
     return null;
   }
 
   return Promise.all([
-    releaseBinding(config),
-    resolveSurfaceConfig(config.apiUrl, config.publicKey, crypto.randomUUID(), {
-      serviceName: config.serviceName,
-    }),
-  ]).then(([releaseConfig, surfaceConfig]) => {
+    client && preflightReleaseBinding(client),
+    config.publicKey
+      ? resolveSurfaceConfig(
+          config.apiUrl,
+          { publicKey: config.publicKey },
+          crypto.randomUUID(),
+          { serviceName: config.serviceName },
+        )
+      : undefined,
+  ]).then(async ([releaseConfig, publicKeyConfig]) => {
     const surfaceSlug = releaseConfig?.surface.slug;
 
     if (
@@ -121,43 +149,56 @@ function preflightBuild(config: ResolvedBuildConfig) {
       ]);
     }
 
-    const missing = releaseConfig && missingReleaseBinding(releaseConfig);
-
-    if (missing) {
-      log.warn(missing, []);
-    }
+    const registeredRelease =
+      client && (releaseConfig || !config.publicKey)
+        ? await registerRelease(client, config, releaseConfig ?? null)
+        : undefined;
 
     return {
-      disabled: Boolean(missing),
-      preflight: {
-        releaseConfig: releaseConfig ?? undefined,
-        surfaceConfig,
-      } satisfies BuildPreflight,
-    };
+      releaseConfig: releaseConfig ?? undefined,
+      registeredRelease,
+      surfaceConfig:
+        publicKeyConfig ??
+        (registeredRelease?.token
+          ? await resolveSurfaceConfig(
+              config.apiUrl,
+              { releaseToken: registeredRelease.token },
+              crypto.randomUUID(),
+              { serviceName: config.serviceName },
+            )
+          : undefined),
+    } satisfies BuildPreflight;
   });
 }
 
-export const withBuildPreflight: (
-  enabled: boolean,
-  config: ResolvedBuildConfig,
-  configured: (preflight: BuildPreflight) => NextConfig,
-  disabled: () => NextConfig,
-  // oxlint-disable-next-line typescript/promise-function-async -- Preserve synchronous configuration when no production preflight is needed.
-) => NextConfig | Promise<NextConfig> = (
-  enabled,
-  config,
-  configured,
-  disabled,
-) => {
-  const pending = enabled ? preflightBuild(config) : null;
+/**
+ * Next evaluates the production config more than once per build, through the
+ * same `withInterfere` result. One preflight per resolved build config keeps
+ * that to one release registration and one set of warnings.
+ */
+export function createBuildPreflight() {
+  const preflights = new Map<string, ReturnType<typeof preflightBuild>>();
 
-  async function complete() {
-    const binding = await pending;
+  const withBuildPreflight: (
+    enabled: boolean,
+    config: ResolvedBuildConfig,
+    configured: (preflight: BuildPreflight) => NextConfig,
+    // oxlint-disable-next-line typescript/promise-function-async -- Preserve synchronous configuration when no production preflight is needed.
+  ) => NextConfig | Promise<NextConfig> = (enabled, config, configured) => {
+    const key = JSON.stringify(config);
 
-    return binding?.disabled
-      ? disabled()
-      : configured(binding?.preflight ?? WITHOUT_PREFLIGHT);
-  }
+    if (enabled && !preflights.has(key)) {
+      preflights.set(key, preflightBuild(config));
+    }
 
-  return pending ? complete() : configured(WITHOUT_PREFLIGHT);
-};
+    const pending = enabled ? (preflights.get(key) ?? null) : null;
+
+    async function complete() {
+      return configured((await pending) ?? WITHOUT_PREFLIGHT);
+    }
+
+    return pending ? complete() : configured(WITHOUT_PREFLIGHT);
+  };
+
+  return withBuildPreflight;
+}

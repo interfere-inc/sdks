@@ -39,10 +39,7 @@ export function createBuildReceipt(filename: string) {
   } | null = null;
 
   let publication: NonNullable<
-    Extract<
-      Awaited<ReturnType<typeof runReleasePipeline>>,
-      { ok: true }
-    >["data"]["publication"]
+    Awaited<ReturnType<typeof runReleasePipeline>>["publication"]
   > | null = null;
 
   const outputs = new Set<string>();

@@ -100,22 +100,31 @@ const input = {
 };
 
 test.each([
-  { field: "sourceProvider", reason: "missing_source_provider" },
-  { field: "destinationProvider", reason: "missing_destination_provider" },
-] as const)("rejects missing $field", ({ field, reason }) => {
-  expect(
-    resolveReleaseRequest({
-      ...input,
-      config: {
-        ...input.config,
-        surface: { ...input.config.surface, [field]: null },
-      },
-    }),
-  ).toStrictEqual({
-    ok: false,
-    reason,
-  });
-});
+  { field: "sourceProvider", provider: "vercel" },
+  { field: "destinationProvider", provider: "cli" },
+] as const)(
+  "still resolves the release when the App has no $field",
+  ({ field, provider }) => {
+    for (const key of ["VERCEL", "WORKERS_CI", "CF_PAGES"]) {
+      vi.stubEnv(key, undefined);
+    }
+
+    vi.stubEnv("GITHUB_SHA", "c".repeat(40));
+
+    expect(
+      resolveReleaseRequest({
+        ...input,
+        config: {
+          ...input.config,
+          surface: { ...input.config.surface, [field]: null },
+        },
+      }),
+    ).toMatchObject({
+      destination: { provider },
+      source: { commitSha: "c".repeat(40) },
+    });
+  },
+);
 
 test.each(["vercel", "cloudflare", "cli"] as const)(
   "resolves %s metadata with the explicit deploy environment",
@@ -135,14 +144,11 @@ test.each(["vercel", "cloudflare", "cli"] as const)(
         },
       }),
     ).toMatchObject({
-      ok: true,
-      request: {
-        buildId: "build",
-        destination: { environment: "staging", provider: destinationProvider },
-        producerVersion: input.producerVersion,
-        slug: input.releaseSlug,
-        source: { commitSha: "a".repeat(40) },
-      },
+      buildId: "build",
+      destination: { environment: "staging", provider: destinationProvider },
+      producerVersion: input.producerVersion,
+      slug: input.releaseSlug,
+      source: { commitSha: "a".repeat(40) },
     });
   },
 );
@@ -160,10 +166,7 @@ test.each(["ghe_cloud", "ghe_server"] as const)(
           surface: { ...input.config.surface, sourceProvider },
         },
       }),
-    ).toMatchObject({
-      ok: true,
-      request: { source: { commitSha: "b".repeat(40) } },
-    });
+    ).toMatchObject({ source: { commitSha: "b".repeat(40) } });
   },
 );
 
@@ -183,10 +186,7 @@ test("handles empty git metadata without CI variables", () => {
   vi.stubEnv("GIT_DIR", path.join(directory, "empty/.git"));
 
   expect(resolveReleaseRequest(input)).toMatchObject({
-    ok: true,
-    request: {
-      source: { commitSha: null },
-    },
+    source: { commitSha: null },
   });
 });
 
@@ -206,10 +206,7 @@ test("handles unavailable git metadata without CI variables", () => {
   vi.stubEnv("GIT_DIR", path.join(directory, "missing"));
 
   expect(resolveReleaseRequest(input)).toMatchObject({
-    ok: true,
-    request: {
-      source: { commitSha: null },
-    },
+    source: { commitSha: null },
   });
 });
 
@@ -229,9 +226,30 @@ test("handles present git metadata without CI variables", () => {
   vi.stubEnv("GIT_DIR", path.join(directory, "present/.git"));
 
   expect(resolveReleaseRequest(input)).toMatchObject({
-    ok: true,
-    request: {
-      source: { commitSha: gitSha },
-    },
+    source: { commitSha: gitSha },
   });
 });
+
+test.each([
+  { env: {}, provider: "cli" },
+  { env: { VERCEL: "1" }, provider: "vercel" },
+  { env: { WORKERS_CI: "1" }, provider: "cloudflare" },
+  { env: { CF_PAGES: "1" }, provider: "cloudflare" },
+] as const)(
+  "without a config, resolves the $provider destination from the build environment",
+  ({ env, provider }) => {
+    for (const key of ["VERCEL", "WORKERS_CI", "CF_PAGES"]) {
+      vi.stubEnv(key, undefined);
+    }
+
+    for (const [key, value] of Object.entries(env)) {
+      vi.stubEnv(key, value);
+    }
+
+    expect(resolveReleaseRequest({ ...input, config: null })).toMatchObject({
+      buildId: "build",
+      destination: { environment: "staging", provider },
+      slug: input.releaseSlug,
+    });
+  },
+);

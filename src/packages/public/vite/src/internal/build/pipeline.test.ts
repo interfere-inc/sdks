@@ -153,12 +153,9 @@ test("uploads the canonical release and cleans its artifacts", async () => {
     });
 
     expect(result).toMatchObject({
-      data: {
-        cleanupFailures: [],
-        fileCount: 1,
-        releaseSlug: canonical,
-      },
-      ok: true,
+      cleanupFailures: [],
+      fileCount: 1,
+      releaseSlug: canonical,
     });
 
     expect(signed).toHaveLength(1);

@@ -38,12 +38,15 @@ npm install @interfere/next
 
 ## Set up
 
-Set two environment variables where your app builds and runs. Both are in the Interfere dashboard under **Settings → Developer**.
+Set a workspace secret where your project builds and where its server runs. Create the key under **Settings → Developer** with `release:write` for builds and `org:telemetry:write` for server telemetry.
 
 ```bash
-INTERFERE_PUBLIC_KEY=interfere_public_us_...   # sends browser telemetry; safe to ship to the browser
-INTERFERE_API_KEY=interfere_secret_us_...      # registers releases, uploads source maps and sends server telemetry; keep it secret
+INTERFERE_API_KEY=interfere_secret_us_...
 ```
+
+Keep this value in your secret manager or uncommitted local environment. Never expose it through a `NEXT_PUBLIC_` variable. The plugin registers a release and bakes its release token into the browser bundle; you do not configure a browser credential yourself. Source maps are handled automatically.
+
+The service name defaults to the unscoped name in `package.json`. Set `OTEL_SERVICE_NAME` or `withInterfere({ serviceName: "storefront" }, nextConfig)` to choose another stable name. Use that same name for the build and server.
 
 Then add four files.
 
@@ -75,7 +78,7 @@ export { onRequestError, register } from "@interfere/next/instrumentation";
 import "@interfere/next/instrumentation-client";
 ```
 
-Next.js runs this file before your page hydrates. A production build with `INTERFERE_PUBLIC_KEY` set fails when this file is missing.
+Next.js runs this file before your page hydrates. Include it whenever browser capture is enabled.
 
 **4. Add the provider to your root layout.**
 
@@ -349,7 +352,7 @@ Pass settings as the first argument: `withInterfere({ serviceName: "storefront" 
 
 | Setting             | Default                            | What it does                                                                                           |
 | ------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `serviceName`       | Your `package.json` name, unscoped | Names this app in Interfere. `OTEL_SERVICE_NAME` overrides the package name.                           |
+| `serviceName`       | Your `package.json` name, unscoped | Names the service in Interfere. `OTEL_SERVICE_NAME` overrides the package name.                        |
 | `sourceMaps.upload` | `true`                             | Uploads source maps at build time.                                                                     |
 | `sourceMaps.purge`  | `true`                             | Deletes source maps from the build output afterwards, so they aren't served. Set `false` to keep them. |
 | `disable`           | `false`                            | Turns Interfere off for this build. No release, no upload, no events.                                  |
@@ -383,12 +386,14 @@ Your app's own origin always receives trace headers, as do the backend hosts lis
 
 ### Environment variables
 
-| Variable                | Required                     | What it does                                                                                                                                                                       |
-| ----------------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `INTERFERE_PUBLIC_KEY`  | Yes                          | Your workspace public key. Without it the browser sends nothing.                                                                                                                   |
-| `INTERFERE_API_KEY`     | For releases and server data | A workspace secret key. Builds need **Source maps**; the server runtime needs **Send telemetry**, and without this key it sends with the public key. Never ship it to the browser. |
-| `INTERFERE_ENVIRONMENT` | No                           | Labels the deployment, such as `staging` or `production`. Defaults to `VERCEL_ENV` on Vercel.                                                                                      |
-| `INTERFERE_SOURCE_ID`   | No                           | The commit SHA, if your CI doesn't expose one (`VERCEL_GIT_COMMIT_SHA`, `GITHUB_SHA`) and the build has no git checkout.                                                           |
+| Variable                | Required                   | What it does                                                                                                                                                                       |
+| ----------------------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `INTERFERE_API_KEY`     | For builds and server data | Workspace secret with `release:write` for release registration and automatic source-map publication, and `org:telemetry:write` for server telemetry. Never ship it to the browser. |
+| `OTEL_SERVICE_NAME`     | No                         | Service name when `serviceName` is not set in the build config; otherwise defaults to the unscoped package name.                                                                   |
+| `INTERFERE_ENVIRONMENT` | No                         | Labels the deployment, such as `staging` or `production`. Defaults to `VERCEL_ENV` on Vercel.                                                                                      |
+| `INTERFERE_SOURCE_ID`   | No                         | The commit SHA, if your CI doesn't expose one (`VERCEL_GIT_COMMIT_SHA`, `GITHUB_SHA`) and the build has no git checkout.                                                           |
+
+`INTERFERE_PUBLIC_KEY` is deprecated legacy configuration. New builds use the release token baked by `withInterfere()`; no public key or workspace-slug fallback is part of setup.
 
 ## Troubleshooting
 
@@ -418,7 +423,7 @@ For a backend host from your workspace settings, Interfere adds no headers until
 
 ### No data arrives
 
-- Check that `INTERFERE_PUBLIC_KEY` is set on the build. Without it the build logs a warning and the SDK stays off.
+- Check that `INTERFERE_API_KEY` is available to the build with `release:write`, and that release registration succeeded. Rebuild after changing build credentials so the browser bundle receives its release token.
 - For server errors and traces, check that `INTERFERE_API_KEY` is set where the server runs and has the **Send telemetry** permission.
 - Look for `[interfere]` warnings in the build output and the browser console. They name the cause.
 - If the warning says `withInterfere()` did not run, another config wrapper dropped it. Make `withInterfere()` the outermost wrapper.
@@ -429,7 +434,8 @@ For a backend host from your workspace settings, Interfere adds no headers until
 ### Stack traces point at minified code
 
 - Set `INTERFERE_API_KEY` on the build. Without it the build skips the release and the upload, and logs a warning.
-- In Interfere, link the app to its repository, and to its Vercel project if you deploy on Vercel. Without these links the build skips the upload and logs a warning.
+- You don't need to link anything in Interfere first. The build reads the commit and the deploy target (Vercel, Cloudflare or another CI) from the build environment.
+- Check the build's release-registration and upload diagnostics. Missing source maps affect stack-trace resolution; they do not require a separate browser credential.
 - The build needs a commit SHA. Most CI systems provide one. Otherwise set `INTERFERE_SOURCE_ID`.
 - Check that `sourceMaps.upload` isn't `false`.
 

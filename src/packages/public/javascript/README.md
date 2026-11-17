@@ -12,9 +12,8 @@ import { InterfereClient } from "@interfere/javascript";
 const client = new InterfereClient({
   baseUrl: "https://api.interfere.com",
   apiKey: { token: process.env.INTERFERE_API_KEY! },
+  headers: { "x-interfere-service": "storefront" },
 });
-
-const config = await client.releases.getReleasesConfig();
 ```
 
 The package includes ESM, CommonJS, and TypeScript declarations. It requires a
@@ -26,21 +25,11 @@ selects a runtime-compatible build automatically. Upload files as `Blob`,
 filesystem path or Node.js stream require the Node.js build; file-path uploads
 in browsers and Edge runtimes throw an unsupported-environment error.
 
-Use `apiKeyHeader: { apiKey: "..." }` for `x-api-key` authentication, or
-`publicKeyHeader: { apiKey: "..." }` for endpoints that accept a public key.
+Use `apiKeyHeader: { apiKey: "..." }` for `x-api-key` authentication instead of Bearer authentication. Keep workspace secrets in trusted server or build environments. Give builds `release:write` and server telemetry `org:telemetry:write`.
 
-For runtime configuration, authenticate with your public key:
+For website instrumentation, use [`@interfere/next`](https://www.npmjs.com/package/@interfere/next) or [`@interfere/vite`](https://www.npmjs.com/package/@interfere/vite). Their build plugins register the service's release, bake a release token into the browser bundle and handle source maps automatically. The API client alone does not perform that setup.
 
-```ts
-import { InterfereClient } from "@interfere/javascript";
-
-const client = new InterfereClient({
-  baseUrl: "https://api.interfere.com",
-  publicKeyHeader: { apiKey: "YOUR_PUBLIC_KEY" },
-});
-
-const config = await client.config.getSdkConfig();
-```
+`publicKeyHeader` is a deprecated legacy authentication option for older endpoints. It remains available for compatibility; new website setup uses the build-minted release token.
 
 Requests retry twice by default for HTTP 408, 429, and 5xx responses, respecting
 `Retry-After`. Network failures and other HTTP statuses are not retried. Configure `maxRetries` and `timeoutInSeconds` on the client or an
@@ -61,22 +50,11 @@ bunx turbo run generate --filter=@interfere/javascript
 CI regenerates the client on every run and fails when the committed `src/`
 differs from the generator's output. Do not edit files under `src/` by hand.
 
-## Workspace key migration
+## Service identity
 
-App keys keep working; copy the workspace public key when convenient. When using a workspace key directly, pass the same service identity as your telemetry through the client's shared headers:
+Pass a stable service name with a workspace secret through the client's shared headers. Add `x-interfere-service-namespace` when you use a namespace. Framework build plugins infer the service name from the unscoped `package.json` name unless you override it. Keep that identity aligned with your telemetry.
 
-```ts
-const client = new InterfereClient({
-  baseUrl: "https://api.interfere.com",
-  publicKeyHeader: { apiKey: publicKey },
-  headers: {
-    "x-interfere-service": "storefront",
-    "x-interfere-service-namespace": "shop",
-  },
-});
-```
-
-The namespace is optional. These headers apply to all client requests. Keep sending the public-key selector header with a workspace secret for release requests. Workspace-key routing must be enabled on the gateway; without a service name, it selects the workspace's default App.
+Browsers authenticate with a release token, not the workspace secret or a workspace slug. The token binds the release to its service; you do not need a public-key selector for new release setup.
 
 ## Supported runtimes
 

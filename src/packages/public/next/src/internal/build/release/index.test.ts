@@ -3,7 +3,9 @@ import { describe, expect, test } from "vitest";
 
 const { resolveReleaseRequest } = await import("./index.js");
 
-type ReleasesConfigResponse = Parameters<typeof resolveReleaseRequest>[3];
+type ReleasesConfigResponse = NonNullable<
+  Parameters<typeof resolveReleaseRequest>[3]
+>;
 
 const releaseSlug = releaseSlugSchema.parse("rel_1234567890abcdef");
 
@@ -23,17 +25,17 @@ function config(overrides: Partial<ReleasesConfigResponse["surface"]> = {}) {
 }
 
 describe("resolveReleaseRequest", () => {
-  test.each([
-    ["sourceProvider", "missing_source_provider"],
-    ["destinationProvider", "missing_destination_provider"],
-  ] as const)("skips releases without %s", (provider, reason) => {
-    expect(
-      resolveReleaseRequest(
-        "build_123",
-        null,
-        releaseSlug,
-        config({ [provider]: null }),
-      ),
-    ).toStrictEqual({ ok: false, reason });
-  });
+  test.each(["sourceProvider", "destinationProvider"] as const)(
+    "still resolves the release without %s",
+    (provider) => {
+      expect(
+        resolveReleaseRequest(
+          "build_123",
+          null,
+          releaseSlug,
+          config({ [provider]: null }),
+        ),
+      ).toMatchObject({ buildId: "build_123", slug: releaseSlug });
+    },
+  );
 });

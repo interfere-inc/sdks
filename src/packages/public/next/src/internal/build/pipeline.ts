@@ -1,6 +1,7 @@
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
 import { sourceMapUploadFetch } from "@interfere/build/source-map-upload-fetch";
 import { uploadSourceMapChunks } from "@interfere/build/upload-source-map-chunks";
+import { preflightReleaseBinding } from "@interfere/build/release-request";
 import { PUBLIC_KEY_HEADER } from "@interfere/constants/api";
 import { InterfereClient } from "@interfere/javascript";
 import type { Interfere } from "@interfere/javascript";
@@ -55,7 +56,7 @@ export async function runBuildPipeline(
   const cleanupFailures: Awaited<ReturnType<typeof cleanupBuildSourceMaps>> =
     [];
 
-  let reportResult: NonNullable<Interfere.TelemetryRequest["result"]> | null =
+  let reportResult: NonNullable<Interfere.TelemetryRequest["result"]> =
     "pipeline_failed";
 
   try {
@@ -85,12 +86,6 @@ export async function runBuildPipeline(
       ]);
     }
 
-    const config =
-      metadata.releaseConfig ??
-      (await client.releases.getReleasesConfig({
-        abortSignal: AbortSignal.timeout(60_000),
-      }));
-
     timing.discover = Math.round(performance.now() - start);
     timing.fileCount = files.length;
 
@@ -98,18 +93,11 @@ export async function runBuildPipeline(
       metadata.buildId,
       metadata.environment,
       metadata.releaseSlug,
-      config,
+      metadata.releaseConfig ??
+        (metadata.registeredRelease
+          ? null
+          : await preflightReleaseBinding(client)),
     );
-
-    if (!request.ok) {
-      reportResult = null;
-
-      return {
-        accepted: false as const,
-        fileCount: 0,
-        reason: request.reason,
-      };
-    }
 
     if (metadata.uploadSourceMaps && files.length === 0) {
       reportResult = "no_source_maps";
@@ -123,11 +111,13 @@ export async function runBuildPipeline(
 
     const registering = performance.now();
 
-    const release = createReleaseResponse.parse(
-      await client.releases.createRelease(request.request, {
-        abortSignal: AbortSignal.timeout(60_000),
-      }),
-    );
+    const release =
+      metadata.registeredRelease ??
+      createReleaseResponse.parse(
+        await client.releases.createRelease(request, {
+          abortSignal: AbortSignal.timeout(60_000),
+        }),
+      );
 
     const registered = performance.now();
 
@@ -203,7 +193,6 @@ export async function runBuildPipeline(
       accepted: true as const,
       buildId: release.build.hash,
       cleanupFailures,
-      config,
       fileCount: metadata.uploadSourceMaps ? files.length : 0,
       release,
       timing,
@@ -243,13 +232,11 @@ export async function runBuildPipeline(
 
     timing.total = Math.round(performance.now() - start);
 
-    if (reportResult !== null) {
-      await client.releases
-        .reportTelemetry(
-          { ...timing, result: reportResult, releaseSlug },
-          { abortSignal: AbortSignal.timeout(10_000) },
-        )
-        .catch(() => undefined);
-    }
+    await client.releases
+      .reportTelemetry(
+        { ...timing, result: reportResult, releaseSlug },
+        { abortSignal: AbortSignal.timeout(10_000) },
+      )
+      .catch(() => undefined);
   }
 }

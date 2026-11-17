@@ -2,10 +2,7 @@ import { once } from "node:events";
 import { createServer } from "node:http";
 import { InterfereClient } from "@interfere/javascript";
 import { afterAll, beforeAll, expect, test } from "vitest";
-import {
-  missingReleaseBinding,
-  preflightReleaseBinding,
-} from "./release-request";
+import { preflightReleaseBinding } from "./release-request";
 
 let body: string;
 let client: InterfereClient;
@@ -80,25 +77,16 @@ test("preserves configured release metadata", async () => {
   const result = await preflightReleaseBinding(client);
 
   expect(result).toStrictEqual(configured);
-  expect(result && missingReleaseBinding(result)).toBeNull();
 });
 
 test.each([
-  { field: "sourceProvider", value: null, missing: "version control provider" },
-  { field: "destinationProvider", value: null, missing: "deployment target" },
-  {
-    field: "sourceProvider",
-    value: "future-source",
-    missing: "version control provider",
-  },
-  {
-    field: "destinationProvider",
-    value: "future-target",
-    missing: "deployment target",
-  },
+  { field: "sourceProvider", value: null },
+  { field: "destinationProvider", value: null },
+  { field: "sourceProvider", value: "future-source" },
+  { field: "destinationProvider", value: "future-target" },
 ])(
   "retains a confirmed unsupported $field ($value)",
-  async ({ field, value, missing }) => {
+  async ({ field, value }) => {
     const config = {
       ...configured,
       surface: { ...configured.surface, [field]: value },
@@ -109,10 +97,5 @@ test.each([
     const result = await preflightReleaseBinding(client);
 
     expect(result).toStrictEqual(config);
-    expect(result && missingReleaseBinding(result)).toContain(missing);
-
-    expect(result && missingReleaseBinding(result)).toContain(
-      "https://interfere.com/~/customer/apps/web",
-    );
   },
 );

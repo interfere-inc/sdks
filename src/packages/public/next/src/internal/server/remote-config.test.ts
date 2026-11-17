@@ -1,6 +1,7 @@
 import { setInjectedConfiguration } from "@interfere/test-config/injected-configuration";
 import { PLUGIN_MANIFEST } from "@interfere/types/sdk/plugins/manifest";
 import { PLUGINS_GLOBAL } from "@interfere/types/sdk/remote-config/plugins";
+import { RELEASE_TOKEN_GLOBAL } from "@interfere/types/sdk/release/token";
 import { setupServer } from "msw/node";
 import { HttpResponse, http } from "msw";
 import {
@@ -168,8 +169,8 @@ describe("N-RC-05 the server fetches in development with a public key", () => {
   );
 });
 
-describe("N-RC-06 the server does not fetch without a public key", () => {
-  test("no INTERFERE_PUBLIC_KEY means no request", async () => {
+describe("N-RC-06 without a public key the server fetches with the baked release token", () => {
+  test("no INTERFERE_PUBLIC_KEY and no baked token means no request", async () => {
     vi.stubEnv("INTERFERE_PUBLIC_KEY", undefined);
 
     serve(() => HttpResponse.json({ plugins: {} }));
@@ -179,6 +180,44 @@ describe("N-RC-06 the server does not fetch without a public key", () => {
     await fetchAndCacheRemoteConfig();
 
     expect(requests).toHaveLength(0);
+  });
+
+  test("a baked release token authenticates the fetch and a remote false still applies", async () => {
+    vi.stubEnv("INTERFERE_PUBLIC_KEY", undefined);
+
+    setInjectedConfiguration(RELEASE_TOKEN_GLOBAL, "release-token");
+
+    serve(() => HttpResponse.json({ plugins: { logs: false } }));
+
+    const { fetchAndCacheRemoteConfig, isPluginEnabled } = await load();
+
+    await fetchAndCacheRemoteConfig();
+
+    expect(requests).toHaveLength(1);
+
+    expect(requests[0]?.headers.get("x-interfere-release-token")).toBe(
+      "release-token",
+    );
+
+    expect(requests[0]?.headers.get("x-interfere-public-key")).toBeNull();
+
+    expect(isPluginEnabled("logs")).toBe(false);
+  });
+
+  test("a public key keeps the fetch on the public key when a token is baked too", async () => {
+    setInjectedConfiguration(RELEASE_TOKEN_GLOBAL, "release-token");
+
+    serve(() => HttpResponse.json({ plugins: {} }));
+
+    const { fetchAndCacheRemoteConfig } = await load();
+
+    await fetchAndCacheRemoteConfig();
+
+    expect(requests[0]?.headers.get("x-interfere-public-key")).toBe(
+      "interfere_pk_test",
+    );
+
+    expect(requests[0]?.headers.get("x-interfere-release-token")).toBeNull();
   });
 });
 

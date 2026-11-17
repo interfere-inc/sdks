@@ -149,12 +149,9 @@ test("keeps maps until complete upload acceptance, then cleans them", async () =
   const result = await runReleasePipeline(options());
 
   expect(result).toMatchObject({
-    ok: true,
-    data: {
-      cleanupFailures: [],
-      fileCount: 1,
-      releaseSlug: slug,
-    },
+    cleanupFailures: [],
+    fileCount: 1,
+    releaseSlug: slug,
   });
 
   await expect(access(file.absolute)).rejects.toMatchObject({ code: "ENOENT" });
@@ -274,6 +271,7 @@ test("reports cleanup failures without undoing acceptance", async () => {
   await mkdir(file.absolute);
 
   await expect(runReleasePipeline(options())).resolves.toMatchObject({
-    data: { cleanupFailures: [{ absolute: file.absolute }], fileCount: 1 },
+    cleanupFailures: [{ absolute: file.absolute }],
+    fileCount: 1,
   });
 });

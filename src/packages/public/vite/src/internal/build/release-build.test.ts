@@ -117,8 +117,8 @@ test.each([
     setting: "deployment target",
   },
 ])(
-  "disables the build, says which surface setting is missing and removes forced maps: $setting",
-  async ({ providers, setting }) => {
+  "keeps Interfere on and uploads source maps when the App has no $setting",
+  async ({ providers }) => {
     expect.hasAssertions();
 
     const root = await project("vite-surface-unconfigured-");
@@ -133,21 +133,13 @@ test.each([
 
     await buildWith(root, logger);
 
-    expect(warnings).toContainEqual(
-      expect.stringContaining(
-        `Interfere is disabled for this build: configure the surface's ${setting} at https://interfere.com/~/acme/apps/vite`,
-      ),
+    expect(warnings).not.toContainEqual(
+      expect.stringMatching(/disabled|release skipped/u),
     );
 
-    expect(finalized).toStrictEqual([]);
+    expect(finalized).toHaveLength(1);
 
-    const { chunks, maps } = await builtFiles(root);
-
-    expect(maps).toStrictEqual([]);
-
-    for (const chunk of chunks) {
-      expect(chunk).not.toContain("sourceMappingURL");
-    }
+    await expect(builtFiles(root)).resolves.toMatchObject({ maps: [] });
   },
 );
 

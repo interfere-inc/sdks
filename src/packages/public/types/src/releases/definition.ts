@@ -71,7 +71,7 @@ export const createReleaseResponse = z
         id: z.string(),
       })
       .meta({ id: "ReleaseSourceRef", title: "ReleaseSourceRef" }),
-    surface: surfaceRefSchema,
+    surface: surfaceRefSchema.nullable(),
     token: z.string().nullable().optional().meta({
       description:
         "Signed release token for browser telemetry, baked into the bundle by the build plugin. It names the workspace, service and release, carries no environment and does not expire. Null when the release has no service.",

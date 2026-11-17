@@ -23,10 +23,10 @@ export function interfereCompilerConfig(
         await existingHook(context);
       }
 
-      if (config.publicKey === null) {
-        log.warn("Public key not set", [
-          "INTERFERE_PUBLIC_KEY is not set, so this build sends no events.",
-          "Set it to a workspace or App key on builds that you deploy.",
+      if (config.publicKey === null && !config.registeredRelease?.token) {
+        log.warn("No browser credential", [
+          "This build has no release token and no INTERFERE_PUBLIC_KEY, so it sends no browser events.",
+          "Set INTERFERE_API_KEY on builds that you deploy and withInterfere() bakes in a release token.",
         ]);
       }
 

@@ -46,6 +46,8 @@ For an approved early preview, retain existing exclusions and add the required I
 
 ### Quick Start (vanilla Vite SPA)
 
+Set `INTERFERE_API_KEY` in your build environment to a workspace secret with `release:write`. Keep it in your secret manager or uncommitted local environment, never in a `VITE_` variable. The plugin registers the release, bakes its release token into the browser bundle and handles source maps automatically. The service name defaults to the unscoped `package.json` name; set `serviceName` in `interfere()` to choose another stable name.
+
 **1. Add the Vite plugin**
 
 ```ts
@@ -154,7 +156,7 @@ function RootComponent() {
 
 ### TanStack Start on Cloudflare Workers
 
-Workers allow network requests only while a request is being handled, so call `register()` inside your Worker's `fetch` handler rather than at module scope. It initializes once per isolate; later calls return straight away. Enable `nodejs_compat` with a `compatibility_date` of 2025-08-15 or later, and set `VITE_INTERFERE_PUBLIC_KEY` as a Worker variable so the server reads it from `process.env`:
+Workers allow network requests only while a request is being handled, so call `register()` inside your Worker's `fetch` handler rather than at module scope. It initializes once per isolate; later calls return straight away. Enable `nodejs_compat` with a `compatibility_date` of 2025-08-15 or later, and provide `INTERFERE_API_KEY` as a Worker secret with `org:telemetry:write` so the server reads it from `process.env`:
 
 ```ts
 // src/worker.ts
@@ -215,15 +217,12 @@ The browser SDK writes `traceparent`, `tracestate` and `baggage` to the page ori
 
 ## First-Time Setup
 
-The SDK splits its credentials by concern: a **public key** travels with the browser bundle (it's not a secret), and a **secret key** stays server-side (CI / GSM / `.env.local`).
+1. **Install** `@interfere/vite` and add the plugin, browser initialization and provider shown above.
+2. **Workspace secret** — set `INTERFERE_API_KEY` with `release:write` for builds, plus `org:telemetry:write` where the server sends telemetry. Never commit the secret or expose it to browser code.
+3. **Service name** — keep the unscoped `package.json` name or set `interfere({ serviceName: "storefront" })`. Keep browser and server overrides aligned with it.
+4. **Build and deploy** — run your usual build. The plugin registers the release and injects the browser token; source-map publication needs no separate setup. Check the build diagnostics if registration fails.
 
-1. **Install** `@interfere/vite` and add the plugin (above).
-2. **Public key** — copy the dashboard's regional public key (`interfere_public_us_*` or `interfere_public_eu_*`) into `.env.local` as `VITE_INTERFERE_PUBLIC_KEY=...`. Public by design; safe to commit to a public repo.
-3. **Secret key** — create a workspace secret key with the **Source maps** (`release:write`) permission, plus **Send telemetry** (`org:telemetry:write`) for server telemetry, and put the regional value (`interfere_secret_us_*` or `interfere_secret_eu_*`) in `.env.local` as `INTERFERE_API_KEY=...`. One key publishes releases for every service in the workspace; each release belongs to the service named by `serviceName`. **Server-side; never commit.**
-4. **First build** — run `bun run build`. The plugin's `closeBundle` hook publishes release metadata and preflight-confirms the release. After this the commit's slug is accepted at ingest.
-5. **Dev cycle** — `bun run dev` then exercises the bundle in your browser. Events flow with the commit's preflight-confirmed slug (the build did the work). New commit? Re-run `bun run build` so the new commit's slug is preflighted.
-
-For **Vercel preview / production**, set `INTERFERE_API_KEY` in your `.env.local` or via GSM (or directly as a Vercel env var). Each preview build runs the same `bun run build` flow in CI; no local-vs-preview divergence.
+Provide the same build credential in CI and your hosting platform's build environment. A browser bundle must contain the token from a successful release registration; setting a server environment variable after the build does not update that bundle.
 
 ## What remote configuration can change
 
@@ -237,27 +236,19 @@ Remote `backendHosts` become discovered HTTPS origins. They receive no trace hea
 
 Interfere organizes telemetry by service. `serviceName`, with an optional `serviceNamespace`, names the service, and every request carries it: SDK requests send `x-interfere-service` and `x-interfere-service-namespace`, and OTLP requests use the `service.name` and `service.namespace` resource attributes. Interfere records a service the first time it sees one, within the workspace's service limit.
 
-Every workspace receives a **Default** workspace public key. Use one workspace key for all of the workspace's services; additional keys can be created or rotated in **Settings → Developer → Public keys**. Servers, CI and collectors use a workspace secret key with **Send telemetry** (`org:telemetry:write`) and name the service the same way.
-
-Apps are being folded into services, one website service per App. Until that finishes, each service also resolves to an App, which holds its website settings:
-
-1. An existing service-to-App association wins.
-2. Otherwise, an App whose name or slug matches the service is used.
-3. Otherwise, the request goes to the workspace's **Default app** (choose it in **Settings → Developer → Public keys**). Without an eligible default, the request is rejected. A missing or deleted default falls back to the oldest eligible App. A request without a service identity also goes to the default App.
-
-Interfere never creates an App from telemetry. An App marked `explicit_only` is excluded from name matching and the default fallback; target it through an existing service association or its App key. App keys (formerly surface keys) are deprecated but still accepted, with no removal date announced. An App key stays bound to its App and skips this resolution.
-
-Keep `serviceName` stable: renaming an App's dashboard title does not change an existing service association. Open **Services** to find the service linked to an App before migrating keys.
+Builds use a workspace secret with `release:write` to register a release for the named service. Browsers authenticate with the release token baked into the bundle. Servers and collectors use a workspace secret with `org:telemetry:write`. Keep the service name stable across releases; the workspace slug is not a browser credential.
 
 Set the same name in `interfere({ serviceName: "storefront" })`, browser `init({ serviceName: "storefront" })`, and server `register({ serviceName: "storefront" })`. Build identity uses the explicit option, then `OTEL_SERVICE_NAME`, then the package name without its scope. Keep an application-owned OpenTelemetry provider aligned too.
 
 ## Environment Variables
 
-| Variable                    | Required              | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| --------------------------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `VITE_INTERFERE_PUBLIC_KEY` | Yes                   | Public workspace or App key in the `interfere_public_us_*` or `interfere_public_eu_*` format. Stamped into the page by the plugin at build time. A production build without it logs a warning and the browser sends no events.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| `INTERFERE_API_KEY`         | Yes for deploy builds | Workspace secret key in the `interfere_secret_us_*` or `interfere_secret_eu_*` format, with the **Source maps** (`release:write`) permission. Used by the plugin at build time to register the release and upload source maps for the App resolved from `VITE_INTERFERE_PUBLIC_KEY` and `serviceName`, and by the server runtime (`register()`, request middleware) to send server telemetry, which needs the **Send telemetry** (`org:telemetry:write`) permission. Without it the server sends with `VITE_INTERFERE_PUBLIC_KEY`. The plugin mirrors it from `.env` files into the dev server's process. A production build without it logs a warning and skips the release. A key with the wrong prefix fails the build. If Interfere rejects the key, the build logs an error and continues without a release. |
-| `INTERFERE_API_URL`         | No                    | Override the collector URL the build pipeline targets. Defaults to `https://api.interfere.com`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| Variable            | Required                   | Description                                                                                                                                                               |
+| ------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `INTERFERE_API_KEY` | For builds and server data | Workspace secret with `release:write` for release registration and automatic source-map publication, and `org:telemetry:write` for server telemetry. Keep it server-side. |
+| `OTEL_SERVICE_NAME` | No                         | Service name when the build's `serviceName` option is absent; defaults to the unscoped package name.                                                                      |
+| `INTERFERE_API_URL` | No                         | Build and server API origin. Defaults to `https://api.interfere.com`.                                                                                                     |
+
+`VITE_INTERFERE_PUBLIC_KEY` is deprecated legacy configuration; it is not required for builds that bake a release token. A build without a token cannot authenticate browser telemetry by workspace slug alone.
 
 ## Plugin Options
 
@@ -282,13 +273,13 @@ Ingest requests never carry cookies. `apiHost` posts to your own site's subdomai
 
 ### Service identity
 
-When release preflight resolves an App whose slug differs from the inferred service name, the build warns once and continues. Set `serviceName` explicitly in `interfere()`, browser `init()` and server `register()` to preserve your existing name; an explicit build option or `OTEL_SERVICE_NAME` suppresses the warning. A workspace key with no resolved App produces no name warning.
+Set `serviceName` explicitly in `interfere()`, browser `init()` and server `register()` to preserve an existing name when you rename your package. Find the current name under **Services**.
 
 ## Migrating From 0.x
 
-Upgrade all `@interfere/*` SDK packages together. Keep the env var names, but replace old `int_pub_*` / `interfere_pk_*` values with the dashboard's regional public key, and replace old `ak_*` / `interfere_ak_*` build keys with the regional Interfere secret key.
+Upgrade all `@interfere/*` SDK packages together. Set `INTERFERE_API_KEY` to a workspace secret, keep the service name stable, and rebuild so the browser receives a release token.
 
-Secret keys that were created for one app keep working. New secret keys belong to the workspace, so set `VITE_INTERFERE_PUBLIC_KEY` on the build machine as well.
+`VITE_INTERFERE_PUBLIC_KEY` and older per-App keys are deprecated legacy configuration. Keep them only for older deployments that still need them while you migrate; new setup uses the workspace secret and service name. Advanced `sourceMaps` options remain available, with automatic upload enabled by default.
 
 ## Identity Management
 

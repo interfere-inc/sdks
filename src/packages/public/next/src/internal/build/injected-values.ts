@@ -6,6 +6,7 @@ import {
   PUBLIC_KEY_GLOBAL,
   RELEASE_SLUG_GLOBAL,
 } from "@interfere/types/sdk/injected-globals";
+import { RELEASE_TOKEN_GLOBAL } from "@interfere/types/sdk/release/token";
 import { SERVICE_NAME_GLOBAL } from "@interfere/types/sdk/service-name";
 import type { ResolvedBuildConfig } from "../../config.js";
 
@@ -14,12 +15,16 @@ export function interfereInjectedValues(
   apiHost: string | undefined,
   serviceName: string | undefined,
 ) {
+  const releaseToken = config.registeredRelease?.token || undefined;
+
   return omitUndefined({
     [SERVICE_NAME_GLOBAL]: serviceName,
     [RELEASE_SLUG_GLOBAL]: config.releaseSlug,
+    [RELEASE_TOKEN_GLOBAL]: releaseToken,
     [BUILD_MARKER_GLOBAL]: true,
     [PUBLIC_KEY_GLOBAL]: config.publicKey || undefined,
-    [API_URL_GLOBAL]: config.publicKey && apiHost ? apiHost : undefined,
+    [API_URL_GLOBAL]:
+      (config.publicKey || releaseToken) && apiHost ? apiHost : undefined,
     [ENVIRONMENT_GLOBAL]: config.environment || undefined,
   });
 }

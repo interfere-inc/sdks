@@ -14,8 +14,8 @@ pub struct CreateReleaseResponse {
     pub org: OrgRef,
     #[serde(default)]
     pub source: ReleaseSourceRef,
-    #[serde(default)]
-    pub surface: SurfaceRef,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub surface: Option<SurfaceRef>,
     /// Signed release token for browser telemetry, baked into the bundle by the build plugin. It names the workspace, service and release, carries no environment and does not expire. Null when the release has no service.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub token: Option<String>,
@@ -75,14 +75,13 @@ impl CreateReleaseResponseBuilder {
     /// - [`destination`](CreateReleaseResponseBuilder::destination)
     /// - [`org`](CreateReleaseResponseBuilder::org)
     /// - [`source`](CreateReleaseResponseBuilder::source)
-    /// - [`surface`](CreateReleaseResponseBuilder::surface)
     pub fn build(self) -> Result<CreateReleaseResponse, BuildError> {
         Ok(CreateReleaseResponse {
             build_value: self.build_value.ok_or_else(|| BuildError::missing_field("build_value"))?,
             destination: self.destination.ok_or_else(|| BuildError::missing_field("destination"))?,
             org: self.org.ok_or_else(|| BuildError::missing_field("org"))?,
             source: self.source.ok_or_else(|| BuildError::missing_field("source"))?,
-            surface: self.surface.ok_or_else(|| BuildError::missing_field("surface"))?,
+            surface: self.surface,
             token: self.token,
         })
     }

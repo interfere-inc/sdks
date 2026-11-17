@@ -190,26 +190,19 @@ export async function releaseBuildOutput(options: ReleaseBuildOutputOptions) {
       }
     }
 
-    if (!result.ok) {
-      return await finish({
-        reason: `release skipped: ${result.failure.kind} for ${result.failure.config.org.slug}/${result.failure.config.surface.slug}.`,
-        status: "skipped",
-      });
-    }
-
-    for (const failure of result.data.cleanupFailures) {
+    for (const failure of result.cleanupFailures) {
       logger.warn(
         `[interfere] cleanup left ${failure.absolute} on disk: ${failure.code ?? failure.message}`,
       );
     }
 
     logger.info(
-      `[interfere] release ${result.data.releaseSlug} confirmed for ${environment ?? "no environment"}: ${result.data.fileCount} maps, ${result.data.timing?.total ?? 0}ms.`,
+      `[interfere] release ${result.releaseSlug} confirmed for ${environment ?? "no environment"}: ${result.fileCount} maps, ${result.timing?.total ?? 0}ms.`,
     );
 
     return {
-      fileCount: result.data.fileCount,
-      releaseSlug: result.data.releaseSlug,
+      fileCount: result.fileCount,
+      releaseSlug: result.releaseSlug,
       status: "released",
     } satisfies ReleaseBuildOutputResult;
   } catch (error) {

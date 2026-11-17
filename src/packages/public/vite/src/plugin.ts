@@ -1,4 +1,3 @@
-import { missingReleaseBinding } from "@interfere/build/release-request";
 import { registerBuildRelease } from "./internal/build/register-release";
 import {
   DIAGNOSTIC_CONTEXT,
@@ -9,7 +8,10 @@ import {
 import { resolveBuildReleaseSlug } from "@interfere/build/release-slug";
 import { resolveBuildServiceName } from "@interfere/build/service-name";
 import type { Interfere } from "@interfere/javascript";
-import { createBuildConfigResolver } from "@interfere/build/config";
+import {
+  buildConfigCredential,
+  createBuildConfigResolver,
+} from "@interfere/build/config";
 import { API_URL } from "@interfere/constants/api";
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
 import type { ReleaseSlug } from "@interfere/types/releases/slug";
@@ -397,12 +399,10 @@ export function interfere(options: InterfereViteOptions = {}) {
 
   let remoteConfigFallback = false;
   let releaseConfig: Interfere.ReleasesConfigResponse | null = null;
-  let missingBinding: string | null = null;
 
   let registeredRelease: Awaited<ReturnType<typeof registerBuildRelease>> =
     null;
 
-  let bindingWarningLogged = false;
   let serviceNameWarning: string | undefined;
 
   const resolveBuildConfig = createBuildConfigResolver((result) => {
@@ -538,11 +538,12 @@ export function interfere(options: InterfereViteOptions = {}) {
         releaseSlug: browser.releaseSlug,
       });
 
-      if (
+      const registersRelease =
         command === "build" &&
         options.sourceMaps?.retain !== true &&
-        release.status === "ok"
-      ) {
+        release.status === "ok";
+
+      if (registersRelease) {
         releaseConfig = await preflightViteBinding({
           apiUrl: pickEnvValue(releaseEnv, "INTERFERE_API_URL") ?? API_URL,
           apiKey: release.apiKey,
@@ -555,27 +556,11 @@ export function interfere(options: InterfereViteOptions = {}) {
           browser.serviceName,
           options.serviceName?.trim() || env["OTEL_SERVICE_NAME"]?.trim(),
         );
-
-        missingBinding = releaseConfig && missingReleaseBinding(releaseConfig);
-
-        if (missingBinding) {
-          state = null;
-
-          return {
-            define: {
-              "import.meta.env.VITE_INTERFERE_DISABLED": '"true"',
-              "import.meta.env.VITE_INTERFERE_PUBLIC_KEY": '""',
-              "import.meta.env.VITE_INTERFERE_RELEASE_SLUG": "null",
-              "import.meta.env.VITE_INTERFERE_RELEASE_TOKEN": "null",
-            },
-            ssr: { noExternal: ["@interfere/vite"] },
-          };
-        }
       }
 
       registeredRelease ??=
-        releaseConfig &&
-        release.status === "ok" &&
+        registersRelease &&
+        (releaseConfig || !browser.publicKey) &&
         browser.commitSha &&
         browser.releaseSlug
           ? await registerBuildRelease({
@@ -597,11 +582,16 @@ export function interfere(options: InterfereViteOptions = {}) {
         env,
       );
 
+      const credential = buildConfigCredential(
+        browser.publicKey,
+        registeredRelease?.token,
+      );
+
       const baked =
-        command === "build" && browser.publicKey && !isTestEnv()
+        command === "build" && credential && !isTestEnv()
           ? await resolveBuildConfig(
               browser.apiHost ?? API_URL,
-              browser.publicKey,
+              credential,
               undefined,
               { serviceName: browser.serviceName },
             )
@@ -615,16 +605,6 @@ export function interfere(options: InterfereViteOptions = {}) {
       return { define, ssr: { noExternal: ["@interfere/vite"] } };
     },
     async configResolved(config) {
-      if (missingBinding) {
-        if (!bindingWarningLogged) {
-          config.logger.warn(`[interfere] ${missingBinding}`);
-
-          bindingWarningLogged = true;
-        }
-
-        return;
-      }
-
       const browser = resolveBrowserConfig(
         options,
         config.env,

@@ -5,6 +5,7 @@ import { HttpResponse } from "msw";
 import { afterAll, beforeAll, expect, test } from "vitest";
 import { application } from "@interfere/test-utils/vitest/packed-application";
 import { receiver } from "@interfere/test-utils/vitest/telemetry-receiver";
+import type { ReceivedRequest } from "@interfere/test-utils/vitest/telemetry-receiver";
 import { exceptions } from "@interfere/test-utils/vitest/otlp";
 
 const TOKEN = "irt_packed_acceptance";
@@ -13,6 +14,7 @@ let app: Awaited<ReturnType<typeof application>>;
 let collector: Awaited<ReturnType<typeof receiver>>;
 let website: Awaited<ReturnType<typeof receiver>>;
 let browser: Browser;
+let buildRequests: ReceivedRequest[];
 
 beforeAll(async () => {
   collector = await receiver({
@@ -53,6 +55,8 @@ beforeAll(async () => {
     INTERFERE_ENVIRONMENT: "preview",
     INTERFERE_SOURCE_ID: "0123456789abcdef0123456789abcdef01234567",
   });
+
+  buildRequests = [...collector.requests];
 
   website.serve(join(app.root, "dist"));
 
@@ -112,4 +116,16 @@ test("a build with an API key and no public key exports browser telemetry under 
   }
 
   await context.close();
+});
+
+test("the build bakes its SDK config with the release token it registered", () => {
+  const configs = buildRequests.filter(
+    (request) =>
+      new URL(request.url, "http://receiver").pathname === "/v3/config",
+  );
+
+  expect(configs).toHaveLength(1);
+
+  expect(configs[0]?.headers.get("x-interfere-release-token")).toBe(TOKEN);
+  expect(configs[0]?.headers.get("x-interfere-public-key")).toBeNull();
 });

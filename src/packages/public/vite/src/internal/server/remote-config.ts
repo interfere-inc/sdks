@@ -7,6 +7,20 @@ import { isEnabledOnServer, readInterfereServerEnv } from "./env";
 
 let cachedConfig: RemotePluginConfig | null = null;
 
+function bakedReleaseToken() {
+  return import.meta.env.VITE_INTERFERE_RELEASE_TOKEN || null;
+}
+
+function serverCredential(publicKey: string | null) {
+  if (publicKey) {
+    return { publicKeyHeader: { apiKey: publicKey } };
+  }
+
+  const releaseToken = bakedReleaseToken();
+
+  return releaseToken ? { releaseTokenHeader: { apiKey: releaseToken } } : null;
+}
+
 export async function fetchAndCacheRemoteConfig(service?: {
   serviceName?: string | undefined;
   serviceNamespace?: string | undefined;
@@ -21,14 +35,16 @@ export async function fetchAndCacheRemoteConfig(service?: {
 
   const env = readInterfereServerEnv();
 
-  if (env.publicKey === null) {
+  const credential = serverCredential(env.publicKey);
+
+  if (credential === null) {
     return;
   }
 
   try {
     const client = new InterfereClient({
       baseUrl: env.apiUrl,
-      publicKeyHeader: { apiKey: env.publicKey },
+      ...credential,
       headers: {
         "x-interfere-service":
           service?.serviceName ||

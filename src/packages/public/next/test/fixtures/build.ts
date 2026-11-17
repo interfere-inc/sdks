@@ -108,6 +108,7 @@ export function createReleaseFixture(
     cleanupFailure?: boolean;
     telemetryFailure?: boolean;
     maps?: boolean;
+    releaseToken?: string;
   } = {},
 ) {
   const chunk = path.join(projectDir, ".next/static/chunks/app.js");
@@ -162,7 +163,7 @@ export function createReleaseFixture(
       if (url.pathname === "/v3/releases") {
         return options.failure === "register"
           ? fail()
-          : Response.json(RELEASE_RESPONSE);
+          : Response.json({ ...RELEASE_RESPONSE, token: options.releaseToken });
       }
 
       if (url.pathname.endsWith("/sign")) {

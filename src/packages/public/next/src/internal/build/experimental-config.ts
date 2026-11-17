@@ -19,21 +19,6 @@ export function needsInstrumentationHookFlag(nextMajor: number | null) {
   );
 }
 
-/**
- * Next's `clientTraceMetadata` is enabled whenever the browser SDK is
- * configured. Managed `register()` writes the stamped SSR trace meta the
- * browser accepts; when the application owns tracing its propagator decides
- * what the meta carries and the browser rejects an unstamped `traceparent`,
- * so the keys are safe in either mode and the owner is only known at runtime.
- */
-export function emitsClientTraceMetadata({
-  publicKey,
-}: {
-  readonly publicKey: string | null;
-}) {
-  return publicKey !== null;
-}
-
 export function interfereExperimentalConfig({
   existing,
   instrumentationHook,
@@ -42,6 +27,13 @@ export function interfereExperimentalConfig({
 }: {
   readonly existing: NextExperimentalConfig | undefined;
   readonly instrumentationHook: boolean;
+  /**
+   * Next's `clientTraceMetadata` is enabled whenever the browser SDK has a
+   * credential. Managed `register()` writes the stamped SSR trace meta the
+   * browser accepts; when the application owns tracing its propagator decides
+   * what the meta carries and the browser rejects an unstamped `traceparent`,
+   * so the keys are safe in either mode and the owner is only known at runtime.
+   */
   readonly traceMetadata: boolean;
   readonly sourceMaps: boolean;
 }) {
