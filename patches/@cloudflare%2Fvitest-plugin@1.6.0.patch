@@ -148,3 +148,23 @@ index e1a1ec4b06caf34cfcd1425dcec9dbd32afa9c3a..c851c812cc9c266bc36c747abde44c27
  		verbose: customOptions.verbose ?? true,
  		inspectorPort,
  		unsafeModuleFallbackService: moduleFallbackService,
+diff --git a/dist/worker/index.mjs b/dist/worker/index.mjs
+index 02997e38282f71b9cbf809348895cd8aa1dc569c..864fd31fa402122c40cde9e32cd8adb8f8a0adba 100644
+--- a/dist/worker/index.mjs
++++ b/dist/worker/index.mjs
+@@ -1151,6 +1151,15 @@ var __VITEST_POOL_WORKERS_RUNNER_DURABLE_OBJECT__ = class extends DurableObject
+ 							return runInRunnerObject(() => originalInvoke(...args));
+ 						};
+ 					} else __console.warn("[vitest-plugin] Could not patch module runner transport. Dynamic import() inside entrypoint/DO handlers may fail.");
++					// WARNING: Vite shares in-flight module promises across the isolate; a dynamic import() started in a Workflow or Durable Object request that workerd cancels (a NonRetryableError engine abort) never settles and hangs every later import of that module, so start it in the Runner Object.
++					if (runner.evaluator?.runInlinedModule) {
++						const originalRunInlinedModule = runner.evaluator.runInlinedModule.bind(runner.evaluator);
++						runner.evaluator.runInlinedModule = (context, code, module) => {
++							const dynamicImport = context.__vite_ssr_dynamic_import__;
++							context.__vite_ssr_dynamic_import__ = (...args) => runInRunnerObject(() => dynamicImport(...args));
++							return originalRunInlinedModule(context, code, module);
++						};
++					} else __console.warn("[vitest-plugin] Could not patch module runner dynamic imports. A dynamic import() in a cancelled entrypoint/DO request may hang later imports.");
+ 				}
+ 				const evaluator = runner.evaluator;
+ 				if (v8CoverageEnabled && evaluator?.runInlinedModule !== void 0 && !v8CoverageEvaluators.has(evaluator)) {
