@@ -5,6 +5,8 @@ const log = createLogger("device");
 
 const LS_KEY = "interfere:device_id";
 
+const FP_LS_KEY = "interfere:fp_hash";
+
 const COOKIE_NAME = "interfere_did";
 
 const COOKIE_MAX_AGE_DAYS = 400;
@@ -14,7 +16,9 @@ const COOKIE_MAX_AGE_DAYS = 400;
  * dynamic-imports the FingerprintJS OSS library after an idle callback and
  * collects only the sources that each finish well under the 50 ms long-task
  * threshold, yielding between them. Tests inject a fixed-value provider that
- * resolves immediately.
+ * resolves immediately. A computed hash is kept in localStorage next to the
+ * device id it was computed for, so later page loads skip the provider until
+ * the device id is cleared or regenerated.
  */
 export type FingerprintProvider = () => Promise<string | null>;
 
@@ -139,6 +143,25 @@ function deleteCookie(name: string) {
   setCookie(name, "", 0);
 }
 
+function readStoredFpHash(ls: Storage | null, deviceId: string) {
+  const stored = ls?.getItem(FP_LS_KEY) ?? null;
+  const prefix = `${deviceId}:`;
+
+  if (!stored?.startsWith(prefix) || stored.length === prefix.length) {
+    return null;
+  }
+
+  return stored.slice(prefix.length);
+}
+
+function storeFpHash(deviceId: string, hash: string) {
+  try {
+    tryLocalStorage()?.setItem(FP_LS_KEY, `${deviceId}:${hash}`);
+  } catch {
+    log.debug("fpHash not stored; it will be recomputed on the next page");
+  }
+}
+
 function generateId() {
   return uuidv4();
 }
@@ -189,6 +212,8 @@ export class DeviceManager {
       Boolean(fromCookie),
     );
 
+    this.fpHash ??= fromLs ? readStoredFpHash(ls, this.deviceId) : null;
+
     this.startFingerprint();
   }
 
@@ -211,6 +236,10 @@ export class DeviceManager {
 
       if (hash) {
         log.debug("fpHash %s", hash);
+
+        if (this.deviceId) {
+          storeFpHash(this.deviceId, hash);
+        }
       }
 
       return hash;
@@ -240,6 +269,10 @@ export class DeviceManager {
 
     persistCookie(COOKIE_NAME, this.deviceId);
 
+    if (this.fpHash) {
+      storeFpHash(this.deviceId, this.fpHash);
+    }
+
     log.debug("device %s (reset)", this.deviceId);
 
     return this.deviceId;
@@ -251,7 +284,11 @@ export class DeviceManager {
     this.fpHash = null;
     this.fpPending = null;
 
-    tryLocalStorage()?.removeItem(LS_KEY);
+    const ls = tryLocalStorage();
+
+    ls?.removeItem(LS_KEY);
+
+    ls?.removeItem(FP_LS_KEY);
 
     deleteCookie(COOKIE_NAME);
 

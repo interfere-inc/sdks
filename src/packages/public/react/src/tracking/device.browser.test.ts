@@ -150,6 +150,8 @@ describe(DeviceManager, () => {
 
     await a.whenFingerprintReady();
 
+    browserStorage.local.remove("interfere:fp_hash");
+
     const b = new DeviceManager(fixedFp("hash-b"));
 
     expect(b.getDeviceId()).toBeNull();
