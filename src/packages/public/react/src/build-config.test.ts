@@ -1,7 +1,8 @@
 import { expect, test } from "vitest";
+import { z } from "zod";
 import config from "../tsdown.config";
 
-test("passes glob entries to rolldown in a stable order", () => {
+test("passes glob entries to rolldown in a stable order", async () => {
   const entries = {
     provider: "/src/provider.tsx",
     "internal/otel/exporter": "/src/internal/otel/exporter.ts",
@@ -9,8 +10,23 @@ test("passes glob entries to rolldown in a stable order", () => {
     "internal/kernel": "/src/internal/kernel.ts",
   };
 
-  const order = (input: Record<string, string>) =>
-    Object.keys(config.inputOptions({ input }).input);
+  const order = async (input: Record<string, string>) => {
+    const inputOptions = z
+      .function({
+        input: [
+          z.object({ input: z.record(z.string(), z.string()) }),
+          z.literal("es"),
+          z.object({ cjsDts: z.boolean() }),
+        ],
+      })
+      .parse(config.inputOptions);
+
+    const options = z
+      .object({ input: z.record(z.string(), z.string()) })
+      .parse(await inputOptions({ input }, "es", { cjsDts: false }));
+
+    return Object.keys(options.input);
+  };
 
   const expected = [
     "api",
@@ -19,9 +35,9 @@ test("passes glob entries to rolldown in a stable order", () => {
     "provider",
   ];
 
-  expect(order(entries)).toStrictEqual(expected);
+  await expect(order(entries)).resolves.toStrictEqual(expected);
 
-  expect(
+  await expect(
     order(Object.fromEntries(Object.entries(entries).toReversed())),
-  ).toStrictEqual(expected);
+  ).resolves.toStrictEqual(expected);
 });

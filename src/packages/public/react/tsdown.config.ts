@@ -7,7 +7,7 @@ const entryMap = z.record(z.string(), z.string());
 
 const isWatch = process.argv.includes("--watch") || process.argv.includes("-w");
 
-export default {
+const config: UserConfig = {
   checks: { moduleLevelDirective: false },
   clean: isWatch ? false : ["dist/**/*"],
   deps: {
@@ -41,4 +41,6 @@ export default {
   suppressWarnings:
     "TypeScript 7.0 does not yet have a stable API and is experimental.",
   unbundle: false,
-} satisfies UserConfig;
+};
+
+export default config;
