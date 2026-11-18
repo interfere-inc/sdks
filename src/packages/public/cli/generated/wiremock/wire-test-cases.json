@@ -304,7 +304,7 @@
       "requiresAuth": true,
       "response": {
         "status": 200,
-        "body": "{\n  \"surface\": {\n    \"id\": \"id\",\n    \"slug\": \"slug\",\n    \"environmentFiltering\": true,\n    \"sourceProvider\": \"github\",\n    \"destinationProvider\": \"vercel\",\n    \"sdkConfig\": {\n      \"serverTracing\": \"full\",\n      \"logSourcing\": \"sdk\",\n      \"platform\": \"vercel\"\n    }\n  },\n  \"org\": {\n    \"id\": \"id\",\n    \"slug\": \"slug\"\n  }\n}"
+        "body": "{\n  \"surface\": {\n    \"id\": \"id\",\n    \"slug\": \"slug\",\n    \"environmentFiltering\": true,\n    \"sourceProvider\": \"github\",\n    \"destinationProvider\": \"vercel\",\n    \"sdkConfig\": {\n      \"serverTracing\": \"full\",\n      \"logSourcing\": \"sdk\",\n      \"platform\": \"vercel\"\n    }\n  },\n  \"org\": {\n    \"id\": \"id\",\n    \"slug\": \"slug\"\n  },\n  \"service\": {\n    \"id\": \"id\",\n    \"name\": \"name\",\n    \"namespace\": \"namespace\"\n  }\n}"
       }
     },
     {
@@ -327,7 +327,7 @@
       "requiresAuth": true,
       "response": {
         "status": 200,
-        "body": "{\n  \"build\": {\n    \"hash\": \"hash\"\n  },\n  \"destination\": {\n    \"id\": \"id\",\n    \"slug\": \"slug\",\n    \"environment\": \"environment\"\n  },\n  \"org\": {\n    \"id\": \"id\",\n    \"slug\": \"slug\"\n  },\n  \"source\": {\n    \"id\": \"id\"\n  },\n  \"surface\": {\n    \"id\": \"id\",\n    \"slug\": \"slug\"\n  },\n  \"token\": \"token\"\n}"
+        "body": "{\n  \"build\": {\n    \"hash\": \"hash\"\n  },\n  \"destination\": {\n    \"id\": \"id\",\n    \"slug\": \"slug\",\n    \"environment\": \"environment\"\n  },\n  \"org\": {\n    \"id\": \"id\",\n    \"slug\": \"slug\"\n  },\n  \"source\": {\n    \"id\": \"id\"\n  },\n  \"service\": {\n    \"id\": \"id\",\n    \"name\": \"name\",\n    \"namespace\": \"namespace\"\n  },\n  \"surface\": {\n    \"id\": \"id\",\n    \"slug\": \"slug\"\n  },\n  \"token\": \"token\"\n}"
       }
     },
     {

@@ -2,7 +2,7 @@ pub use crate::prelude::*;
 #[allow(unused_imports)]
 use super::*;
 
-/// Response body returned after creating a release.
+/// Response body returned after creating a release. surface is deprecated: read service instead; surface is removed in the next API version.
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq, Eq, Hash)]
 pub struct CreateReleaseResponse {
     #[serde(rename = "build")]
@@ -14,6 +14,8 @@ pub struct CreateReleaseResponse {
     pub org: OrgRef,
     #[serde(default)]
     pub source: ReleaseSourceRef,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub service: Option<ReleaseServiceRef>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub surface: Option<SurfaceRef>,
     /// Signed release token for browser telemetry, baked into the bundle by the build plugin. It names the workspace, service and release, carries no environment and does not expire. Null when the release has no service.
@@ -34,6 +36,7 @@ pub struct CreateReleaseResponseBuilder {
     destination: Option<ReleaseDestinationRef>,
     org: Option<OrgRef>,
     source: Option<ReleaseSourceRef>,
+    service: Option<ReleaseServiceRef>,
     surface: Option<SurfaceRef>,
     token: Option<String>,
 }
@@ -59,6 +62,11 @@ impl CreateReleaseResponseBuilder {
         self
     }
 
+    pub fn service(mut self, value: ReleaseServiceRef) -> Self {
+        self.service = Some(value);
+        self
+    }
+
     pub fn surface(mut self, value: SurfaceRef) -> Self {
         self.surface = Some(value);
         self
@@ -81,6 +89,7 @@ impl CreateReleaseResponseBuilder {
             destination: self.destination.ok_or_else(|| BuildError::missing_field("destination"))?,
             org: self.org.ok_or_else(|| BuildError::missing_field("org"))?,
             source: self.source.ok_or_else(|| BuildError::missing_field("source"))?,
+            service: self.service,
             surface: self.surface,
             token: self.token,
         })

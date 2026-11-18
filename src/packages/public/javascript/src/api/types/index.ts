@@ -30,6 +30,7 @@ export * from "./ReleaseBuildResult.js";
 export * from "./ReleaseDestination.js";
 export * from "./ReleaseDestinationRef.js";
 export * from "./ReleaseService.js";
+export * from "./ReleaseServiceRef.js";
 export * from "./ReleaseSource.js";
 export * from "./ReleaseSourceRef.js";
 export * from "./ReleasesConfigResponse.js";

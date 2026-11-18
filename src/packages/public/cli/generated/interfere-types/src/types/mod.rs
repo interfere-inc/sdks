@@ -6,7 +6,7 @@
 //! ## Type Categories
 //!
 //! - **Request/Response Types**: 2211 types for API operations
-//! - **Model Types**: 603 types for data representation
+//! - **Model Types**: 604 types for data representation
 
 pub mod drain_drain_otlp_export_request_signal;
 pub mod traces_trace_activity_request_occurred_at;
@@ -294,6 +294,7 @@ pub mod releases_config_response_org;
 pub mod releases_config_response;
 pub mod configured_source_provider;
 pub mod configured_destination_provider;
+pub mod release_service_ref;
 pub mod create_release_response;
 pub mod release_build_ref;
 pub mod release_destination_ref;
@@ -3109,6 +3110,7 @@ pub use releases_config_response_org::ReleasesConfigResponseOrg;
 pub use releases_config_response::ReleasesConfigResponse;
 pub use configured_source_provider::ConfiguredSourceProvider;
 pub use configured_destination_provider::ConfiguredDestinationProvider;
+pub use release_service_ref::ReleaseServiceRef;
 pub use create_release_response::CreateReleaseResponse;
 pub use release_build_ref::ReleaseBuildRef;
 pub use release_destination_ref::ReleaseDestinationRef;

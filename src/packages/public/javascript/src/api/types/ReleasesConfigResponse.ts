@@ -3,11 +3,12 @@
 import type * as Interfere from "../index.js";
 
 /**
- * Surface and organization a build-time API key resolves to, with the source provider collapsed to the family the build tooling understands. The surface is null when a workspace secret key builds for a service that has no App.
+ * Service and organization a build-time API key resolves to. surface is deprecated: read service instead; surface is removed in the next API version. It carries the App with the source provider collapsed to the family the build tooling understands, and is null when a workspace secret key builds for a service that has no App.
  */
 export interface ReleasesConfigResponse {
     surface: ReleasesConfigResponse.Surface | null;
     org: ReleasesConfigResponse.Org;
+    service?: (Interfere.ReleaseServiceRef | null) | undefined;
 }
 
 export namespace ReleasesConfigResponse {

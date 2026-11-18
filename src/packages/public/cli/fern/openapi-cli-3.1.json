@@ -2073,13 +2073,16 @@
               "id",
               "slug"
             ]
+          },
+          "service": {
+            "$ref": "#/components/schemas/ReleaseServiceRef"
           }
         },
         "required": [
           "surface",
           "org"
         ],
-        "description": "Surface and organization a build-time API key resolves to, with the source provider collapsed to the family the build tooling understands. The surface is null when a workspace secret key builds for a service that has no App."
+        "description": "Service and organization a build-time API key resolves to. surface is deprecated: read service instead; surface is removed in the next API version. It carries the App with the source provider collapsed to the family the build tooling understands, and is null when a workspace secret key builds for a service that has no App."
       },
       "ConfiguredSourceProvider": {
         "type": [
@@ -2107,6 +2110,32 @@
         ],
         "description": "ConfiguredDestinationProvider"
       },
+      "ReleaseServiceRef": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "namespace": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "namespace"
+        ],
+        "description": "Service the release belongs to, identified by its OpenTelemetry service.name and service.namespace."
+      },
       "CreateReleaseResponse": {
         "type": "object",
         "properties": {
@@ -2122,6 +2151,9 @@
           },
           "source": {
             "$ref": "#/components/schemas/ReleaseSourceRef"
+          },
+          "service": {
+            "$ref": "#/components/schemas/ReleaseServiceRef"
           },
           "surface": {
             "$ref": "#/components/schemas/SurfaceRef"
@@ -2141,7 +2173,7 @@
           "source",
           "surface"
         ],
-        "description": "Response body returned after creating a release."
+        "description": "Response body returned after creating a release. surface is deprecated: read service instead; surface is removed in the next API version."
       },
       "ReleaseBuildRef": {
         "type": "object",

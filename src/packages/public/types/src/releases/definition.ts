@@ -4,6 +4,7 @@ import {
   releaseDestinationMetadataSchema,
   releaseSourceMetadataSchema,
 } from "../integrations/index.ts";
+import { releaseServiceRefSchema } from "./service-ref.ts";
 import { releaseSlugSchema } from "./slug.ts";
 
 export const releaseStatusSchema = z
@@ -71,6 +72,7 @@ export const createReleaseResponse = z
         id: z.string(),
       })
       .meta({ id: "ReleaseSourceRef", title: "ReleaseSourceRef" }),
+    service: releaseServiceRefSchema.nullable().optional(),
     surface: surfaceRefSchema.nullable(),
     token: z.string().nullable().optional().meta({
       description:
@@ -78,7 +80,8 @@ export const createReleaseResponse = z
     }),
   })
   .meta({
-    description: "Response body returned after creating a release.",
+    description:
+      "Response body returned after creating a release. surface is deprecated: read service instead; surface is removed in the next API version.",
     id: "CreateReleaseResponse",
     title: "CreateReleaseResponse",
   });

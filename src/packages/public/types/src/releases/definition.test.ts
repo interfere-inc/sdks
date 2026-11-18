@@ -1,5 +1,6 @@
 import { createReleaseRequest, createReleaseResponse } from "./definition.ts";
 import { describe, expect, test } from "vitest";
+import { z } from "zod";
 
 describe("createReleaseRequestSchema", () => {
   const validSource = {
@@ -67,6 +68,49 @@ describe("createReleaseResponseSchema", () => {
 
     expect(result.success).toBe(true);
     expect(result.data).toStrictEqual(serverResponse);
+  });
+
+  test("answers with the service and documents surface as deprecated", () => {
+    const serverResponse = {
+      build: { hash: "abc123" },
+      destination: {
+        environment: "production",
+        id: "release_99",
+        slug: "rel_0123456789abcdef",
+      },
+      org: { id: "org_1", slug: "my-org" },
+      service: { id: "service_7", name: "checkout", namespace: null },
+      source: { id: "abc123" },
+      surface: null,
+      token: null,
+    };
+
+    expect(createReleaseResponse.parse(serverResponse)).toStrictEqual(
+      serverResponse,
+    );
+
+    const { $defs } = z.toJSONSchema(createReleaseResponse, { io: "input" });
+
+    expect($defs?.["CreateReleaseResponse"]?.description).toContain(
+      "surface is deprecated: read service instead",
+    );
+
+    expect($defs?.["CreateReleaseResponse"]).toMatchObject({
+      properties: {
+        service: {
+          anyOf: [{ $ref: "#/$defs/ReleaseServiceRef" }, { type: "null" }],
+        },
+      },
+    });
+
+    expect($defs?.["ReleaseServiceRef"]).toMatchObject({
+      properties: {
+        id: { type: "string" },
+        name: { type: "string" },
+        namespace: { type: ["string", "null"] },
+      },
+      required: ["id", "name", "namespace"],
+    });
   });
 
   test("rejects response with flat fields instead of nested", () => {

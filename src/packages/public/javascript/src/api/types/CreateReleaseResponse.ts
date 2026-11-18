@@ -3,13 +3,14 @@
 import type * as Interfere from "../index.js";
 
 /**
- * Response body returned after creating a release.
+ * Response body returned after creating a release. surface is deprecated: read service instead; surface is removed in the next API version.
  */
 export interface CreateReleaseResponse {
     build: Interfere.ReleaseBuildRef;
     destination: Interfere.ReleaseDestinationRef;
     org: Interfere.OrgRef;
     source: Interfere.ReleaseSourceRef;
+    service?: (Interfere.ReleaseServiceRef | null) | undefined;
     surface: Interfere.SurfaceRef | null;
     /** Signed release token for browser telemetry, baked into the bundle by the build plugin. It names the workspace, service and release, carries no environment and does not expire. Null when the release has no service. */
     token?: (string | null) | undefined;
