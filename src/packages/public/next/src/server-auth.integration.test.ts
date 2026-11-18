@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, expect, test } from "vitest";
 import { application } from "@interfere/test-utils/vitest/packed-application";
 import { receiver } from "@interfere/test-utils/vitest/telemetry-receiver";
+import type { ReceivedRequest } from "@interfere/test-utils/vitest/telemetry-receiver";
 import { exceptions } from "@interfere/test-utils/vitest/otlp";
 
 let collector: Awaited<ReturnType<typeof receiver>>;
@@ -22,6 +23,17 @@ function drainRequests() {
   );
 }
 
+function fromEdge(request: ReceivedRequest) {
+  return request.headers.get("x-fern-runtime") === "edge-runtime";
+}
+
+function exportsByRuntime() {
+  return {
+    node: drainRequests().filter((request) => !fromEdge(request)),
+    edge: drainRequests().filter((request) => fromEdge(request)),
+  };
+}
+
 async function failOnNodeAndEdge(url: string) {
   for (const path of ["/api/failure", "/api/edge-failure"]) {
     // oxlint-disable-next-line eslint/no-await-in-loop -- Each route fails on its own runtime before export is checked.
@@ -35,23 +47,19 @@ async function failOnNodeAndEdge(url: string) {
 
   await expect
     .poll(
-      () =>
-        [
-          exceptions(drainRequests(), "next-route-error").length,
-          exceptions(drainRequests(), "next-edge-route-error").length,
-        ].every((count) => count > 0),
+      () => {
+        const { node, edge } = exportsByRuntime();
+
+        return [
+          exceptions(node, "next-route-error").length,
+          exceptions(edge, "next-edge-route-error").length,
+        ].every((count) => count > 0);
+      },
       { timeout: 15_000 },
     )
     .toBe(true);
 
-  return {
-    node: drainRequests().filter(
-      (request) => exceptions([request], "next-route-error").length > 0,
-    ),
-    edge: drainRequests().filter(
-      (request) => exceptions([request], "next-edge-route-error").length > 0,
-    ),
-  };
+  return exportsByRuntime();
 }
 
 beforeAll(async () => {
