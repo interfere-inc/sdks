@@ -67,8 +67,7 @@ export default async function setup(project) {
       join(directory, "isolation.browser.test.ts"),
       `
 import { expect, test } from "vitest";
-import { fillStorageQuota } from "@interfere/test-config/browser-storage";
-const namespaced = /^vt[0-9a-f]{8}_shared-key$/u;
+import { browserStorage, fillStorageQuota } from "@interfere/test-config/browser-storage";
 test("namespaces storage and cookies under a per-file prefix", () => {
   localStorage.setItem("shared-key", "a");
   sessionStorage.setItem("shared-key", "b");
@@ -77,9 +76,21 @@ test("namespaces storage and cookies under a per-file prefix", () => {
   expect(sessionStorage.getItem("shared-key")).toBe("b");
   expect(localStorage.length).toBe(1);
   expect(localStorage.key(0)).toBe("shared-key");
-  expect(Object.keys(localStorage).filter((key) => namespaced.test(key))).toHaveLength(1);
-  expect(Object.keys(localStorage)).not.toContain("shared-key");
+  expect(browserStorage.local.keys()).toStrictEqual(["shared-key"]);
+  expect(browserStorage.session.keys()).toStrictEqual(["shared-key"]);
   expect(document.cookie).toBe("shared-cookie=1");
+});
+test.each([[localStorage, browserStorage.local], [sessionStorage, browserStorage.session]])("enumerates only this file while a sibling key exists", (storage, isolated) => {
+  storage["vtdeadbeef_x"] = "sibling";
+  try {
+    expect(isolated.keys()).toStrictEqual([]);
+    storage.setItem("own-key", "own-value");
+    expect(isolated.keys()).toStrictEqual(["own-key"]);
+    expect(storage.getItem("own-key")).toBe("own-value");
+    expect(storage["vtdeadbeef_x"]).toBe("sibling");
+  } finally {
+    delete storage["vtdeadbeef_x"];
+  }
 });
 test("restores what the previous test wrote once it finished", async () => {
   expect(localStorage.getItem("shared-key")).toBeNull();
@@ -208,7 +219,7 @@ test("collects the browser test after global setup and applies viewport override
       name: "isolation.browser.test.ts",
       state: "passed",
       errors: [],
-      tests: 5,
+      tests: 7,
     },
     {
       name: "startup.browser.test.ts",

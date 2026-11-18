@@ -23,10 +23,14 @@ test("the actual closing page retains its oversized final segment and the next p
   await reopened.goto(`${harness.origin}/replay-carryover?allowed=false`);
 
   const retained = await reopened.evaluate(() =>
-    Object.keys(localStorage).map(
-      (key) =>
-        JSON.parse(localStorage.getItem(key) ?? "null") as { body: string },
-    ),
+    Array.from({ length: localStorage.length }, (_, index) =>
+      localStorage.key(index),
+    )
+      .filter((key) => key !== null)
+      .map(
+        (key) =>
+          JSON.parse(localStorage.getItem(key) ?? "null") as { body: string },
+      ),
   );
 
   expect(retained).toHaveLength(1);

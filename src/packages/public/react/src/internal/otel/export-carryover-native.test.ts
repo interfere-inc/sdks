@@ -16,7 +16,11 @@ test("hidden exports survive tab close, drain in order on the next page, and hol
   });
 
   await expect(
-    harness.page.evaluate(() => Object.keys(localStorage)),
+    harness.page.evaluate(() =>
+      Array.from({ length: localStorage.length }, (_, index) =>
+        localStorage.key(index),
+      ).filter((key) => key !== null),
+    ),
   ).resolves.toHaveLength(8);
 
   await harness.page.close();
@@ -42,19 +46,23 @@ test("hidden exports survive tab close, drain in order on the next page, and hol
   ).resolves.toStrictEqual(["1", "2", "3", "4", "5", "6", "7"]);
 
   const held = await reopened.evaluate(() =>
-    Object.keys(localStorage).map((key) => {
-      const entry = JSON.parse(localStorage.getItem(key) ?? "{}") as {
-        body: string;
-        dispatched?: number;
-      };
+    Array.from({ length: localStorage.length }, (_, index) =>
+      localStorage.key(index),
+    )
+      .filter((key) => key !== null)
+      .map((key) => {
+        const entry = JSON.parse(localStorage.getItem(key) ?? "{}") as {
+          body: string;
+          dispatched?: number;
+        };
 
-      localStorage.setItem(key, JSON.stringify({ ...entry, dispatched: 0 }));
+        localStorage.setItem(key, JSON.stringify({ ...entry, dispatched: 0 }));
 
-      return {
-        body: entry.body.split(":")[0],
-        dispatched: entry.dispatched !== undefined,
-      };
-    }),
+        return {
+          body: entry.body.split(":")[0],
+          dispatched: entry.dispatched !== undefined,
+        };
+      }),
   );
 
   expect(held).toStrictEqual([{ body: "0", dispatched: true }]);
@@ -68,7 +76,11 @@ test("hidden exports survive tab close, drain in order on the next page, and hol
     .toStrictEqual([expect.stringMatching(/^0:/u)]);
 
   await expect(
-    reopened.evaluate(() => Object.keys(localStorage)),
+    reopened.evaluate(() =>
+      Array.from({ length: localStorage.length }, (_, index) =>
+        localStorage.key(index),
+      ).filter((key) => key !== null),
+    ),
   ).resolves.toHaveLength(0);
 });
 
@@ -92,7 +104,11 @@ test("carryover stays within its public-key scope and clears before a later page
   ).resolves.toStrictEqual([]);
 
   await expect(
-    reopened.evaluate(() => Object.keys(localStorage)),
+    reopened.evaluate(() =>
+      Array.from({ length: localStorage.length }, (_, index) =>
+        localStorage.key(index),
+      ).filter((key) => key !== null),
+    ),
   ).resolves.toHaveLength(1);
 
   await reopened.evaluate(() => globalThis.exportCarryoverFixture.deny());
@@ -104,7 +120,11 @@ test("carryover stays within its public-key scope and clears before a later page
   ).resolves.toStrictEqual([]);
 
   await expect(
-    reopened.evaluate(() => Object.keys(localStorage)),
+    reopened.evaluate(() =>
+      Array.from({ length: localStorage.length }, (_, index) =>
+        localStorage.key(index),
+      ).filter((key) => key !== null),
+    ),
   ).resolves.toHaveLength(0);
 });
 

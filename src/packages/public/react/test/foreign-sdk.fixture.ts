@@ -403,8 +403,12 @@ export const foreignSdkFixture = {
       .split(";")
       .map((entry) => entry.trim().split("=")[0] ?? "")
       .filter((name) => name !== ""),
-    local: Object.keys(localStorage),
-    session: Object.keys(sessionStorage),
+    local: Array.from({ length: localStorage.length }, (_, index) =>
+      localStorage.key(index),
+    ).filter((key) => key !== null),
+    session: Array.from({ length: sessionStorage.length }, (_, index) =>
+      sessionStorage.key(index),
+    ).filter((key) => key !== null),
   }),
   throwLater: (message: string) => {
     setTimeout(() => {

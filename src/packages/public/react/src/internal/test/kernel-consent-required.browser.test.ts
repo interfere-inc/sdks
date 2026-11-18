@@ -54,9 +54,10 @@ function sessionBaggage(header: string | null) {
 }
 
 function interfereStorageKeys() {
-  return [...Object.keys(localStorage), ...Object.keys(sessionStorage)].filter(
-    (key) => key.startsWith("interfere"),
-  );
+  return [
+    ...browserStorage.local.keys(),
+    ...browserStorage.session.keys(),
+  ].filter((key) => key.startsWith("interfere"));
 }
 
 function consentManager(onChange: (granted: boolean) => void) {

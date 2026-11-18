@@ -4,6 +4,15 @@ import { requireIsolation } from "./browser-storage-scope.ts";
 
 function writer(storage: () => Storage) {
   return {
+    keys() {
+      requireIsolation("browserStorage");
+
+      const area = storage();
+
+      return Array.from({ length: area.length }, (_, index) =>
+        area.key(index),
+      ).filter((key) => key !== null);
+    },
     set(key: string, value: string) {
       requireIsolation("browserStorage");
 

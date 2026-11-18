@@ -143,8 +143,8 @@ describe("A51 consent required and not granted", () => {
 
     expect(kernel.device.getDeviceId()).toBeNull();
     expect(sessions()).toStrictEqual([]);
-    expect(Object.keys(localStorage)).toStrictEqual([]);
-    expect(Object.keys(sessionStorage)).toStrictEqual([]);
+    expect(browserStorage.local.keys()).toStrictEqual([]);
+    expect(browserStorage.session.keys()).toStrictEqual([]);
 
     await expect(cookieStore.get("interfere_did")).resolves.toBeNull();
   });
