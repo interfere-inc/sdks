@@ -38,8 +38,8 @@ pub struct QueryReplaySessionsListByKeysResponseItem {
     #[serde(with = "crate::core::number_serializers::option")]
     pub storage_deleted_at: Option<f64>,
     #[serde(rename = "surfaceId")]
-    #[serde(default)]
-    pub surface_id: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub surface_id: Option<String>,
     #[serde(rename = "updatedAt")]
     #[serde(default)]
     #[serde(with = "crate::core::number_serializers")]
@@ -133,7 +133,6 @@ impl QueryReplaySessionsListByKeysResponseItemBuilder {
     /// - [`organization_id`](QueryReplaySessionsListByKeysResponseItemBuilder::organization_id)
     /// - [`session_id`](QueryReplaySessionsListByKeysResponseItemBuilder::session_id)
     /// - [`started_at`](QueryReplaySessionsListByKeysResponseItemBuilder::started_at)
-    /// - [`surface_id`](QueryReplaySessionsListByKeysResponseItemBuilder::surface_id)
     /// - [`updated_at`](QueryReplaySessionsListByKeysResponseItemBuilder::updated_at)
     pub fn build(self) -> Result<QueryReplaySessionsListByKeysResponseItem, BuildError> {
         Ok(QueryReplaySessionsListByKeysResponseItem {
@@ -146,7 +145,7 @@ impl QueryReplaySessionsListByKeysResponseItemBuilder {
             session_id: self.session_id.ok_or_else(|| BuildError::missing_field("session_id"))?,
             started_at: self.started_at.ok_or_else(|| BuildError::missing_field("started_at"))?,
             storage_deleted_at: self.storage_deleted_at,
-            surface_id: self.surface_id.ok_or_else(|| BuildError::missing_field("surface_id"))?,
+            surface_id: self.surface_id,
             updated_at: self.updated_at.ok_or_else(|| BuildError::missing_field("updated_at"))?,
         })
     }

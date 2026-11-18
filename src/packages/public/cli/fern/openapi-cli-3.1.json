@@ -5822,13 +5822,13 @@
                           "sourceId": {
                             "type": "string",
                             "format": "uuid",
-                            "description": "The incident App or service/repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
+                            "description": "The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
                           },
                           "recordId": {
                             "type": "string",
                             "minLength": 1,
                             "maxLength": 255,
-                            "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same App."
+                            "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service."
                           },
                           "windowStart": {
                             "type": "integer",
@@ -5961,13 +5961,13 @@
                                   "sourceId": {
                                     "type": "string",
                                     "format": "uuid",
-                                    "description": "The incident App or service/repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
+                                    "description": "The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
                                   },
                                   "recordId": {
                                     "type": "string",
                                     "minLength": 1,
                                     "maxLength": 255,
-                                    "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same App."
+                                    "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service."
                                   },
                                   "windowStart": {
                                     "type": "integer",
@@ -6453,6 +6453,25 @@
                     "type": "string",
                     "maxLength": 2048,
                     "format": "uri"
+                  },
+                  "service": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 255
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name"
+                    ],
+                    "additionalProperties": false
                   },
                   "surface": {
                     "type": "object",
@@ -6990,6 +7009,25 @@
                         "required": [
                           "problemId",
                           "sequence"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "service": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "name": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 255
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name"
                         ],
                         "additionalProperties": false
                       },
@@ -9841,13 +9879,13 @@
                           "sourceId": {
                             "type": "string",
                             "format": "uuid",
-                            "description": "The incident App or service/repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
+                            "description": "The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
                           },
                           "recordId": {
                             "type": "string",
                             "minLength": 1,
                             "maxLength": 255,
-                            "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same App."
+                            "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service."
                           },
                           "windowStart": {
                             "type": "integer",
@@ -10188,13 +10226,13 @@
                                               "sourceId": {
                                                 "type": "string",
                                                 "format": "uuid",
-                                                "description": "The incident App or service/repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
+                                                "description": "The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
                                               },
                                               "recordId": {
                                                 "type": "string",
                                                 "minLength": 1,
                                                 "maxLength": 255,
-                                                "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same App."
+                                                "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service."
                                               },
                                               "windowStart": {
                                                 "type": "integer",
@@ -10345,13 +10383,13 @@
                                               "sourceId": {
                                                 "type": "string",
                                                 "format": "uuid",
-                                                "description": "The incident App or service/repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
+                                                "description": "The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
                                               },
                                               "recordId": {
                                                 "type": "string",
                                                 "minLength": 1,
                                                 "maxLength": 255,
-                                                "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same App."
+                                                "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service."
                                               },
                                               "windowStart": {
                                                 "type": "integer",
@@ -35842,13 +35880,13 @@
                                   "sourceId": {
                                     "type": "string",
                                     "format": "uuid",
-                                    "description": "The incident App or service/repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
+                                    "description": "The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
                                   },
                                   "recordId": {
                                     "type": "string",
                                     "minLength": 1,
                                     "maxLength": 255,
-                                    "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same App."
+                                    "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service."
                                   },
                                   "windowStart": {
                                     "type": "integer",
@@ -35981,13 +36019,13 @@
                                           "sourceId": {
                                             "type": "string",
                                             "format": "uuid",
-                                            "description": "The incident App or service/repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
+                                            "description": "The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
                                           },
                                           "recordId": {
                                             "type": "string",
                                             "minLength": 1,
                                             "maxLength": 255,
-                                            "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same App."
+                                            "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service."
                                           },
                                           "windowStart": {
                                             "type": "integer",
@@ -36421,6 +36459,25 @@
                             "maxLength": 2048,
                             "format": "uri"
                           },
+                          "service": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "format": "uuid"
+                              },
+                              "name": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 255
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name"
+                            ],
+                            "additionalProperties": false
+                          },
                           "surface": {
                             "type": "object",
                             "properties": {
@@ -36631,6 +36688,25 @@
                                 "required": [
                                   "problemId",
                                   "sequence"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "service": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string",
+                                    "format": "uuid"
+                                  },
+                                  "name": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 255
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "name"
                                 ],
                                 "additionalProperties": false
                               },
@@ -38080,13 +38156,13 @@
                                   "sourceId": {
                                     "type": "string",
                                     "format": "uuid",
-                                    "description": "The incident App or service/repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
+                                    "description": "The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
                                   },
                                   "recordId": {
                                     "type": "string",
                                     "minLength": 1,
                                     "maxLength": 255,
-                                    "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same App."
+                                    "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service."
                                   },
                                   "windowStart": {
                                     "type": "integer",
@@ -40954,13 +41030,13 @@
                                     "sourceId": {
                                       "type": "string",
                                       "format": "uuid",
-                                      "description": "The incident App or service/repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
+                                      "description": "The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
                                     },
                                     "recordId": {
                                       "type": "string",
                                       "minLength": 1,
                                       "maxLength": 255,
-                                      "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same App."
+                                      "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service."
                                     },
                                     "windowStart": {
                                       "type": "integer",
@@ -41093,13 +41169,13 @@
                                             "sourceId": {
                                               "type": "string",
                                               "format": "uuid",
-                                              "description": "The incident App or service/repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
+                                              "description": "The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
                                             },
                                             "recordId": {
                                               "type": "string",
                                               "minLength": 1,
                                               "maxLength": 255,
-                                              "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same App."
+                                              "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service."
                                             },
                                             "windowStart": {
                                               "type": "integer",
@@ -41544,6 +41620,25 @@
                               "maxLength": 2048,
                               "format": "uri"
                             },
+                            "service": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "name": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 255
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "name"
+                              ],
+                              "additionalProperties": false
+                            },
                             "surface": {
                               "type": "object",
                               "properties": {
@@ -41815,6 +41910,25 @@
                                   "required": [
                                     "problemId",
                                     "sequence"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "service": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "format": "uuid"
+                                    },
+                                    "name": {
+                                      "type": "string",
+                                      "minLength": 1,
+                                      "maxLength": 255
+                                    }
+                                  },
+                                  "required": [
+                                    "id",
+                                    "name"
                                   ],
                                   "additionalProperties": false
                                 },
@@ -43561,13 +43675,13 @@
                                     "sourceId": {
                                       "type": "string",
                                       "format": "uuid",
-                                      "description": "The incident App or service/repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
+                                      "description": "The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
                                     },
                                     "recordId": {
                                       "type": "string",
                                       "minLength": 1,
                                       "maxLength": 255,
-                                      "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same App."
+                                      "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service."
                                     },
                                     "windowStart": {
                                       "type": "integer",
@@ -51787,8 +51901,22 @@
                 ]
               },
               "surfaceId": {
-                "type": "string",
-                "format": "uuid"
+                "anyOf": [
+                  {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
               },
               "updatedAt": {
                 "type": "number"
@@ -51862,8 +51990,22 @@
               ]
             },
             "surfaceId": {
-              "type": "string",
-              "format": "uuid"
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
             },
             "updatedAt": {
               "type": "number"
@@ -51933,8 +52075,22 @@
               ]
             },
             "surfaceId": {
-              "type": "string",
-              "format": "uuid"
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
             },
             "updatedAt": {
               "type": "number"

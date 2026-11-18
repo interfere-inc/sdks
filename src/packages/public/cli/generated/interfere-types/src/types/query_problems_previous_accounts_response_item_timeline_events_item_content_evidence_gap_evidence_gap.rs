@@ -12,6 +12,8 @@ pub struct QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvi
     #[serde(skip_serializing_if = "Option::is_none")]
     pub shared_ask: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceGapEvidenceGapSharedAsk>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub service: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceGapEvidenceGapService>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub surface: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceGapEvidenceGapSurface>,
 }
 
@@ -27,6 +29,7 @@ pub struct QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvi
     kind: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceGapEvidenceGapKind>,
     replay_disabled: Option<bool>,
     shared_ask: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceGapEvidenceGapSharedAsk>,
+    service: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceGapEvidenceGapService>,
     surface: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceGapEvidenceGapSurface>,
 }
 
@@ -46,6 +49,11 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceG
         self
     }
 
+    pub fn service(mut self, value: QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceGapEvidenceGapService) -> Self {
+        self.service = Some(value);
+        self
+    }
+
     pub fn surface(mut self, value: QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceGapEvidenceGapSurface) -> Self {
         self.surface = Some(value);
         self
@@ -59,6 +67,7 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceG
             kind: self.kind.ok_or_else(|| BuildError::missing_field("kind"))?,
             replay_disabled: self.replay_disabled,
             shared_ask: self.shared_ask,
+            service: self.service,
             surface: self.surface,
         })
     }

@@ -39,6 +39,8 @@ pub struct QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentAct
     #[serde(skip_serializing_if = "Option::is_none")]
     pub docs_url: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub service: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindService>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub surface: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindSurface>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub answer: Option<String>,
@@ -82,6 +84,7 @@ pub struct QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentAct
     gap_kind: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindGapKind>,
     integration_name: Option<String>,
     docs_url: Option<String>,
+    service: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindService>,
     surface: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindSurface>,
     answer: Option<String>,
     options: Option<Vec<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindOptionsItem>>,
@@ -153,6 +156,11 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKin
         self
     }
 
+    pub fn service(mut self, value: QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindService) -> Self {
+        self.service = Some(value);
+        self
+    }
+
     pub fn surface(mut self, value: QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindSurface) -> Self {
         self.surface = Some(value);
         self
@@ -211,6 +219,7 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKin
             gap_kind: self.gap_kind,
             integration_name: self.integration_name,
             docs_url: self.docs_url,
+            service: self.service,
             surface: self.surface,
             answer: self.answer,
             options: self.options,

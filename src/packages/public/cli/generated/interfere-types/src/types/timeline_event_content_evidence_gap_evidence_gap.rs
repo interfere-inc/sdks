@@ -12,6 +12,8 @@ pub struct TimelineEventContentEvidenceGapEvidenceGap {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub shared_ask: Option<TimelineEventContentEvidenceGapEvidenceGapSharedAsk>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub service: Option<TimelineEventContentEvidenceGapEvidenceGapService>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub surface: Option<TimelineEventContentEvidenceGapEvidenceGapSurface>,
 }
 
@@ -27,6 +29,7 @@ pub struct TimelineEventContentEvidenceGapEvidenceGapBuilder {
     kind: Option<TimelineEventContentEvidenceGapEvidenceGapKind>,
     replay_disabled: Option<bool>,
     shared_ask: Option<TimelineEventContentEvidenceGapEvidenceGapSharedAsk>,
+    service: Option<TimelineEventContentEvidenceGapEvidenceGapService>,
     surface: Option<TimelineEventContentEvidenceGapEvidenceGapSurface>,
 }
 
@@ -46,6 +49,11 @@ impl TimelineEventContentEvidenceGapEvidenceGapBuilder {
         self
     }
 
+    pub fn service(mut self, value: TimelineEventContentEvidenceGapEvidenceGapService) -> Self {
+        self.service = Some(value);
+        self
+    }
+
     pub fn surface(mut self, value: TimelineEventContentEvidenceGapEvidenceGapSurface) -> Self {
         self.surface = Some(value);
         self
@@ -59,6 +67,7 @@ impl TimelineEventContentEvidenceGapEvidenceGapBuilder {
             kind: self.kind.ok_or_else(|| BuildError::missing_field("kind"))?,
             replay_disabled: self.replay_disabled,
             shared_ask: self.shared_ask,
+            service: self.service,
             surface: self.surface,
         })
     }

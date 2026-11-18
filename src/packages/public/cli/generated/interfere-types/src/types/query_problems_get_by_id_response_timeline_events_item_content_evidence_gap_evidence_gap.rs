@@ -12,6 +12,8 @@ pub struct QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapEvide
     #[serde(skip_serializing_if = "Option::is_none")]
     pub shared_ask: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapEvidenceGapSharedAsk>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub service: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapEvidenceGapService>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub surface: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapEvidenceGapSurface>,
 }
 
@@ -27,6 +29,7 @@ pub struct QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapEvide
     kind: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapEvidenceGapKind>,
     replay_disabled: Option<bool>,
     shared_ask: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapEvidenceGapSharedAsk>,
+    service: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapEvidenceGapService>,
     surface: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapEvidenceGapSurface>,
 }
 
@@ -46,6 +49,11 @@ impl QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapEvidenceGap
         self
     }
 
+    pub fn service(mut self, value: QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapEvidenceGapService) -> Self {
+        self.service = Some(value);
+        self
+    }
+
     pub fn surface(mut self, value: QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapEvidenceGapSurface) -> Self {
         self.surface = Some(value);
         self
@@ -59,6 +67,7 @@ impl QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapEvidenceGap
             kind: self.kind.ok_or_else(|| BuildError::missing_field("kind"))?,
             replay_disabled: self.replay_disabled,
             shared_ask: self.shared_ask,
+            service: self.service,
             surface: self.surface,
         })
     }

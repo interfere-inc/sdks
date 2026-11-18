@@ -39,6 +39,8 @@ pub struct TimelineEventContentActionKind {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub docs_url: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub service: Option<TimelineEventContentActionKindService>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub surface: Option<TimelineEventContentActionKindSurface>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub answer: Option<String>,
@@ -82,6 +84,7 @@ pub struct TimelineEventContentActionKindBuilder {
     gap_kind: Option<TimelineEventContentActionKindGapKind>,
     integration_name: Option<String>,
     docs_url: Option<String>,
+    service: Option<TimelineEventContentActionKindService>,
     surface: Option<TimelineEventContentActionKindSurface>,
     answer: Option<String>,
     options: Option<Vec<TimelineEventContentActionKindOptionsItem>>,
@@ -153,6 +156,11 @@ impl TimelineEventContentActionKindBuilder {
         self
     }
 
+    pub fn service(mut self, value: TimelineEventContentActionKindService) -> Self {
+        self.service = Some(value);
+        self
+    }
+
     pub fn surface(mut self, value: TimelineEventContentActionKindSurface) -> Self {
         self.surface = Some(value);
         self
@@ -211,6 +219,7 @@ impl TimelineEventContentActionKindBuilder {
             gap_kind: self.gap_kind,
             integration_name: self.integration_name,
             docs_url: self.docs_url,
+            service: self.service,
             surface: self.surface,
             answer: self.answer,
             options: self.options,

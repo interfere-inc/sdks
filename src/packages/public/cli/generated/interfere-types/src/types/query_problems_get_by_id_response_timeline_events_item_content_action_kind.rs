@@ -39,6 +39,8 @@ pub struct QueryProblemsGetByIdResponseTimelineEventsItemContentActionKind {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub docs_url: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub service: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentActionKindService>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub surface: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentActionKindSurface>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub answer: Option<String>,
@@ -82,6 +84,7 @@ pub struct QueryProblemsGetByIdResponseTimelineEventsItemContentActionKindBuilde
     gap_kind: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentActionKindGapKind>,
     integration_name: Option<String>,
     docs_url: Option<String>,
+    service: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentActionKindService>,
     surface: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentActionKindSurface>,
     answer: Option<String>,
     options: Option<Vec<QueryProblemsGetByIdResponseTimelineEventsItemContentActionKindOptionsItem>>,
@@ -153,6 +156,11 @@ impl QueryProblemsGetByIdResponseTimelineEventsItemContentActionKindBuilder {
         self
     }
 
+    pub fn service(mut self, value: QueryProblemsGetByIdResponseTimelineEventsItemContentActionKindService) -> Self {
+        self.service = Some(value);
+        self
+    }
+
     pub fn surface(mut self, value: QueryProblemsGetByIdResponseTimelineEventsItemContentActionKindSurface) -> Self {
         self.surface = Some(value);
         self
@@ -211,6 +219,7 @@ impl QueryProblemsGetByIdResponseTimelineEventsItemContentActionKindBuilder {
             gap_kind: self.gap_kind,
             integration_name: self.integration_name,
             docs_url: self.docs_url,
+            service: self.service,
             surface: self.surface,
             answer: self.answer,
             options: self.options,

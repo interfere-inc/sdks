@@ -7,11 +7,11 @@ pub struct TimelineEventRequestContractResolutionReceiptReceiptConnectionEvidenc
     #[serde(rename = "problemId")]
     #[serde(default)]
     pub problem_id: String,
-    /// The incident App or service/repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection.
+    /// The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection.
     #[serde(rename = "sourceId")]
     #[serde(default)]
     pub source_id: String,
-    /// Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same App.
+    /// Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service.
     #[serde(rename = "recordId")]
     #[serde(default)]
     pub record_id: String,
