@@ -226,7 +226,7 @@ export async function discoverByPairing(opts: DiscoverByPairingOptions) {
     pairs.set(mapPublic, chunks);
   }
 
-  const files = await mapWithConcurrency(
+  const prepared = await mapWithConcurrency(
     [...pairs],
     DISCOVERY_CONCURRENCY,
     async ([mapPublic, chunks]) => {
@@ -277,22 +277,46 @@ export async function discoverByPairing(opts: DiscoverByPairingOptions) {
           ? mapContent
           : injectDebugIdIntoMap(mapContent, debugId);
 
-      await Promise.all(
-        chunks.map(async (chunk) => {
-          if (chunk.existingDebugId !== debugId) {
-            await writeFile(
-              chunk.jsAbs,
-              injectDebugIdIntoJs(chunk.jsContent, debugId),
-              "utf8",
-            );
-          }
-        }),
-      );
+      return { chunks, debugId, finalMap, mapContent, mapPublic, pair };
+    },
+  );
 
-      if (finalMap !== mapContent) {
-        await writeFile(pair.mapAbs, finalMap, "utf8");
-      }
+  const parsed = prepared.filter((entry) => entry !== null);
 
+  // WARNING: A failed discovery is followed at once by a cleanup that strips and deletes every map, so no debug-ID write may start before every map has parsed or still be running when discovery fails.
+  const failedWrites = await mapWithConcurrency(
+    parsed,
+    DISCOVERY_CONCURRENCY,
+    async ({ chunks, debugId, finalMap, mapContent, pair }) => {
+      const writes = await Promise.allSettled([
+        ...chunks.flatMap((chunk) =>
+          chunk.existingDebugId === debugId
+            ? []
+            : [
+                writeFile(
+                  chunk.jsAbs,
+                  injectDebugIdIntoJs(chunk.jsContent, debugId),
+                  "utf8",
+                ),
+              ],
+        ),
+        ...(finalMap === mapContent
+          ? []
+          : [writeFile(pair.mapAbs, finalMap, "utf8")]),
+      ]);
+
+      return writes.find((write) => write.status === "rejected");
+    },
+  );
+
+  const failedWrite = failedWrites.find((write) => write !== undefined);
+
+  if (failedWrite) {
+    throw failedWrite.reason;
+  }
+
+  const loaded = parsed.map(
+    ({ chunks, debugId, finalMap, mapPublic, pair }) => {
       const chunkUrls = [
         ...new Set(chunks.map((chunk) => chunk.jsPublic)),
       ].toSorted();
@@ -308,11 +332,9 @@ export async function discoverByPairing(opts: DiscoverByPairingOptions) {
         debugId,
         hash: createHash("sha256").update(finalMap).digest("hex"),
         path: mapPublic,
-      }) satisfies SourceMapFile | null;
+      }) satisfies SourceMapFile;
     },
   );
-
-  const loaded = files.filter((file): file is SourceMapFile => file !== null);
 
   return {
     files: loaded,

@@ -36,14 +36,15 @@ globalThis.fetch = async (input, init) => {
   return response;
 };
 
-async function settleInflightFetches() {
+/** Resolves once every fetch the page has started, including ones started while waiting, has settled. */
+export async function fetchesSettled() {
   if (inflight.size === 0) {
     return;
   }
 
   await Promise.allSettled(inflight);
 
-  await settleInflightFetches();
+  await fetchesSettled();
 }
 
 export function addBaselineHandlers(...handlers: RequestHandler[]) {
@@ -75,7 +76,7 @@ globalThis.addEventListener("beforeunload", () => {
 });
 
 afterEach(async () => {
-  await settleInflightFetches();
+  await fetchesSettled();
 
   worker.resetHandlers(...baseline);
 

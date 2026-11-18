@@ -20,6 +20,8 @@ let registration: MockInstance<typeof trace.setGlobalTracerProvider>;
 
 beforeAll(async () => {
   await import("./instrumentation.edge.js");
+
+  await import("./internal/server/exporters/server-flush.js");
 });
 
 beforeEach(() => {

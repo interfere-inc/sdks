@@ -1,8 +1,7 @@
 import { expect, test, vi } from "vitest";
+import { serverPropagationTargets } from "./propagation-targets.js";
 
-test("invalid origins never become propagation targets", async () => {
-  const { serverPropagationTargets } = await import("./propagation-targets.js");
-
+test("invalid origins never become propagation targets", () => {
   const warn = vi.spyOn(console, "warn");
 
   expect(

@@ -31,6 +31,12 @@ import {
 } from "vitest";
 import type { MockInstance } from "vitest";
 
+await import("./register");
+
+await import("./capture");
+
+await import("./runtime");
+
 let collector: Awaited<ReturnType<typeof receiver>>;
 
 let register: (typeof import("./register"))["register"];

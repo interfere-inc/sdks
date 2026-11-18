@@ -2,6 +2,8 @@ import { trace } from "@opentelemetry/api";
 import { BasicTracerProvider } from "@opentelemetry/sdk-trace-base";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 
+await import("./ownership.js");
+
 beforeEach(() => {
   vi.resetModules();
 });

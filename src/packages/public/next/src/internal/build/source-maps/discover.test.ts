@@ -79,21 +79,40 @@ describe("discoverSourceMaps (webpack)", () => {
     { mapContent: '"map"', expectedError: TypeError },
     { mapContent: "[]", expectedError: TypeError },
   ])(
-    "leaves chunks and maps unchanged for invalid maps: $mapContent",
+    "leaves every chunk and map unchanged when one of many maps is invalid: $mapContent",
     async ({ mapContent, expectedError }) => {
       const dir = await mkdtemp(join(tmpdir(), "discover-invalid-map-"));
 
       const chunks = join(dir, ".next/static/chunks");
-      const jsPath = join(chunks, "app.js");
-      const mapPath = join(chunks, "app.js.map");
-      const jsContent = JS_WITH_MAP("app.js.map");
+
+      const names = [
+        ...Array.from({ length: 40 }, (_, index) => `${index + 10}.js`),
+        "zz-app.js",
+      ];
+
+      const files = names.flatMap((name) => [
+        join(chunks, name),
+        join(chunks, `${name}.map`),
+      ]);
+
+      const snapshot = async () =>
+        Promise.all(files.map(async (file) => readFile(file, "utf8")));
 
       try {
         await mkdir(chunks, { recursive: true });
 
-        await writeFile(jsPath, jsContent);
+        await Promise.all(
+          names.map(async (name) => {
+            await writeFile(join(chunks, name), JS_WITH_MAP(`${name}.map`));
 
-        await writeFile(mapPath, mapContent);
+            await writeFile(
+              join(chunks, `${name}.map`),
+              name === "zz-app.js" ? mapContent : SOURCE_MAP,
+            );
+          }),
+        );
+
+        const before = await snapshot();
 
         await expect(
           discoverSourceMaps({
@@ -103,9 +122,7 @@ describe("discoverSourceMaps (webpack)", () => {
           }),
         ).rejects.toThrow(expectedError);
 
-        await expect(readFile(jsPath, "utf8")).resolves.toBe(jsContent);
-
-        await expect(readFile(mapPath, "utf8")).resolves.toBe(mapContent);
+        await expect(snapshot()).resolves.toStrictEqual(before);
       } finally {
         await rm(dir, { recursive: true, force: true });
       }

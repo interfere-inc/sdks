@@ -87,21 +87,31 @@ describe(discoverByPairing, () => {
     { content: '"map"', expectedError: TypeError },
     { content: "[]", expectedError: TypeError },
   ])(
-    "throws on malformed source map $content without rewriting its chunk, leaving cleanup to the caller",
+    "throws on malformed source map $content behind more chunks than the worker limit without rewriting any chunk or map, leaving cleanup to the caller",
     async ({ content, expectedError }) => {
-      await writeChunk("assets/app.js");
+      const chunks = [
+        ...Array.from({ length: 40 }, (_, index) => `assets/${index + 10}.js`),
+        "assets/zz-app.js",
+      ];
 
-      const jsPath = join(projectDir, "dist/assets/app.js");
+      await Promise.all(chunks.map(async (chunk) => writeChunk(chunk)));
 
-      const before = await readFile(jsPath, "utf8");
+      await writeFile(join(projectDir, "dist/assets/zz-app.js.map"), content);
 
-      await writeFile(`${jsPath}.map`, content);
+      const snapshot = async () =>
+        Promise.all(
+          chunks.flatMap((chunk) =>
+            [chunk, `${chunk}.map`].map(async (file) =>
+              readFile(join(projectDir, "dist", file), "utf8"),
+            ),
+          ),
+        );
+
+      const before = await snapshot();
 
       await expect(discover()).rejects.toThrow(expectedError);
 
-      await expect(readFile(jsPath, "utf8")).resolves.toBe(before);
-
-      await expect(readFile(`${jsPath}.map`, "utf8")).resolves.toBe(content);
+      await expect(snapshot()).resolves.toStrictEqual(before);
     },
   );
 

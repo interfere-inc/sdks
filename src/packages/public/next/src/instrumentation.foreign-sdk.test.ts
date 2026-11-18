@@ -34,6 +34,8 @@ import {
   vi,
 } from "vitest";
 
+await import("./instrumentation.js");
+
 const requests: string[] = [];
 
 const server = mswServer(

@@ -22,6 +22,10 @@ import {
   vi,
 } from "vitest";
 
+await import("./instrumentation.js");
+
+await import("@vercel/otel");
+
 const requests: string[] = [];
 
 const hold = { ms: 0 };

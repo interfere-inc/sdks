@@ -15,6 +15,8 @@ import {
   vi,
 } from "vitest";
 
+await import("./remote-config.js");
+
 const API = "https://next-remote-config.test";
 
 const server = setupServer();

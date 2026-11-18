@@ -25,6 +25,8 @@ import {
 } from "vitest";
 import type { MockInstance } from "vitest";
 
+await import("./instrumentation.js");
+
 const server = setupServer(
   http.post("https://collector.test/*", () => HttpResponse.json({})),
 );

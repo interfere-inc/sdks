@@ -6,6 +6,8 @@ import { StackContextManager } from "@opentelemetry/sdk-trace-web";
 import { toRecordOptions } from "../config.js";
 import { startReplayRecorder } from "./recorder.js";
 
+await import("rrweb");
+
 test("records snapshots and mutations under the stack context manager using at most two temporary frames", async () => {
   expect.hasAssertions();
 
@@ -21,8 +23,6 @@ test("records snapshots and mutations under the stack context manager using at m
   shadow.append(marker);
 
   document.body.append(host);
-
-  await import("rrweb");
 
   const appended = vi.spyOn(document.body, "appendChild");
 

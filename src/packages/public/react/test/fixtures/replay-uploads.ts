@@ -1,7 +1,7 @@
 import { gunzipSync } from "fflate";
 import { HttpResponse, http } from "msw";
 
-import { createCountSignal } from "./upload-signal.js";
+import { createCountSignal, createMatchSignal } from "./upload-signal.js";
 
 const requests: Request[] = [];
 
@@ -13,6 +13,7 @@ const uploads: {
 }[] = [];
 
 const uploadSignal = createCountSignal(uploads);
+const uploadMatchSignal = createMatchSignal(uploads);
 const requestSignal = createCountSignal(requests);
 
 async function record(request: Request) {
@@ -45,6 +46,8 @@ async function record(request: Request) {
   uploads.push({ request, text, events, metadata });
 
   uploadSignal.notify();
+
+  uploadMatchSignal.notify();
 }
 
 export const replayUploadUrl = "https://replay.invalid/v3/replay/upload/:id";
@@ -54,6 +57,7 @@ export const replayUploads = {
   uploads,
   record,
   uploadsReached: uploadSignal.reached,
+  uploadMatching: uploadMatchSignal.reached,
   requestsReached: requestSignal.reached,
 };
 

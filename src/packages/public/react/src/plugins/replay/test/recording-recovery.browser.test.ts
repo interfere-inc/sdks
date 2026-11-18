@@ -7,7 +7,7 @@ import {
   replayUploads,
 } from "../../../../test/fixtures/replay-uploads.js";
 import { createCountSignal } from "../../../../test/fixtures/upload-signal.js";
-import { worker } from "../../../../test/msw.js";
+import { fetchesSettled, worker } from "../../../../test/msw.js";
 import { describe, expect, test, vi } from "vitest";
 
 const { uploads, requests } = replayUploads;
@@ -191,6 +191,8 @@ describe("C-L3 chunks after a network recovery carry the same session", () => {
 
     await failuresReached(1);
 
+    await fetchesSettled();
+
     worker.resetHandlers();
 
     record.addCustomEvent("after-reconnect", true);
@@ -237,6 +239,8 @@ describe("C-L3 chunks after a network recovery carry the same session", () => {
     }
 
     await failuresReached(3);
+
+    await fetchesSettled();
 
     record.addCustomEvent("back-online", true);
 

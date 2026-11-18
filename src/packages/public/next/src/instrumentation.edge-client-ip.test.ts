@@ -2,8 +2,12 @@ import { HttpResponse, http } from "msw";
 import { registeredTracerProvider } from "@interfere/server-core/ownership";
 import { trace } from "@opentelemetry/api";
 import { BasicTracerProvider } from "@opentelemetry/sdk-trace-base";
-import { afterEach, beforeEach, expect, test, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, expect, test, vi } from "vitest";
 import { delivered, network, requests } from "../test/edge-network.fixture";
+
+beforeAll(async () => {
+  await import("./instrumentation.edge.js");
+});
 
 beforeEach(() => {
   vi.resetModules();

@@ -116,15 +116,15 @@ test("snapshots with reason idle when the session paused for input idleness", as
     "please add custom event after start recording",
   );
 
-  const uploadsBefore = uploads.length;
-
   harness.kernel.recordException(backgroundFailure("idle failure"), {
     mechanism,
   });
 
-  await replayUploads.uploadsReached(uploadsBefore + 1);
+  const snapshot = await replayUploads.uploadMatching(({ text }) =>
+    text.includes(PAUSED_SNAPSHOT_TAG),
+  );
 
-  expect(uploads.at(-1)?.events.at(-1)).toMatchObject({
+  expect(snapshot.events.at(-1)).toMatchObject({
     type: EventType.Custom,
     data: { tag: PAUSED_SNAPSHOT_TAG, payload: { reason: "idle" } },
   });
@@ -155,15 +155,18 @@ test("stops on the session idle pause and records again on the lifecycle resume"
     "please add custom event after start recording",
   );
 
-  const uploadsBefore = uploads.length;
-
   globalThis.dispatchEvent(new PointerEvent("pointerdown"));
 
   record.addCustomEvent("after-input", true);
 
   await vi.advanceTimersByTimeAsync(2000);
 
-  await replayUploads.uploadsReached(uploadsBefore + 1);
+  const resumed = await replayUploads.uploadMatching(({ text }) =>
+    text.includes("after-input"),
+  );
 
-  expect(uploads.at(-1)?.text).toContain("after-input");
+  expect(resumed.events.slice(0, 2)).toMatchObject([
+    { type: EventType.Meta },
+    { type: EventType.FullSnapshot },
+  ]);
 });

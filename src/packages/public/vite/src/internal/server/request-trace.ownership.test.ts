@@ -11,6 +11,12 @@ import {
 } from "@opentelemetry/sdk-trace-base";
 import { afterEach, expect, test, vi } from "vitest";
 
+await import("./register");
+
+await import("./runtime");
+
+await import("../../tanstack-start");
+
 afterEach(() => {
   trace.disable();
 

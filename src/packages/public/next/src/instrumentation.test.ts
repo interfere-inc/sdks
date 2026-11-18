@@ -61,6 +61,10 @@ vi.mock(
   }),
 );
 
+await import("./instrumentation.js");
+
+await import("./internal/server/capture/global-handlers.js");
+
 const providerSpies = {
   register: vi.spyOn(NodeTracerProvider.prototype, "register"),
   flushTraces: vi.spyOn(NodeTracerProvider.prototype, "forceFlush"),

@@ -5,7 +5,7 @@ import {
   replayUploadUrl,
   replayUploads,
 } from "../../../../test/fixtures/replay-uploads.js";
-import { worker } from "../../../../test/msw.js";
+import { fetchesSettled, worker } from "../../../../test/msw.js";
 import { beforeEach, expect, test, vi } from "vitest";
 
 const { uploads, requests } = replayUploads;
@@ -102,6 +102,8 @@ test("retries a failed chunk without changing its segment metadata", async () =>
   await vi.advanceTimersByTimeAsync(10_000);
 
   await replayUploads.uploadsReached(1);
+
+  await fetchesSettled();
 
   expect(uploads).toHaveLength(1);
 

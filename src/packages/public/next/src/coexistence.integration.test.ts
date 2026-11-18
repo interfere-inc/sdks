@@ -152,16 +152,6 @@ test("a missing replay chunk leaves other lazy plugins and application interacti
     .getByRole("button", { name: "Rage target" })
     .click({ clickCount: 3 });
 
-  await expect
-    .poll(
-      () =>
-        exportedSpans(collector.requests).filter(
-          (span) => span.name === "rage_click",
-        ).length,
-      { timeout: 15_000 },
-    )
-    .toBe(before + 1);
-
   await page.getByRole("button", { name: "Successful action" }).click();
 
   await expect
@@ -175,4 +165,15 @@ test("a missing replay chunk leaves other lazy plugins and application interacti
       timeout: 15_000,
     })
     .toBe(1);
+
+  // WARNING: rage_click waits in the 60 s trace batch; only the exception flush above exports it, so assert it after that flush.
+  await expect
+    .poll(
+      () =>
+        exportedSpans(collector.requests).filter(
+          (span) => span.name === "rage_click",
+        ).length,
+      { timeout: 15_000 },
+    )
+    .toBe(before + 1);
 });
