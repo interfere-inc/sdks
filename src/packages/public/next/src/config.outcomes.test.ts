@@ -13,6 +13,8 @@ import { withInterfere } from "./config.js";
 import { log } from "./internal/logger.js";
 import { afterEach, expect, test, vi } from "vitest";
 
+const grantExpiresAt = () => Math.floor(Date.now() / 1000) + 600;
+
 afterEach(() => {
   vi.restoreAllMocks();
 
@@ -175,7 +177,7 @@ test("reports cleanup_failed through the production compile hook", async () => {
           () =>
             HttpResponse.json(
               {
-                expiresAt: Math.floor(Date.now() / 1000) + 600,
+                expiresAt: grantExpiresAt(),
                 uploads: [
                   {
                     path: "_next/static/chunks/app.js.map",
@@ -279,7 +281,7 @@ test("links the services page when the release has no app", async () => {
         () =>
           HttpResponse.json(
             {
-              expiresAt: Math.floor(Date.now() / 1000) + 600,
+              expiresAt: grantExpiresAt(),
               uploads: [{ path: "_next/static/chunks/app.js.map" }],
             },
             { status: 200 },

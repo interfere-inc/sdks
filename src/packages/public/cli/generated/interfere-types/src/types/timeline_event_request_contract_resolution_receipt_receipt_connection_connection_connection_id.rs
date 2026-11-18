@@ -16,6 +16,7 @@ pub struct TimelineEventRequestContractResolutionReceiptReceiptConnectionConnect
     #[serde(rename = "connectionRevision")]
     #[serde(default)]
     pub connection_revision: i64,
+    /// Milliseconds since the Unix epoch in UTC.
     #[serde(rename = "verifiedAt")]
     #[serde(default)]
     pub verified_at: i64,

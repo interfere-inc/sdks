@@ -12,6 +12,8 @@ const slug = "rel_aaaaaaaaaaaaaaaa";
 
 const base = `${origin}/v3/releases/${slug}/source-maps`;
 
+const grantExpiresAt = () => Math.floor(Date.now() / 1000) + 600;
+
 const server = setupServer();
 
 beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
@@ -105,7 +107,7 @@ test.each([
       releaseSlug: slug,
       files: [file],
       signed: {
-        expiresAt: Math.floor(Date.now() / 1000) + 600,
+        expiresAt: grantExpiresAt(),
         uploads: [{ path: file.path }],
         batchUpload: {
           version: 1,
@@ -171,7 +173,7 @@ test("sends the session upload grant on every chunk and batch request", async ()
     releaseSlug: slug,
     signed: {
       batchUpload: { version: 1, maxBodyBytes: 524_288, maxFiles: 32 },
-      expiresAt: Math.floor(Date.now() / 1000) + 600,
+      expiresAt: grantExpiresAt(),
       uploadGrant: "grant",
       uploads: [{ path: "small.js.map" }, { path: "large.js.map" }],
     },
@@ -235,7 +237,7 @@ test("sends no bytes for files the server marks present", async () => {
       releaseSlug: slug,
       files: [stored, fresh],
       signed: {
-        expiresAt: Math.floor(Date.now() / 1000) + 600,
+        expiresAt: grantExpiresAt(),
         uploads: [{ path: stored.path, present: true }, { path: fresh.path }],
       },
     }),

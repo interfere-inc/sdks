@@ -6077,7 +6077,8 @@
                           "verifiedAt": {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           }
                         },
                         "required": [
@@ -6109,7 +6110,8 @@
                           "verifiedAt": {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           "integrationId": {
                             "type": "string",
@@ -6153,7 +6155,8 @@
                           "verifiedAt": {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           }
                         },
                         "required": [
@@ -6185,7 +6188,8 @@
                           "verifiedAt": {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           "integrationId": {
                             "type": "string",
@@ -10115,7 +10119,8 @@
                                           "verifiedAt": {
                                             "type": "integer",
                                             "minimum": 0,
-                                            "maximum": 9007199254740991
+                                            "maximum": 9007199254740991,
+                                            "description": "Milliseconds since the Unix epoch in UTC."
                                           }
                                         },
                                         "required": [
@@ -10147,7 +10152,8 @@
                                           "verifiedAt": {
                                             "type": "integer",
                                             "minimum": 0,
-                                            "maximum": 9007199254740991
+                                            "maximum": 9007199254740991,
+                                            "description": "Milliseconds since the Unix epoch in UTC."
                                           },
                                           "integrationId": {
                                             "type": "string",
@@ -36135,7 +36141,8 @@
                                   "verifiedAt": {
                                     "type": "integer",
                                     "minimum": 0,
-                                    "maximum": 9007199254740991
+                                    "maximum": 9007199254740991,
+                                    "description": "Milliseconds since the Unix epoch in UTC."
                                   }
                                 },
                                 "required": [
@@ -36167,7 +36174,8 @@
                                   "verifiedAt": {
                                     "type": "integer",
                                     "minimum": 0,
-                                    "maximum": 9007199254740991
+                                    "maximum": 9007199254740991,
+                                    "description": "Milliseconds since the Unix epoch in UTC."
                                   },
                                   "integrationId": {
                                     "type": "string",
@@ -36211,7 +36219,8 @@
                                   "verifiedAt": {
                                     "type": "integer",
                                     "minimum": 0,
-                                    "maximum": 9007199254740991
+                                    "maximum": 9007199254740991,
+                                    "description": "Milliseconds since the Unix epoch in UTC."
                                   }
                                 },
                                 "required": [
@@ -36243,7 +36252,8 @@
                                   "verifiedAt": {
                                     "type": "integer",
                                     "minimum": 0,
-                                    "maximum": 9007199254740991
+                                    "maximum": 9007199254740991,
+                                    "description": "Milliseconds since the Unix epoch in UTC."
                                   },
                                   "integrationId": {
                                     "type": "string",
@@ -41285,7 +41295,8 @@
                                     "verifiedAt": {
                                       "type": "integer",
                                       "minimum": 0,
-                                      "maximum": 9007199254740991
+                                      "maximum": 9007199254740991,
+                                      "description": "Milliseconds since the Unix epoch in UTC."
                                     }
                                   },
                                   "required": [
@@ -41317,7 +41328,8 @@
                                     "verifiedAt": {
                                       "type": "integer",
                                       "minimum": 0,
-                                      "maximum": 9007199254740991
+                                      "maximum": 9007199254740991,
+                                      "description": "Milliseconds since the Unix epoch in UTC."
                                     },
                                     "integrationId": {
                                       "type": "string",
@@ -41361,7 +41373,8 @@
                                     "verifiedAt": {
                                       "type": "integer",
                                       "minimum": 0,
-                                      "maximum": 9007199254740991
+                                      "maximum": 9007199254740991,
+                                      "description": "Milliseconds since the Unix epoch in UTC."
                                     }
                                   },
                                   "required": [
@@ -41393,7 +41406,8 @@
                                     "verifiedAt": {
                                       "type": "integer",
                                       "minimum": 0,
-                                      "maximum": 9007199254740991
+                                      "maximum": 9007199254740991,
+                                      "description": "Milliseconds since the Unix epoch in UTC."
                                     },
                                     "integrationId": {
                                       "type": "string",
@@ -43911,7 +43925,8 @@
                                                     "verifiedAt": {
                                                       "type": "integer",
                                                       "minimum": 0,
-                                                      "maximum": 9007199254740991
+                                                      "maximum": 9007199254740991,
+                                                      "description": "Milliseconds since the Unix epoch in UTC."
                                                     }
                                                   },
                                                   "required": [
@@ -43943,7 +43958,8 @@
                                                     "verifiedAt": {
                                                       "type": "integer",
                                                       "minimum": 0,
-                                                      "maximum": 9007199254740991
+                                                      "maximum": 9007199254740991,
+                                                      "description": "Milliseconds since the Unix epoch in UTC."
                                                     },
                                                     "integrationId": {
                                                       "type": "string",
