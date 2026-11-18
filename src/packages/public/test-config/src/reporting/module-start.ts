@@ -7,7 +7,7 @@ import type {
 } from "vitest/node";
 
 type PhaseEvent =
-  | { phase: "discovered"; files: { project: string; file: string }[] }
+  | { phase: "discovered"; project: string; file: string }
   | {
       phase: "module";
       project: string;
@@ -58,19 +58,20 @@ export default class ModuleStartReporter implements Reporter {
   onTestRunStart(
     ...[specifications]: Parameters<NonNullable<Reporter["onTestRunStart"]>>
   ) {
-    this.emit({
-      phase: "discovered",
-      files: specifications
-        .map(({ project, moduleId }) => ({
-          project: project.name,
-          file: relative(project.config.root, moduleId),
-        }))
-        .toSorted((a, b) =>
-          JSON.stringify([a.project, a.file]).localeCompare(
-            JSON.stringify([b.project, b.file]),
-          ),
+    const discovered = specifications
+      .map(({ project, moduleId }) => ({
+        project: project.name,
+        file: relative(project.config.root, moduleId),
+      }))
+      .toSorted((a, b) =>
+        JSON.stringify([a.project, a.file]).localeCompare(
+          JSON.stringify([b.project, b.file]),
         ),
-    });
+      );
+
+    for (const { project, file } of discovered) {
+      this.emit({ phase: "discovered", project, file });
+    }
   }
 
   onTestModuleStart(testModule: TestModule) {

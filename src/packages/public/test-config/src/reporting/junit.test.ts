@@ -10,8 +10,9 @@ import {
 import { tmpdir } from "node:os";
 import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import { expect, test, vi } from "vitest";
+import { afterAll, beforeAll, expect, test, vi } from "vitest";
 
+import type { Vitest } from "vitest/node";
 import { createVitest } from "vitest/node";
 import RepositoryJUnitReporter from "./junit";
 import ModuleStartReporter from "./module-start";
@@ -100,6 +101,20 @@ async function collect(
   }
 }
 
+let runner: Vitest | undefined;
+
+beforeAll(async () => {
+  runner = await createVitest({
+    config: false,
+    watch: false,
+    name: "large-package (worker)",
+  });
+});
+
+afterAll(async () => {
+  await runner?.close();
+});
+
 test("keeps native failures, skips and duplicate cases distinct across projects", async () => {
   const { xml, result, file, phases } = await collect(
     'import { test, expect } from "vitest"; test.each([false, true])("duplicate", (value) => { expect(value).toBe(true); }); test.skip("skipped", () => {}); test("unique", () => { expect(true).toBe(true); }); test("duplicate [case 1]", () => { expect(true).toBe(true); });',
@@ -121,7 +136,11 @@ test("keeps native failures, skips and duplicate cases distinct across projects"
   expect(xml).toContain(`classname="${file} [second]"`);
 
   expect(phases[0]).toContain(
-    '"phase":"discovered","files":[{"project":"first","file":"src/cases.test.ts"},{"project":"second","file":"src/cases.test.ts"}]',
+    '"phase":"discovered","project":"first","file":"src/cases.test.ts"}',
+  );
+
+  expect(phases[1]).toContain(
+    '"phase":"discovered","project":"second","file":"src/cases.test.ts"}',
   );
 
   const modules = phases.filter((event) => event.includes('"phase":"module"'));
@@ -310,14 +329,10 @@ test.each([
 
       reporter.onTestRunEnd([], [], "passed");
 
-      expect(write).toHaveBeenCalledTimes(2);
+      expect(write).toHaveBeenCalledTimes(1);
       expect(write.mock.calls[0]?.[0]).toContain(expected);
 
       expect(write.mock.calls[0]?.[0]).toContain(
-        '"phase":"discovered","files":[]',
-      );
-
-      expect(write.mock.calls[1]?.[0]).toContain(
         '"phase":"finished","files":0,"unhandledErrors":0,"reason":"passed"',
       );
     } finally {
@@ -327,3 +342,36 @@ test.each([
     }
   },
 );
+
+test("keeps every phase line under the 64 KiB line limit of log readers however many modules a run discovers", () => {
+  const [project] = runner?.projects ?? [];
+
+  if (project === undefined) {
+    throw new Error("Vitest created no project");
+  }
+
+  const lines: string[] = [];
+
+  const reporter = new ModuleStartReporter({
+    write: (line) => {
+      lines.push(line);
+    },
+  });
+
+  reporter.onTestRunStart(
+    Array.from({ length: 1000 }, (_, index) =>
+      project.createSpecification(
+        join(
+          project.config.root,
+          `src/investigation/lifecycle/test/module-${index}.worker.test.ts`,
+        ),
+      ),
+    ),
+  );
+
+  expect(
+    lines.filter((line) => Buffer.byteLength(line) >= 64 * 1024),
+  ).toStrictEqual([]);
+
+  expect(lines).toHaveLength(1000);
+});
