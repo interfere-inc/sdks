@@ -99,6 +99,18 @@ export class ServerRuntime {
   }
 
   async flush() {
+    // WARNING: workerd settles a promise only in the request that created it; a flush there must await only its own export, never `pending` or `flushes`.
+    if (
+      "navigator" in globalThis &&
+      globalThis.navigator.userAgent === "Cloudflare-Workers"
+    ) {
+      const { pipeline } = this;
+
+      await containAsync("flush()", async () => pipeline?.flush());
+
+      return;
+    }
+
     await this.pending;
 
     const { pipeline } = this;

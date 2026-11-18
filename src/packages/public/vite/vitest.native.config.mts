@@ -6,6 +6,7 @@ export default defineConfig({
   root: import.meta.dirname,
   plugins: [
     cloudflareTest({
+      main: "./test/workerd/flush-worker.ts",
       remoteBindings: false,
       miniflare: {
         compatibilityDate: "2026-07-06",
