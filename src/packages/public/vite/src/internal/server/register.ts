@@ -36,8 +36,17 @@ import { readInterfereServerEnv } from "./env";
 import { FreshnessStampingPropagator } from "./freshness-propagator";
 import { RequestPropagation } from "./request-propagation";
 import type { ServerInstrumentationOptions } from "./instrumentation-options";
-import { fetchAndCacheRemoteConfig } from "./remote-config";
+import { ensureRemoteConfig } from "./remote-config";
 import { runtime } from "./runtime";
+
+function resolveServiceName(opts: ServerInstrumentationOptions) {
+  return (
+    opts.serviceName ||
+    getStringFromEnv("OTEL_SERVICE_NAME") ||
+    import.meta.env.VITE_INTERFERE_SERVICE_NAME ||
+    defaultServiceName()
+  );
+}
 
 /** Flushes Interfere's server providers within the platform export budget. */
 export async function flush() {
@@ -72,11 +81,7 @@ export async function register(opts: ServerInstrumentationOptions = {}) {
       platform: import.meta.env.VITE_INTERFERE_PLATFORM,
     });
 
-    const serviceName =
-      opts.serviceName ||
-      getStringFromEnv("OTEL_SERVICE_NAME") ||
-      import.meta.env.VITE_INTERFERE_SERVICE_NAME ||
-      defaultServiceName();
+    const serviceName = resolveServiceName(opts);
 
     const requestPropagation = new RequestPropagation(
       new CompositePropagator({
@@ -186,11 +191,11 @@ export async function register(opts: ServerInstrumentationOptions = {}) {
       flush,
     });
 
-    await fetchAndCacheRemoteConfig({
-      serviceName,
-      serviceNamespace: opts.serviceNamespace,
-    });
-
     return pipeline;
+  });
+
+  await ensureRemoteConfig({
+    serviceName: resolveServiceName(opts),
+    serviceNamespace: opts.serviceNamespace,
   });
 }

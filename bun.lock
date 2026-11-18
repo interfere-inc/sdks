@@ -364,6 +364,7 @@
         "@interfere/test-utils": "workspace:^",
         "@interfere/typescript-config": "workspace:^",
         "@jridgewell/trace-mapping": "catalog:",
+        "@msw/cloudflare": "catalog:",
         "@playwright/test": "catalog:",
         "@tanstack/react-start": "catalog:",
         "@types/node": "catalog:",
@@ -408,6 +409,7 @@
     "@edge-runtime/vm": "5.0.0",
     "@fingerprintjs/fingerprintjs": "5.3.0",
     "@jridgewell/trace-mapping": "0.3.31",
+    "@msw/cloudflare": "0.0.1",
     "@opentelemetry/api": "1.9.1",
     "@opentelemetry/api-logs": "0.223.0",
     "@opentelemetry/baggage-span-processor": "0.5.0",
@@ -790,6 +792,8 @@
     "@manypkg/get-packages": ["@manypkg/get-packages@3.1.0", "", { "dependencies": { "@manypkg/find-root": "^3.1.0", "@manypkg/tools": "^2.1.0" } }, "sha512-0TbBVyvPrP7xGYBI/cP8UP+yl/z+HtbTttAD7FMAJgn/kXOTwh5/60TsqP9ZYY710forNfyV0N8P/IE/ujGZJg=="],
 
     "@manypkg/tools": ["@manypkg/tools@2.1.2", "", { "dependencies": { "jju": "^1.4.0", "tinyglobby": "^0.2.13", "yaml": "^2.9.0" } }, "sha512-6QEf6yqFbETdwGITKq57aYoPfX/3K8XFNwsAlx0C1M7o8cb79sv1M3w+tWuWvIcSbNqrLF7OD7YpZMVVz335hQ=="],
+
+    "@msw/cloudflare": ["@msw/cloudflare@0.0.1", "", { "dependencies": { "@mswjs/interceptors": "^0.41.6" }, "peerDependencies": { "msw": ">=2.14.1" } }, "sha512-baTWdbz1Aeiyk7/Gjw9xv6OscQuvXvVTAgvX3OYZuAbI+lI2Lys/38EFqyfmB055p1k3I+u0HdH+ZwOr4jFyZg=="],
 
     "@mswjs/interceptors": ["@mswjs/interceptors@0.41.9", "", { "dependencies": { "@open-draft/deferred-promise": "^2.2.0", "@open-draft/logger": "^0.3.0", "@open-draft/until": "^2.0.0", "is-node-process": "^1.2.0", "outvariant": "^1.4.3", "strict-event-emitter": "^0.5.1" } }, "sha512-VVPPgHyQ6ShqnrmDWuxjmUIsO9gWyOZFmuOfLd9LfBGQJwZfy0gvv9pbHSJuoFNIYC7ZDX9aoFwowjcdSC4E8w=="],
 

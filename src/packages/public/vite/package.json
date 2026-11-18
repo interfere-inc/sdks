@@ -109,6 +109,7 @@
     "@interfere/test-utils": "workspace:^",
     "@interfere/typescript-config": "workspace:^",
     "@jridgewell/trace-mapping": "catalog:",
+    "@msw/cloudflare": "catalog:",
     "@playwright/test": "catalog:",
     "@tanstack/react-start": "catalog:",
     "@types/node": "catalog:",

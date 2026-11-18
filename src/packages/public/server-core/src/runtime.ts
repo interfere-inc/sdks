@@ -45,6 +45,14 @@ export interface ServerPipeline {
   shutdown: () => Promise<void>;
 }
 
+/** Whether this isolate is workerd, which settles a promise only inside the request that created it. */
+export function onWorkerd() {
+  return (
+    "navigator" in globalThis &&
+    globalThis.navigator.userAgent === "Cloudflare-Workers"
+  );
+}
+
 /** Owns one adapter's initialization, error delivery and provider lifetime. */
 export class ServerRuntime {
   private readonly name: string;
@@ -68,7 +76,8 @@ export class ServerRuntime {
 
   async register(start: () => Promise<ServerPipeline | null>) {
     if (this.pending) {
-      return this.pending;
+      // WARNING: on workerd another request may own `pending` and end before it settles; awaiting it there rejects and strands this request.
+      return onWorkerd() ? undefined : this.pending;
     }
 
     if (this.pipeline) {
@@ -100,10 +109,7 @@ export class ServerRuntime {
 
   async flush() {
     // WARNING: workerd settles a promise only in the request that created it; a flush there must await only its own export, never `pending` or `flushes`.
-    if (
-      "navigator" in globalThis &&
-      globalThis.navigator.userAgent === "Cloudflare-Workers"
-    ) {
+    if (onWorkerd()) {
       const { pipeline } = this;
 
       await containAsync("flush()", async () => pipeline?.flush());

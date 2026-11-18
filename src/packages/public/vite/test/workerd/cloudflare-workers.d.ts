@@ -4,6 +4,6 @@ declare module "cloudflare:workers" {
   }
 
   export const exports: {
-    default: InstanceType<typeof import("./flush-worker").default>;
+    default: InstanceType<typeof import("./server-worker").default>;
   };
 }

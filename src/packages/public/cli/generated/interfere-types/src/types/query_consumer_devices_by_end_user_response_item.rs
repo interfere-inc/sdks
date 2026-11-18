@@ -31,8 +31,8 @@ pub struct QueryConsumerDevicesByEndUserResponseItem {
     #[serde(default)]
     pub organization_id: String,
     #[serde(rename = "surfaceId")]
-    #[serde(default)]
-    pub surface_id: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub surface_id: Option<String>,
     #[serde(rename = "updatedAt")]
     #[serde(default)]
     #[serde(with = "crate::core::number_serializers")]
@@ -118,7 +118,6 @@ impl QueryConsumerDevicesByEndUserResponseItemBuilder {
     /// - [`created_at`](QueryConsumerDevicesByEndUserResponseItemBuilder::created_at)
     /// - [`device_id`](QueryConsumerDevicesByEndUserResponseItemBuilder::device_id)
     /// - [`organization_id`](QueryConsumerDevicesByEndUserResponseItemBuilder::organization_id)
-    /// - [`surface_id`](QueryConsumerDevicesByEndUserResponseItemBuilder::surface_id)
     /// - [`updated_at`](QueryConsumerDevicesByEndUserResponseItemBuilder::updated_at)
     pub fn build(self) -> Result<QueryConsumerDevicesByEndUserResponseItem, BuildError> {
         Ok(QueryConsumerDevicesByEndUserResponseItem {
@@ -129,7 +128,7 @@ impl QueryConsumerDevicesByEndUserResponseItemBuilder {
             first_seen_at: self.first_seen_at,
             last_seen_at: self.last_seen_at,
             organization_id: self.organization_id.ok_or_else(|| BuildError::missing_field("organization_id"))?,
-            surface_id: self.surface_id.ok_or_else(|| BuildError::missing_field("surface_id"))?,
+            surface_id: self.surface_id,
             updated_at: self.updated_at.ok_or_else(|| BuildError::missing_field("updated_at"))?,
             surface: self.surface,
         })

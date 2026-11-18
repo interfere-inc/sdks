@@ -13221,8 +13221,22 @@
               "format": "uuid"
             },
             "surfaceId": {
-              "type": "string",
-              "format": "uuid"
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
             },
             "updatedAt": {
               "type": "number"
