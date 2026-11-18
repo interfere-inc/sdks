@@ -1,5 +1,14 @@
 # @interfere/server-core
 
+## 0.2.1
+
+### Patch Changes
+
+- 2279673: On Cloudflare Workers, a server flush no longer waits on a flush started by another request, so it no longer fails with "This promise was created by a request that has since ended".
+- 7a535a6: On Cloudflare Workers, `register()` no longer waits on startup begun by another request, so a request that ends during cold start can no longer fail later requests with "This promise was created by a request that has since ended" or leave the SDK uninitialised.
+- Updated dependencies [3ef4bdb]
+  - @interfere/types@11.2.0
+
 ## 0.2.0
 
 ### Minor Changes

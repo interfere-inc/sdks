@@ -1,5 +1,9 @@
 # @interfere/cli-darwin-arm64
 
+## 1.18.0
+
+No changes in this release.
+
 ## 1.17.0
 
 ### Patch Changes

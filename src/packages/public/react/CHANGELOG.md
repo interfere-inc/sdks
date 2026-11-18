@@ -1,5 +1,14 @@
 # @interfere/react
 
+## 13.1.1
+
+### Patch Changes
+
+- 4ac308b: A device fingerprint that finishes computing after the SDK is torn down, for example when the provider unmounts, is no longer written to `localStorage`.
+- Updated dependencies [3ef4bdb]
+  - @interfere/types@11.2.0
+  - @interfere/javascript@0.6.0
+
 ## 13.1.0
 
 ### Minor Changes

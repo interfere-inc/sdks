@@ -1,5 +1,13 @@
 # @interfere/build
 
+## 0.6.1
+
+### Patch Changes
+
+- Updated dependencies [3ef4bdb]
+  - @interfere/types@11.2.0
+  - @interfere/javascript@0.6.0
+
 ## 0.6.0
 
 ### Minor Changes

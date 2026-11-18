@@ -1,5 +1,11 @@
 # @interfere/javascript
 
+## 0.6.0
+
+### Minor Changes
+
+- 3ef4bdb: `createRelease` and `getReleasesConfig` responses carry `service` (`ReleaseServiceRef`: id, name and namespace) for the release's service, and `surface` is deprecated in its favour.
+
 ## 0.5.0
 
 ### Minor Changes

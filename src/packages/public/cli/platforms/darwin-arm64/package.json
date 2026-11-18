@@ -1,6 +1,6 @@
 {
   "name": "@interfere/cli-darwin-arm64",
-  "version": "1.17.0",
+  "version": "1.18.0",
   "description": "Interfere CLI native binary for darwin-arm64.",
   "homepage": "https://interfere.com",
   "license": "MIT",

@@ -1,5 +1,11 @@
 # @interfere/types
 
+## 11.2.0
+
+### Minor Changes
+
+- 3ef4bdb: `createRelease` and `getReleasesConfig` responses carry `service` (`ReleaseServiceRef`: id, name and namespace) for the release's service, and `surface` is deprecated in its favour.
+
 ## 11.1.0
 
 ### Minor Changes

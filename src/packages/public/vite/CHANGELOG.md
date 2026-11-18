@@ -1,5 +1,23 @@
 # @interfere/vite
 
+## 13.1.1
+
+### Patch Changes
+
+- 4ac308b: A device fingerprint that finishes computing after the SDK is torn down, for example when the provider unmounts, is no longer written to `localStorage`.
+- f070137: A build with one malformed source map no longer leaves other source maps, or the `sourceMappingURL` comments that point to them, in the build output.
+- 2279673: On Cloudflare Workers, a server flush no longer waits on a flush started by another request, so it no longer fails with "This promise was created by a request that has since ended".
+- 7a535a6: On Cloudflare Workers, `register()` no longer waits on startup begun by another request, so a request that ends during cold start can no longer fail later requests with "This promise was created by a request that has since ended" or leave the SDK uninitialised.
+- Updated dependencies [4ac308b]
+- Updated dependencies [3ef4bdb]
+- Updated dependencies [2279673]
+- Updated dependencies [7a535a6]
+  - @interfere/react@13.1.1
+  - @interfere/types@11.2.0
+  - @interfere/javascript@0.6.0
+  - @interfere/server-core@0.2.1
+  - @interfere/build@0.6.1
+
 ## 13.1.0
 
 ### Minor Changes
