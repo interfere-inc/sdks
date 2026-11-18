@@ -591,14 +591,14 @@ Legacy alias for connections.installations. List integration installations to di
 
 #### `interfere integrations link-cli-destination`
 
-Links an app (surface) to the workspace's CLI integration.
+Links a service to the workspace's CLI integration.
 
 `POST /v3/workspaces/{workspaceSlug}/integrations/cli/destination`
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
 | `--workspace-slug` | `string` | Yes |  |
-| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
+| `--json` | `JSON` | No | Request body as JSON (or use individual body-field flags) |
 
 #### `interfere integrations link-surface-to-destination`
 

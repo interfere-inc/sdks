@@ -4,10 +4,13 @@ use super::*;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq, Eq, Hash)]
 pub struct LinkCliDestinationRequest {
-    /// Surface URL slug, using lowercase letters, numbers, and hyphens.
+    #[serde(rename = "serviceId")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub service_id: Option<String>,
+    /// Legacy App selector. Links the App and its service, if it has one. Use serviceId to link a service.
     #[serde(rename = "surfaceSlug")]
-    #[serde(default)]
-    pub surface_slug: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub surface_slug: Option<String>,
 }
 
 impl LinkCliDestinationRequest {
@@ -19,21 +22,26 @@ impl LinkCliDestinationRequest {
 #[derive(Clone, PartialEq, Default, Debug)]
 #[non_exhaustive]
 pub struct LinkCliDestinationRequestBuilder {
+    service_id: Option<String>,
     surface_slug: Option<String>,
 }
 
 impl LinkCliDestinationRequestBuilder {
+    pub fn service_id(mut self, value: impl Into<String>) -> Self {
+        self.service_id = Some(value.into());
+        self
+    }
+
     pub fn surface_slug(mut self, value: impl Into<String>) -> Self {
         self.surface_slug = Some(value.into());
         self
     }
 
     /// Consumes the builder and constructs a [`LinkCliDestinationRequest`].
-    /// This method will fail if any of the following fields are not set:
-    /// - [`surface_slug`](LinkCliDestinationRequestBuilder::surface_slug)
     pub fn build(self) -> Result<LinkCliDestinationRequest, BuildError> {
         Ok(LinkCliDestinationRequest {
-            surface_slug: self.surface_slug.ok_or_else(|| BuildError::missing_field("surface_slug"))?,
+            service_id: self.service_id,
+            surface_slug: self.surface_slug,
         })
     }
 }

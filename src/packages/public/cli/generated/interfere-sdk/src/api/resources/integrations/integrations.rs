@@ -1446,7 +1446,7 @@ impl IntegrationsClient {
             .await
     }
 
-    /// Links an app (surface) to the workspace's CLI integration.
+    /// Links a service to the workspace's CLI integration.
     ///
     /// # Arguments
     ///
@@ -1474,7 +1474,7 @@ impl IntegrationsClient {
     ///         .link_cli_destination(
     ///             &"workspaceSlug".to_string(),
     ///             &LinkCliDestinationRequest {
-    ///                 surface_slug: "surfaceSlug".to_string(),
+    ///                 ..Default::default()
     ///             },
     ///             None,
     ///         )

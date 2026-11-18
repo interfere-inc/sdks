@@ -2124,9 +2124,7 @@
       "params": {
         "workspace": "workspaceSlug"
       },
-      "body": {
-        "surfaceSlug": "surfaceSlug"
-      },
+      "body": {},
       "queryMatchers": [],
       "headerMatchers": [],
       "requiresAuth": true,
@@ -6703,9 +6701,7 @@
       "params": {
         "workspace": "workspaceSlug"
       },
-      "body": {
-        "surfaceSlug": "surfaceSlug"
-      },
+      "body": {},
       "queryMatchers": [],
       "headerMatchers": [],
       "requiresAuth": true,

@@ -61620,70 +61620,6 @@
           }
         }
       },
-      "ErrorResponse_3cfb93c298ec62e03b5f0c773ae0ffe6465986e9ffe28eb614f7c3c4a859f869": {
-        "description": "Resource not found",
-        "content": {
-          "application/json": {
-            "schema": {
-              "oneOf": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "defined": {
-                      "const": true
-                    },
-                    "code": {
-                      "const": "SURFACE_NOT_FOUND"
-                    },
-                    "status": {
-                      "const": 404
-                    },
-                    "message": {
-                      "type": "string",
-                      "default": "Surface not found."
-                    },
-                    "data": {}
-                  },
-                  "required": [
-                    "defined",
-                    "code",
-                    "status",
-                    "message"
-                  ]
-                },
-                {
-                  "type": "object",
-                  "properties": {
-                    "defined": {
-                      "const": true
-                    },
-                    "code": {
-                      "const": "WORKSPACE_NOT_FOUND"
-                    },
-                    "status": {
-                      "const": 404
-                    },
-                    "message": {
-                      "type": "string",
-                      "default": "Workspace not found."
-                    },
-                    "data": {}
-                  },
-                  "required": [
-                    "defined",
-                    "code",
-                    "status",
-                    "message"
-                  ]
-                },
-                {
-                  "$ref": "#/components/schemas/RpcUnexpectedError"
-                }
-              ]
-            }
-          }
-        }
-      },
       "ErrorResponse_2d362a4dcfdc8c518b10b2e559d310a0e755e37ef284408e24e0d620e2481b70": {
         "description": "Resource not found",
         "content": {
@@ -61961,6 +61897,70 @@
                     "message": {
                       "type": "string",
                       "default": "Support is temporarily unavailable."
+                    },
+                    "data": {}
+                  },
+                  "required": [
+                    "defined",
+                    "code",
+                    "status",
+                    "message"
+                  ]
+                },
+                {
+                  "$ref": "#/components/schemas/RpcUnexpectedError"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "ErrorResponse_3cfb93c298ec62e03b5f0c773ae0ffe6465986e9ffe28eb614f7c3c4a859f869": {
+        "description": "Resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "defined": {
+                      "const": true
+                    },
+                    "code": {
+                      "const": "SURFACE_NOT_FOUND"
+                    },
+                    "status": {
+                      "const": 404
+                    },
+                    "message": {
+                      "type": "string",
+                      "default": "Surface not found."
+                    },
+                    "data": {}
+                  },
+                  "required": [
+                    "defined",
+                    "code",
+                    "status",
+                    "message"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "defined": {
+                      "const": true
+                    },
+                    "code": {
+                      "const": "WORKSPACE_NOT_FOUND"
+                    },
+                    "status": {
+                      "const": 404
+                    },
+                    "message": {
+                      "type": "string",
+                      "default": "Workspace not found."
                     },
                     "data": {}
                   },
@@ -80424,7 +80424,7 @@
       "post": {
         "operationId": "linkCliDestination",
         "summary": "Link CLI destination",
-        "description": "Links an app (surface) to the workspace's CLI integration.",
+        "description": "Links a service to the workspace's CLI integration.",
         "tags": [
           "Integrations"
         ],
@@ -80442,21 +80442,22 @@
           }
         ],
         "requestBody": {
-          "required": true,
+          "required": false,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
+                  "serviceId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
                   "surfaceSlug": {
                     "type": "string",
                     "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-                    "description": "Surface URL slug, using lowercase letters, numbers, and hyphens."
+                    "description": "Legacy App selector. Links the App and its service, if it has one. Use serviceId to link a service."
                   }
-                },
-                "required": [
-                  "surfaceSlug"
-                ]
+                }
               }
             }
           }
@@ -80482,7 +80483,93 @@
             "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
           },
           "404": {
-            "$ref": "#/components/responses/ErrorResponse_3cfb93c298ec62e03b5f0c773ae0ffe6465986e9ffe28eb614f7c3c4a859f869"
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "defined": {
+                          "const": true
+                        },
+                        "code": {
+                          "const": "SERVICE_NOT_FOUND"
+                        },
+                        "status": {
+                          "const": 404
+                        },
+                        "message": {
+                          "type": "string",
+                          "default": "Service not found."
+                        },
+                        "data": {}
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "defined": {
+                          "const": true
+                        },
+                        "code": {
+                          "const": "SURFACE_NOT_FOUND"
+                        },
+                        "status": {
+                          "const": 404
+                        },
+                        "message": {
+                          "type": "string",
+                          "default": "Surface not found."
+                        },
+                        "data": {}
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "defined": {
+                          "const": true
+                        },
+                        "code": {
+                          "const": "WORKSPACE_NOT_FOUND"
+                        },
+                        "status": {
+                          "const": 404
+                        },
+                        "message": {
+                          "type": "string",
+                          "default": "Workspace not found."
+                        },
+                        "data": {}
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message"
+                      ]
+                    },
+                    {
+                      "$ref": "#/components/schemas/RpcUnexpectedError"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "503": {
             "$ref": "#/components/responses/ErrorResponse_b7d254f6bd68a887b2398a1b58fb8fe3913110d7236a6e4540d7d2aa990fb12b"
@@ -80544,7 +80631,7 @@
             "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
           },
           "404": {
-            "$ref": "#/components/responses/ErrorResponse_3cfb93c298ec62e03b5f0c773ae0ffe6465986e9ffe28eb614f7c3c4a859f869"
+            "$ref": "#/components/responses/ErrorResponse_aacd31107d1b82f7d854a3aa7c98c401a41a182720fd213babe309171722e17c"
           },
           "503": {
             "$ref": "#/components/responses/ErrorResponse_b7d254f6bd68a887b2398a1b58fb8fe3913110d7236a6e4540d7d2aa990fb12b"
