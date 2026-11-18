@@ -369,6 +369,8 @@ export class SessionTracker {
 
     this.clearIdentity();
 
+    this.device.dispose();
+
     this.slot.manager = null;
   }
 

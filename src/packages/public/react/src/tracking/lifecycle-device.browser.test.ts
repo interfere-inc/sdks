@@ -1,5 +1,6 @@
 import {
   FP_HASH,
+  pendingDevice,
   readyDevice,
   sessions,
   sessionsArrived,
@@ -8,6 +9,7 @@ import {
   started,
   teardownLifecycle,
 } from "./lifecycle.fixture.js";
+import type { SessionTracker } from "./api.js";
 import { browserStorage } from "@interfere/test-config/browser-storage";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
@@ -121,5 +123,41 @@ describe("A61 identity.clear before device identity", () => {
     expect(localStorage.getItem("interfere:device_id")).toBeNull();
 
     await expect(cookieStore.get("interfere_did")).resolves.toBeNull();
+  });
+});
+
+describe("A73 fingerprint resolving after the tracker lets go of the device", () => {
+  test.each([
+    {
+      release: "dispose",
+      letGo: (tracker: SessionTracker) => {
+        tracker.dispose();
+      },
+    },
+    {
+      release: "consent revoke",
+      letGo: (tracker: SessionTracker) => {
+        tracker.discardDeviceIdentity();
+      },
+    },
+  ])("stores no fingerprint hash after $release", async ({ letGo }) => {
+    expect.hasAssertions();
+
+    const { device, release } = pendingDevice();
+
+    const tracker = await started(device);
+
+    tracker.startDeviceIdentity();
+
+    const probe = device.whenFingerprintReady();
+
+    letGo(tracker);
+
+    release(FP_HASH);
+
+    await expect(probe).resolves.toBeNull();
+
+    expect(device.getFpHash()).toBeNull();
+    expect(localStorage.getItem("interfere:fp_hash")).toBeNull();
   });
 });

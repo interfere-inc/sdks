@@ -227,7 +227,7 @@ export class DeviceManager {
     this.fpPending = (async () => {
       const hash = await this.fingerprintProvider();
 
-      // WARNING: A consent purge can race this probe; accepting its stale result restores an identity the user cleared.
+      // WARNING: A consent purge or a disposed tracker can race this probe; accepting its stale result restores an identity the user cleared or stores a hash after its owner is gone.
       if (epoch !== this.epoch) {
         return null;
       }
@@ -276,6 +276,11 @@ export class DeviceManager {
     log.debug("device %s (reset)", this.deviceId);
 
     return this.deviceId;
+  }
+
+  dispose() {
+    this.epoch += 1;
+    this.fpPending = null;
   }
 
   clear() {
