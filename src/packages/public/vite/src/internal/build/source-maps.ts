@@ -277,7 +277,14 @@ export async function discoverByPairing(opts: DiscoverByPairingOptions) {
           ? mapContent
           : injectDebugIdIntoMap(mapContent, debugId);
 
-      return { chunks, debugId, finalMap, mapContent, mapPublic, pair };
+      return {
+        chunks,
+        debugId,
+        finalMap,
+        mapPublic,
+        pair,
+        rewritesMap: finalMap !== mapContent,
+      };
     },
   );
 
@@ -287,7 +294,7 @@ export async function discoverByPairing(opts: DiscoverByPairingOptions) {
   const failedWrites = await mapWithConcurrency(
     parsed,
     DISCOVERY_CONCURRENCY,
-    async ({ chunks, debugId, finalMap, mapContent, pair }) => {
+    async ({ chunks, debugId, finalMap, pair, rewritesMap }) => {
       const writes = await Promise.allSettled([
         ...chunks.flatMap((chunk) =>
           chunk.existingDebugId === debugId
@@ -300,9 +307,7 @@ export async function discoverByPairing(opts: DiscoverByPairingOptions) {
                 ),
               ],
         ),
-        ...(finalMap === mapContent
-          ? []
-          : [writeFile(pair.mapAbs, finalMap, "utf8")]),
+        ...(rewritesMap ? [writeFile(pair.mapAbs, finalMap, "utf8")] : []),
       ]);
 
       return writes.find((write) => write.status === "rejected");

@@ -1,6 +1,8 @@
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { setFlagsFromString } from "node:v8";
+import { runInNewContext } from "node:vm";
 
 import type { DiscoveryResult } from "./discover.js";
 import {
@@ -8,7 +10,29 @@ import {
   injectDebugIdIntoJs,
   injectDebugIdIntoMap,
 } from "./discover.js";
-import { afterAll, beforeAll, describe, expect, test } from "vitest";
+import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
+
+const writeHook = vi.hoisted(() => ({
+  onFirstWrite: undefined as (() => void) | undefined,
+}));
+
+// oxlint-disable-next-line anti-slop/no-module-mocking, interfere-testing/no-test-doubles -- Every write still reaches the real writeFile unchanged; the wrapper only measures the heap once every map has been prepared and before the first write.
+vi.mock(import("node:fs/promises"), async (importOriginal) => {
+  const actual = await importOriginal();
+
+  return {
+    ...actual,
+    writeFile: (async (...args: Parameters<typeof actual.writeFile>) => {
+      const hook = writeHook.onFirstWrite;
+
+      writeHook.onFirstWrite = undefined;
+
+      hook?.();
+
+      return actual.writeFile(...args);
+    }) as typeof actual.writeFile,
+  };
+});
 
 const JS_WITH_MAP = (mapName: string) =>
   `function hello(){}\n//# sourceMappingURL=${mapName}`;
@@ -295,6 +319,65 @@ describe("discoverSourceMaps (webpack)", () => {
       byPath.get("_next/server/chunks/[root-of-the-server]__2e816af5._.js.map")
         ?.chunkUrl,
     ).toBe("_next/server/chunks/[root-of-the-server]__2e816af5._.js");
+  });
+
+  test("holds about one copy of every map in memory when the first debug-ID write starts", async () => {
+    setFlagsFromString("--expose-gc");
+
+    const collectGarbage = runInNewContext("gc") as () => void;
+
+    const dir = await mkdtemp(join(tmpdir(), "discover-peak-memory-"));
+
+    const chunks = join(dir, ".next/static/chunks");
+    const mapCount = 8;
+    const mapBytes = 4 * 1024 * 1024;
+
+    try {
+      await mkdir(chunks, { recursive: true });
+
+      await Promise.all(
+        Array.from({ length: mapCount }, async (_, index) => {
+          await writeFile(
+            join(chunks, `c${index}.js`),
+            JS_WITH_MAP(`c${index}.js.map`),
+          );
+
+          await writeFile(
+            join(chunks, `c${index}.js.map`),
+            JSON.stringify({
+              mappings: "AAAA",
+              sources: ["src/app.ts"],
+              sourcesContent: [`${"a".repeat(mapBytes)}${index}`],
+              version: 3,
+            }),
+          );
+        }),
+      );
+
+      collectGarbage();
+
+      const baseline = process.memoryUsage().heapUsed;
+      let atFirstWrite = baseline;
+
+      writeHook.onFirstWrite = () => {
+        collectGarbage();
+
+        atFirstWrite = process.memoryUsage().heapUsed;
+      };
+
+      const result = await discoverSourceMaps({
+        bundler: "webpack",
+        distDir: ".next",
+        projectDir: dir,
+      });
+
+      expect(result.files).toHaveLength(mapCount);
+      expect(atFirstWrite - baseline).toBeLessThan(mapCount * mapBytes * 1.5);
+    } finally {
+      writeHook.onFirstWrite = undefined;
+
+      await rm(dir, { recursive: true, force: true });
+    }
   });
 
   test("returns empty when distDir does not exist", async () => {

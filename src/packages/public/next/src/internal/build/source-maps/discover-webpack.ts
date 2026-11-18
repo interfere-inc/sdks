@@ -190,7 +190,14 @@ export async function discoverWebpack(opts: {
           ? mapContent
           : injectDebugIdIntoMap(mapContent, debugId);
 
-      return { chunks, debugId, finalMap, mapContent, mapPublic, pair };
+      return {
+        chunks,
+        debugId,
+        finalMap,
+        mapPublic,
+        pair,
+        rewritesMap: finalMap !== mapContent,
+      };
     }),
   );
 
@@ -198,7 +205,7 @@ export async function discoverWebpack(opts: {
 
   // WARNING: A failed discovery is followed at once by a cleanup that strips and deletes every map, so no debug-ID write may start before every map has parsed or still be running when discovery fails.
   const writes = await Promise.allSettled(
-    parsed.flatMap(({ chunks, debugId, finalMap, mapContent, pair }) => [
+    parsed.flatMap(({ chunks, debugId, finalMap, pair, rewritesMap }) => [
       ...chunks.flatMap((chunk) =>
         chunk.existingDebugId === debugId
           ? []
@@ -210,9 +217,7 @@ export async function discoverWebpack(opts: {
               ),
             ],
       ),
-      ...(finalMap === mapContent
-        ? []
-        : [writeFile(pair.mapAbs, finalMap, "utf8")]),
+      ...(rewritesMap ? [writeFile(pair.mapAbs, finalMap, "utf8")] : []),
     ]),
   );
 
