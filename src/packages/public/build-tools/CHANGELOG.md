@@ -1,5 +1,60 @@
 # @interfere/build
 
+## 0.6.0
+
+### Minor Changes
+
+- ead7ecb: Source-map uploads now send each map's SHA-256 first and skip uploading maps your Company already stores.
+
+  ### Network
+  - Data sent and consent: the sign request now carries a `sha256` for each source map, and the SDK sends no bytes for maps the response marks `present`.
+
+- 4eb17ec: A Vite build with a workspace API key and no public key now registers its release and bakes the release token, and `resolveReleaseRequest` accepts a `null` config, taking the deploy target from the build environment.
+
+  ### Network
+  - Data sent and consent: a build whose workspace key has no public key now registers its release with `POST /v3/releases`, sending the `x-interfere-service` header, the commit and the deploy target read from the build environment; builds with a public key are unchanged.
+
+- 4eb17ec: When your workspace accepts release tokens, SDK settings no longer need a public key: a build with `INTERFERE_API_KEY` and no public key bakes its settings (server tracing, log sourcing, plugins, ingest URL, backend hosts, anonymous replay) by fetching `/v3/config` with the release token it registered, the server fetches its remote plugin config with the token baked into the server bundle, and `createBuildConfigResolver` now takes a credential, `{ publicKey }` or `{ releaseToken }`, in place of the public key string.
+
+  ### Network
+  - Headers: build-time and server `GET /v3/config` send `x-interfere-release-token` instead of `x-interfere-public-key` when the build has no public key. Builds with a public key are unchanged.
+
+- 4eb17ec: Breaking: `resolveReleaseRequest` now returns the release request itself and never skips a release, so builds register releases and upload source maps without a repository or deploy target linked in Interfere.
+
+  ### Network
+  - Data sent and consent: builds with no repository or deploy target linked in Interfere now register their release and upload source maps, with the deploy target read from the build environment.
+
+- 4eb17ec: Breaking: `missingReleaseBinding` is removed, since a missing repository or deploy target no longer disables a build.
+- 85d4511: Builds register releases with their service identity in the request body using only `INTERFERE_API_KEY`.
+
+  ### Network
+  - Data sent and consent: release registration sends `service.name` in the JSON body, including releases published from retained Vite build output; the build-tools resolver also accepts `service.namespace`.
+
+### Patch Changes
+
+- 4d63981: Every public package is now published with npm trusted publishing and a provenance attestation.
+- 0be7ad5: A build with a workspace API key now publishes source maps for every service: `getReleasesConfig` answers with a `null` legacy `surface` field for a service that has none, and the build plugins read the config without it.
+- Updated dependencies [4d63981]
+- Updated dependencies [b8c5bad]
+- Updated dependencies [9aaddd6]
+- Updated dependencies [d1b1138]
+- Updated dependencies [db2b560]
+- Updated dependencies [ead7ecb]
+- Updated dependencies [042188e]
+- Updated dependencies [6e18c76]
+- Updated dependencies [4eb17ec]
+- Updated dependencies [ca4d372]
+- Updated dependencies [ec31e5d]
+- Updated dependencies [4eb17ec]
+- Updated dependencies [e820a7f]
+- Updated dependencies [f2e532d]
+- Updated dependencies [5f28fcd]
+- Updated dependencies [0be7ad5]
+- Updated dependencies [c0c40ed]
+- Updated dependencies [b77bfb3]
+  - @interfere/javascript@0.5.0
+  - @interfere/types@11.1.0
+
 ## 0.5.2
 
 ### Patch Changes

@@ -1,5 +1,38 @@
 # @interfere/javascript
 
+## 0.5.0
+
+### Minor Changes
+
+- db2b560: Problem and error body types now share one `Interfere.ErrorService` type for their `service` field, which replaces per-type `Service` namespaces such as `ApiKeyAuthProblem.Service`.
+- ead7ecb: Source-map uploads now send each map's SHA-256 first and skip uploading maps your Company already stores.
+
+  ### Network
+  - Data sent and consent: the sign request now carries a `sha256` for each source map, and the SDK sends no bytes for maps the response marks `present`.
+
+- 4eb17ec: `config.getSdkConfig`, `sessions.createSession` and `sessions.identifySession` accept a release token through the `releaseTokenHeader` option and send it as the `x-interfere-release-token` header.
+
+  ### Network
+  - Headers: `GET /v3/config`, `POST /v3/session` and `POST /v3/session/identify` send `x-interfere-release-token` when the caller passes `releaseTokenHeader`; requests from callers that don't pass it are unchanged.
+
+- ca4d372: `drain.otlpExport` accepts a release token through the `releaseTokenHeader` option and sends it as the `x-interfere-release-token` header.
+
+  ### Network
+  - Headers: `POST /drain/v1/{signal}` sends `x-interfere-release-token` when the caller passes `releaseTokenHeader`; requests from callers that don't pass it are unchanged.
+
+- ec31e5d: `createRelease` responses now include a signed release `token` when the release belongs to a service.
+
+  ### Network
+  - Data sent and consent: the release registration response now also returns `token`, a signed value holding the workspace, service and release ids, the release slug, the issue time and the key id; it is public by design.
+
+- 4eb17ec: `createRelease` now registers a release for every service, and its response's legacy `surface` field is `null` for a service that has none.
+- e820a7f: Source-map manifests now accept `rolldown` as the bundler, for Vite 8 builds.
+- 0be7ad5: A build with a workspace API key now publishes source maps for every service: `getReleasesConfig` answers with a `null` legacy `surface` field for a service that has none, and the build plugins read the config without it.
+
+### Patch Changes
+
+- 4d63981: Every public package is now published with npm trusted publishing and a provenance attestation.
+
 ## 0.4.1
 
 ### Patch Changes

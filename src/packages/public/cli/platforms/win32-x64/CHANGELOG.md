@@ -1,5 +1,11 @@
 # @interfere/cli-win32-x64
 
+## 1.17.0
+
+### Patch Changes
+
+- 4d63981: Every public package is now published with npm trusted publishing and a provenance attestation.
+
 ## 1.16.0
 
 No changes in this release.

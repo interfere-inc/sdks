@@ -1,6 +1,6 @@
 {
   "name": "@interfere/test-utils",
-  "version": "10.1.3",
+  "version": "10.1.4",
   "description": "Shared test utilities used across Interfere packages.",
   "homepage": "https://interfere.com",
   "bugs": "mailto:support@interfere.com",

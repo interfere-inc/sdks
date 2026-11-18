@@ -1,5 +1,24 @@
 # @interfere/constants
 
+## 9.4.0
+
+### Minor Changes
+
+- b8baffc: Server runtimes now send telemetry with `INTERFERE_API_KEY` when it is set, and send the public key in the `x-interfere-public-key` header instead of a URL query parameter.
+
+### Patch Changes
+
+- 4d63981: Every public package is now published with npm trusted publishing and a provenance attestation.
+
+### Network
+
+- Headers:
+  - b8baffc: when `INTERFERE_API_KEY` is set, Node server exports (Next.js, Vite) add `authorization: Bearer <INTERFERE_API_KEY>` and Next.js Edge exports send `x-api-key`; every server export sends `x-interfere-public-key` when the public key is set.
+- Origins:
+  - b8baffc: `POST {INTERFERE_API_URL}/drain/v1/{traces,logs,metrics}` (default `https://api.interfere.com`), server to server, no longer carries the `public_key` query parameter.
+- Data sent and consent:
+  - b8baffc: with `INTERFERE_API_KEY` set, server telemetry belongs to the workspace and its `service.name` instead of being attributed through the public key; browser requests are unchanged.
+
 ## 9.3.3
 
 ### Patch Changes

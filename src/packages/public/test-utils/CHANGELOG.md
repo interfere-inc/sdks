@@ -1,5 +1,13 @@
 # @interfere/test-utils
 
+## 10.1.4
+
+### Patch Changes
+
+- 4d63981: Every public package is now published with npm trusted publishing and a provenance attestation.
+- Updated dependencies [4d63981]
+  - @interfere/helpers@9.3.5
+
 ## 10.1.3
 
 ### Patch Changes

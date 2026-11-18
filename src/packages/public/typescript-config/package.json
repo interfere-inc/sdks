@@ -1,6 +1,6 @@
 {
   "name": "@interfere/typescript-config",
-  "version": "9.0.4",
+  "version": "9.0.5",
   "description": "Shared TypeScript configurations used across Interfere packages.",
   "keywords": [
     "config",

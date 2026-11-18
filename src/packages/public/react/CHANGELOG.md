@@ -1,5 +1,96 @@
 # @interfere/react
 
+## 13.1.0
+
+### Minor Changes
+
+- 9aaddd6: Server and browser telemetry from built bundles now report the `production` environment, or the Wrangler environment of a `CLOUDFLARE_ENV` build, without `INTERFERE_ENVIRONMENT`; set it only for other preview or staging deploys.
+- 6e18c76: When release registration succeeds, `@interfere/vite` bakes its release token into the browser bundle for the browser SDK to use without exposing the build secret.
+
+- 8390a99: Build and browser warnings now talk about services and release tokens: `withInterfere()` and `interfere()` no longer print the inferred service name mismatch warning, the Next.js build log links to the Services page, a Next.js build with a public key but no `instrumentation-client` file warns instead of failing, and the browser SDK's credential warnings point to building with `INTERFERE_API_KEY`.
+- c0c40ed: Browser network errors such as `Failed to fetch` now record whether the browser was offline and whether the page was hidden or being left, so Interfere can tell a visitor's network from a failure in your app.
+
+### Patch Changes
+
+- 4d63981: Every public package is now published with npm trusted publishing and a provenance attestation.
+- b8c5bad: The browser SDK no longer bundles zod, which makes the eager browser bundle about 25 KiB smaller gzipped, and Interfere now leaves `traceparent` to a Sentry client configured with `propagateTraceparent`.
+
+- d1b1138: Breaking: consent is now one option and one setter, `init({ consent: "required" })` and `consent.set()`, which replace the boolean and object `consent` options and keep the SDK from storing anything on the device until consent is granted.
+
+- 615b212: Backend hosts discovered from your workspace settings now receive trace headers only after a one-time CORS check shows they accept them, so their requests no longer fail on a header their `Access-Control-Allow-Headers` doesn't list.
+
+- 050d678: The `@interfere/next` and `@interfere/react` READMEs are rewritten for people installing the SDK, and the React quick start now uses the Vite provider.
+- 9ab763e: Bot detection now uses `isbot`, which makes the browser bundle about 20 KiB smaller gzipped and also skips uptime monitors such as Pingdom.
+- 2876c24: Browser bundles now carry one copy of each OpenTelemetry package, which makes the telemetry chunk about 1.1 KiB smaller gzipped and stops most of a page's spans and log records from being lost before export.
+
+- 2c82a56: Device fingerprinting no longer causes long tasks, and each browser's `fpHash` changes once after upgrading.
+
+- 3de6985: Rage-click detection no longer keeps removed elements in memory after a route change.
+
+- 934e614: Session replay options now take effect as documented: `blockClass`, `maskTextClass` and `ignoreClass` apply, an invalid selector is dropped with a warning, full snapshots are taken every 5 minutes and `recordCanvas` records WebP at two frames a second.
+
+- d4da60c: Session replay holds less memory, no longer uploads unplayable gaps, records nothing for anonymous visitors when the replay policy is `never` and cancels uploads in progress when consent is revoked.
+
+- b191ac7: Session replay now loads only rrweb's recorder, not its player, which makes the lazy replay chunk about 23 KiB smaller gzipped.
+- 9aaddd6: Request spans no longer carry the browser's resource-timing events (`fetchStart` through `responseEnd`), which makes each request span sent when a page closes up to about 900 bytes smaller.
+- d1b1138: Breaking: `tracing.mode` is removed, request spans now come from the OpenTelemetry fetch and XMLHttpRequest instrumentations in every setup, and Interfere leaves `traceparent` to Datadog, Sentry or an OpenTelemetry propagator that already writes it.
+
+- bb1a76b: The device fingerprint is now computed once per device and kept in `localStorage`, so later page loads skip loading FingerprintJS and running its probes.
+
+- a8d5250: Telemetry that is still being sent when a visitor leaves the page is now resent on the way out instead of being lost.
+
+- Updated dependencies [4d63981]
+- Updated dependencies [b8c5bad]
+- Updated dependencies [9aaddd6]
+- Updated dependencies [d1b1138]
+- Updated dependencies [db2b560]
+- Updated dependencies [ead7ecb]
+- Updated dependencies [042188e]
+- Updated dependencies [6e18c76]
+- Updated dependencies [4eb17ec]
+- Updated dependencies [ca4d372]
+- Updated dependencies [ec31e5d]
+- Updated dependencies [4eb17ec]
+- Updated dependencies [e820a7f]
+- Updated dependencies [f2e532d]
+- Updated dependencies [5f28fcd]
+- Updated dependencies [b8baffc]
+- Updated dependencies [0be7ad5]
+- Updated dependencies [c0c40ed]
+- Updated dependencies [b77bfb3]
+  - @interfere/constants@9.4.0
+  - @interfere/helpers@9.3.5
+  - @interfere/javascript@0.5.0
+  - @interfere/types@11.1.0
+
+### Network
+
+- Headers:
+  - 6e18c76: browser `/drain/v1/{signal}` exports and `/v3/replay/upload` send `x-interfere-release-token` when the build baked a token; `/v3/config` and `/v3/session` also receive it, with legacy public-key headers retained for older deployments.
+  - b8c5bad: when Sentry is configured with `propagateTraceparent` for a request's URL, Interfere no longer writes its own `traceparent` on that request.
+  - d1b1138: before consent, `baggage` carries `interfere.session.id` set to a page-scoped `page_<uuidv7>` id; previously no `baggage` was sent while analytics was denied.
+  - 615b212: a backend host discovered from workspace settings receives no `traceparent`, `tracestate` or `baggage` until the CORS check passes, and afterwards only the headers that passed.
+  - d1b1138: when `tracing.propagation` is unset, `traceparent` and `tracestate` are no longer written to URLs that Datadog RUM, Sentry with `propagateTraceparent` or another OpenTelemetry propagator writes them to; `baggage` is unchanged.
+- Origins:
+  - 615b212: the check is one credentialed `HEAD` request to the request's path without its query string, and a second without `baggage` if the first is rejected, at most once per host per browser session; it carries random trace ids and no application data.
+- Retries:
+  - d4da60c: replay chunks that depend on a keyframe dropped from a full retry queue are dropped with it instead of being retried.
+  - d1b1138: leave-time telemetry that doesn't fit the keepalive budget is delivered on the next page load instead of being dropped.
+  - a8d5250: an export still in flight when the page starts leaving is cancelled and sent once more through the leave path, so its spans can arrive twice if the first request had already reached Interfere.
+- Data sent and consent:
+  - c0c40ed: exception events for transport failures carry up to four more attributes: `error.type`, `interfere.page.visibility`, `interfere.page.leaving` and, when offline, `network.connection.type`; no URLs or identifiers are added.
+  - d1b1138: before consent, spans and logs carry the page-scoped id, no session or identify request is sent, and nothing is stored in cookies, `localStorage` or `sessionStorage`; when consent is granted, one `session.start` log record links the page id to the session.
+  - 2876c24: spans and log records that were dropped before export when two OpenTelemetry copies mixed are now sent.
+  - 2c82a56: the session request's `fpHash` is computed from fewer browser signals, so its value changes once per browser.
+  - 3de6985: a rage click whose last clicked element has already been removed and garbage-collected reports `ui.rage_click.selector` as `unknown`.
+  - 934e614: replay chunks carry a full snapshot every 5 minutes instead of every minute; elements matching your `blockClass`, `maskTextClass` or `ignoreClass` are now blocked, masked or ignored; with `recordCanvas`, canvas frames are WebP at quality 0.6 and two frames a second.
+  - d4da60c: revoking consent aborts replay uploads already in progress, anonymous visitors on `never` surfaces are not recorded before they are identified, and unplayable replay gaps are no longer uploaded.
+  - d1b1138: request spans sent to the trace endpoint replace `interfere.request` log records, with the same URL redaction, identity and consent rules, and each `fetch` response is cloned once to detect when its body completes.
+  - bb1a76b: on repeat visits `fpHash` is sent with the first session request instead of a later update, and the SDK stores one new `localStorage` key, `interfere:fp_hash`, under the same consent rules as `interfere:device_id`.
+- CORS:
+  - 6e18c76: custom proxies must allow `x-interfere-release-token` on browser telemetry, configuration, session and replay requests.
+  - 615b212: a discovered host must list the headers it should receive in `Access-Control-Allow-Headers`; a host that answers `Access-Control-Allow-Origin: *` fails the credentialed check and needs `tracing.propagateTo`.
+
 ## 13.0.4
 
 ### Patch Changes

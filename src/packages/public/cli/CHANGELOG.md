@@ -1,5 +1,17 @@
 # @interfere/cli
 
+## 1.17.0
+
+### Minor Changes
+
+- Regenerate CLI commands and API types from the current API schema.
+
+### Patch Changes
+
+- 4d63981: Every public package is now published with npm trusted publishing and a provenance attestation.
+- 28f75f2: The `@interfere/cli` and `@interfere/vite` READMEs now describe sending telemetry by service, with a workspace secret key for servers, build pipelines and collectors.
+- c3e1497: The `@interfere/vite` and `@interfere/cli` READMEs drop their outdated description of how telemetry from a newly seen service is routed.
+
 ## 1.16.0
 
 ### Minor Changes

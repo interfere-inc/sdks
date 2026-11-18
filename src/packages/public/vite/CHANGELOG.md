@@ -1,5 +1,125 @@
 # @interfere/vite
 
+## 13.1.0
+
+### Minor Changes
+
+- 9aaddd6: Server and browser telemetry from built bundles now report the `production` environment, or the Wrangler environment of a `CLOUDFLARE_ENV` build, without `INTERFERE_ENVIRONMENT`; set it only for other preview or staging deploys.
+- ead7ecb: Source-map uploads now send each map's SHA-256 first and skip uploading maps your Company already stores.
+
+- 4eb17ec: A Vite build with a workspace API key and no public key now registers its release and bakes the release token, and `resolveReleaseRequest` accepts a `null` config, taking the deploy target from the build environment.
+
+- 8f7fbe3: `releaseBuildOutput` now returns the release token as `releaseToken` (set even when the release already holds source maps from another build, null when no release was registered), so a build that retains its source maps can put the token into its page per environment.
+- 6e18c76: When release registration succeeds, `@interfere/vite` bakes its release token into the browser bundle for the browser SDK to use without exposing the build secret.
+
+- 4eb17ec: When your workspace accepts release tokens, SDK settings no longer need a public key: a build with `INTERFERE_API_KEY` and no public key bakes its settings (server tracing, log sourcing, plugins, ingest URL, backend hosts, anonymous replay) by fetching `/v3/config` with the release token it registered, the server fetches its remote plugin config with the token baked into the server bundle, and `createBuildConfigResolver` now takes a credential, `{ publicKey }` or `{ releaseToken }`, in place of the public key string.
+
+- 4eb17ec: Breaking: `resolveReleaseRequest` now returns the release request itself and never skips a release, so builds register releases and upload source maps without a repository or deploy target linked in Interfere.
+
+- 5f28fcd: Server runtimes without `INTERFERE_API_KEY` now send telemetry with the release token the build baked into the server bundle, so the Next.js Node and Edge runtimes and the Vite Node server pick `INTERFERE_API_KEY`, then the baked release token, then the public key.
+
+- b8baffc: Server runtimes now send telemetry with `INTERFERE_API_KEY` when it is set, and send the public key in the `x-interfere-public-key` header instead of a URL query parameter.
+
+- 85d4511: Builds register releases with their service identity in the request body using only `INTERFERE_API_KEY`.
+
+- 8390a99: Build and browser warnings now talk about services and release tokens: `withInterfere()` and `interfere()` no longer print the inferred service name mismatch warning, the Next.js build log links to the Services page, a Next.js build with a public key but no `instrumentation-client` file warns instead of failing, and the browser SDK's credential warnings point to building with `INTERFERE_API_KEY`.
+- 0be7ad5: A build with a workspace API key now publishes source maps for every service: `getReleasesConfig` answers with a `null` legacy `surface` field for a service that has none, and the build plugins read the config without it.
+- 6be79f7: `@interfere/vite/server` now runs on Cloudflare Workers with `nodejs_compat`, so Worker server spans join the browser's trace.
+
+### Patch Changes
+
+- 4d63981: Every public package is now published with npm trusted publishing and a provenance attestation.
+- b8c5bad: The browser SDK no longer bundles zod, which makes the eager browser bundle about 25 KiB smaller gzipped, and Interfere now leaves `traceparent` to a Sentry client configured with `propagateTraceparent`.
+
+- d1b1138: Breaking: consent is now one option and one setter, `init({ consent: "required" })` and `consent.set()`, which replace the boolean and object `consent` options and keep the SDK from storing anything on the device until consent is granted.
+
+- 615b212: Backend hosts discovered from your workspace settings now receive trace headers only after a one-time CORS check shows they accept them, so their requests no longer fail on a header their `Access-Control-Allow-Headers` doesn't list.
+
+- 9ab763e: Bot detection now uses `isbot`, which makes the browser bundle about 20 KiB smaller gzipped and also skips uptime monitors such as Pingdom.
+- 2876c24: Browser bundles now carry one copy of each OpenTelemetry package, which makes the telemetry chunk about 1.1 KiB smaller gzipped and stops most of a page's spans and log records from being lost before export.
+
+- 4365430: Release requests made at build time now send the SDK name and version in the `x-interfere-producer-version` header.
+
+- 9aaddd6: Request spans no longer carry the browser's resource-timing events (`fetchStart` through `responseEnd`), which makes each request span sent when a page closes up to about 900 bytes smaller.
+- 28f75f2: The `@interfere/cli` and `@interfere/vite` READMEs now describe sending telemetry by service, with a workspace secret key for servers, build pipelines and collectors.
+- c37dcbe: The READMEs now call the `release:write` permission **Source maps**, matching Settings > Developer.
+- c3e1497: The `@interfere/vite` and `@interfere/cli` READMEs drop their outdated description of how telemetry from a newly seen service is routed.
+- Updated dependencies [4d63981]
+- Updated dependencies [b8c5bad]
+- Updated dependencies [9aaddd6]
+- Updated dependencies [d1b1138]
+- Updated dependencies [615b212]
+- Updated dependencies [db2b560]
+- Updated dependencies [ead7ecb]
+- Updated dependencies [050d678]
+- Updated dependencies [9ab763e]
+- Updated dependencies [4eb17ec]
+- Updated dependencies [2876c24]
+- Updated dependencies [2c82a56]
+- Updated dependencies [3de6985]
+- Updated dependencies [042188e]
+- Updated dependencies [6e18c76]
+- Updated dependencies [4eb17ec]
+- Updated dependencies [ca4d372]
+- Updated dependencies [ec31e5d]
+- Updated dependencies [4eb17ec]
+- Updated dependencies [4eb17ec]
+- Updated dependencies [4eb17ec]
+- Updated dependencies [4eb17ec]
+- Updated dependencies [934e614]
+- Updated dependencies [d4da60c]
+- Updated dependencies [b191ac7]
+- Updated dependencies [9aaddd6]
+- Updated dependencies [d1b1138]
+- Updated dependencies [e820a7f]
+- Updated dependencies [f2e532d]
+- Updated dependencies [5f28fcd]
+- Updated dependencies [5f28fcd]
+- Updated dependencies [b8baffc]
+- Updated dependencies [85d4511]
+- Updated dependencies [8390a99]
+- Updated dependencies [0be7ad5]
+- Updated dependencies [bb1a76b]
+- Updated dependencies [c0c40ed]
+- Updated dependencies [b77bfb3]
+- Updated dependencies [a8d5250]
+  - @interfere/build@0.6.0
+  - @interfere/constants@9.4.0
+  - @interfere/helpers@9.3.5
+  - @interfere/javascript@0.5.0
+  - @interfere/react@13.1.0
+  - @interfere/server-core@0.2.0
+  - @interfere/types@11.1.0
+
+### Network
+
+- Headers:
+  - 6e18c76: browser `/drain/v1/{signal}` exports and `/v3/replay/upload` send `x-interfere-release-token` when the build baked a token; `/v3/config` and `/v3/session` also receive it, with legacy public-key headers retained for older deployments.
+  - 4eb17ec: build-time and server `GET /v3/config` send `x-interfere-release-token` instead of `x-interfere-public-key` when the build has no public key. Builds with a public key are unchanged.
+  - 5f28fcd: Node and Edge server exports to `/drain/v1/{signal}` send `x-interfere-release-token` when `INTERFERE_API_KEY` is unset and the build baked a release token, with no `authorization` or `x-api-key`, and send `x-interfere-public-key` alongside it when the public key is also set; runtimes with `INTERFERE_API_KEY` set are unchanged.
+  - b8baffc: when `INTERFERE_API_KEY` is set, Node server exports (Next.js, Vite) add `authorization: Bearer <INTERFERE_API_KEY>` and Next.js Edge exports send `x-api-key`; every server export sends `x-interfere-public-key` when the public key is set.
+  - b8c5bad: when Sentry is configured with `propagateTraceparent` for a request's URL, Interfere no longer writes its own `traceparent` on that request.
+  - d1b1138: before consent, `baggage` carries `interfere.session.id` set to a page-scoped `page_<uuidv7>` id; previously no `baggage` was sent while analytics was denied.
+  - 615b212: a backend host discovered from workspace settings receives no `traceparent`, `tracestate` or `baggage` until the CORS check passes, and afterwards only the headers that passed.
+  - 4365430: `x-interfere-producer-version: <package>@<version>` is added to release preflight and upload requests from the `@interfere/next` build and to release preflight requests from `@interfere/vite`.
+- Origins:
+  - b8baffc: `POST {INTERFERE_API_URL}/drain/v1/{traces,logs,metrics}` (default `https://api.interfere.com`), server to server, no longer carries the `public_key` query parameter.
+  - 615b212: the check is one credentialed `HEAD` request to the request's path without its query string, and a second without `baggage` if the first is rejected, at most once per host per browser session; it carries random trace ids and no application data.
+  - 4365430: the configured Interfere API origin (`/v3/releases/*`, `GET` and `POST`), called from Node at build time with the secret key; browser requests are unchanged.
+- Data sent and consent:
+  - ead7ecb: the sign request now carries a `sha256` for each source map, and the SDK sends no bytes for maps the response marks `present`.
+  - 4eb17ec: a build whose workspace key has no public key now registers its release with `POST /v3/releases`, sending the `x-interfere-service` header, the commit and the deploy target read from the build environment; builds with a public key are unchanged.
+  - 4eb17ec: builds with no repository or deploy target linked in Interfere now register their release and upload source maps, with the deploy target read from the build environment.
+  - 5f28fcd: server telemetry from a runtime with only the baked release token is attributed to the service and release named in the token, and server capture turns on for such a runtime even without a public key.
+  - b8baffc: with `INTERFERE_API_KEY` set, server telemetry belongs to the workspace and its `service.name` instead of being attributed through the public key; browser requests are unchanged.
+  - 85d4511: release registration sends `service.name` in the JSON body, including releases published from retained Vite build output; the build-tools resolver also accepts `service.namespace`.
+  - 6be79f7: on Cloudflare Workers, `@interfere/vite/server` sends server spans to the same telemetry endpoint as on Node.js, exported inside each request's `waitUntil`.
+  - d1b1138: before consent, spans and logs carry the page-scoped id, no session or identify request is sent, and nothing is stored in cookies, `localStorage` or `sessionStorage`; when consent is granted, one `session.start` log record links the page id to the session.
+  - 2876c24: spans and log records that were dropped before export when two OpenTelemetry copies mixed are now sent.
+- CORS:
+  - 6e18c76: custom proxies must allow `x-interfere-release-token` on browser telemetry, configuration, session and replay requests.
+  - 615b212: a discovered host must list the headers it should receive in `Access-Control-Allow-Headers`; a host that answers `Access-Control-Allow-Origin: *` fails the credentialed check and needs `tracing.propagateTo`.
+
 ## 13.0.4
 
 ### Patch Changes

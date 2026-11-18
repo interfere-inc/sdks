@@ -1,6 +1,6 @@
 {
   "name": "@interfere/helpers",
-  "version": "9.3.4",
+  "version": "9.3.5",
   "description": "Small, framework-agnostic helpers shared across Interfere packages.",
   "keywords": [
     "deep-merge",

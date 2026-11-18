@@ -8,7 +8,7 @@
     "typegen": "fern generate --local --force && yq -i '.package.version = strenv(npm_package_version)' Cargo.toml && yq -i '.package.version = strenv(npm_package_version)' generated/Cargo.toml && yq -i '.lib.path = (.lib.path // \"src/lib.rs\") | ... comments = \"\"' generated/Cargo.toml && yq -i '.lib.path = (.lib.path // \"src/lib.rs\") | ... comments = \"\"' generated/interfere-sdk/Cargo.toml && yq -i '.lib.path = (.lib.path // \"src/lib.rs\") | ... comments = \"\"' generated/interfere-types/Cargo.toml && oxfmt generated/Cargo.toml generated/interfere-sdk/Cargo.toml generated/interfere-types/Cargo.toml && cargo update --workspace && cargo update --manifest-path generated/Cargo.toml --workspace && grep -rlF '<CLI>' generated/src | xargs -r perl -pi -e 's/<CLI>/interfere/g'"
   },
   "name": "@interfere/cli",
-  "version": "1.16.0",
+  "version": "1.17.0",
   "description": "Command-line access to the Interfere API for developers and coding agents.",
   "homepage": "https://interfere.com",
   "license": "MIT",
@@ -47,6 +47,6 @@
     "node": ">=20"
   },
   "interfere": {
-    "cliSchemaHash": "c404fbb98318c0a0fe5107bd736d51ff893a25ba5a07954e3324edbc13e18acd"
+    "cliSchemaHash": "80d3ba99274a78f40be6c581d690fcc1f12ef2f9fc4812ecc1cbced44de5de64"
   }
 }

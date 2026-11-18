@@ -1,5 +1,50 @@
 # @interfere/server-core
 
+## 0.2.0
+
+### Minor Changes
+
+- 5f28fcd: Breaking: `serverCredential()` in `@interfere/server-core/credential` takes the release token as its second argument (`apiKey, releaseToken, publicKey`) and returns `{ releaseToken, publicKey? }` when there is no API key and a token is set, which `serverCredentialHeaders()` sends as `x-interfere-release-token` plus `x-interfere-public-key` when the public key is set.
+- b8baffc: Server runtimes now send telemetry with `INTERFERE_API_KEY` when it is set, and send the public key in the `x-interfere-public-key` header instead of a URL query parameter.
+
+### Patch Changes
+
+- 4d63981: Every public package is now published with npm trusted publishing and a provenance attestation.
+- 2876c24: Browser bundles now carry one copy of each OpenTelemetry package, which makes the telemetry chunk about 1.1 KiB smaller gzipped and stops most of a page's spans and log records from being lost before export.
+
+- b77bfb3: Server spans now read session and device ids only from `interfere.*` baggage, so browsers still on SDK 12.x or earlier must upgrade to 13.x to keep server spans linked to their sessions.
+
+- Updated dependencies [4d63981]
+- Updated dependencies [b8c5bad]
+- Updated dependencies [9aaddd6]
+- Updated dependencies [d1b1138]
+- Updated dependencies [ead7ecb]
+- Updated dependencies [042188e]
+- Updated dependencies [6e18c76]
+- Updated dependencies [ec31e5d]
+- Updated dependencies [4eb17ec]
+- Updated dependencies [e820a7f]
+- Updated dependencies [f2e532d]
+- Updated dependencies [5f28fcd]
+- Updated dependencies [b8baffc]
+- Updated dependencies [0be7ad5]
+- Updated dependencies [c0c40ed]
+- Updated dependencies [b77bfb3]
+  - @interfere/constants@9.4.0
+  - @interfere/helpers@9.3.5
+  - @interfere/types@11.1.0
+
+### Network
+
+- Headers:
+  - b8baffc: when `INTERFERE_API_KEY` is set, Node server exports (Next.js, Vite) add `authorization: Bearer <INTERFERE_API_KEY>` and Next.js Edge exports send `x-api-key`; every server export sends `x-interfere-public-key` when the public key is set.
+- Origins:
+  - b8baffc: `POST {INTERFERE_API_URL}/drain/v1/{traces,logs,metrics}` (default `https://api.interfere.com`), server to server, no longer carries the `public_key` query parameter.
+- Data sent and consent:
+  - b8baffc: with `INTERFERE_API_KEY` set, server telemetry belongs to the workspace and its `service.name` instead of being attributed through the public key; browser requests are unchanged.
+  - 2876c24: spans and log records that were dropped before export when two OpenTelemetry copies mixed are now sent.
+  - b77bfb3: server spans no longer copy the legacy `session.id` and `device.id` baggage keys, so vendor baggage such as Datadog's `session.id` is never recorded.
+
 ## 0.1.3
 
 ### Patch Changes

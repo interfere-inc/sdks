@@ -1,5 +1,11 @@
 # @interfere/typescript-config
 
+## 9.0.5
+
+### Patch Changes
+
+- 4d63981: Every public package is now published with npm trusted publishing and a provenance attestation.
+
 ## 9.0.4
 
 ### Patch Changes

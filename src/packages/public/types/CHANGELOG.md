@@ -1,5 +1,54 @@
 # @interfere/types
 
+## 11.1.0
+
+### Minor Changes
+
+- b8c5bad: The browser SDK no longer bundles zod, which makes the eager browser bundle about 25 KiB smaller gzipped, and Interfere now leaves `traceparent` to a Sentry client configured with `propagateTraceparent`.
+
+- 9aaddd6: Server and browser telemetry from built bundles now report the `production` environment, or the Wrangler environment of a `CLOUDFLARE_ENV` build, without `INTERFERE_ENVIRONMENT`; set it only for other preview or staging deploys.
+- ead7ecb: Source-map uploads now send each map's SHA-256 first and skip uploading maps your Company already stores.
+
+- 042188e: `CreateReleaseRequest` accepts an optional `service` (`{ name, namespace? }`), so a workspace secret key can register a release without a public key.
+- 6e18c76: When release registration succeeds, `@interfere/vite` bakes its release token into the browser bundle for the browser SDK to use without exposing the build secret.
+
+- ec31e5d: `createRelease` responses now include a signed release `token` when the release belongs to a service.
+
+- 4eb17ec: `createRelease` now registers a release for every service, and its response's legacy `surface` field is `null` for a service that has none.
+- e820a7f: Source-map manifests now accept `rolldown` as the bundler, for Vite 8 builds.
+- f2e532d: The build diagnostic for a release that Interfere can't accept for a workspace secret key's service now asks for the service the build publishes for (`serviceName` or `OTEL_SERVICE_NAME`) instead of asking only for a public key, and also covers a server answer of `RELEASE_SERVICE_REQUIRED`.
+- 5f28fcd: Server runtimes without `INTERFERE_API_KEY` now send telemetry with the release token the build baked into the server bundle, so the Next.js Node and Edge runtimes and the Vite Node server pick `INTERFERE_API_KEY`, then the baked release token, then the public key.
+
+- 0be7ad5: A build with a workspace API key now publishes source maps for every service: `getReleasesConfig` answers with a `null` legacy `surface` field for a service that has none, and the build plugins read the config without it.
+- c0c40ed: Browser network errors such as `Failed to fetch` now record whether the browser was offline and whether the page was hidden or being left, so Interfere can tell a visitor's network from a failure in your app.
+
+### Patch Changes
+
+- 4d63981: Every public package is now published with npm trusted publishing and a provenance attestation.
+- d1b1138: Breaking: consent is now one option and one setter, `init({ consent: "required" })` and `consent.set()`, which replace the boolean and object `consent` options and keep the SDK from storing anything on the device until consent is granted.
+
+- b77bfb3: Server spans now read session and device ids only from `interfere.*` baggage, so browsers still on SDK 12.x or earlier must upgrade to 13.x to keep server spans linked to their sessions.
+
+- Updated dependencies [4d63981]
+  - @interfere/helpers@9.3.5
+
+### Network
+
+- Headers:
+  - b8c5bad: when Sentry is configured with `propagateTraceparent` for a request's URL, Interfere no longer writes its own `traceparent` on that request.
+  - 6e18c76: browser `/drain/v1/{signal}` exports and `/v3/replay/upload` send `x-interfere-release-token` when the build baked a token; `/v3/config` and `/v3/session` also receive it, with legacy public-key headers retained for older deployments.
+  - 5f28fcd: Node and Edge server exports to `/drain/v1/{signal}` send `x-interfere-release-token` when `INTERFERE_API_KEY` is unset and the build baked a release token, with no `authorization` or `x-api-key`, and send `x-interfere-public-key` alongside it when the public key is also set; runtimes with `INTERFERE_API_KEY` set are unchanged.
+  - d1b1138: before consent, `baggage` carries `interfere.session.id` set to a page-scoped `page_<uuidv7>` id; previously no `baggage` was sent while analytics was denied.
+- Data sent and consent:
+  - ead7ecb: the sign request now carries a `sha256` for each source map, and the SDK sends no bytes for maps the response marks `present`.
+  - ec31e5d: the release registration response now also returns `token`, a signed value holding the workspace, service and release ids, the release slug, the issue time and the key id; it is public by design.
+  - 5f28fcd: server telemetry from a runtime with only the baked release token is attributed to the service and release named in the token, and server capture turns on for such a runtime even without a public key.
+  - c0c40ed: exception events for transport failures carry up to four more attributes: `error.type`, `interfere.page.visibility`, `interfere.page.leaving` and, when offline, `network.connection.type`; no URLs or identifiers are added.
+  - d1b1138: before consent, spans and logs carry the page-scoped id, no session or identify request is sent, and nothing is stored in cookies, `localStorage` or `sessionStorage`; when consent is granted, one `session.start` log record links the page id to the session.
+  - b77bfb3: server spans no longer copy the legacy `session.id` and `device.id` baggage keys, so vendor baggage such as Datadog's `session.id` is never recorded.
+- CORS:
+  - 6e18c76: custom proxies must allow `x-interfere-release-token` on browser telemetry, configuration, session and replay requests.
+
 ## 11.0.2
 
 ### Patch Changes

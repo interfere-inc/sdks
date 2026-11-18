@@ -1,6 +1,6 @@
 {
   "name": "@interfere/types",
-  "version": "11.0.2",
+  "version": "11.1.0",
   "description": "TypeScript & Zod types for Interfere",
   "keywords": [
     "logging",
