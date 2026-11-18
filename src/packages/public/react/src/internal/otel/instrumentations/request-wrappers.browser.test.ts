@@ -13,6 +13,14 @@ import { worker } from "../../../../test/msw.js";
 import { w3cTraceHeaders } from "../../../../test/trace-headers.test-utils.js";
 import { registerBundledInstrumentations } from "./instrumentations.js";
 
+function stallMainThread() {
+  const deadline = performance.now() + 80;
+
+  do {
+    document.body.getBoundingClientRect();
+  } while (performance.now() < deadline);
+}
+
 test("one upstream wrapper per request API, inert after dispose, and requests still reach the network", async () => {
   expect.hasAssertions();
 
@@ -73,7 +81,21 @@ test("one upstream wrapper per request API, inert after dispose, and requests st
     XMLHttpRequest.prototype.setRequestHeader === nativeSetRequestHeader,
   ]).toStrictEqual([false, false, false, true]);
 
+  const longTasks = Promise.withResolvers<undefined>();
+
+  const longTaskObserver = new PerformanceObserver(() =>
+    longTasks.resolve(undefined),
+  );
+
+  longTaskObserver.observe({ type: "longtask" });
+
+  onTestFinished(() => longTaskObserver.disconnect());
+
+  stallMainThread();
+
   handle.dispose();
+
+  await longTasks.promise;
 
   expect([
     globalThis.fetch,
@@ -208,15 +230,26 @@ test("ending open requests as the page leaves exports a just-completed request s
 
   worker.use(http.get(url, () => new HttpResponse(null, { status: 204 })));
 
+  const harness = await fetch(location.href);
+
   const response = await fetch(url);
 
-  const before = exporter.getFinishedSpans().length;
+  const issued = () =>
+    exporter
+      .getFinishedSpans()
+      .filter((span) => span.attributes["url.full"] === url);
+
+  const before = issued().length;
 
   handle.endOpenRequests();
 
   expect([
+    harness.ok,
+    exporter
+      .getFinishedSpans()
+      .some((span) => span.attributes["url.full"] === location.href),
     response.status,
     before,
-    exporter.getFinishedSpans().map((span) => span.attributes["url.full"]),
-  ]).toStrictEqual([204, 0, [url]]);
+    issued().map((span) => span.attributes["url.full"]),
+  ]).toStrictEqual([true, true, 204, 0, [url]]);
 });

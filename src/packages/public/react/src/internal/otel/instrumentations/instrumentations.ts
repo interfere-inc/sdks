@@ -190,6 +190,7 @@ export function registerBundledInstrumentations(input: InstrumentationsInput) {
   const coreInstrumentations = [
     ...requests.instrumentations,
     new LongTaskInstrumentation({
+      enabled: false,
       observerCallback: (span, info: ObserverCallbackInformation) => {
         stampUrlAttrs(span, resolveRoute);
 
