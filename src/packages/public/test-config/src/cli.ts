@@ -1,5 +1,6 @@
 import { spawn } from "node:child_process";
 import { once } from "node:events";
+import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, resolve } from "node:path";
 import { z } from "zod";
@@ -10,9 +11,24 @@ if (process.env["TESTCONTAINERS_RYUK_DISABLED"] === "true") {
   );
 }
 
-const args = z
-  .array(z.string())
-  .parse(JSON.parse(process.env["VITEST_ARGS"] ?? "[]"));
+const packageArgs = (variable: string) => {
+  const { name } = z
+    .object({ name: z.string() })
+    .parse(JSON.parse(readFileSync(resolve("package.json"), "utf8")));
+
+  return (
+    z.record(z.string(), z.array(z.string())).parse(JSON.parse(variable))[
+      name
+    ] ?? []
+  );
+};
+
+const packageVariable = process.env["VITEST_PACKAGE_ARGS"];
+
+const args = [
+  ...z.array(z.string()).parse(JSON.parse(process.env["VITEST_ARGS"] ?? "[]")),
+  ...(packageVariable === undefined ? [] : packageArgs(packageVariable)),
+];
 
 const argv = process.argv.slice(2);
 

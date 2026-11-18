@@ -70,6 +70,19 @@ describe("disabled container cleanup", () => {
 test.each([
   { environment: undefined, script: [], appended: [] },
   {
+    environment: '["--exclude=**/*.browser.test.*"]',
+    packageArgs:
+      '{"@fixture/local":["--shard=2/8"],"@fixture/other":["--shard=1/8"]}',
+    script: [],
+    appended: ["--exclude=**/*.browser.test.*", "--shard=2/8"],
+  },
+  {
+    environment: '["--exclude=**/*.browser.test.*"]',
+    packageArgs: '{"@fixture/other":["--shard=1/8"]}',
+    script: [],
+    appended: ["--exclude=**/*.browser.test.*"],
+  },
+  {
     environment: '["--exclude=**/*.browser.test.*","filename with spaces"]',
     script: [],
     appended: ["--exclude=**/*.browser.test.*", "filename with spaces"],
@@ -85,8 +98,8 @@ test.each([
     appended: ["--exclude=**/*.browser.test.*"],
   },
 ])(
-  "passes environment arguments to the package executable: $environment",
-  async ({ environment, script, appended }) => {
+  "passes environment arguments to the package executable: $environment $packageArgs",
+  async ({ environment, packageArgs, script, appended }) => {
     const local = mkdtempSync(join(directory, "instrumented-"));
     const installation = join(local, "node_modules/vitest");
     const output = join(local, "arguments.json");
@@ -110,7 +123,14 @@ writeFileSync(${JSON.stringify(output)}, JSON.stringify(process.argv.slice(2)));
     const originalArgv = process.argv;
     const originalDirectory = process.cwd();
 
+    writeFileSync(
+      join(local, "package.json"),
+      JSON.stringify({ name: "@fixture/local" }),
+    );
+
     vi.stubEnv("VITEST_ARGS", environment);
+
+    vi.stubEnv("VITEST_PACKAGE_ARGS", packageArgs);
 
     vi.resetModules();
 
