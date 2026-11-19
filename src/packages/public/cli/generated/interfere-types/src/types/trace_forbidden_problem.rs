@@ -15,6 +15,15 @@ pub enum TraceForbiddenProblem {
             service: Option<ErrorService>,
         },
 
+        #[serde(rename = "WORKSPACE_ACCESS_DENIED")]
+        #[non_exhaustive]
+        WorkspaceAccessDenied {
+            #[serde(skip_serializing_if = "Option::is_none")]
+            message: Option<String>,
+            #[serde(skip_serializing_if = "Option::is_none")]
+            service: Option<ErrorService>,
+        },
+
         #[serde(rename = "NETWORK_ACCESS_DENIED")]
         #[non_exhaustive]
         NetworkAccessDenied {
@@ -36,6 +45,10 @@ impl TraceForbiddenProblem {
         Self::AuthOrgRequired { message: None, service: None }
     }
 
+    pub fn workspace_access_denied() -> Self {
+        Self::WorkspaceAccessDenied { message: None, service: None }
+    }
+
     pub fn network_access_denied() -> Self {
         Self::NetworkAccessDenied { message: None, service: None }
     }
@@ -46,6 +59,14 @@ impl TraceForbiddenProblem {
 
     pub fn auth_org_required_with_service(message: Option<String>, service: ErrorService) -> Self {
         Self::AuthOrgRequired { message, service: Some(service) }
+    }
+
+    pub fn workspace_access_denied_with_message(message: String, service: Option<ErrorService>) -> Self {
+        Self::WorkspaceAccessDenied { message: Some(message), service }
+    }
+
+    pub fn workspace_access_denied_with_service(message: Option<String>, service: ErrorService) -> Self {
+        Self::WorkspaceAccessDenied { message, service: Some(service) }
     }
 
     pub fn network_access_denied_with_message(message: String, service: Option<ErrorService>) -> Self {

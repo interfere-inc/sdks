@@ -542,6 +542,26 @@
               "code": {
                 "type": "string",
                 "enum": [
+                  "WORKSPACE_ACCESS_DENIED"
+                ]
+              },
+              "message": {
+                "type": "string"
+              },
+              "service": {
+                "$ref": "#/components/schemas/ErrorService"
+              }
+            },
+            "required": [
+              "code"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": [
                   "NETWORK_ACCESS_DENIED"
                 ]
               },
@@ -60747,8 +60767,8 @@
           }
         }
       },
-      "ErrorResponse_55582d89bcbe716ce0200ca70c2c615e8ad9f7a73f87bfc70326c45970263ba1": {
-        "description": "Session has no organization or its network is blocked",
+      "ErrorResponse_e1c49b8b55ef8a4bf21d159d13feea2c8307cefe59bbb1cbce8d27dcef195828": {
+        "description": "Session has no organization, lacks the findings read permission, or its network is blocked",
         "content": {
           "application/json": {
             "schema": {
@@ -62840,7 +62860,7 @@
             "$ref": "#/components/responses/ErrorResponse_d03f543fe12dfdb00107c9112362cc77f0687b3d5ca39a6f00110ab6d5c82688"
           },
           "403": {
-            "$ref": "#/components/responses/ErrorResponse_55582d89bcbe716ce0200ca70c2c615e8ad9f7a73f87bfc70326c45970263ba1"
+            "$ref": "#/components/responses/ErrorResponse_e1c49b8b55ef8a4bf21d159d13feea2c8307cefe59bbb1cbce8d27dcef195828"
           },
           "404": {
             "$ref": "#/components/responses/ErrorResponse_a6d61fd0679d406bc4e0a34e6f8213b12b124c07e9d18e5ff34ec559d9a699ea"
@@ -62933,7 +62953,7 @@
             "$ref": "#/components/responses/ErrorResponse_d03f543fe12dfdb00107c9112362cc77f0687b3d5ca39a6f00110ab6d5c82688"
           },
           "403": {
-            "$ref": "#/components/responses/ErrorResponse_55582d89bcbe716ce0200ca70c2c615e8ad9f7a73f87bfc70326c45970263ba1"
+            "$ref": "#/components/responses/ErrorResponse_e1c49b8b55ef8a4bf21d159d13feea2c8307cefe59bbb1cbce8d27dcef195828"
           },
           "404": {
             "description": "Finding is unknown in this organization",
@@ -63050,7 +63070,7 @@
             "$ref": "#/components/responses/ErrorResponse_d03f543fe12dfdb00107c9112362cc77f0687b3d5ca39a6f00110ab6d5c82688"
           },
           "403": {
-            "$ref": "#/components/responses/ErrorResponse_55582d89bcbe716ce0200ca70c2c615e8ad9f7a73f87bfc70326c45970263ba1"
+            "$ref": "#/components/responses/ErrorResponse_e1c49b8b55ef8a4bf21d159d13feea2c8307cefe59bbb1cbce8d27dcef195828"
           },
           "404": {
             "$ref": "#/components/responses/ErrorResponse_a6d61fd0679d406bc4e0a34e6f8213b12b124c07e9d18e5ff34ec559d9a699ea"
@@ -63143,7 +63163,7 @@
             "$ref": "#/components/responses/ErrorResponse_d03f543fe12dfdb00107c9112362cc77f0687b3d5ca39a6f00110ab6d5c82688"
           },
           "403": {
-            "$ref": "#/components/responses/ErrorResponse_55582d89bcbe716ce0200ca70c2c615e8ad9f7a73f87bfc70326c45970263ba1"
+            "$ref": "#/components/responses/ErrorResponse_e1c49b8b55ef8a4bf21d159d13feea2c8307cefe59bbb1cbce8d27dcef195828"
           },
           "404": {
             "$ref": "#/components/responses/ErrorResponse_a6d61fd0679d406bc4e0a34e6f8213b12b124c07e9d18e5ff34ec559d9a699ea"
@@ -63264,7 +63284,7 @@
             "$ref": "#/components/responses/ErrorResponse_d03f543fe12dfdb00107c9112362cc77f0687b3d5ca39a6f00110ab6d5c82688"
           },
           "403": {
-            "$ref": "#/components/responses/ErrorResponse_55582d89bcbe716ce0200ca70c2c615e8ad9f7a73f87bfc70326c45970263ba1"
+            "$ref": "#/components/responses/ErrorResponse_e1c49b8b55ef8a4bf21d159d13feea2c8307cefe59bbb1cbce8d27dcef195828"
           },
           "404": {
             "$ref": "#/components/responses/ErrorResponse_79823ea8459eacf98625ab992710310d50cbf4d505a071fdd73644503c7a9336"
@@ -63385,7 +63405,7 @@
             "$ref": "#/components/responses/ErrorResponse_d03f543fe12dfdb00107c9112362cc77f0687b3d5ca39a6f00110ab6d5c82688"
           },
           "403": {
-            "$ref": "#/components/responses/ErrorResponse_55582d89bcbe716ce0200ca70c2c615e8ad9f7a73f87bfc70326c45970263ba1"
+            "$ref": "#/components/responses/ErrorResponse_e1c49b8b55ef8a4bf21d159d13feea2c8307cefe59bbb1cbce8d27dcef195828"
           },
           "404": {
             "$ref": "#/components/responses/ErrorResponse_79823ea8459eacf98625ab992710310d50cbf4d505a071fdd73644503c7a9336"
@@ -63467,7 +63487,7 @@
             "$ref": "#/components/responses/ErrorResponse_d03f543fe12dfdb00107c9112362cc77f0687b3d5ca39a6f00110ab6d5c82688"
           },
           "403": {
-            "$ref": "#/components/responses/ErrorResponse_55582d89bcbe716ce0200ca70c2c615e8ad9f7a73f87bfc70326c45970263ba1"
+            "$ref": "#/components/responses/ErrorResponse_e1c49b8b55ef8a4bf21d159d13feea2c8307cefe59bbb1cbce8d27dcef195828"
           },
           "503": {
             "$ref": "#/components/responses/ErrorResponse_899a86dfabd1f14f0ea27a3bebc66fdf4007a0fb46d32cfde08d7772f3c7493e"
