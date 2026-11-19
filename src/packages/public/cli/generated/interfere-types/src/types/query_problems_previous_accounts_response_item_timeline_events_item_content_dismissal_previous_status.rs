@@ -4,7 +4,7 @@ use super::*;
 
 #[non_exhaustive]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum QueryProblemsGetByIdResponseTimelineEventsItemContentPreviousStatusPreviousStatus {
+pub enum QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissalPreviousStatus {
     Draft,
     Detected,
     Reasoning,
@@ -20,7 +20,7 @@ pub enum QueryProblemsGetByIdResponseTimelineEventsItemContentPreviousStatusPrev
     /// it will be captured here with the raw string value.
     __Unknown(String),
 }
-impl Serialize for QueryProblemsGetByIdResponseTimelineEventsItemContentPreviousStatusPreviousStatus {
+impl Serialize for QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissalPreviousStatus {
     fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         match self {
             Self::Draft => serializer.serialize_str("DRAFT"),
@@ -38,7 +38,7 @@ impl Serialize for QueryProblemsGetByIdResponseTimelineEventsItemContentPrevious
     }
 }
 
-impl<'de> Deserialize<'de> for QueryProblemsGetByIdResponseTimelineEventsItemContentPreviousStatusPreviousStatus {
+impl<'de> Deserialize<'de> for QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissalPreviousStatus {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         let value = String::deserialize(deserializer)?;
         match value.as_str() {
@@ -57,7 +57,7 @@ impl<'de> Deserialize<'de> for QueryProblemsGetByIdResponseTimelineEventsItemCon
     }
 }
 
-impl fmt::Display for QueryProblemsGetByIdResponseTimelineEventsItemContentPreviousStatusPreviousStatus {
+impl fmt::Display for QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissalPreviousStatus {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Draft => write!(f, "DRAFT"),

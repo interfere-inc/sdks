@@ -31,7 +31,7 @@ pub enum QueryProblemsGetByIdResponseTimelineEventsItemContent {
 
         QueryProblemsGetByIdResponseTimelineEventsItemContentRelease(QueryProblemsGetByIdResponseTimelineEventsItemContentRelease),
 
-        QueryProblemsGetByIdResponseTimelineEventsItemContentPreviousStatus(QueryProblemsGetByIdResponseTimelineEventsItemContentPreviousStatus),
+        QueryProblemsGetByIdResponseTimelineEventsItemContentDismissal(QueryProblemsGetByIdResponseTimelineEventsItemContentDismissal),
 
         QueryProblemsGetByIdResponseTimelineEventsItemContentTitle(QueryProblemsGetByIdResponseTimelineEventsItemContentTitle),
 }
@@ -89,8 +89,8 @@ impl QueryProblemsGetByIdResponseTimelineEventsItemContent {
         matches!(self, Self::QueryProblemsGetByIdResponseTimelineEventsItemContentRelease(_))
     }
 
-    pub fn is_query_problems_get_by_id_response_timeline_events_item_content_previous_status(&self) -> bool {
-        matches!(self, Self::QueryProblemsGetByIdResponseTimelineEventsItemContentPreviousStatus(_))
+    pub fn is_query_problems_get_by_id_response_timeline_events_item_content_dismissal(&self) -> bool {
+        matches!(self, Self::QueryProblemsGetByIdResponseTimelineEventsItemContentDismissal(_))
     }
 
     pub fn is_query_problems_get_by_id_response_timeline_events_item_content_title(&self) -> bool {
@@ -280,16 +280,16 @@ impl QueryProblemsGetByIdResponseTimelineEventsItemContent {
                 }
     }
 
-    pub fn as_query_problems_get_by_id_response_timeline_events_item_content_previous_status(&self) -> Option<&QueryProblemsGetByIdResponseTimelineEventsItemContentPreviousStatus> {
+    pub fn as_query_problems_get_by_id_response_timeline_events_item_content_dismissal(&self) -> Option<&QueryProblemsGetByIdResponseTimelineEventsItemContentDismissal> {
         match self {
-                    Self::QueryProblemsGetByIdResponseTimelineEventsItemContentPreviousStatus(value) => Some(value),
+                    Self::QueryProblemsGetByIdResponseTimelineEventsItemContentDismissal(value) => Some(value),
                     _ => None,
                 }
     }
 
-    pub fn into_query_problems_get_by_id_response_timeline_events_item_content_previous_status(self) -> Option<QueryProblemsGetByIdResponseTimelineEventsItemContentPreviousStatus> {
+    pub fn into_query_problems_get_by_id_response_timeline_events_item_content_dismissal(self) -> Option<QueryProblemsGetByIdResponseTimelineEventsItemContentDismissal> {
         match self {
-                    Self::QueryProblemsGetByIdResponseTimelineEventsItemContentPreviousStatus(value) => Some(value),
+                    Self::QueryProblemsGetByIdResponseTimelineEventsItemContentDismissal(value) => Some(value),
                     _ => None,
                 }
     }
@@ -325,7 +325,7 @@ impl fmt::Display for QueryProblemsGetByIdResponseTimelineEventsItemContent {
             Self::QueryProblemsGetByIdResponseTimelineEventsItemContentCosineScore(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsGetByIdResponseTimelineEventsItemContentEleven(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsGetByIdResponseTimelineEventsItemContentRelease(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
-            Self::QueryProblemsGetByIdResponseTimelineEventsItemContentPreviousStatus(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::QueryProblemsGetByIdResponseTimelineEventsItemContentDismissal(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsGetByIdResponseTimelineEventsItemContentTitle(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
         }
     }

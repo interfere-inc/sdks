@@ -4,7 +4,7 @@ use super::*;
 
 #[non_exhaustive]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum TimelineEventContentPreviousStatusPreviousStatus {
+pub enum QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissalStatus {
     Draft,
     Detected,
     Reasoning,
@@ -20,7 +20,7 @@ pub enum TimelineEventContentPreviousStatusPreviousStatus {
     /// it will be captured here with the raw string value.
     __Unknown(String),
 }
-impl Serialize for TimelineEventContentPreviousStatusPreviousStatus {
+impl Serialize for QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissalStatus {
     fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         match self {
             Self::Draft => serializer.serialize_str("DRAFT"),
@@ -38,7 +38,7 @@ impl Serialize for TimelineEventContentPreviousStatusPreviousStatus {
     }
 }
 
-impl<'de> Deserialize<'de> for TimelineEventContentPreviousStatusPreviousStatus {
+impl<'de> Deserialize<'de> for QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissalStatus {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         let value = String::deserialize(deserializer)?;
         match value.as_str() {
@@ -57,7 +57,7 @@ impl<'de> Deserialize<'de> for TimelineEventContentPreviousStatusPreviousStatus 
     }
 }
 
-impl fmt::Display for TimelineEventContentPreviousStatusPreviousStatus {
+impl fmt::Display for QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissalStatus {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Draft => write!(f, "DRAFT"),

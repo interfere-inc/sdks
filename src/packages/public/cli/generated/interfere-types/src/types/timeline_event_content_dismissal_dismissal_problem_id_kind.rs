@@ -3,14 +3,14 @@ pub use crate::prelude::*;
 use super::*;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
-pub enum TimelineEventContentPreviousStatusRetryKind {
-    #[serde(rename = "investigation")]
-    Investigation,
+pub enum TimelineEventContentDismissalDismissalProblemIdKind {
+    #[serde(rename = "duplicateOf")]
+    DuplicateOf,
 }
-impl fmt::Display for TimelineEventContentPreviousStatusRetryKind {
+impl fmt::Display for TimelineEventContentDismissalDismissalProblemIdKind {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let s = match self {
-            Self::Investigation => "investigation",
+            Self::DuplicateOf => "duplicateOf",
         };
         write!(f, "{}", s)
     }

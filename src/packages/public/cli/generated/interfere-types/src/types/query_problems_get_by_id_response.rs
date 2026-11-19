@@ -32,6 +32,9 @@ pub struct QueryProblemsGetByIdResponse {
     #[serde(default)]
     #[serde(with = "crate::core::number_serializers::option")]
     pub description_tainted_at: Option<f64>,
+    #[serde(rename = "dismissReason")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub dismiss_reason: Option<String>,
     #[serde(rename = "dismissedAt")]
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(default)]
@@ -40,6 +43,9 @@ pub struct QueryProblemsGetByIdResponse {
     #[serde(rename = "dismissedBy")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub dismissed_by: Option<String>,
+    #[serde(rename = "dismissedDuplicateOfId")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub dismissed_duplicate_of_id: Option<String>,
     #[serde(rename = "duplicateOfId")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub duplicate_of_id: Option<String>,
@@ -151,8 +157,10 @@ pub struct QueryProblemsGetByIdResponseBuilder {
     compact_title: Option<String>,
     description: Option<String>,
     description_tainted_at: Option<f64>,
+    dismiss_reason: Option<String>,
     dismissed_at: Option<f64>,
     dismissed_by: Option<String>,
+    dismissed_duplicate_of_id: Option<String>,
     duplicate_of_id: Option<String>,
     fingerprint: Option<String>,
     first_seen_at: Option<f64>,
@@ -225,6 +233,11 @@ impl QueryProblemsGetByIdResponseBuilder {
         self
     }
 
+    pub fn dismiss_reason(mut self, value: impl Into<String>) -> Self {
+        self.dismiss_reason = Some(value.into());
+        self
+    }
+
     pub fn dismissed_at(mut self, value: f64) -> Self {
         self.dismissed_at = Some(value);
         self
@@ -232,6 +245,11 @@ impl QueryProblemsGetByIdResponseBuilder {
 
     pub fn dismissed_by(mut self, value: impl Into<String>) -> Self {
         self.dismissed_by = Some(value.into());
+        self
+    }
+
+    pub fn dismissed_duplicate_of_id(mut self, value: impl Into<String>) -> Self {
+        self.dismissed_duplicate_of_id = Some(value.into());
         self
     }
 
@@ -401,8 +419,10 @@ impl QueryProblemsGetByIdResponseBuilder {
             compact_title: self.compact_title,
             description: self.description,
             description_tainted_at: self.description_tainted_at,
+            dismiss_reason: self.dismiss_reason,
             dismissed_at: self.dismissed_at,
             dismissed_by: self.dismissed_by,
+            dismissed_duplicate_of_id: self.dismissed_duplicate_of_id,
             duplicate_of_id: self.duplicate_of_id,
             fingerprint: self.fingerprint.ok_or_else(|| BuildError::missing_field("fingerprint"))?,
             first_seen_at: self.first_seen_at.ok_or_else(|| BuildError::missing_field("first_seen_at"))?,

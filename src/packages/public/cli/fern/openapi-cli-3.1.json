@@ -9731,6 +9731,44 @@
               {
                 "type": "object",
                 "properties": {
+                  "dismissal": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "enum": [
+                              "noise",
+                              "notAMalfunction",
+                              "wontFix"
+                            ],
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "const": "duplicateOf"
+                          },
+                          "problemId": {
+                            "type": "string",
+                            "format": "uuid"
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "problemId"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  },
                   "recoveryEvidence": {
                     "type": "object",
                     "properties": {
@@ -34728,6 +34766,23 @@
                   }
                 ]
               },
+              "dismissReason": {
+                "anyOf": [
+                  {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
               "dismissedAt": {
                 "anyOf": [
                   {
@@ -34739,6 +34794,24 @@
                 ]
               },
               "dismissedBy": {
+                "anyOf": [
+                  {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "dismissedDuplicateOfId": {
                 "anyOf": [
                   {
                     "anyOf": [
@@ -35137,8 +35210,10 @@
               "compactTitle",
               "description",
               "descriptionTaintedAt",
+              "dismissReason",
               "dismissedAt",
               "dismissedBy",
+              "dismissedDuplicateOfId",
               "duplicateOfId",
               "fingerprint",
               "firstSeenAt",
@@ -35314,6 +35389,23 @@
                 }
               ]
             },
+            "dismissReason": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "dismissedAt": {
               "anyOf": [
                 {
@@ -35325,6 +35417,24 @@
               ]
             },
             "dismissedBy": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "dismissedDuplicateOfId": {
               "anyOf": [
                 {
                   "anyOf": [
@@ -38028,6 +38138,44 @@
                       {
                         "type": "object",
                         "properties": {
+                          "dismissal": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "kind": {
+                                    "enum": [
+                                      "noise",
+                                      "notAMalfunction",
+                                      "wontFix"
+                                    ],
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "kind"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "kind": {
+                                    "const": "duplicateOf"
+                                  },
+                                  "problemId": {
+                                    "type": "string",
+                                    "format": "uuid"
+                                  }
+                                },
+                                "required": [
+                                  "kind",
+                                  "problemId"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
                           "recoveryEvidence": {
                             "type": "object",
                             "properties": {
@@ -39720,8 +39868,10 @@
             "compactTitle",
             "description",
             "descriptionTaintedAt",
+            "dismissReason",
             "dismissedAt",
             "dismissedBy",
+            "dismissedDuplicateOfId",
             "duplicateOfId",
             "fingerprint",
             "firstSeenAt",
@@ -39888,6 +40038,23 @@
                   }
                 ]
               },
+              "dismissReason": {
+                "anyOf": [
+                  {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
               "dismissedAt": {
                 "anyOf": [
                   {
@@ -39899,6 +40066,24 @@
                 ]
               },
               "dismissedBy": {
+                "anyOf": [
+                  {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "dismissedDuplicateOfId": {
                 "anyOf": [
                   {
                     "anyOf": [
@@ -43551,6 +43736,44 @@
                         {
                           "type": "object",
                           "properties": {
+                            "dismissal": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "noise",
+                                        "notAMalfunction",
+                                        "wontFix"
+                                      ],
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "kind": {
+                                      "const": "duplicateOf"
+                                    },
+                                    "problemId": {
+                                      "type": "string",
+                                      "format": "uuid"
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "problemId"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
+                            },
                             "recoveryEvidence": {
                               "type": "object",
                               "properties": {
@@ -45420,8 +45643,10 @@
               "compactTitle",
               "description",
               "descriptionTaintedAt",
+              "dismissReason",
               "dismissedAt",
               "dismissedBy",
+              "dismissedDuplicateOfId",
               "duplicateOfId",
               "fingerprint",
               "firstSeenAt",
@@ -45592,6 +45817,23 @@
                 }
               ]
             },
+            "dismissReason": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "dismissedAt": {
               "anyOf": [
                 {
@@ -45603,6 +45845,24 @@
               ]
             },
             "dismissedBy": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "dismissedDuplicateOfId": {
               "anyOf": [
                 {
                   "anyOf": [
@@ -46222,8 +46482,10 @@
             "compactTitle",
             "description",
             "descriptionTaintedAt",
+            "dismissReason",
             "dismissedAt",
             "dismissedBy",
+            "dismissedDuplicateOfId",
             "duplicateOfId",
             "fingerprint",
             "firstSeenAt",
@@ -46390,6 +46652,23 @@
                 }
               ]
             },
+            "dismissReason": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "dismissedAt": {
               "anyOf": [
                 {
@@ -46401,6 +46680,24 @@
               ]
             },
             "dismissedBy": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "dismissedDuplicateOfId": {
               "anyOf": [
                 {
                   "anyOf": [
@@ -47014,8 +47311,10 @@
             "compactTitle",
             "description",
             "descriptionTaintedAt",
+            "dismissReason",
             "dismissedAt",
             "dismissedBy",
+            "dismissedDuplicateOfId",
             "duplicateOfId",
             "fingerprint",
             "firstSeenAt",
@@ -47181,6 +47480,23 @@
                 }
               ]
             },
+            "dismissReason": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "dismissedAt": {
               "anyOf": [
                 {
@@ -47192,6 +47508,24 @@
               ]
             },
             "dismissedBy": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "dismissedDuplicateOfId": {
               "anyOf": [
                 {
                   "anyOf": [
@@ -47811,8 +48145,10 @@
             "compactTitle",
             "description",
             "descriptionTaintedAt",
+            "dismissReason",
             "dismissedAt",
             "dismissedBy",
+            "dismissedDuplicateOfId",
             "duplicateOfId",
             "fingerprint",
             "firstSeenAt",
@@ -73944,7 +74280,7 @@
       "post": {
         "operationId": "problems_dismiss",
         "summary": "problems dismiss",
-        "description": "Dismiss a problem. Inspect its current evidence and state before applying the requested dismissal. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.",
+        "description": "Dismiss a problem with a reason: noise, notAMalfunction or wontFix, or duplicateOf with the problemId of the Problem that already tracks the defect (resolve it with problems.list first). Inspect its current evidence and state before applying the requested dismissal. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.",
         "tags": [
           "problems"
         ],
@@ -73978,6 +74314,44 @@
                       "timelineEventId": {
                         "type": "string",
                         "format": "uuid"
+                      },
+                      "reason": {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "noise",
+                                  "notAMalfunction",
+                                  "wontFix"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "const": "duplicateOf"
+                              },
+                              "problemId": {
+                                "type": "string",
+                                "format": "uuid"
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "problemId"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
                       }
                     },
                     "required": [
@@ -74040,7 +74414,7 @@
       "post": {
         "operationId": "problems_restore",
         "summary": "problems restore",
-        "description": "Restore a problem from its dismissed state as allowed by the lifecycle rules. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.",
+        "description": "Reopen a dismissed or not-a-problem Problem as allowed by the lifecycle rules. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.",
         "tags": [
           "problems"
         ],

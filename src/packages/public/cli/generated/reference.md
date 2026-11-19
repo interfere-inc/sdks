@@ -1091,7 +1091,7 @@ Returns affected-user counts grouped into time buckets for a problem.
 
 #### `interfere problems dismiss`
 
-Dismiss a problem. Inspect its current evidence and state before applying the requested dismissal. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
+Dismiss a problem with a reason: noise, notAMalfunction or wontFix, or duplicateOf with the problemId of the Problem that already tracks the defect (resolve it with problems.list first). Inspect its current evidence and state before applying the requested dismissal. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
 
 `POST /v3/workspaces/{workspaceSlug}/actions/problems.dismiss`
 
@@ -1245,7 +1245,7 @@ Returns daily occurrences and recorded affected-user counts for the last 30 UTC 
 
 #### `interfere problems restore`
 
-Restore a problem from its dismissed state as allowed by the lifecycle rules. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
+Reopen a dismissed or not-a-problem Problem as allowed by the lifecycle rules. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
 
 `POST /v3/workspaces/{workspaceSlug}/actions/problems.restore`
 

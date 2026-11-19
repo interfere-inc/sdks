@@ -31,7 +31,7 @@ pub enum QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContent {
 
         QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentRelease(QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentRelease),
 
-        QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentPreviousStatus(QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentPreviousStatus),
+        QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissal(QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissal),
 
         QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTitle(QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTitle),
 }
@@ -89,8 +89,8 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContent {
         matches!(self, Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentRelease(_))
     }
 
-    pub fn is_query_problems_previous_accounts_response_item_timeline_events_item_content_previous_status(&self) -> bool {
-        matches!(self, Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentPreviousStatus(_))
+    pub fn is_query_problems_previous_accounts_response_item_timeline_events_item_content_dismissal(&self) -> bool {
+        matches!(self, Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissal(_))
     }
 
     pub fn is_query_problems_previous_accounts_response_item_timeline_events_item_content_title(&self) -> bool {
@@ -280,16 +280,16 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContent {
                 }
     }
 
-    pub fn as_query_problems_previous_accounts_response_item_timeline_events_item_content_previous_status(&self) -> Option<&QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentPreviousStatus> {
+    pub fn as_query_problems_previous_accounts_response_item_timeline_events_item_content_dismissal(&self) -> Option<&QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissal> {
         match self {
-                    Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentPreviousStatus(value) => Some(value),
+                    Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissal(value) => Some(value),
                     _ => None,
                 }
     }
 
-    pub fn into_query_problems_previous_accounts_response_item_timeline_events_item_content_previous_status(self) -> Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentPreviousStatus> {
+    pub fn into_query_problems_previous_accounts_response_item_timeline_events_item_content_dismissal(self) -> Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissal> {
         match self {
-                    Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentPreviousStatus(value) => Some(value),
+                    Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissal(value) => Some(value),
                     _ => None,
                 }
     }
@@ -325,7 +325,7 @@ impl fmt::Display for QueryProblemsPreviousAccountsResponseItemTimelineEventsIte
             Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentCosineScore(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEleven(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentRelease(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
-            Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentPreviousStatus(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissal(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTitle(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
         }
     }

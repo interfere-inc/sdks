@@ -10,6 +10,8 @@ pub struct DismissProblemsRequestArgs {
     #[serde(rename = "timelineEventId")]
     #[serde(default)]
     pub timeline_event_id: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reason: Option<DismissProblemsRequestArgsReason>,
 }
 
 impl DismissProblemsRequestArgs {
@@ -23,6 +25,7 @@ impl DismissProblemsRequestArgs {
 pub struct DismissProblemsRequestArgsBuilder {
     problem_id: Option<String>,
     timeline_event_id: Option<String>,
+    reason: Option<DismissProblemsRequestArgsReason>,
 }
 
 impl DismissProblemsRequestArgsBuilder {
@@ -36,6 +39,11 @@ impl DismissProblemsRequestArgsBuilder {
         self
     }
 
+    pub fn reason(mut self, value: DismissProblemsRequestArgsReason) -> Self {
+        self.reason = Some(value);
+        self
+    }
+
     /// Consumes the builder and constructs a [`DismissProblemsRequestArgs`].
     /// This method will fail if any of the following fields are not set:
     /// - [`problem_id`](DismissProblemsRequestArgsBuilder::problem_id)
@@ -44,6 +52,7 @@ impl DismissProblemsRequestArgsBuilder {
         Ok(DismissProblemsRequestArgs {
             problem_id: self.problem_id.ok_or_else(|| BuildError::missing_field("problem_id"))?,
             timeline_event_id: self.timeline_event_id.ok_or_else(|| BuildError::missing_field("timeline_event_id"))?,
+            reason: self.reason,
         })
     }
 }

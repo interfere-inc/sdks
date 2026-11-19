@@ -31,7 +31,7 @@ pub enum TimelineEventContent {
 
         TimelineEventContentRelease(TimelineEventContentRelease),
 
-        TimelineEventContentPreviousStatus(TimelineEventContentPreviousStatus),
+        TimelineEventContentDismissal(TimelineEventContentDismissal),
 
         TimelineEventContentTitle(TimelineEventContentTitle),
 }
@@ -89,8 +89,8 @@ impl TimelineEventContent {
         matches!(self, Self::TimelineEventContentRelease(_))
     }
 
-    pub fn is_timeline_event_content_previous_status(&self) -> bool {
-        matches!(self, Self::TimelineEventContentPreviousStatus(_))
+    pub fn is_timeline_event_content_dismissal(&self) -> bool {
+        matches!(self, Self::TimelineEventContentDismissal(_))
     }
 
     pub fn is_timeline_event_content_title(&self) -> bool {
@@ -280,16 +280,16 @@ impl TimelineEventContent {
                 }
     }
 
-    pub fn as_timeline_event_content_previous_status(&self) -> Option<&TimelineEventContentPreviousStatus> {
+    pub fn as_timeline_event_content_dismissal(&self) -> Option<&TimelineEventContentDismissal> {
         match self {
-                    Self::TimelineEventContentPreviousStatus(value) => Some(value),
+                    Self::TimelineEventContentDismissal(value) => Some(value),
                     _ => None,
                 }
     }
 
-    pub fn into_timeline_event_content_previous_status(self) -> Option<TimelineEventContentPreviousStatus> {
+    pub fn into_timeline_event_content_dismissal(self) -> Option<TimelineEventContentDismissal> {
         match self {
-                    Self::TimelineEventContentPreviousStatus(value) => Some(value),
+                    Self::TimelineEventContentDismissal(value) => Some(value),
                     _ => None,
                 }
     }
@@ -325,7 +325,7 @@ impl fmt::Display for TimelineEventContent {
             Self::TimelineEventContentCosineScore(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::TimelineEventContentEleven(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::TimelineEventContentRelease(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
-            Self::TimelineEventContentPreviousStatus(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::TimelineEventContentDismissal(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::TimelineEventContentTitle(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
         }
     }

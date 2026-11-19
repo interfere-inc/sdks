@@ -3,7 +3,7 @@ pub use crate::prelude::*;
 use super::*;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq, Eq, Hash)]
-pub struct TimelineEventContentPreviousStatusRecoveryEvidence {
+pub struct TimelineEventContentDismissalRecoveryEvidence {
     #[serde(default)]
     pub assessment: String,
     #[serde(rename = "sessionIds")]
@@ -13,21 +13,21 @@ pub struct TimelineEventContentPreviousStatusRecoveryEvidence {
     pub reviewed: bool,
 }
 
-impl TimelineEventContentPreviousStatusRecoveryEvidence {
-    pub fn builder() -> TimelineEventContentPreviousStatusRecoveryEvidenceBuilder {
-        <TimelineEventContentPreviousStatusRecoveryEvidenceBuilder as Default>::default()
+impl TimelineEventContentDismissalRecoveryEvidence {
+    pub fn builder() -> TimelineEventContentDismissalRecoveryEvidenceBuilder {
+        <TimelineEventContentDismissalRecoveryEvidenceBuilder as Default>::default()
     }
 }
 
 #[derive(Clone, PartialEq, Default, Debug)]
 #[non_exhaustive]
-pub struct TimelineEventContentPreviousStatusRecoveryEvidenceBuilder {
+pub struct TimelineEventContentDismissalRecoveryEvidenceBuilder {
     assessment: Option<String>,
     session_ids: Option<Vec<String>>,
     reviewed: Option<bool>,
 }
 
-impl TimelineEventContentPreviousStatusRecoveryEvidenceBuilder {
+impl TimelineEventContentDismissalRecoveryEvidenceBuilder {
     pub fn assessment(mut self, value: impl Into<String>) -> Self {
         self.assessment = Some(value.into());
         self
@@ -43,13 +43,13 @@ impl TimelineEventContentPreviousStatusRecoveryEvidenceBuilder {
         self
     }
 
-    /// Consumes the builder and constructs a [`TimelineEventContentPreviousStatusRecoveryEvidence`].
+    /// Consumes the builder and constructs a [`TimelineEventContentDismissalRecoveryEvidence`].
     /// This method will fail if any of the following fields are not set:
-    /// - [`assessment`](TimelineEventContentPreviousStatusRecoveryEvidenceBuilder::assessment)
-    /// - [`session_ids`](TimelineEventContentPreviousStatusRecoveryEvidenceBuilder::session_ids)
-    /// - [`reviewed`](TimelineEventContentPreviousStatusRecoveryEvidenceBuilder::reviewed)
-    pub fn build(self) -> Result<TimelineEventContentPreviousStatusRecoveryEvidence, BuildError> {
-        Ok(TimelineEventContentPreviousStatusRecoveryEvidence {
+    /// - [`assessment`](TimelineEventContentDismissalRecoveryEvidenceBuilder::assessment)
+    /// - [`session_ids`](TimelineEventContentDismissalRecoveryEvidenceBuilder::session_ids)
+    /// - [`reviewed`](TimelineEventContentDismissalRecoveryEvidenceBuilder::reviewed)
+    pub fn build(self) -> Result<TimelineEventContentDismissalRecoveryEvidence, BuildError> {
+        Ok(TimelineEventContentDismissalRecoveryEvidence {
             assessment: self.assessment.ok_or_else(|| BuildError::missing_field("assessment"))?,
             session_ids: self.session_ids.ok_or_else(|| BuildError::missing_field("session_ids"))?,
             reviewed: self.reviewed.ok_or_else(|| BuildError::missing_field("reviewed"))?,
