@@ -5,7 +5,8 @@ use super::*;
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct CreateSurfaceResponse {
     #[serde(rename = "apiKey")]
-    pub api_key: CreateSurfaceResponseApiKey,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub api_key: Option<CreateSurfaceResponseApiKey>,
     #[serde(rename = "publicKey")]
     #[serde(default)]
     pub public_key: String,
@@ -44,12 +45,11 @@ impl CreateSurfaceResponseBuilder {
 
     /// Consumes the builder and constructs a [`CreateSurfaceResponse`].
     /// This method will fail if any of the following fields are not set:
-    /// - [`api_key`](CreateSurfaceResponseBuilder::api_key)
     /// - [`public_key`](CreateSurfaceResponseBuilder::public_key)
     /// - [`surface`](CreateSurfaceResponseBuilder::surface)
     pub fn build(self) -> Result<CreateSurfaceResponse, BuildError> {
         Ok(CreateSurfaceResponse {
-            api_key: self.api_key.ok_or_else(|| BuildError::missing_field("api_key"))?,
+            api_key: self.api_key,
             public_key: self.public_key.ok_or_else(|| BuildError::missing_field("public_key"))?,
             surface: self.surface.ok_or_else(|| BuildError::missing_field("surface"))?,
         })

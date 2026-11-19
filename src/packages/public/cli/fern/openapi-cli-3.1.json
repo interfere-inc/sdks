@@ -60581,7 +60581,6 @@
           }
         },
         "required": [
-          "apiKey",
           "publicKey",
           "surface"
         ]
