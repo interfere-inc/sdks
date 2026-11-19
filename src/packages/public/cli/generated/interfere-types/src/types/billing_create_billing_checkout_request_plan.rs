@@ -2,43 +2,58 @@ pub use crate::prelude::*;
 #[allow(unused_imports)]
 use super::*;
 
-#[non_exhaustive]
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[serde(untagged)]
 pub enum CreateBillingCheckoutRequestPlan {
-    Pro,
-    Business,
-    /// This variant is used for forward compatibility.
-    /// If the server sends a value not recognized by the current SDK version,
-    /// it will be captured here with the raw string value.
-    __Unknown(String),
-}
-impl Serialize for CreateBillingCheckoutRequestPlan {
-    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        match self {
-            Self::Pro => serializer.serialize_str("pro"),
-            Self::Business => serializer.serialize_str("business"),
-            Self::__Unknown(val) => serializer.serialize_str(val),
-        }
-    }
+        CreateBillingCheckoutRequestPlanZero(CreateBillingCheckoutRequestPlanZero),
+
+        CreateBillingCheckoutRequestPlanOne(CreateBillingCheckoutRequestPlanOne),
 }
 
-impl<'de> Deserialize<'de> for CreateBillingCheckoutRequestPlan {
-    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
-        let value = String::deserialize(deserializer)?;
-        match value.as_str() {
-            "pro" => Ok(Self::Pro),
-            "business" => Ok(Self::Business),
-            _ => Ok(Self::__Unknown(value)),
-        }
+impl CreateBillingCheckoutRequestPlan {
+    pub fn is_create_billing_checkout_request_plan_zero(&self) -> bool {
+        matches!(self, Self::CreateBillingCheckoutRequestPlanZero(_))
+    }
+
+    pub fn is_create_billing_checkout_request_plan_one(&self) -> bool {
+        matches!(self, Self::CreateBillingCheckoutRequestPlanOne(_))
+    }
+
+
+    pub fn as_create_billing_checkout_request_plan_zero(&self) -> Option<&CreateBillingCheckoutRequestPlanZero> {
+        match self {
+                    Self::CreateBillingCheckoutRequestPlanZero(value) => Some(value),
+                    _ => None,
+                }
+    }
+
+    pub fn into_create_billing_checkout_request_plan_zero(self) -> Option<CreateBillingCheckoutRequestPlanZero> {
+        match self {
+                    Self::CreateBillingCheckoutRequestPlanZero(value) => Some(value),
+                    _ => None,
+                }
+    }
+
+    pub fn as_create_billing_checkout_request_plan_one(&self) -> Option<&CreateBillingCheckoutRequestPlanOne> {
+        match self {
+                    Self::CreateBillingCheckoutRequestPlanOne(value) => Some(value),
+                    _ => None,
+                }
+    }
+
+    pub fn into_create_billing_checkout_request_plan_one(self) -> Option<CreateBillingCheckoutRequestPlanOne> {
+        match self {
+                    Self::CreateBillingCheckoutRequestPlanOne(value) => Some(value),
+                    _ => None,
+                }
     }
 }
 
 impl fmt::Display for CreateBillingCheckoutRequestPlan {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Pro => write!(f, "pro"),
-            Self::Business => write!(f, "business"),
-            Self::__Unknown(val) => write!(f, "{}", val),
+            Self::CreateBillingCheckoutRequestPlanZero(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::CreateBillingCheckoutRequestPlanOne(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
         }
     }
 }

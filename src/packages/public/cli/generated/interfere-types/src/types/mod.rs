@@ -5,7 +5,7 @@
 //!
 //! ## Type Categories
 //!
-//! - **Request/Response Types**: 2230 types for API operations
+//! - **Request/Response Types**: 2232 types for API operations
 //! - **Model Types**: 611 types for data representation
 
 pub mod drain_drain_otlp_export_request_signal;
@@ -113,6 +113,8 @@ pub mod surfaces_create_surface_request_api_key;
 pub mod surfaces_create_surface_request_type;
 pub mod surfaces_surface_events_timeseries_request_window;
 pub mod billing_create_billing_checkout_request_billing_interval;
+pub mod billing_create_billing_checkout_request_plan_zero;
+pub mod billing_create_billing_checkout_request_plan_one;
 pub mod billing_create_billing_checkout_request_plan;
 pub mod billing_create_billing_portal_request_flow;
 pub mod tiers_create_tiers_request_shade;
@@ -2955,6 +2957,8 @@ pub use surfaces_create_surface_request_api_key::CreateSurfaceRequestApiKey;
 pub use surfaces_create_surface_request_type::CreateSurfaceRequestType;
 pub use surfaces_surface_events_timeseries_request_window::SurfaceEventsTimeseriesRequestWindow;
 pub use billing_create_billing_checkout_request_billing_interval::CreateBillingCheckoutRequestBillingInterval;
+pub use billing_create_billing_checkout_request_plan_zero::CreateBillingCheckoutRequestPlanZero;
+pub use billing_create_billing_checkout_request_plan_one::CreateBillingCheckoutRequestPlanOne;
 pub use billing_create_billing_checkout_request_plan::CreateBillingCheckoutRequestPlan;
 pub use billing_create_billing_portal_request_flow::CreateBillingPortalRequestFlow;
 pub use tiers_create_tiers_request_shade::CreateTiersRequestShade;

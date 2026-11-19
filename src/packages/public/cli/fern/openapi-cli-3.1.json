@@ -78549,11 +78549,18 @@
                     "format": "uuid"
                   },
                   "plan": {
-                    "enum": [
-                      "pro",
-                      "business"
+                    "anyOf": [
+                      {
+                        "enum": [
+                          "pro",
+                          "team"
+                        ],
+                        "type": "string"
+                      },
+                      {
+                        "const": "business"
+                      }
                     ],
-                    "type": "string",
                     "default": "pro"
                   },
                   "successUrl": {
