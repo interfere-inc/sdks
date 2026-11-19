@@ -35,6 +35,15 @@ export const browserStorage = {
   local: writer(() => localStorage),
   session: writer(() => sessionStorage),
   cookies: {
+    get(name: string) {
+      requireIsolation("browserStorage");
+
+      const pair = document.cookie
+        .split("; ")
+        .find((entry) => entry.startsWith(`${name}=`));
+
+      return pair === undefined ? null : pair.slice(name.length + 1);
+    },
     set(name: string, value: string, attributes = "path=/") {
       requireIsolation("browserStorage");
 

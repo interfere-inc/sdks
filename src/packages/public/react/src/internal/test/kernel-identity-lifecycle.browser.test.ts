@@ -146,7 +146,7 @@ describe("A51 consent required and not granted", () => {
     expect(browserStorage.local.keys()).toStrictEqual([]);
     expect(browserStorage.session.keys()).toStrictEqual([]);
 
-    await expect(cookieStore.get("interfere_did")).resolves.toBeNull();
+    expect(browserStorage.cookies.get("interfere_did")).toBeNull();
   });
 });
 
@@ -165,7 +165,7 @@ describe("A52 analytics consent revoked", () => {
     expect(localStorage.getItem("interfere:session_id")).toBeNull();
     expect(kernel.session.getId()).toMatch(PAGE_ID);
 
-    await expect(cookieStore.get("interfere_did")).resolves.toBeNull();
+    expect(browserStorage.cookies.get("interfere_did")).toBeNull();
 
     const before = sessions().length;
 

@@ -1,3 +1,4 @@
+import { browserStorage } from "@interfere/test-config/browser-storage";
 import { DISABLE_ALL_PLUGINS } from "../../../test/fixtures/disable-all-plugins.js";
 import { worker } from "../../../test/msw.js";
 import { SessionTracker } from "../../tracking/api.js";
@@ -60,7 +61,7 @@ test("keeps analytics dark until provider configuration settles, then activates 
 
   expect(localStorage.getItem("interfere:device_id")).toBe(id);
 
-  expect((await cookieStore.get("interfere_did"))?.value).toBe(id);
+  expect(browserStorage.cookies.get("interfere_did")).toBe(id);
 
   await vi.dynamicImportSettled();
 

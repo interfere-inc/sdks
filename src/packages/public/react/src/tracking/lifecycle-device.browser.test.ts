@@ -39,7 +39,7 @@ describe("A43 device id restored from the cookie", () => {
 });
 
 describe("A44 device id restored from localStorage", () => {
-  test("cookie cleared but localStorage present restores the id and rewrites the cookie", async () => {
+  test("cookie cleared but localStorage present restores the id and rewrites the cookie", () => {
     expect.hasAssertions();
 
     const first = readyDevice();
@@ -48,7 +48,7 @@ describe("A44 device id restored from localStorage", () => {
 
     const id = first.getDeviceId();
 
-    await cookieStore.delete("interfere_did");
+    browserStorage.cookies.remove("interfere_did");
 
     const reloaded = readyDevice();
 
@@ -56,9 +56,7 @@ describe("A44 device id restored from localStorage", () => {
 
     expect(reloaded.getDeviceId()).toBe(id);
 
-    await expect(cookieStore.get("interfere_did")).resolves.toMatchObject({
-      value: id,
-    });
+    expect(browserStorage.cookies.get("interfere_did")).toBe(id);
   });
 });
 
@@ -122,7 +120,7 @@ describe("A61 identity.clear before device identity", () => {
     expect(tracker.getDeviceId()).toBeNull();
     expect(localStorage.getItem("interfere:device_id")).toBeNull();
 
-    await expect(cookieStore.get("interfere_did")).resolves.toBeNull();
+    expect(browserStorage.cookies.get("interfere_did")).toBeNull();
   });
 });
 

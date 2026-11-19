@@ -86,7 +86,7 @@ describe("stored fpHash", () => {
 
     browserStorage.local.remove("interfere:device_id");
 
-    await cookieStore.delete("interfere_did");
+    browserStorage.cookies.remove("interfere_did");
 
     const provider = countingFp("hash-new");
     const later = new DeviceManager(provider.run);

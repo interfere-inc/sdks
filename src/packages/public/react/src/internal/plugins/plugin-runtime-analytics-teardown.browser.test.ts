@@ -1,3 +1,4 @@
+import { browserStorage } from "@interfere/test-config/browser-storage";
 /* oxlint-disable interfere-structure/colocated-tests */
 import { EventType } from "@rrweb/types";
 import { record } from "rrweb";
@@ -31,7 +32,7 @@ test("analytics remote teardown leaves replay recording", async () => {
   expect(deviceId).toStrictEqual(expect.any(String));
   expect(localStorage.getItem("interfere:device_id")).toBe(deviceId);
 
-  expect((await cookieStore.get("interfere_did"))?.value).toBe(deviceId);
+  expect(browserStorage.cookies.get("interfere_did")).toBe(deviceId);
 
   record.addCustomEvent("before-analytics-stop", cause);
 
@@ -46,9 +47,7 @@ test("analytics remote teardown leaves replay recording", async () => {
 
   expect(localStorage.getItem("interfere:device_id")).toBe(deviceId);
 
-  expect((await cookieStore.get("interfere_did"))?.value ?? null).toBe(
-    deviceId,
-  );
+  expect(browserStorage.cookies.get("interfere_did")).toBe(deviceId);
 
   target.click();
 
