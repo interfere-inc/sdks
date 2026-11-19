@@ -28,7 +28,8 @@
     "build": {
       "inputs": [
         "$TURBO_DEFAULT$",
-        "generated/**"
+        "generated/**",
+        "!**/*.test.*"
       ],
       "env": [
         "CARGO_BUILD_TARGET",
