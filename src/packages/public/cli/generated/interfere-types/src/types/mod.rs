@@ -5,7 +5,7 @@
 //!
 //! ## Type Categories
 //!
-//! - **Request/Response Types**: 2233 types for API operations
+//! - **Request/Response Types**: 2229 types for API operations
 //! - **Model Types**: 611 types for data representation
 
 pub mod drain_drain_otlp_export_request_signal;
@@ -108,8 +108,6 @@ pub mod surfaces_set_sdk_plugin_surfaces_request_args_plugin;
 pub mod surfaces_set_sdk_plugin_surfaces_request_args;
 pub mod surfaces_update_name_surfaces_request_args;
 pub mod surfaces_create_surface_request_anonymous_replay_policy;
-pub mod surfaces_create_surface_request_api_key_scopes_item;
-pub mod surfaces_create_surface_request_api_key;
 pub mod surfaces_create_surface_request_type;
 pub mod surfaces_surface_events_timeseries_request_window;
 pub mod billing_create_billing_checkout_request_billing_interval;
@@ -2640,8 +2638,6 @@ pub mod surface_activity_response_value_status;
 pub mod surface_activity_response_value;
 pub mod surface_activity_response;
 pub mod surface_sdk_status_response;
-pub mod create_surface_response_api_key_name;
-pub mod create_surface_response_api_key;
 pub mod create_surface_response_surface_type;
 pub mod create_surface_response_surface;
 pub mod create_surface_response;
@@ -2953,8 +2949,6 @@ pub use surfaces_set_sdk_plugin_surfaces_request_args_plugin::SetSdkPluginSurfac
 pub use surfaces_set_sdk_plugin_surfaces_request_args::SetSdkPluginSurfacesRequestArgs;
 pub use surfaces_update_name_surfaces_request_args::UpdateNameSurfacesRequestArgs;
 pub use surfaces_create_surface_request_anonymous_replay_policy::CreateSurfaceRequestAnonymousReplayPolicy;
-pub use surfaces_create_surface_request_api_key_scopes_item::CreateSurfaceRequestApiKeyScopesItem;
-pub use surfaces_create_surface_request_api_key::CreateSurfaceRequestApiKey;
 pub use surfaces_create_surface_request_type::CreateSurfaceRequestType;
 pub use surfaces_surface_events_timeseries_request_window::SurfaceEventsTimeseriesRequestWindow;
 pub use billing_create_billing_checkout_request_billing_interval::CreateBillingCheckoutRequestBillingInterval;
@@ -5485,8 +5479,6 @@ pub use surface_activity_response_value_status::SurfaceActivityResponseValueStat
 pub use surface_activity_response_value::SurfaceActivityResponseValue;
 pub use surface_activity_response::SurfaceActivityResponse;
 pub use surface_sdk_status_response::SurfaceSdkStatusResponse;
-pub use create_surface_response_api_key_name::CreateSurfaceResponseApiKeyName;
-pub use create_surface_response_api_key::CreateSurfaceResponseApiKey;
 pub use create_surface_response_surface_type::CreateSurfaceResponseSurfaceType;
 pub use create_surface_response_surface::CreateSurfaceResponseSurface;
 pub use create_surface_response::CreateSurfaceResponse;

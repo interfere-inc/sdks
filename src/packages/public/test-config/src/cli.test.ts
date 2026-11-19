@@ -22,6 +22,8 @@ const cli = fileURLToPath(new URL("cli.ts", import.meta.url));
 const config = join(directory, "vitest.config.mts");
 
 beforeAll(() => {
+  delete process.env["VITEST_SELECTION"];
+
   mkdirSync(join(directory, "node_modules"));
 
   symlinkSync(

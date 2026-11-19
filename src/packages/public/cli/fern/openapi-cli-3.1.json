@@ -60522,26 +60522,6 @@
       "CreateSurfaceResponse": {
         "type": "object",
         "properties": {
-          "apiKey": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string"
-              },
-              "name": {
-                "const": "Default"
-              },
-              "secret": {
-                "type": "string",
-                "minLength": 1
-              }
-            },
-            "required": [
-              "id",
-              "name",
-              "secret"
-            ]
-          },
           "publicKey": {
             "type": "string"
           },
@@ -84886,72 +84866,6 @@
                     "default": true,
                     "description": "Whether anonymous-user telemetry is collected."
                   },
-                  "apiKey": {
-                    "type": "object",
-                    "properties": {
-                      "scopes": {
-                        "type": "array",
-                        "minItems": 1,
-                        "items": {
-                          "enum": [
-                            "org:telemetry:write",
-                            "org:surfaces:read",
-                            "org:surfaces:write",
-                            "org:surfaces:delete",
-                            "org:services:read",
-                            "org:services:write",
-                            "org:customers:read",
-                            "org:tiers:read",
-                            "org:tiers:write",
-                            "org:problems:read",
-                            "org:problems:write",
-                            "org:findings:read",
-                            "org:support:read",
-                            "org:support:write",
-                            "org:replays:read",
-                            "org:source_context:read",
-                            "org:integration_settings:read",
-                            "org:integration_settings:write",
-                            "org:workspace_members:read",
-                            "org:workspace_members:write",
-                            "org:workspace_billing:read",
-                            "org:workspace_billing:write",
-                            "org:workspace_basics:read",
-                            "org:workspace_basics:write",
-                            "org:workspace_domains:read",
-                            "org:workspace_domains:write",
-                            "org:api_keys:read",
-                            "org:api_keys:write",
-                            "org:workspace_auth:read",
-                            "org:workspace_auth:write",
-                            "org:workspace:destroy",
-                            "org:workspace:transfer_ownership",
-                            "release:write"
-                          ],
-                          "type": "string"
-                        },
-                        "description": "Permission scopes granted to the key."
-                      },
-                      "secondsUntilExpiration": {
-                        "anyOf": [
-                          {
-                            "type": "integer",
-                            "minimum": -9007199254740991,
-                            "maximum": 9007199254740991,
-                            "exclusiveMinimum": 0,
-                            "description": "Positive lifetime in seconds, or null for no expiry."
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      }
-                    },
-                    "required": [
-                      "scopes",
-                      "secondsUntilExpiration"
-                    ]
-                  },
                   "idempotencyKey": {
                     "type": "string",
                     "format": "uuid"
@@ -84973,7 +84887,6 @@
                   }
                 },
                 "required": [
-                  "apiKey",
                   "idempotencyKey",
                   "name",
                   "type"
@@ -85026,31 +84939,6 @@
                         "message": {
                           "type": "string",
                           "default": "This surface creation attempt no longer matches. Refresh before trying again."
-                        },
-                        "data": {}
-                      },
-                      "required": [
-                        "defined",
-                        "code",
-                        "status",
-                        "message"
-                      ]
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "defined": {
-                          "const": true
-                        },
-                        "code": {
-                          "const": "SURFACE_KEY_CONFLICT"
-                        },
-                        "status": {
-                          "const": 409
-                        },
-                        "message": {
-                          "type": "string",
-                          "default": "This key name or revision is no longer available. Refresh the keys before trying again."
                         },
                         "data": {}
                       },

@@ -3095,12 +3095,6 @@
         "workspace": "workspaceSlug"
       },
       "body": {
-        "apiKey": {
-          "scopes": [
-            "org:telemetry:write"
-          ],
-          "secondsUntilExpiration": null
-        },
         "idempotencyKey": "idempotencyKey",
         "name": "name",
         "type": "nextjs"
@@ -3110,7 +3104,7 @@
       "requiresAuth": true,
       "response": {
         "status": 200,
-        "body": "{\n  \"apiKey\": {\n    \"id\": \"id\",\n    \"name\": \"Default\",\n    \"secret\": \"secret\"\n  },\n  \"publicKey\": \"publicKey\",\n  \"surface\": {\n    \"id\": \"id\",\n    \"name\": \"name\",\n    \"slug\": \"slug\",\n    \"type\": \"nextjs\"\n  }\n}"
+        "body": "{\n  \"publicKey\": \"publicKey\",\n  \"surface\": {\n    \"id\": \"id\",\n    \"name\": \"name\",\n    \"slug\": \"slug\",\n    \"type\": \"nextjs\"\n  }\n}"
       }
     },
     {
@@ -7725,12 +7719,6 @@
         "workspace": "workspaceSlug"
       },
       "body": {
-        "apiKey": {
-          "scopes": [
-            "org:telemetry:write"
-          ],
-          "secondsUntilExpiration": null
-        },
         "idempotencyKey": "idempotencyKey",
         "name": "name",
         "type": "nextjs"

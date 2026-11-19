@@ -768,11 +768,6 @@ impl SurfacesClient {
     ///         .create_surface(
     ///             &"workspaceSlug".to_string(),
     ///             &CreateSurfaceRequest {
-    ///                 api_key: CreateSurfaceRequestAPIKey {
-    ///                     scopes: vec![CreateSurfaceRequestAPIKeyScopesItem::OrgTelemetryWrite],
-    ///                     seconds_until_expiration: None,
-    ///                     ..Default::default()
-    ///                 },
     ///                 idempotency_key: "idempotencyKey".to_string(),
     ///                 name: "name".to_string(),
     ///                 r#type: CreateSurfaceRequestType::Nextjs,
