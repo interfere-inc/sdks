@@ -83298,15 +83298,13 @@
                     "anyOf": [
                       {
                         "type": "string",
-                        "minLength": 1,
                         "maxLength": 255
                       },
                       {
                         "type": "null"
                       }
                     ],
-                    "default": null,
-                    "description": "Provider resource that tells apart services sharing a namespace and name, such as vercel:prj_abc for one Vercel project. Null addresses the service without one."
+                    "description": "Provider resource that tells apart services sharing a namespace and name, such as vercel:prj_abc for one Vercel project. Omit it to address the only service with this namespace and name; null or an empty string addresses the service without a resource."
                   },
                   "reportableEnvironment": {
                     "anyOf": [
@@ -83474,15 +83472,13 @@
                     "anyOf": [
                       {
                         "type": "string",
-                        "minLength": 1,
                         "maxLength": 255
                       },
                       {
                         "type": "null"
                       }
                     ],
-                    "default": null,
-                    "description": "Provider resource that tells apart services sharing a namespace and name, such as vercel:prj_abc for one Vercel project. Null addresses the service without one."
+                    "description": "Provider resource that tells apart services sharing a namespace and name, such as vercel:prj_abc for one Vercel project. Omit it to address the only service with this namespace and name; null or an empty string addresses the service without a resource."
                   },
                   "source": {
                     "anyOf": [
