@@ -5,7 +5,7 @@
 //!
 //! ## Type Categories
 //!
-//! - **Request/Response Types**: 2232 types for API operations
+//! - **Request/Response Types**: 2233 types for API operations
 //! - **Model Types**: 611 types for data representation
 
 pub mod drain_drain_otlp_export_request_signal;
@@ -2627,6 +2627,7 @@ pub mod submit_problem_feedback_response;
 pub mod service_activity_response_services_item;
 pub mod service_activity_response_signals_item_platform;
 pub mod service_activity_response_signals_item;
+pub mod service_activity_response_sdks_item_status;
 pub mod service_activity_response_sdks_item;
 pub mod service_activity_response;
 pub mod set_service_reportable_environment_response;
@@ -5471,6 +5472,7 @@ pub use submit_problem_feedback_response::SubmitProblemFeedbackResponse;
 pub use service_activity_response_services_item::ServiceActivityResponseServicesItem;
 pub use service_activity_response_signals_item_platform::ServiceActivityResponseSignalsItemPlatform;
 pub use service_activity_response_signals_item::ServiceActivityResponseSignalsItem;
+pub use service_activity_response_sdks_item_status::ServiceActivityResponseSdksItemStatus;
 pub use service_activity_response_sdks_item::ServiceActivityResponseSdksItem;
 pub use service_activity_response::ServiceActivityResponse;
 pub use set_service_reportable_environment_response::SetServiceReportableEnvironmentResponse;

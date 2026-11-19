@@ -107,6 +107,9 @@ pub struct QueryProblemsListResponseItem {
     pub resolved_at: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sequence: Option<i64>,
+    #[serde(rename = "serviceId")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub service_id: Option<String>,
     pub status: QueryProblemsListResponseItemStatus,
     #[serde(rename = "surfaceId")]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -175,6 +178,7 @@ pub struct QueryProblemsListResponseItemBuilder {
     regression_probability: Option<f64>,
     resolved_at: Option<f64>,
     sequence: Option<i64>,
+    service_id: Option<String>,
     status: Option<QueryProblemsListResponseItemStatus>,
     surface_id: Option<String>,
     title: Option<String>,
@@ -341,6 +345,11 @@ impl QueryProblemsListResponseItemBuilder {
         self
     }
 
+    pub fn service_id(mut self, value: impl Into<String>) -> Self {
+        self.service_id = Some(value.into());
+        self
+    }
+
     pub fn status(mut self, value: QueryProblemsListResponseItemStatus) -> Self {
         self.status = Some(value);
         self
@@ -424,6 +433,7 @@ impl QueryProblemsListResponseItemBuilder {
             regression_probability: self.regression_probability,
             resolved_at: self.resolved_at,
             sequence: self.sequence,
+            service_id: self.service_id,
             status: self.status.ok_or_else(|| BuildError::missing_field("status"))?,
             surface_id: self.surface_id,
             title: self.title,

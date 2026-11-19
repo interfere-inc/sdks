@@ -13,7 +13,7 @@ impl ServicesClient {
         })
     }
 
-    /// Returns the latest span time for each OpenTelemetry service in the workspace over the last 7 days. Services with no spans in that window are omitted. Also returns hourly span, log and metric point counts per service over the last 24 hours, aligned to `buckets`; services with no signals in that window are omitted from `signals`. `sdks` lists the Interfere SDK name and version that sent each namespace-less service's spans over the same 24 hours, with span counts.
+    /// Returns the latest span time for each OpenTelemetry service in the workspace over the last 7 days. Services with no spans in that window are omitted. Also returns hourly span, log and metric point counts per service over the last 24 hours, aligned to `buckets`; services with no signals in that window are omitted from `signals`. `sdks` lists the Interfere SDK name and version that sent each namespace-less service's spans over the same 24 hours, with span counts. Each row’s `status` is `supported`, `outdated` or `unknown` for the newest SDK version that service reported, against the minimum supported SDK version.
     ///
     /// # Arguments
     ///

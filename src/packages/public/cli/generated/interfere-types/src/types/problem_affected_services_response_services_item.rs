@@ -10,6 +10,9 @@ pub struct ProblemAffectedServicesResponseServicesItem {
     pub namespace: Option<String>,
     #[serde(default)]
     pub name: String,
+    /// Provider resource that tells apart services sharing a namespace and name, such as vercel:prj_abc; null for a service without one.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub resource: Option<String>,
     pub r#type: ProblemAffectedServicesResponseServicesItemType,
     #[serde(default)]
     pub traces: i64,
@@ -27,6 +30,7 @@ pub struct ProblemAffectedServicesResponseServicesItemBuilder {
     id: Option<String>,
     namespace: Option<String>,
     name: Option<String>,
+    resource: Option<String>,
     r#type: Option<ProblemAffectedServicesResponseServicesItemType>,
     traces: Option<i64>,
 }
@@ -44,6 +48,11 @@ impl ProblemAffectedServicesResponseServicesItemBuilder {
 
     pub fn name(mut self, value: impl Into<String>) -> Self {
         self.name = Some(value.into());
+        self
+    }
+
+    pub fn resource(mut self, value: impl Into<String>) -> Self {
+        self.resource = Some(value.into());
         self
     }
 
@@ -68,6 +77,7 @@ impl ProblemAffectedServicesResponseServicesItemBuilder {
             id: self.id.ok_or_else(|| BuildError::missing_field("id"))?,
             namespace: self.namespace,
             name: self.name.ok_or_else(|| BuildError::missing_field("name"))?,
+            resource: self.resource,
             r#type: self.r#type.ok_or_else(|| BuildError::missing_field("r#type"))?,
             traces: self.traces.ok_or_else(|| BuildError::missing_field("traces"))?,
         })

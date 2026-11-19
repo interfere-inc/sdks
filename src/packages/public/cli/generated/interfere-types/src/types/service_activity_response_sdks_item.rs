@@ -11,6 +11,8 @@ pub struct ServiceActivityResponseSdksItem {
     pub name: String,
     #[serde(default)]
     pub version: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub status: Option<ServiceActivityResponseSdksItemStatus>,
     #[serde(default)]
     pub spans: i64,
 }
@@ -27,6 +29,7 @@ pub struct ServiceActivityResponseSdksItemBuilder {
     service_id: Option<String>,
     name: Option<String>,
     version: Option<String>,
+    status: Option<ServiceActivityResponseSdksItemStatus>,
     spans: Option<i64>,
 }
 
@@ -46,6 +49,11 @@ impl ServiceActivityResponseSdksItemBuilder {
         self
     }
 
+    pub fn status(mut self, value: ServiceActivityResponseSdksItemStatus) -> Self {
+        self.status = Some(value);
+        self
+    }
+
     pub fn spans(mut self, value: i64) -> Self {
         self.spans = Some(value);
         self
@@ -62,6 +70,7 @@ impl ServiceActivityResponseSdksItemBuilder {
             service_id: self.service_id.ok_or_else(|| BuildError::missing_field("service_id"))?,
             name: self.name.ok_or_else(|| BuildError::missing_field("name"))?,
             version: self.version.ok_or_else(|| BuildError::missing_field("version"))?,
+            status: self.status,
             spans: self.spans.ok_or_else(|| BuildError::missing_field("spans"))?,
         })
     }

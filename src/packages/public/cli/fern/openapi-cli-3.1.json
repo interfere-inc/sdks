@@ -35144,6 +35144,24 @@
                   }
                 ]
               },
+              "serviceId": {
+                "anyOf": [
+                  {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
               "status": {
                 "enum": [
                   "DRAFT",
@@ -35253,6 +35271,7 @@
               "regressionProbability",
               "resolvedAt",
               "sequence",
+              "serviceId",
               "status",
               "surfaceId",
               "title",
@@ -35756,6 +35775,24 @@
                       "type": "integer",
                       "minimum": -9007199254740991,
                       "maximum": 9007199254740991
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "serviceId": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uuid"
                     },
                     {
                       "type": "null"
@@ -39911,6 +39948,7 @@
             "regressionProbability",
             "resolvedAt",
             "sequence",
+            "serviceId",
             "status",
             "surfaceId",
             "title",
@@ -40405,6 +40443,24 @@
                         "type": "integer",
                         "minimum": -9007199254740991,
                         "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "serviceId": {
+                "anyOf": [
+                  {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid"
                       },
                       {
                         "type": "null"
@@ -45686,6 +45742,7 @@
               "regressionProbability",
               "resolvedAt",
               "sequence",
+              "serviceId",
               "status",
               "surfaceId",
               "title",
@@ -46195,6 +46252,24 @@
                 }
               ]
             },
+            "serviceId": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "status": {
               "enum": [
                 "DRAFT",
@@ -46525,6 +46600,7 @@
             "regressionProbability",
             "resolvedAt",
             "sequence",
+            "serviceId",
             "status",
             "surfaceId",
             "title",
@@ -47030,6 +47106,24 @@
                 }
               ]
             },
+            "serviceId": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "status": {
               "enum": [
                 "DRAFT",
@@ -47354,6 +47448,7 @@
             "regressionProbability",
             "resolvedAt",
             "sequence",
+            "serviceId",
             "status",
             "surfaceId",
             "title",
@@ -47858,6 +47953,24 @@
                 }
               ]
             },
+            "serviceId": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "status": {
               "enum": [
                 "DRAFT",
@@ -48188,6 +48301,7 @@
             "regressionProbability",
             "resolvedAt",
             "sequence",
+            "serviceId",
             "status",
             "surfaceId",
             "title",
@@ -58131,6 +58245,17 @@
                 "name": {
                   "type": "string"
                 },
+                "resource": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "description": "Provider resource that tells apart services sharing a namespace and name, such as vercel:prj_abc; null for a service without one."
+                },
                 "type": {
                   "enum": [
                     "unclassified",
@@ -58150,6 +58275,7 @@
                 "id",
                 "namespace",
                 "name",
+                "resource",
                 "type",
                 "traces"
               ]
@@ -60235,6 +60361,15 @@
                 "version": {
                   "type": "string"
                 },
+                "status": {
+                  "enum": [
+                    "supported",
+                    "outdated",
+                    "unknown"
+                  ],
+                  "type": "string",
+                  "default": "unknown"
+                },
                 "spans": {
                   "type": "integer",
                   "minimum": 0,
@@ -62054,6 +62189,45 @@
                     "message": {
                       "type": "string",
                       "default": "Workspace not found."
+                    },
+                    "data": {}
+                  },
+                  "required": [
+                    "defined",
+                    "code",
+                    "status",
+                    "message"
+                  ]
+                },
+                {
+                  "$ref": "#/components/schemas/RpcUnexpectedError"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "ErrorResponse_e722459efa1895c7ae07d93a423d9ae54f251751e36386e8a768dacf698c5e0f": {
+        "description": "Request conflicts with current state",
+        "content": {
+          "application/json": {
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "defined": {
+                      "const": true
+                    },
+                    "code": {
+                      "const": "SERVICE_RESOURCE_REQUIRED"
+                    },
+                    "status": {
+                      "const": 409
+                    },
+                    "message": {
+                      "type": "string",
+                      "default": "Several services share this namespace and name. Send resource to choose one."
                     },
                     "data": {}
                   },
@@ -83218,7 +83392,7 @@
       "get": {
         "operationId": "serviceActivity",
         "summary": "Get service activity",
-        "description": "Returns the latest span time for each OpenTelemetry service in the workspace over the last 7 days. Services with no spans in that window are omitted. Also returns hourly span, log and metric point counts per service over the last 24 hours, aligned to `buckets`; services with no signals in that window are omitted from `signals`. `sdks` lists the Interfere SDK name and version that sent each namespace-less service's spans over the same 24 hours, with span counts.",
+        "description": "Returns the latest span time for each OpenTelemetry service in the workspace over the last 7 days. Services with no spans in that window are omitted. Also returns hourly span, log and metric point counts per service over the last 24 hours, aligned to `buckets`; services with no signals in that window are omitted from `signals`. `sdks` lists the Interfere SDK name and version that sent each namespace-less service's spans over the same 24 hours, with span counts. Each row’s `status` is `supported`, `outdated` or `unknown` for the newest SDK version that service reported, against the minimum supported SDK version.",
         "tags": [
           "Services"
         ],
@@ -83324,7 +83498,7 @@
                         "type": "null"
                       }
                     ],
-                    "description": "Provider resource that tells apart services sharing a namespace and name, such as vercel:prj_abc for one Vercel project. Omit it to address the only service with this namespace and name; null or an empty string addresses the service without a resource."
+                    "description": "Provider resource that tells apart services sharing a namespace and name, such as vercel:prj_abc for one Vercel project. Omit it to address the only service with this namespace and name; when several share it, the call answers SERVICE_RESOURCE_REQUIRED with their resources. Null or an empty string addresses the service without a resource."
                   },
                   "reportableEnvironment": {
                     "anyOf": [
@@ -83432,6 +83606,9 @@
               }
             }
           },
+          "409": {
+            "$ref": "#/components/responses/ErrorResponse_e722459efa1895c7ae07d93a423d9ae54f251751e36386e8a768dacf698c5e0f"
+          },
           "503": {
             "$ref": "#/components/responses/ErrorResponse_b7d254f6bd68a887b2398a1b58fb8fe3913110d7236a6e4540d7d2aa990fb12b"
           }
@@ -83498,7 +83675,7 @@
                         "type": "null"
                       }
                     ],
-                    "description": "Provider resource that tells apart services sharing a namespace and name, such as vercel:prj_abc for one Vercel project. Omit it to address the only service with this namespace and name; null or an empty string addresses the service without a resource."
+                    "description": "Provider resource that tells apart services sharing a namespace and name, such as vercel:prj_abc for one Vercel project. Omit it to address the only service with this namespace and name; when several share it, the call answers SERVICE_RESOURCE_REQUIRED with their resources. Null or an empty string addresses the service without a resource."
                   },
                   "source": {
                     "anyOf": [
@@ -83652,6 +83829,9 @@
                 }
               }
             }
+          },
+          "409": {
+            "$ref": "#/components/responses/ErrorResponse_e722459efa1895c7ae07d93a423d9ae54f251751e36386e8a768dacf698c5e0f"
           },
           "503": {
             "$ref": "#/components/responses/ErrorResponse_b7d254f6bd68a887b2398a1b58fb8fe3913110d7236a6e4540d7d2aa990fb12b"
