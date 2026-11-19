@@ -193,7 +193,10 @@ test("the Profound shape: a discovered host that allows traceparent and tracesta
 
   withBackendHosts();
 
+  const gate = Promise.withResolvers<undefined>();
+
   const backend = record(BACKEND, {
+    probeGate: gate.promise,
     rejects: (entry) => entry.baggage !== null,
   });
 
@@ -204,6 +207,8 @@ test("the Profound shape: a discovered host that allows traceparent and tracesta
   await post(`${BACKEND}/slides`);
 
   await sendXhr(`${BACKEND}/slides`, {}, "PUT");
+
+  gate.resolve(undefined);
 
   await provenSettled(BACKEND);
 
