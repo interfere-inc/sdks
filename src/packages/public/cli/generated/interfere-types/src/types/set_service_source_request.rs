@@ -8,6 +8,9 @@ pub struct SetServiceSourceRequest {
     pub namespace: Option<String>,
     #[serde(default)]
     pub name: String,
+    /// Provider resource that tells apart services sharing a namespace and name, such as vercel:prj_abc for one Vercel project. Null addresses the service without one.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub resource: Option<String>,
     /// Repository that holds this service's code, or null to remove the link.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub source: Option<SetServiceSourceRequestSource>,
@@ -24,6 +27,7 @@ impl SetServiceSourceRequest {
 pub struct SetServiceSourceRequestBuilder {
     namespace: Option<String>,
     name: Option<String>,
+    resource: Option<String>,
     source: Option<SetServiceSourceRequestSource>,
 }
 
@@ -35,6 +39,11 @@ impl SetServiceSourceRequestBuilder {
 
     pub fn name(mut self, value: impl Into<String>) -> Self {
         self.name = Some(value.into());
+        self
+    }
+
+    pub fn resource(mut self, value: impl Into<String>) -> Self {
+        self.resource = Some(value.into());
         self
     }
 
@@ -50,6 +59,7 @@ impl SetServiceSourceRequestBuilder {
         Ok(SetServiceSourceRequest {
             namespace: self.namespace,
             name: self.name.ok_or_else(|| BuildError::missing_field("name"))?,
+            resource: self.resource,
             source: self.source,
         })
     }

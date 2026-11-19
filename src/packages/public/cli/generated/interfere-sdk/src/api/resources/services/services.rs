@@ -100,6 +100,7 @@ impl ServicesClient {
     ///             &SetServiceReportableEnvironmentRequest {
     ///                 name: "name".to_string(),
     ///                 namespace: None,
+    ///                 resource: None,
     ///                 reportable_environment: None,
     ///             },
     ///             None,
@@ -169,6 +170,7 @@ impl ServicesClient {
     ///             &SetServiceSourceRequest {
     ///                 name: "name".to_string(),
     ///                 namespace: None,
+    ///                 resource: None,
     ///                 source: None,
     ///             },
     ///             None,
