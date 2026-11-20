@@ -281,7 +281,7 @@ impl PrivateClient {
             .await
     }
 
-    /// Creates a private API key with explicit scopes and expiration. Supply surfaceSlug for an app key; omit it for a workspace key. Grants cannot exceed the caller's permissions. Reuse the same idempotency key and request after an uncertain response.
+    /// Creates a workspace secret API key with explicit scopes and expiration. One key with the release:write scope publishes releases for every app in the workspace. Grants cannot exceed the caller's permissions. Reuse the same idempotency key and request after an uncertain response.
     ///
     /// # Arguments
     ///
@@ -313,7 +313,6 @@ impl PrivateClient {
     ///                 idempotency_key: "idempotencyKey".to_string(),
     ///                 name: "name".to_string(),
     ///                 scopes: vec![CreatePrivateRequestScopesItem::OrgTelemetryWrite],
-    ///                 surface_slug: None,
     ///                 seconds_until_expiration: None,
     ///             },
     ///             None,
@@ -462,155 +461,6 @@ impl PrivateClient {
                 Method::DELETE,
                 &format!("v3/workspaces/{}/api-keys/{}", workspace, api_key_id),
                 None,
-                None,
-                options,
-            )
-            .await
-    }
-
-    /// Creates a secret API key. Reuse the same idempotencyKey and intent after a transport failure to recover the same creation attempt.
-    ///
-    /// # Arguments
-    ///
-    /// * `workspace` - Workspace URL slug, using lowercase letters, numbers, and hyphens.
-    /// * `surface_slug` - Surface URL slug, using lowercase letters, numbers, and hyphens.
-    /// * `options` - Additional request options such as headers, timeout, etc.
-    ///
-    /// # Returns
-    ///
-    /// JSON response from the API
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// use interfere_sdk::prelude::*;
-    ///
-    /// #[tokio::main]
-    /// async fn main() {
-    ///     let config = ClientConfig {
-    ///         api_key: Some("<value>".to_string()),
-    ///         ..Default::default()
-    ///     };
-    ///     let client = InterfereClient::new(config).expect("Failed to build client");
-    ///     client
-    ///         .keys
-    ///         .private
-    ///         .create_for_surface(
-    ///             &"workspaceSlug".to_string(),
-    ///             &"surfaceSlug".to_string(),
-    ///             &CreateForSurfacePrivateRequest {
-    ///                 idempotency_key: "idempotencyKey".to_string(),
-    ///                 name: "name".to_string(),
-    ///                 scopes: vec![CreateForSurfacePrivateRequestScopesItem::OrgTelemetryWrite],
-    ///                 seconds_until_expiration: None,
-    ///             },
-    ///             None,
-    ///         )
-    ///         .await;
-    /// }
-    /// ```
-    pub async fn create_for_surface(
-        &self,
-        workspace: &str,
-        surface_slug: &str,
-        request: &CreateForSurfacePrivateRequest,
-        options: Option<RequestOptions>,
-    ) -> Result<CreateWorkspaceApiKeyResponse, ApiError> {
-        let endpoint_auth_headers = self
-            .http_client
-            .resolve_endpoint_auth_headers(&options, &[&["clerkSession"] as &[&str]])
-            .await?;
-        let options = {
-            let mut o = options.unwrap_or_default();
-            for (header_key, header_value) in endpoint_auth_headers {
-                o.additional_headers.insert(header_key, header_value);
-            }
-            o.max_retries = Some(0);
-            Some(o)
-        };
-        self.http_client
-            .execute_request(
-                Method::POST,
-                &format!(
-                    "v3/workspaces/{}/surfaces/{}/apiKey",
-                    workspace, surface_slug
-                ),
-                Some(serde_json::to_value(request).map_err(ApiError::Serialization)?),
-                None,
-                options,
-            )
-            .await
-    }
-
-    /// Rotates a secret API key. Reuse the same idempotencyKey and intent when retrying the rotation.
-    ///
-    /// # Arguments
-    ///
-    /// * `workspace` - Workspace URL slug, using lowercase letters, numbers, and hyphens.
-    /// * `surface_slug` - Surface URL slug, using lowercase letters, numbers, and hyphens.
-    /// * `options` - Additional request options such as headers, timeout, etc.
-    ///
-    /// # Returns
-    ///
-    /// JSON response from the API
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// use interfere_sdk::prelude::*;
-    ///
-    /// #[tokio::main]
-    /// async fn main() {
-    ///     let config = ClientConfig {
-    ///         api_key: Some("<value>".to_string()),
-    ///         ..Default::default()
-    ///     };
-    ///     let client = InterfereClient::new(config).expect("Failed to build client");
-    ///     client
-    ///         .keys
-    ///         .private
-    ///         .rotate(
-    ///             &"workspaceSlug".to_string(),
-    ///             &"surfaceSlug".to_string(),
-    ///             &"apiKeyId".to_string(),
-    ///             &RotatePrivateRequest {
-    ///                 expected_updated_at: 1,
-    ///                 retire_after_seconds: "retireAfterSeconds".to_string(),
-    ///                 idempotency_key: "idempotencyKey".to_string(),
-    ///             },
-    ///             None,
-    ///         )
-    ///         .await;
-    /// }
-    /// ```
-    pub async fn rotate(
-        &self,
-        workspace: &str,
-        surface_slug: &str,
-        api_key_id: &str,
-        request: &RotatePrivateRequest,
-        options: Option<RequestOptions>,
-    ) -> Result<CreateWorkspaceApiKeyResponse, ApiError> {
-        let endpoint_auth_headers = self
-            .http_client
-            .resolve_endpoint_auth_headers(&options, &[&["clerkSession"] as &[&str]])
-            .await?;
-        let options = {
-            let mut o = options.unwrap_or_default();
-            for (header_key, header_value) in endpoint_auth_headers {
-                o.additional_headers.insert(header_key, header_value);
-            }
-            o.max_retries = Some(0);
-            Some(o)
-        };
-        self.http_client
-            .execute_request(
-                Method::POST,
-                &format!(
-                    "v3/workspaces/{}/surfaces/{}/apiKey/{}/roll",
-                    workspace, surface_slug, api_key_id
-                ),
-                Some(serde_json::to_value(request).map_err(ApiError::Serialization)?),
                 None,
                 options,
             )

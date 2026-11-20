@@ -782,25 +782,13 @@ Legacy alias for connections.vercelInstallations. List Vercel installations avai
 
 #### `interfere keys private create`
 
-Creates a private API key with explicit scopes and expiration. Supply surfaceSlug for an app key; omit it for a workspace key. Grants cannot exceed the caller's permissions. Reuse the same idempotency key and request after an uncertain response.
+Creates a workspace secret API key with explicit scopes and expiration. One key with the release:write scope publishes releases for every app in the workspace. Grants cannot exceed the caller's permissions. Reuse the same idempotency key and request after an uncertain response.
 
 `POST /v3/workspaces/{workspaceSlug}/api-keys`
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
 | `--workspace-slug` | `string` | Yes |  |
-| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
-
-#### `interfere keys private create-for-surface`
-
-Creates a secret API key. Reuse the same idempotencyKey and intent after a transport failure to recover the same creation attempt.
-
-`POST /v3/workspaces/{workspaceSlug}/surfaces/{surfaceSlug}/apiKey`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-| `--surface-slug` | `string` | Yes |  |
 | `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
 
 #### `interfere keys private delete`
@@ -856,19 +844,6 @@ Revoke a private API key identified from keys.private.listForSurface. Clients us
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
 | `--workspace-slug` | `string` | Yes |  |
-| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
-
-#### `interfere keys private rotate`
-
-Rotates a secret API key. Reuse the same idempotencyKey and intent when retrying the rotation.
-
-`POST /v3/workspaces/{workspaceSlug}/surfaces/{surfaceSlug}/apiKey/{apiKeyId}/roll`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-| `--surface-slug` | `string` | Yes |  |
-| `--api-key-id` | `string (uuid)` | Yes |  |
 | `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
 
 #### `interfere keys private update-name`

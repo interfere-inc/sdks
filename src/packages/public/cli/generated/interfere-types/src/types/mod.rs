@@ -5,7 +5,7 @@
 //!
 //! ## Type Categories
 //!
-//! - **Request/Response Types**: 2229 types for API operations
+//! - **Request/Response Types**: 2226 types for API operations
 //! - **Model Types**: 611 types for data representation
 
 pub mod drain_drain_otlp_export_request_signal;
@@ -129,7 +129,6 @@ pub mod keys_private_list_for_surface_private_request_args;
 pub mod keys_private_revoke_private_request_args;
 pub mod keys_private_update_name_private_request_args;
 pub mod keys_private_create_private_request_scopes_item;
-pub mod keys_private_create_for_surface_private_request_scopes_item;
 pub mod keys_public_list_for_surface_public_request_args;
 pub mod keys_public_revoke_public_request_args;
 pub mod keys_public_revoke_workspace_key_public_request_args;
@@ -2782,8 +2781,6 @@ pub mod list_for_surface_private_request;
 pub mod revoke_private_request;
 pub mod update_name_private_request;
 pub mod create_private_request;
-pub mod create_for_surface_private_request;
-pub mod rotate_private_request;
 pub mod list_for_surface_public_request;
 pub mod for_workspace_public_request;
 pub mod revoke_public_request;
@@ -2970,7 +2967,6 @@ pub use keys_private_list_for_surface_private_request_args::ListForSurfacePrivat
 pub use keys_private_revoke_private_request_args::RevokePrivateRequestArgs;
 pub use keys_private_update_name_private_request_args::UpdateNamePrivateRequestArgs;
 pub use keys_private_create_private_request_scopes_item::CreatePrivateRequestScopesItem;
-pub use keys_private_create_for_surface_private_request_scopes_item::CreateForSurfacePrivateRequestScopesItem;
 pub use keys_public_list_for_surface_public_request_args::ListForSurfacePublicRequestArgs;
 pub use keys_public_revoke_public_request_args::RevokePublicRequestArgs;
 pub use keys_public_revoke_workspace_key_public_request_args::RevokeWorkspaceKeyPublicRequestArgs;
@@ -5623,8 +5619,6 @@ pub use list_for_surface_private_request::ListForSurfacePrivateRequest;
 pub use revoke_private_request::RevokePrivateRequest;
 pub use update_name_private_request::UpdateNamePrivateRequest;
 pub use create_private_request::CreatePrivateRequest;
-pub use create_for_surface_private_request::CreateForSurfacePrivateRequest;
-pub use rotate_private_request::RotatePrivateRequest;
 pub use list_for_surface_public_request::ListForSurfacePublicRequest;
 pub use for_workspace_public_request::ForWorkspacePublicRequest;
 pub use revoke_public_request::RevokePublicRequest;

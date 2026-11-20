@@ -4,10 +4,6 @@ use super::*;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq, Eq, Hash)]
 pub struct CreatePrivateRequest {
-    /// Surface URL slug, using lowercase letters, numbers, and hyphens.
-    #[serde(rename = "surfaceSlug")]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub surface_slug: Option<String>,
     #[serde(rename = "idempotencyKey")]
     #[serde(default)]
     pub idempotency_key: String,
@@ -32,7 +28,6 @@ impl CreatePrivateRequest {
 #[derive(Clone, PartialEq, Default, Debug)]
 #[non_exhaustive]
 pub struct CreatePrivateRequestBuilder {
-    surface_slug: Option<String>,
     idempotency_key: Option<String>,
     name: Option<String>,
     scopes: Option<Vec<CreatePrivateRequestScopesItem>>,
@@ -40,11 +35,6 @@ pub struct CreatePrivateRequestBuilder {
 }
 
 impl CreatePrivateRequestBuilder {
-    pub fn surface_slug(mut self, value: impl Into<String>) -> Self {
-        self.surface_slug = Some(value.into());
-        self
-    }
-
     pub fn idempotency_key(mut self, value: impl Into<String>) -> Self {
         self.idempotency_key = Some(value.into());
         self
@@ -72,7 +62,6 @@ impl CreatePrivateRequestBuilder {
     /// - [`scopes`](CreatePrivateRequestBuilder::scopes)
     pub fn build(self) -> Result<CreatePrivateRequest, BuildError> {
         Ok(CreatePrivateRequest {
-            surface_slug: self.surface_slug,
             idempotency_key: self.idempotency_key.ok_or_else(|| BuildError::missing_field("idempotency_key"))?,
             name: self.name.ok_or_else(|| BuildError::missing_field("name"))?,
             scopes: self.scopes.ok_or_else(|| BuildError::missing_field("scopes"))?,

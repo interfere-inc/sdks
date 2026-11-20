@@ -1971,16 +1971,6 @@ async fn wire_delete_3() {
 }
 
 #[tokio::test]
-async fn wire_create_for_surface() {
-    run_case("create_for_surface").await;
-}
-
-#[tokio::test]
-async fn wire_rotate() {
-    run_case("rotate").await;
-}
-
-#[tokio::test]
 async fn wire_list_for_surface_2() {
     run_case("list_for_surface_2").await;
 }
@@ -2011,8 +2001,8 @@ async fn wire_create_2() {
 }
 
 #[tokio::test]
-async fn wire_rotate_1() {
-    run_case("rotate_1").await;
+async fn wire_rotate() {
+    run_case("rotate").await;
 }
 
 #[tokio::test]
@@ -3116,16 +3106,6 @@ async fn wire_delete_3_error() {
 }
 
 #[tokio::test]
-async fn wire_create_for_surface_error() {
-    run_case("create_for_surface_error").await;
-}
-
-#[tokio::test]
-async fn wire_rotate_error() {
-    run_case("rotate_error").await;
-}
-
-#[tokio::test]
 async fn wire_list_for_surface_2_error() {
     run_case("list_for_surface_2_error").await;
 }
@@ -3156,8 +3136,8 @@ async fn wire_create_2_error() {
 }
 
 #[tokio::test]
-async fn wire_rotate_1_error() {
-    run_case("rotate_1_error").await;
+async fn wire_rotate_error() {
+    run_case("rotate_error").await;
 }
 
 #[tokio::test]

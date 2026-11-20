@@ -3550,52 +3550,6 @@
       }
     },
     {
-      "id": "create_for_surface",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/surfaces/{surfaceSlug}/apiKey",
-      "params": {
-        "workspace": "workspaceSlug",
-        "surfaceSlug": "surfaceSlug"
-      },
-      "body": {
-        "idempotencyKey": "idempotencyKey",
-        "name": "name",
-        "scopes": [
-          "org:telemetry:write"
-        ],
-        "secondsUntilExpiration": null
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "{\n  \"apiKey\": {\n    \"id\": \"id\",\n    \"name\": \"name\",\n    \"secret\": \"secret\"\n  }\n}"
-      }
-    },
-    {
-      "id": "rotate",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/surfaces/{surfaceSlug}/apiKey/{apiKeyId}/roll",
-      "params": {
-        "workspace": "workspaceSlug",
-        "surfaceSlug": "surfaceSlug",
-        "apiKeyId": "apiKeyId"
-      },
-      "body": {
-        "expectedUpdatedAt": 1,
-        "retireAfterSeconds": "retireAfterSeconds",
-        "idempotencyKey": "idempotencyKey"
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "{\n  \"apiKey\": {\n    \"id\": \"id\",\n    \"name\": \"name\",\n    \"secret\": \"secret\"\n  }\n}"
-      }
-    },
-    {
       "id": "list_for_surface_2",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/publicKeys.forSurface",
@@ -3719,7 +3673,7 @@
       }
     },
     {
-      "id": "rotate_1",
+      "id": "rotate",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/surfaces/{surfaceSlug}/publicKeys/{publicKeyId}/roll",
       "params": {
@@ -8198,54 +8152,6 @@
       "expectError": true
     },
     {
-      "id": "create_for_surface_error",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/surfaces/{surfaceSlug}/apiKey",
-      "params": {
-        "workspace": "workspaceSlug",
-        "surfaceSlug": "surfaceSlug"
-      },
-      "body": {
-        "idempotencyKey": "idempotencyKey",
-        "name": "name",
-        "scopes": [
-          "org:telemetry:write"
-        ],
-        "secondsUntilExpiration": null
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
-      "id": "rotate_error",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/surfaces/{surfaceSlug}/apiKey/{apiKeyId}/roll",
-      "params": {
-        "workspace": "workspaceSlug",
-        "surfaceSlug": "surfaceSlug",
-        "apiKeyId": "apiKeyId"
-      },
-      "body": {
-        "expectedUpdatedAt": 1,
-        "retireAfterSeconds": "retireAfterSeconds",
-        "idempotencyKey": "idempotencyKey"
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
       "id": "list_for_surface_2_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/publicKeys.forSurface",
@@ -8375,7 +8281,7 @@
       "expectError": true
     },
     {
-      "id": "rotate_1_error",
+      "id": "rotate_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/surfaces/{surfaceSlug}/publicKeys/{publicKeyId}/roll",
       "params": {

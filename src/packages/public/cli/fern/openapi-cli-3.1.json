@@ -62519,159 +62519,6 @@
             }
           }
         }
-      },
-      "ErrorResponse_0f820ea0045717d1562c597f8380f5ae746704be9eb763c2801b15d82d62255d": {
-        "description": "Request conflicts with current state",
-        "content": {
-          "application/json": {
-            "schema": {
-              "oneOf": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "defined": {
-                      "const": true
-                    },
-                    "code": {
-                      "const": "SURFACE_CREATION_CONFLICT"
-                    },
-                    "status": {
-                      "const": 409
-                    },
-                    "message": {
-                      "type": "string",
-                      "default": "This surface creation attempt no longer matches. Refresh before trying again."
-                    },
-                    "data": {}
-                  },
-                  "required": [
-                    "defined",
-                    "code",
-                    "status",
-                    "message"
-                  ]
-                },
-                {
-                  "type": "object",
-                  "properties": {
-                    "defined": {
-                      "const": true
-                    },
-                    "code": {
-                      "const": "SURFACE_KEY_CONFLICT"
-                    },
-                    "status": {
-                      "const": 409
-                    },
-                    "message": {
-                      "type": "string",
-                      "default": "This key name or revision is no longer available. Refresh the keys before trying again."
-                    },
-                    "data": {}
-                  },
-                  "required": [
-                    "defined",
-                    "code",
-                    "status",
-                    "message"
-                  ]
-                },
-                {
-                  "$ref": "#/components/schemas/RpcUnexpectedError"
-                }
-              ]
-            }
-          }
-        }
-      },
-      "ErrorResponse_cb01984997275af12909b5dd3cc4fee15ea6715b965037740cec13edc596e3ee": {
-        "description": "Resource not found",
-        "content": {
-          "application/json": {
-            "schema": {
-              "oneOf": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "defined": {
-                      "const": true
-                    },
-                    "code": {
-                      "const": "SURFACE_KEY_NOT_FOUND"
-                    },
-                    "status": {
-                      "const": 404
-                    },
-                    "message": {
-                      "type": "string",
-                      "default": "Surface key not found."
-                    },
-                    "data": {}
-                  },
-                  "required": [
-                    "defined",
-                    "code",
-                    "status",
-                    "message"
-                  ]
-                },
-                {
-                  "type": "object",
-                  "properties": {
-                    "defined": {
-                      "const": true
-                    },
-                    "code": {
-                      "const": "SURFACE_NOT_FOUND"
-                    },
-                    "status": {
-                      "const": 404
-                    },
-                    "message": {
-                      "type": "string",
-                      "default": "Surface not found."
-                    },
-                    "data": {}
-                  },
-                  "required": [
-                    "defined",
-                    "code",
-                    "status",
-                    "message"
-                  ]
-                },
-                {
-                  "type": "object",
-                  "properties": {
-                    "defined": {
-                      "const": true
-                    },
-                    "code": {
-                      "const": "WORKSPACE_NOT_FOUND"
-                    },
-                    "status": {
-                      "const": 404
-                    },
-                    "message": {
-                      "type": "string",
-                      "default": "Workspace not found."
-                    },
-                    "data": {}
-                  },
-                  "required": [
-                    "defined",
-                    "code",
-                    "status",
-                    "message"
-                  ]
-                },
-                {
-                  "$ref": "#/components/schemas/RpcUnexpectedError"
-                }
-              ]
-            }
-          }
-        }
       }
     }
   },
@@ -77293,7 +77140,7 @@
       "post": {
         "operationId": "keys_private_create",
         "summary": "keys private create",
-        "description": "Creates a private API key with explicit scopes and expiration. Supply surfaceSlug for an app key; omit it for a workspace key. Grants cannot exceed the caller's permissions. Reuse the same idempotency key and request after an uncertain response.",
+        "description": "Creates a workspace secret API key with explicit scopes and expiration. One key with the release:write scope publishes releases for every app in the workspace. Grants cannot exceed the caller's permissions. Reuse the same idempotency key and request after an uncertain response.",
         "tags": [
           "keys.private"
         ],
@@ -77317,11 +77164,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "surfaceSlug": {
-                    "type": "string",
-                    "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-                    "description": "Surface URL slug, using lowercase letters, numbers, and hyphens."
-                  },
                   "idempotencyKey": {
                     "type": "string",
                     "format": "uuid"
@@ -84531,299 +84373,6 @@
         }
       }
     },
-    "/v3/workspaces/{workspaceSlug}/surfaces/{surfaceSlug}/apiKey": {
-      "post": {
-        "operationId": "keys_private_createForSurface",
-        "summary": "keys private createForSurface",
-        "description": "Creates a secret API key. Reuse the same idempotencyKey and intent after a transport failure to recover the same creation attempt.",
-        "tags": [
-          "keys.private"
-        ],
-        "parameters": [
-          {
-            "name": "workspaceSlug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
-            },
-            "x-fern-parameter-name": "workspace"
-          },
-          {
-            "name": "surfaceSlug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-              "description": "Surface URL slug, using lowercase letters, numbers, and hyphens."
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "idempotencyKey": {
-                    "type": "string",
-                    "format": "uuid"
-                  },
-                  "name": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 64,
-                    "description": "Display name of the key."
-                  },
-                  "scopes": {
-                    "type": "array",
-                    "minItems": 1,
-                    "items": {
-                      "enum": [
-                        "org:telemetry:write",
-                        "org:surfaces:read",
-                        "org:surfaces:write",
-                        "org:surfaces:delete",
-                        "org:services:read",
-                        "org:services:write",
-                        "org:customers:read",
-                        "org:tiers:read",
-                        "org:tiers:write",
-                        "org:problems:read",
-                        "org:problems:write",
-                        "org:findings:read",
-                        "org:support:read",
-                        "org:support:write",
-                        "org:replays:read",
-                        "org:source_context:read",
-                        "org:integration_settings:read",
-                        "org:integration_settings:write",
-                        "org:workspace_members:read",
-                        "org:workspace_members:write",
-                        "org:workspace_billing:read",
-                        "org:workspace_billing:write",
-                        "org:workspace_basics:read",
-                        "org:workspace_basics:write",
-                        "org:workspace_domains:read",
-                        "org:workspace_domains:write",
-                        "org:api_keys:read",
-                        "org:api_keys:write",
-                        "org:workspace_auth:read",
-                        "org:workspace_auth:write",
-                        "org:workspace:destroy",
-                        "org:workspace:transfer_ownership",
-                        "release:write"
-                      ],
-                      "type": "string"
-                    },
-                    "description": "Permission scopes granted to the key."
-                  },
-                  "secondsUntilExpiration": {
-                    "anyOf": [
-                      {
-                        "type": "integer",
-                        "minimum": -9007199254740991,
-                        "maximum": 9007199254740991,
-                        "exclusiveMinimum": 0,
-                        "description": "Positive lifetime in seconds, or null for no expiry."
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  }
-                },
-                "required": [
-                  "idempotencyKey",
-                  "name",
-                  "scopes",
-                  "secondsUntilExpiration"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateWorkspaceApiKeyResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/RpcValidationError"
-          },
-          "401": {
-            "$ref": "#/components/responses/ErrorResponse_d7174de43f943d10193d5f31cc4615acb6d01e6a15ef9a1a861235cb9792319b"
-          },
-          "403": {
-            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
-          },
-          "404": {
-            "$ref": "#/components/responses/ErrorResponse_3cfb93c298ec62e03b5f0c773ae0ffe6465986e9ffe28eb614f7c3c4a859f869"
-          },
-          "409": {
-            "$ref": "#/components/responses/ErrorResponse_0f820ea0045717d1562c597f8380f5ae746704be9eb763c2801b15d82d62255d"
-          },
-          "503": {
-            "$ref": "#/components/responses/ErrorResponse_b7d254f6bd68a887b2398a1b58fb8fe3913110d7236a6e4540d7d2aa990fb12b"
-          }
-        },
-        "x-cloudflare-labels": [
-          "cf-api-endpoint"
-        ],
-        "security": [
-          {
-            "clerkSession": []
-          }
-        ],
-        "x-interfere-read-only": false,
-        "x-fern-sdk-group-name": [
-          "keys",
-          "private"
-        ],
-        "x-fern-sdk-method-name": "create-for-surface",
-        "x-fern-retries": {
-          "disabled": true
-        }
-      }
-    },
-    "/v3/workspaces/{workspaceSlug}/surfaces/{surfaceSlug}/apiKey/{apiKeyId}/roll": {
-      "post": {
-        "operationId": "keys_private_rotate",
-        "summary": "keys private rotate",
-        "description": "Rotates a secret API key. Reuse the same idempotencyKey and intent when retrying the rotation.",
-        "tags": [
-          "keys.private"
-        ],
-        "parameters": [
-          {
-            "name": "workspaceSlug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
-            },
-            "x-fern-parameter-name": "workspace"
-          },
-          {
-            "name": "surfaceSlug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-              "description": "Surface URL slug, using lowercase letters, numbers, and hyphens."
-            }
-          },
-          {
-            "name": "apiKeyId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "expectedUpdatedAt": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 9007199254740991
-                  },
-                  "retireAfterSeconds": {
-                    "anyOf": [
-                      {
-                        "const": 0
-                      },
-                      {
-                        "const": 3600
-                      },
-                      {
-                        "const": 86400
-                      }
-                    ]
-                  },
-                  "idempotencyKey": {
-                    "type": "string",
-                    "format": "uuid"
-                  }
-                },
-                "required": [
-                  "expectedUpdatedAt",
-                  "retireAfterSeconds",
-                  "idempotencyKey"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateWorkspaceApiKeyResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/RpcValidationError"
-          },
-          "401": {
-            "$ref": "#/components/responses/ErrorResponse_d7174de43f943d10193d5f31cc4615acb6d01e6a15ef9a1a861235cb9792319b"
-          },
-          "403": {
-            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
-          },
-          "404": {
-            "$ref": "#/components/responses/ErrorResponse_cb01984997275af12909b5dd3cc4fee15ea6715b965037740cec13edc596e3ee"
-          },
-          "409": {
-            "$ref": "#/components/responses/ErrorResponse_0f820ea0045717d1562c597f8380f5ae746704be9eb763c2801b15d82d62255d"
-          },
-          "503": {
-            "$ref": "#/components/responses/ErrorResponse_b7d254f6bd68a887b2398a1b58fb8fe3913110d7236a6e4540d7d2aa990fb12b"
-          }
-        },
-        "x-cloudflare-labels": [
-          "cf-api-endpoint"
-        ],
-        "security": [
-          {
-            "clerkSession": []
-          }
-        ],
-        "x-interfere-read-only": false,
-        "x-fern-sdk-group-name": [
-          "keys",
-          "private"
-        ],
-        "x-fern-sdk-method-name": "rotate",
-        "x-fern-retries": {
-          "disabled": true
-        }
-      }
-    },
     "/v3/workspaces/{workspaceSlug}/surfaces": {
       "post": {
         "operationId": "createSurface",
@@ -85296,7 +84845,93 @@
             "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
           },
           "404": {
-            "$ref": "#/components/responses/ErrorResponse_cb01984997275af12909b5dd3cc4fee15ea6715b965037740cec13edc596e3ee"
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "defined": {
+                          "const": true
+                        },
+                        "code": {
+                          "const": "SURFACE_KEY_NOT_FOUND"
+                        },
+                        "status": {
+                          "const": 404
+                        },
+                        "message": {
+                          "type": "string",
+                          "default": "Surface key not found."
+                        },
+                        "data": {}
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "defined": {
+                          "const": true
+                        },
+                        "code": {
+                          "const": "SURFACE_NOT_FOUND"
+                        },
+                        "status": {
+                          "const": 404
+                        },
+                        "message": {
+                          "type": "string",
+                          "default": "Surface not found."
+                        },
+                        "data": {}
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "defined": {
+                          "const": true
+                        },
+                        "code": {
+                          "const": "WORKSPACE_NOT_FOUND"
+                        },
+                        "status": {
+                          "const": 404
+                        },
+                        "message": {
+                          "type": "string",
+                          "default": "Workspace not found."
+                        },
+                        "data": {}
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message"
+                      ]
+                    },
+                    {
+                      "$ref": "#/components/schemas/RpcUnexpectedError"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "409": {
             "$ref": "#/components/responses/ErrorResponse_088cb09282d303295e75879da2c16585de0b7b9e07c53fe74d377c3985f2792c"
