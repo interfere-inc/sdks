@@ -1569,6 +1569,17 @@ List provisioned SCIM groups and their workspace role mappings. Pass the workspa
 
 ### `interfere services`
 
+#### `interfere services delete-service`
+
+Deletes an OpenTelemetry service that nothing refers to; any other service answers SERVICE_IN_USE. Stored telemetry is kept, and the service is created again when telemetry with the same namespace, name and resource arrives.
+
+`DELETE /v3/workspaces/{workspaceSlug}/services`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
+
 #### `interfere services service-activity`
 
 Returns the latest span time for each OpenTelemetry service in the workspace over the last 7 days. Services with no spans in that window are omitted. Also returns hourly span, log and metric point counts per service over the last 24 hours, aligned to `buckets`; services with no signals in that window are omitted from `signals`. `sdks` lists the Interfere SDK name and version that sent each namespace-less service's spans over the same 24 hours, with span counts. Each row’s `status` is `supported`, `outdated` or `unknown` for the newest SDK version that service reported, against the minimum supported SDK version.

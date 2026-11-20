@@ -60392,6 +60392,17 @@
           "signals"
         ]
       },
+      "DeleteServiceResponse": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "const": true
+          }
+        },
+        "required": [
+          "ok"
+        ]
+      },
       "SetServiceReportableEnvironmentResponse": {
         "type": "object",
         "properties": {
@@ -62168,6 +62179,70 @@
                     "message": {
                       "type": "string",
                       "default": "Workspace not found."
+                    },
+                    "data": {}
+                  },
+                  "required": [
+                    "defined",
+                    "code",
+                    "status",
+                    "message"
+                  ]
+                },
+                {
+                  "$ref": "#/components/schemas/RpcUnexpectedError"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "ErrorResponse_0768de99929ccf4a57ca404cadf947d6ed908c08b524e366669e0129e7b0ef1d": {
+        "description": "Resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "defined": {
+                      "const": true
+                    },
+                    "code": {
+                      "const": "WORKSPACE_NOT_FOUND"
+                    },
+                    "status": {
+                      "const": 404
+                    },
+                    "message": {
+                      "type": "string",
+                      "default": "Workspace not found."
+                    },
+                    "data": {}
+                  },
+                  "required": [
+                    "defined",
+                    "code",
+                    "status",
+                    "message"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "defined": {
+                      "const": true
+                    },
+                    "code": {
+                      "const": "SERVICE_NOT_FOUND"
+                    },
+                    "status": {
+                      "const": 404
+                    },
+                    "message": {
+                      "type": "string",
+                      "default": "Service not found."
                     },
                     "data": {}
                   },
@@ -83271,6 +83346,169 @@
         }
       }
     },
+    "/v3/workspaces/{workspaceSlug}/services": {
+      "delete": {
+        "operationId": "deleteService",
+        "summary": "Delete a telemetry service",
+        "description": "Deletes an OpenTelemetry service that nothing refers to; any other service answers SERVICE_IN_USE. Stored telemetry is kept, and the service is created again when telemetry with the same namespace, name and resource arrives.",
+        "tags": [
+          "Services"
+        ],
+        "parameters": [
+          {
+            "name": "workspaceSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
+            },
+            "x-fern-parameter-name": "workspace"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "namespace": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "default": ""
+                  },
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255
+                  },
+                  "resource": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 255
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "description": "Provider resource that tells apart services sharing a namespace and name, such as vercel:prj_abc for one Vercel project. Omit it to address the only service with this namespace and name; when several share it, the call answers SERVICE_RESOURCE_REQUIRED with their resources. Null or an empty string addresses the service without a resource."
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteServiceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/RpcValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse_d7174de43f943d10193d5f31cc4615acb6d01e6a15ef9a1a861235cb9792319b"
+          },
+          "403": {
+            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse_0768de99929ccf4a57ca404cadf947d6ed908c08b524e366669e0129e7b0ef1d"
+          },
+          "409": {
+            "description": "Request conflicts with current state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "defined": {
+                          "const": true
+                        },
+                        "code": {
+                          "const": "SERVICE_IN_USE"
+                        },
+                        "status": {
+                          "const": 409
+                        },
+                        "message": {
+                          "type": "string",
+                          "default": "A data source that problems, releases, apps, keys, sessions or an integration still refer to can't be deleted."
+                        },
+                        "data": {}
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "defined": {
+                          "const": true
+                        },
+                        "code": {
+                          "const": "SERVICE_RESOURCE_REQUIRED"
+                        },
+                        "status": {
+                          "const": 409
+                        },
+                        "message": {
+                          "type": "string",
+                          "default": "Several services share this namespace and name. Send resource to choose one."
+                        },
+                        "data": {}
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message"
+                      ]
+                    },
+                    {
+                      "$ref": "#/components/schemas/RpcUnexpectedError"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "$ref": "#/components/responses/ErrorResponse_b7d254f6bd68a887b2398a1b58fb8fe3913110d7236a6e4540d7d2aa990fb12b"
+          }
+        },
+        "x-cloudflare-labels": [
+          "cf-api-endpoint"
+        ],
+        "security": [
+          {
+            "clerkSession": []
+          }
+        ],
+        "x-interfere-read-only": false,
+        "x-fern-retries": {
+          "disabled": true
+        }
+      }
+    },
     "/v3/workspaces/{workspaceSlug}/services/reportable-environment": {
       "put": {
         "operationId": "setServiceReportableEnvironment",
@@ -83364,68 +83602,7 @@
             "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
           },
           "404": {
-            "description": "Resource not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "defined": {
-                          "const": true
-                        },
-                        "code": {
-                          "const": "WORKSPACE_NOT_FOUND"
-                        },
-                        "status": {
-                          "const": 404
-                        },
-                        "message": {
-                          "type": "string",
-                          "default": "Workspace not found."
-                        },
-                        "data": {}
-                      },
-                      "required": [
-                        "defined",
-                        "code",
-                        "status",
-                        "message"
-                      ]
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "defined": {
-                          "const": true
-                        },
-                        "code": {
-                          "const": "SERVICE_NOT_FOUND"
-                        },
-                        "status": {
-                          "const": 404
-                        },
-                        "message": {
-                          "type": "string",
-                          "default": "Service not found."
-                        },
-                        "data": {}
-                      },
-                      "required": [
-                        "defined",
-                        "code",
-                        "status",
-                        "message"
-                      ]
-                    },
-                    {
-                      "$ref": "#/components/schemas/RpcUnexpectedError"
-                    }
-                  ]
-                }
-              }
-            }
+            "$ref": "#/components/responses/ErrorResponse_0768de99929ccf4a57ca404cadf947d6ed908c08b524e366669e0129e7b0ef1d"
           },
           "409": {
             "$ref": "#/components/responses/ErrorResponse_e722459efa1895c7ae07d93a423d9ae54f251751e36386e8a768dacf698c5e0f"

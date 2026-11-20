@@ -1911,6 +1911,11 @@ async fn wire_serviceactivity() {
 }
 
 #[tokio::test]
+async fn wire_deleteservice() {
+    run_case("deleteservice").await;
+}
+
+#[tokio::test]
 async fn wire_setservicereportableenvironment() {
     run_case("setservicereportableenvironment").await;
 }
@@ -3043,6 +3048,11 @@ async fn wire_submitworkspacefeedback_error() {
 #[tokio::test]
 async fn wire_serviceactivity_error() {
     run_case("serviceactivity_error").await;
+}
+
+#[tokio::test]
+async fn wire_deleteservice_error() {
+    run_case("deleteservice_error").await;
 }
 
 #[tokio::test]

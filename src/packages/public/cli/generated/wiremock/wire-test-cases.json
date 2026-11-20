@@ -3320,6 +3320,24 @@
       }
     },
     {
+      "id": "deleteservice",
+      "method": "DELETE",
+      "path": "/v3/workspaces/{workspace}/services",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "name": "name"
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"ok\": \"ok\"\n}"
+      }
+    },
+    {
       "id": "setservicereportableenvironment",
       "method": "PUT",
       "path": "/v3/workspaces/{workspace}/services/reportable-environment",
@@ -7900,6 +7918,25 @@
         "workspace": "workspaceSlug"
       },
       "body": null,
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "deleteservice_error",
+      "method": "DELETE",
+      "path": "/v3/workspaces/{workspace}/services",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "name": "name"
+      },
       "queryMatchers": [],
       "headerMatchers": [],
       "requiresAuth": true,

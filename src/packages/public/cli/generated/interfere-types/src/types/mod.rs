@@ -5,7 +5,7 @@
 //!
 //! ## Type Categories
 //!
-//! - **Request/Response Types**: 2226 types for API operations
+//! - **Request/Response Types**: 2228 types for API operations
 //! - **Model Types**: 611 types for data representation
 
 pub mod drain_drain_otlp_export_request_signal;
@@ -2627,6 +2627,7 @@ pub mod service_activity_response_signals_item;
 pub mod service_activity_response_sdks_item_status;
 pub mod service_activity_response_sdks_item;
 pub mod service_activity_response;
+pub mod delete_service_response;
 pub mod set_service_reportable_environment_response;
 pub mod set_service_source_response;
 pub mod create_support_thread_response;
@@ -2771,6 +2772,7 @@ pub mod create_tiers_request;
 pub mod update_tiers_request;
 pub mod submit_problem_feedback_request;
 pub mod submit_workspace_feedback_request;
+pub mod delete_service_request;
 pub mod set_service_reportable_environment_request;
 pub mod set_service_source_request;
 pub mod validate_key_request;
@@ -5465,6 +5467,7 @@ pub use service_activity_response_signals_item::ServiceActivityResponseSignalsIt
 pub use service_activity_response_sdks_item_status::ServiceActivityResponseSdksItemStatus;
 pub use service_activity_response_sdks_item::ServiceActivityResponseSdksItem;
 pub use service_activity_response::ServiceActivityResponse;
+pub use delete_service_response::DeleteServiceResponse;
 pub use set_service_reportable_environment_response::SetServiceReportableEnvironmentResponse;
 pub use set_service_source_response::SetServiceSourceResponse;
 pub use create_support_thread_response::CreateSupportThreadResponse;
@@ -5609,6 +5612,7 @@ pub use create_tiers_request::CreateTiersRequest;
 pub use update_tiers_request::UpdateTiersRequest;
 pub use submit_problem_feedback_request::SubmitProblemFeedbackRequest;
 pub use submit_workspace_feedback_request::SubmitWorkspaceFeedbackRequest;
+pub use delete_service_request::DeleteServiceRequest;
 pub use set_service_reportable_environment_request::SetServiceReportableEnvironmentRequest;
 pub use set_service_source_request::SetServiceSourceRequest;
 pub use validate_key_request::ValidateKeyRequest;

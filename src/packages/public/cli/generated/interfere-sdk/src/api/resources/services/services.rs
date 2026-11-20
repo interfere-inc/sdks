@@ -70,6 +70,72 @@ impl ServicesClient {
             .await
     }
 
+    /// Deletes an OpenTelemetry service that nothing refers to; any other service answers SERVICE_IN_USE. Stored telemetry is kept, and the service is created again when telemetry with the same namespace, name and resource arrives.
+    ///
+    /// # Arguments
+    ///
+    /// * `workspace` - Workspace URL slug, using lowercase letters, numbers, and hyphens.
+    /// * `options` - Additional request options such as headers, timeout, etc.
+    ///
+    /// # Returns
+    ///
+    /// JSON response from the API
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use interfere_sdk::prelude::*;
+    ///
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     let config = ClientConfig {
+    ///         api_key: Some("<value>".to_string()),
+    ///         ..Default::default()
+    ///     };
+    ///     let client = InterfereClient::new(config).expect("Failed to build client");
+    ///     client
+    ///         .services
+    ///         .delete_service(
+    ///             &"workspaceSlug".to_string(),
+    ///             &DeleteServiceRequest {
+    ///                 name: "name".to_string(),
+    ///                 namespace: None,
+    ///                 resource: None,
+    ///             },
+    ///             None,
+    ///         )
+    ///         .await;
+    /// }
+    /// ```
+    pub async fn delete_service(
+        &self,
+        workspace: &str,
+        request: &DeleteServiceRequest,
+        options: Option<RequestOptions>,
+    ) -> Result<DeleteServiceResponse, ApiError> {
+        let endpoint_auth_headers = self
+            .http_client
+            .resolve_endpoint_auth_headers(&options, &[&["clerkSession"] as &[&str]])
+            .await?;
+        let options = {
+            let mut o = options.unwrap_or_default();
+            for (header_key, header_value) in endpoint_auth_headers {
+                o.additional_headers.insert(header_key, header_value);
+            }
+            o.max_retries = Some(0);
+            Some(o)
+        };
+        self.http_client
+            .execute_request(
+                Method::DELETE,
+                &format!("v3/workspaces/{}/services", workspace),
+                Some(serde_json::to_value(request).map_err(ApiError::Serialization)?),
+                None,
+                options,
+            )
+            .await
+    }
+
     /// Sets the environment whose exceptions create findings and problems for an OpenTelemetry service, compared with the deployment.environment.name resource attribute. Exceptions from other or missing environments are still stored as telemetry. Null, the default, reports every environment.
     ///
     /// # Arguments
