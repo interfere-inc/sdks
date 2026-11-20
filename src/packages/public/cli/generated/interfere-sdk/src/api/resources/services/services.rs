@@ -70,7 +70,7 @@ impl ServicesClient {
             .await
     }
 
-    /// Deletes an OpenTelemetry service that nothing refers to; any other service answers SERVICE_IN_USE. Stored telemetry is kept, and the service is created again when telemetry with the same namespace, name and resource arrives.
+    /// Deletes an OpenTelemetry service and its release history: releases, release deployments and source-map uploads. A service that apps, keys, replay sessions, findings, problems or a destination integration still refer to answers SERVICE_IN_USE, whose details list those blockers. Stored telemetry is kept, and the service is created again when telemetry with the same namespace, name and resource arrives.
     ///
     /// # Arguments
     ///

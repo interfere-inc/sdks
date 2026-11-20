@@ -9,6 +9,7 @@ pub enum SurfaceActivityResponseValueStatus {
     Receiving,
     Stale,
     Outdated,
+    SdkSilent,
     /// This variant is used for forward compatibility.
     /// If the server sends a value not recognized by the current SDK version,
     /// it will be captured here with the raw string value.
@@ -21,6 +22,7 @@ impl Serialize for SurfaceActivityResponseValueStatus {
             Self::Receiving => serializer.serialize_str("receiving"),
             Self::Stale => serializer.serialize_str("stale"),
             Self::Outdated => serializer.serialize_str("outdated"),
+            Self::SdkSilent => serializer.serialize_str("sdk-silent"),
             Self::__Unknown(val) => serializer.serialize_str(val),
         }
     }
@@ -34,6 +36,7 @@ impl<'de> Deserialize<'de> for SurfaceActivityResponseValueStatus {
             "receiving" => Ok(Self::Receiving),
             "stale" => Ok(Self::Stale),
             "outdated" => Ok(Self::Outdated),
+            "sdk-silent" => Ok(Self::SdkSilent),
             _ => Ok(Self::__Unknown(value)),
         }
     }
@@ -46,6 +49,7 @@ impl fmt::Display for SurfaceActivityResponseValueStatus {
             Self::Receiving => write!(f, "receiving"),
             Self::Stale => write!(f, "stale"),
             Self::Outdated => write!(f, "outdated"),
+            Self::SdkSilent => write!(f, "sdk-silent"),
             Self::__Unknown(val) => write!(f, "{}", val),
         }
     }
