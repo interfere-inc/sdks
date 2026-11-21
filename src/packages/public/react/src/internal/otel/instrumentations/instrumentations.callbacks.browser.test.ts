@@ -15,16 +15,20 @@ import type { BundledInstrumentations } from "./instrumentations.js";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 function resourceTiming(name: string) {
-  return {
+  const timing = {
     connectEnd: 0,
     connectStart: 0,
+    contentType: "",
     decodedBodySize: 0,
+    deliveryType: "",
     domainLookupEnd: 0,
     domainLookupStart: 0,
     duration: 0,
     encodedBodySize: 0,
     entryType: "resource",
     fetchStart: 0,
+    finalResponseHeadersStart: 0,
+    firstInterimResponseStart: 0,
     initiatorType: "script",
     name,
     nextHopProtocol: "h2",
@@ -47,7 +51,9 @@ function resourceTiming(name: string) {
     },
     transferSize: 0,
     workerStart: 0,
-  } satisfies PerformanceResourceTiming;
+  };
+
+  return timing satisfies PerformanceResourceTiming;
 }
 
 describe("registered instrumentation callbacks", () => {
