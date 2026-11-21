@@ -1726,6 +1726,11 @@ async fn wire_dismiss() {
 }
 
 #[tokio::test]
+async fn wire_mark_in_recovery() {
+    run_case("mark_in_recovery").await;
+}
+
+#[tokio::test]
 async fn wire_restore() {
     run_case("restore").await;
 }
@@ -2863,6 +2868,11 @@ async fn wire_navigable_error() {
 #[tokio::test]
 async fn wire_dismiss_error() {
     run_case("dismiss_error").await;
+}
+
+#[tokio::test]
+async fn wire_mark_in_recovery_error() {
+    run_case("mark_in_recovery_error").await;
 }
 
 #[tokio::test]

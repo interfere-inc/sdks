@@ -2614,6 +2614,27 @@
       }
     },
     {
+      "id": "mark_in_recovery",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/problems.markInRecovery",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "problemId": "problemId",
+          "timelineEventId": "timelineEventId"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true\n}"
+      }
+    },
+    {
       "id": "restore",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/actions/problems.restore",
@@ -7166,6 +7187,28 @@
       "id": "dismiss_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/actions/problems.dismiss",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "problemId": "problemId",
+          "timelineEventId": "timelineEventId"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "mark_in_recovery_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/problems.markInRecovery",
       "params": {
         "workspace": "workspaceSlug"
       },

@@ -1119,6 +1119,17 @@ List visible, non-deleted problems ordered by lastSeenAt descending, including a
 | `--workspace-slug` | `string` | Yes |  |
 | `--json` | `JSON` | No | Request body as JSON (or use individual body-field flags) |
 
+#### `interfere problems mark-in-recovery`
+
+Mark an active problem as in recovery when its fix has shipped. Interfere then verifies the recovery: the problem resolves if it stays quiet and returns to active if it recurs. Optionally name the fix as a release (id or slug), the git commit SHA a release was built from, or a merged GitHub pull request (number or URL) whose merge commit a release was built from. Interfere uses the first deployed release of the problem's service in the problem's environment that matches, rejects it if the problem occurred after it deployed, and resolves the problem once that release has been live for an hour without a new occurrence. A problem already in recovery is left unchanged. Record feedback on Interfere's analysis with the problem feedback endpoint. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
+
+`POST /v3/workspaces/{workspaceSlug}/actions/problems.markInRecovery`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
+
 #### `interfere problems navigable`
 
 List visible, non-deleted problems with each problem's newest customer-visible timeline event (detection, status change, observation, regression, action request, comment, root cause or fix). Order by the later of createdAt and that event's createdAt to rank problems by recent activity. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.

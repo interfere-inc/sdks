@@ -55198,6 +55198,18 @@
           "success"
         ]
       },
+      "Mutation_problems_markInRecoveryResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "const": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success"
+        ]
+      },
       "Mutation_problems_restoreResponse": {
         "type": "object",
         "properties": {
@@ -74508,6 +74520,165 @@
           }
         },
         "x-fern-sdk-method-name": "dismiss",
+        "x-cloudflare-labels": [
+          "cf-api-endpoint"
+        ],
+        "security": [
+          {
+            "clerkSession": []
+          }
+        ],
+        "x-interfere-read-only": false,
+        "x-internal": false,
+        "x-fern-sdk-group-name": [
+          "problems"
+        ],
+        "x-fern-retries": {
+          "disabled": true
+        }
+      }
+    },
+    "/v3/workspaces/{workspaceSlug}/actions/problems.markInRecovery": {
+      "post": {
+        "operationId": "problems_markInRecovery",
+        "summary": "problems markInRecovery",
+        "description": "Mark an active problem as in recovery when its fix has shipped. Interfere then verifies the recovery: the problem resolves if it stays quiet and returns to active if it recurs. Optionally name the fix as a release (id or slug), the git commit SHA a release was built from, or a merged GitHub pull request (number or URL) whose merge commit a release was built from. Interfere uses the first deployed release of the problem's service in the problem's environment that matches, rejects it if the problem occurred after it deployed, and resolves the problem once that release has been live for an hour without a new occurrence. A problem already in recovery is left unchanged. Record feedback on Interfere's analysis with the problem feedback endpoint. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.",
+        "tags": [
+          "problems"
+        ],
+        "parameters": [
+          {
+            "name": "workspaceSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
+            },
+            "x-fern-parameter-name": "workspace"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "args": {
+                    "type": "object",
+                    "properties": {
+                      "problemId": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "timelineEventId": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "fix": {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "const": "release"
+                              },
+                              "release": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 200
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "release"
+                            ]
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "const": "commit"
+                              },
+                              "sha": {
+                                "type": "string",
+                                "pattern": "^[0-9a-fA-F]{7,40}$"
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "sha"
+                            ]
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "const": "pullRequest"
+                              },
+                              "pullRequest": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer",
+                                    "minimum": -9007199254740991,
+                                    "maximum": 9007199254740991,
+                                    "exclusiveMinimum": 0
+                                  },
+                                  {
+                                    "type": "string",
+                                    "format": "uri"
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "pullRequest"
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "problemId",
+                      "timelineEventId"
+                    ]
+                  }
+                },
+                "required": [
+                  "args"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mutation_problems_markInRecoveryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/RpcValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse_b32e7e47d27147b78e9ca9c8927315e0c48a5a54a03868590623df7e2ff7d2af"
+          },
+          "403": {
+            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
+          },
+          "503": {
+            "$ref": "#/components/responses/ErrorResponse_a4a8a71ed4a33ddc602b7e2cf4dd0b51ef37c46db1b01870377abdbd6cbda1b5"
+          }
+        },
+        "x-fern-sdk-method-name": "mark-in-recovery",
         "x-cloudflare-labels": [
           "cf-api-endpoint"
         ],
