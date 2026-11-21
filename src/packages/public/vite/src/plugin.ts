@@ -22,6 +22,10 @@ import { loadEnv } from "vite";
 import type { Logger, Plugin, ResolvedConfig, UserConfig } from "vite";
 
 import { runGitCommand } from "./internal/build/git";
+import {
+  BAKED_RELEASE_SLUG_DEFINE,
+  BAKED_RELEASE_TOKEN_DEFINE,
+} from "./internal/baked-release";
 import { rejectRemovedOptions } from "./internal/plugin-options";
 import type { InterfereViteOptions } from "./internal/plugin-options";
 import { createBuildReceipt } from "./internal/build/build-receipt";
@@ -138,7 +142,13 @@ function resolveBrowserConfig(
   } satisfies BrowserConfig;
 }
 
-function browserDefine(browser: BrowserConfig, releaseToken: string | null) {
+function browserDefine(
+  browser: BrowserConfig,
+  releaseToken: string | null,
+  command: "build" | "serve",
+) {
+  const baked = command === "build";
+
   return {
     "import.meta.env.VITE_INTERFERE_API_HOST": JSON.stringify(
       browser.apiHost ?? null,
@@ -146,10 +156,14 @@ function browserDefine(browser: BrowserConfig, releaseToken: string | null) {
     "import.meta.env.VITE_INTERFERE_ENVIRONMENT": JSON.stringify(
       browser.environment,
     ),
-    "import.meta.env.VITE_INTERFERE_RELEASE_SLUG": JSON.stringify(
+    [baked
+      ? BAKED_RELEASE_SLUG_DEFINE
+      : "import.meta.env.VITE_INTERFERE_RELEASE_SLUG"]: JSON.stringify(
       browser.releaseSlug,
     ),
-    "import.meta.env.VITE_INTERFERE_RELEASE_TOKEN":
+    [baked
+      ? BAKED_RELEASE_TOKEN_DEFINE
+      : "import.meta.env.VITE_INTERFERE_RELEASE_TOKEN"]:
       JSON.stringify(releaseToken),
     "import.meta.env.VITE_INTERFERE_SERVICE_NAME": JSON.stringify(
       browser.serviceName ?? null,
@@ -585,7 +599,7 @@ export function interfere(options: InterfereViteOptions = {}) {
           : null;
 
       const define = omitUndefined({
-        ...browserDefine(browser, registeredRelease?.token ?? null),
+        ...browserDefine(browser, registeredRelease?.token ?? null, command),
         ...remoteConfigDefine(baked),
       });
 

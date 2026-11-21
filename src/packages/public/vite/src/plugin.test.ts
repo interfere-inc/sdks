@@ -30,6 +30,10 @@ import {
   vi,
 } from "vitest";
 
+import {
+  BAKED_RELEASE_SLUG_DEFINE,
+  BAKED_RELEASE_TOKEN_DEFINE,
+} from "./internal/baked-release";
 import { PRODUCER_VERSION } from "./version";
 
 const { interfere } = await import("./plugin.js");
@@ -161,7 +165,9 @@ const API_HOST_KEY = "import.meta.env.VITE_INTERFERE_API_HOST";
 
 const ENVIRONMENT_KEY = "import.meta.env.VITE_INTERFERE_ENVIRONMENT";
 
-const RELEASE_SLUG_KEY = "import.meta.env.VITE_INTERFERE_RELEASE_SLUG";
+const RELEASE_SLUG_KEY = BAKED_RELEASE_SLUG_DEFINE;
+
+const DEV_RELEASE_SLUG_KEY = "import.meta.env.VITE_INTERFERE_RELEASE_SLUG";
 
 const SERVICE_NAME_KEY = "import.meta.env.VITE_INTERFERE_SERVICE_NAME";
 
@@ -482,7 +488,7 @@ describe("interfere vite plugin", () => {
 
       expect(define[ENVIRONMENT_KEY]).toBe("null");
 
-      expect(define[RELEASE_SLUG_KEY]).toBe(
+      expect(define[DEV_RELEASE_SLUG_KEY]).toBe(
         JSON.stringify(deriveReleaseSlug(gitSha)),
       );
     });
@@ -1268,8 +1274,7 @@ describe("interfere vite plugin", () => {
       const config = await resolvePluginConfig(plugin);
 
       expect(config.define).toMatchObject({
-        "import.meta.env.VITE_INTERFERE_RELEASE_TOKEN":
-          JSON.stringify("irt_signed"),
+        [BAKED_RELEASE_TOKEN_DEFINE]: JSON.stringify("irt_signed"),
       });
 
       expect(releaseRequests).toHaveLength(1);

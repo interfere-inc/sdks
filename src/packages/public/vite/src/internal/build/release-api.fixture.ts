@@ -99,6 +99,25 @@ export function serveSurfaceProviders(providers: {
   );
 }
 
+export function serveReleaseToken(token: string) {
+  server.use(
+    http.post(`${RELEASE_API}/v3/releases`, () =>
+      HttpResponse.json({
+        build: { hash: "deadbeef12345678" },
+        destination: {
+          environment: "production",
+          id: "release_1",
+          slug: "rel_deadbeef12345678",
+        },
+        org: { id: "org_1", slug: "acme" },
+        source: { id: "source_1" },
+        surface: { id: "surface_1", slug: "vite" },
+        token,
+      }),
+    ),
+  );
+}
+
 export function resetRecordedRequests() {
   server.resetHandlers();
 

@@ -18,6 +18,8 @@ import { PLUGINS_GLOBAL } from "@interfere/types/sdk/remote-config/plugins";
 import { ANONYMOUS_REPLAY_GLOBAL } from "@interfere/types/sdk/remote-config/anonymous-replay";
 import { SERVICE_NAME_GLOBAL } from "@interfere/types/sdk/service-name";
 
+import { bakedReleaseSlug, bakedReleaseToken } from "./baked-release";
+
 // oxlint-disable-next-line anti-slop/no-unsafe-dictionary-type -- Existing host-global values have unrelated contracts and must be preserved verbatim unless nullish.
 type MutableGlobal = Record<string, unknown>;
 
@@ -37,12 +39,16 @@ export function applyBrowserGlobals() {
     g[ENVIRONMENT_GLOBAL] ??= import.meta.env.VITE_INTERFERE_ENVIRONMENT;
   }
 
-  if (import.meta.env.VITE_INTERFERE_RELEASE_SLUG) {
-    g[RELEASE_SLUG_GLOBAL] ??= import.meta.env.VITE_INTERFERE_RELEASE_SLUG;
+  const releaseSlug = bakedReleaseSlug();
+
+  if (releaseSlug) {
+    g[RELEASE_SLUG_GLOBAL] ??= releaseSlug;
   }
 
-  if (import.meta.env.VITE_INTERFERE_RELEASE_TOKEN) {
-    g[RELEASE_TOKEN_GLOBAL] ??= import.meta.env.VITE_INTERFERE_RELEASE_TOKEN;
+  const releaseToken = bakedReleaseToken();
+
+  if (releaseToken) {
+    g[RELEASE_TOKEN_GLOBAL] ??= releaseToken;
   }
 
   if (import.meta.env.VITE_INTERFERE_INGEST_URL) {

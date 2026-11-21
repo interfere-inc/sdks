@@ -7,6 +7,7 @@ const GLOBAL_KEYS = [
   "__INTERFERE_API_URL__",
   "__INTERFERE_ENVIRONMENT__",
   "__INTERFERE_RELEASE_SLUG__",
+  "__INTERFERE_RELEASE_TOKEN__",
   "__INTERFERE_INGEST_URL__",
   "__INTERFERE_PLUGINS__",
   "__INTERFERE_BACKEND_HOSTS__",
@@ -75,6 +76,8 @@ describe(applyBrowserGlobals, () => {
 
     vi.stubEnv("VITE_INTERFERE_RELEASE_SLUG", "rel_deadbeef");
 
+    vi.stubEnv("VITE_INTERFERE_RELEASE_TOKEN", "irt_bridge");
+
     applyBrowserGlobals();
 
     expect(globalThis).toHaveProperty(
@@ -95,6 +98,11 @@ describe(applyBrowserGlobals, () => {
     expect(globalThis).toHaveProperty(
       "__INTERFERE_RELEASE_SLUG__",
       "rel_deadbeef",
+    );
+
+    expect(globalThis).toHaveProperty(
+      "__INTERFERE_RELEASE_TOKEN__",
+      "irt_bridge",
     );
   });
 

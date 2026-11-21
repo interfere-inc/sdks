@@ -6,6 +6,8 @@ import {
 import { resolveReleaseCommitSha } from "@interfere/types/sdk/github-source";
 import type { RunGitCommand } from "@interfere/types/sdk/github-source";
 
+import { bakedReleaseSlug } from "./baked-release";
+
 const noGit: RunGitCommand = () => null;
 
 export function resolveCommitSha(runGit: RunGitCommand = noGit) {
@@ -14,10 +16,7 @@ export function resolveCommitSha(runGit: RunGitCommand = noGit) {
 }
 
 export function resolveReleaseSlug(runGit: RunGitCommand = noGit) {
-  const baked = releaseSlugSchema.safeParse(
-    // oxlint-disable-next-line typescript/no-unnecessary-condition, typescript/dot-notation -- Native Node omits env; downstream source consumers see only Vite's index signature.
-    import.meta.env?.["VITE_INTERFERE_RELEASE_SLUG"],
-  );
+  const baked = releaseSlugSchema.safeParse(bakedReleaseSlug());
 
   if (baked.success) {
     return { commitSha: null, slug: baked.data };

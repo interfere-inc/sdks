@@ -5,6 +5,8 @@ import {
   resolveEnvironment,
 } from "@interfere/types/sdk/runtime";
 
+import { bakedReleaseToken } from "../baked-release";
+
 interface InterfereServerEnv {
   readonly apiKey: string | null;
   readonly apiUrl: string;
@@ -60,7 +62,7 @@ function readApiKey() {
 }
 
 function readReleaseToken() {
-  return import.meta.env.VITE_INTERFERE_RELEASE_TOKEN || null;
+  return bakedReleaseToken() || null;
 }
 
 function readPublicKey() {
