@@ -12,7 +12,7 @@ const shared = {
   checks: { legacyCjs: false },
   logLevel: "warn",
   suppressWarnings:
-    "TypeScript 7.0 does not yet have a stable API and is experimental.",
+    "TypeScript Go is experimental. Some options will be unavailable.",
 } satisfies UserConfig;
 
 export default [

@@ -31,5 +31,16 @@
   },
   "scripts": {
     "lint:oxlint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/typescript-config"
+  },
+  "devDependencies": {
+    "next": "catalog:"
+  },
+  "peerDependencies": {
+    "next": "^15.3.0 || ^16.0.0"
+  },
+  "peerDependenciesMeta": {
+    "next": {
+      "optional": true
+    }
   }
 }

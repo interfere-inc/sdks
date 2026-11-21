@@ -1,8 +1,7 @@
 diff --git a/dist/pool/index.mjs b/dist/pool/index.mjs
-index 333d12df2a47fd04c00d227cfb24a3eda6f5fef8..957b74b0991b7372b69d0759fc552973786f56c0 100644
 --- a/dist/pool/index.mjs
 +++ b/dist/pool/index.mjs
-@@ -53719,18 +53719,7 @@ function get_escaped_char(char) {
+@@ -53719,18 +53719,7 @@
  }
  /** @param {string} str */
  function stringify_string(str) {
@@ -22,7 +21,7 @@ index 333d12df2a47fd04c00d227cfb24a3eda6f5fef8..957b74b0991b7372b69d0759fc552973
  }
  /** @param {Record<string | symbol, any>} object */
  function enumerable_symbols(object$1) {
-@@ -78735,6 +78724,8 @@ async function parseCustomPoolOptions(project, rootPath, value, mode, envDir) {
+@@ -78786,6 +78775,8 @@
  	const options = WorkersPoolOptionsSchema.parse(value);
  	options.miniflare ??= {};
  	const miniflareModuleRules = options.miniflare.modulesRules;
@@ -31,7 +30,7 @@ index 333d12df2a47fd04c00d227cfb24a3eda6f5fef8..957b74b0991b7372b69d0759fc552973
  	const errorRef = {};
  	const workers = options.miniflare?.workers;
  	const rootPathOption = getRootPath(options.miniflare);
-@@ -78744,6 +78735,8 @@ async function parseCustomPoolOptions(project, rootPath, value, mode, envDir) {
+@@ -78795,6 +78786,8 @@
  	} catch (e) {
  		coalesceZodErrors(errorRef, e);
  	}
@@ -40,7 +39,7 @@ index 333d12df2a47fd04c00d227cfb24a3eda6f5fef8..957b74b0991b7372b69d0759fc552973
  	options.miniflare.rootPath = rootPath;
  	options.miniflare.workers = [];
  	if (workers !== void 0) options.miniflare.workers = workers.map((worker, i) => {
-@@ -78936,11 +78929,22 @@ function inlineCachedModule(module$1, cacheContents) {
+@@ -78987,11 +78980,22 @@
  		code
  	};
  }
@@ -64,19 +63,15 @@ index 333d12df2a47fd04c00d227cfb24a3eda6f5fef8..957b74b0991b7372b69d0759fc552973
  */
  function inlineCachedModules(response) {
  	const cacheContents = /* @__PURE__ */ new Map();
-@@ -78951,18 +78955,47 @@ function inlineCachedModules(response) {
+@@ -79002,19 +79006,48 @@
  		return response;
  	}
  	if (inlined !== response || response === null || typeof response !== "object" || Array.isArray(response)) return inlined;
 -	let hasCachedModules = false;
--	const entries = Object.entries(response).flatMap(([specifier, module$1]) => {
 +	const sizes = /* @__PURE__ */ new Map();
 +	for (const module$1 of Object.values(response)) {
 +		if (!isCachedModule(module$1) || sizes.has(module$1.tmp)) continue;
- 		try {
--			const inlinedModule = inlineCachedModule(module$1, cacheContents);
--			hasCachedModules ||= inlinedModule !== module$1;
--			return [[specifier, inlinedModule]];
++		try {
 +			sizes.set(module$1.tmp, fs.statSync(module$1.tmp).size);
 +		} catch {
 +			sizes.set(module$1.tmp, Infinity);
@@ -90,10 +85,13 @@ index 333d12df2a47fd04c00d227cfb24a3eda6f5fef8..957b74b0991b7372b69d0759fc552973
 +		budget -= size;
 +		keep.add(tmp);
 +	}
-+	const entries = Object.entries(response).flatMap(([specifier, module$1]) => {
+ 	const entries = Object.entries(response).flatMap(([specifier, module$1]) => {
 +		if (!isCachedModule(module$1)) return [[specifier, module$1]];
 +		if (!keep.has(module$1.tmp)) return [];
-+		try {
+ 		try {
+-			const inlinedModule = inlineCachedModule(module$1, cacheContents);
+-			hasCachedModules ||= inlinedModule !== module$1;
+-			return [[specifier, inlinedModule]];
 +			return [[specifier, inlineCachedModule(module$1, cacheContents)]];
  		} catch {
 -			hasCachedModules = true;
@@ -111,15 +109,16 @@ index 333d12df2a47fd04c00d227cfb24a3eda6f5fef8..957b74b0991b7372b69d0759fc552973
 +		...module$1,
 +		code: module$1.code.slice(0, start)
 +	};
-+}
+ }
 +function stripDependencySourceMaps(response) {
 +	if (response === null || typeof response !== "object" || Array.isArray(response) || "externalize" in response) return response;
 +	if ("code" in response) return stripDependencySourceMap(response);
 +	return Object.fromEntries(Object.entries(response).map(([specifier, module$1]) => [specifier, stripDependencySourceMap(module$1)]));
- }
++}
  var CloudflarePoolWorker = class {
  	name = "cloudflare-pool";
-@@ -78997,6 +79030,8 @@ var CloudflarePoolWorker = class {
+ 	debug = util.debuglog("vitest-plugin");
+@@ -79048,6 +79081,8 @@
  		this.socket = await connectToMiniflareSocket(this.mf, getRunnerName(this.options.project));
  	}
  	async stop() {
@@ -128,7 +127,7 @@ index 333d12df2a47fd04c00d227cfb24a3eda6f5fef8..957b74b0991b7372b69d0759fc552973
  		this.socket?.close();
  		this.socket = void 0;
  		this.moduleFetchRequestIds.clear();
-@@ -79040,14 +79075,17 @@ var CloudflarePoolWorker = class {
+@@ -79091,14 +79126,17 @@
  			}
  		};
  		const rpcResponse = message;
@@ -149,7 +148,7 @@ index 333d12df2a47fd04c00d227cfb24a3eda6f5fef8..957b74b0991b7372b69d0759fc552973
  	}
  	on(event, callback) {
  		assert(this.socket, "Message received from Worker before initialisation");
-@@ -79512,9 +79550,10 @@ async function buildProjectMiniflareOptions(ctx, project, customOptions, main) {
+@@ -79563,9 +79601,10 @@
  	}
  	return {
  		...SHARED_MINIFLARE_OPTIONS,
@@ -162,10 +161,9 @@ index 333d12df2a47fd04c00d227cfb24a3eda6f5fef8..957b74b0991b7372b69d0759fc552973
  		workers: [runnerWorker, ...auxiliaryWorkers]
  	};
 diff --git a/dist/worker/index.mjs b/dist/worker/index.mjs
-index c0d13f14d95ef11e16430aa095d65a34726fd321..f43860fd4ec733eff40e97f8322a3ec40e98bb83 100644
 --- a/dist/worker/index.mjs
 +++ b/dist/worker/index.mjs
-@@ -1144,6 +1144,15 @@ var __VITEST_POOL_WORKERS_RUNNER_DURABLE_OBJECT__ = class extends DurableObject
+@@ -1144,6 +1144,15 @@
  							return runInRunnerObject(() => originalInvoke(...args));
  						};
  					} else __console.warn("[vitest-plugin] Could not patch module runner transport. Dynamic import() inside entrypoint/DO handlers may fail.");

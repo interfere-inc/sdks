@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import type { UserConfig } from "tsdown";
 
 const isWatch = process.argv.includes("--watch") || process.argv.includes("-w");
@@ -16,7 +17,7 @@ const baseConfig = {
   minify: { codegen: true, compress: true, mangle: false },
   sourcemap: false,
   suppressWarnings:
-    "TypeScript 7.0 does not yet have a stable API and is experimental.",
+    "TypeScript Go is experimental. Some options will be unavailable.",
   unbundle: true,
 } satisfies UserConfig;
 

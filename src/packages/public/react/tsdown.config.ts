@@ -39,7 +39,7 @@ const config: UserConfig = {
   sourcemap: false,
   target: ["safari16.4", "chrome111"],
   suppressWarnings:
-    "TypeScript 7.0 does not yet have a stable API and is experimental.",
+    "TypeScript Go is experimental. Some options will be unavailable.",
   unbundle: false,
 };
 

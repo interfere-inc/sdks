@@ -39,7 +39,6 @@ function initializeVendor(vendor: Options["vendor"]) {
       defaultIntegrations: false,
       integrations: [
         breadcrumbsIntegration({
-          console: false,
           dom: false,
           history: false,
         }),
@@ -49,7 +48,6 @@ function initializeVendor(vendor: Options["vendor"]) {
       propagateTraceparent: true,
       tracePropagationTargets: [location.origin],
       beforeSend: () => null,
-      beforeSendTransaction: () => null,
       beforeBreadcrumb(breadcrumb, hint) {
         if (breadcrumb.category === "fetch") {
           const parsed = fetchHint.safeParse(hint);

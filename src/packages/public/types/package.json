@@ -48,17 +48,6 @@
         "types": "./dist/sdk/*.d.cts",
         "default": "./dist/sdk/*.cjs"
       }
-    },
-    "#events/*": {
-      "monorepo": "./src/events/*.ts",
-      "import": {
-        "types": "./dist/events/*.d.mts",
-        "default": "./dist/events/*.mjs"
-      },
-      "require": {
-        "types": "./dist/events/*.d.cts",
-        "default": "./dist/events/*.cjs"
-      }
     }
   },
   "exports": {

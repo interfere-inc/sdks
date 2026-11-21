@@ -1,0 +1,12 @@
+diff --git a/dist/chunks/spy.BO0hTE3G.js b/dist/chunks/spy.BO0hTE3G.js
+index 331c9d4..1c860ce 100644
+--- a/dist/chunks/spy.BO0hTE3G.js
++++ b/dist/chunks/spy.BO0hTE3G.js
+@@ -211,6 +211,7 @@ function createMockInstance(options = {}) {
+ 	};
+ 	mock.mockRestore = function mockRestore() {
+ 		mock.mockReset();
++		if (restore) SetPrototypeDelete(MOCK_RESTORE, restore);
+ 		return restore?.();
+ 	};
+ 	mock.mockName = function mockName(name) {

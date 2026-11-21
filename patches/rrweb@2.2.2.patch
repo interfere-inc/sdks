@@ -1,0 +1,122 @@
+diff --git a/dist/rrweb.cjs b/dist/rrweb.cjs
+index dba7005..5b4f4fd 100644
+--- a/dist/rrweb.cjs
++++ b/dist/rrweb.cjs
+@@ -103,7 +103,14 @@ function getUntaintedPrototype$2(key) {
+ 			iframeEl.classList.add("rr-block");
+ 			iframeEl.setAttribute("__rrwebUntaintedMutationObserver", "");
+ 			untaintedBaseIframeCleanup$2[key] = () => iframeEl.remove();
+-		} else iframeEl.remove();
++		} else {
++			for (const name of Object.keys(testableAccessors$2)) {
++				if (typeof win[name] === "function" && win[name].prototype) {
++					untaintedBasePrototype$2[name] ??= win[name].prototype;
++				}
++			}
++			iframeEl.remove();
++		}
+ 		return untaintedBasePrototype$2[key] = untaintedObject;
+ 	} catch {
+ 		return defaultPrototype;
+@@ -5249,7 +5256,14 @@ function getUntaintedPrototype$1(key) {
+ 			iframeEl.classList.add("rr-block");
+ 			iframeEl.setAttribute("__rrwebUntaintedMutationObserver", "");
+ 			untaintedBaseIframeCleanup$1[key] = () => iframeEl.remove();
+-		} else iframeEl.remove();
++		} else {
++			for (const name of Object.keys(testableAccessors$1)) {
++				if (typeof win[name] === "function" && win[name].prototype) {
++					untaintedBasePrototype$1[name] ??= win[name].prototype;
++				}
++			}
++			iframeEl.remove();
++		}
+ 		return untaintedBasePrototype$1[key] = untaintedObject;
+ 	} catch {
+ 		return defaultPrototype;
+@@ -10231,7 +10245,14 @@ function getUntaintedPrototype(key) {
+ 			iframeEl.classList.add("rr-block");
+ 			iframeEl.setAttribute("__rrwebUntaintedMutationObserver", "");
+ 			untaintedBaseIframeCleanup[key] = () => iframeEl.remove();
+-		} else iframeEl.remove();
++		} else {
++			for (const name of Object.keys(testableAccessors)) {
++				if (typeof win[name] === "function" && win[name].prototype) {
++					untaintedBasePrototype[name] ??= win[name].prototype;
++				}
++			}
++			iframeEl.remove();
++		}
+ 		return untaintedBasePrototype[key] = untaintedObject;
+ 	} catch {
+ 		return defaultPrototype;
+@@ -12288,7 +12309,7 @@ var ShadowDomManager = class {
+ 	* Monkey patch 'attachShadow' of an IFrameElement to observe newly added shadow doms.
+ 	*/
+ 	observeAttachShadow(iframeElement) {
+-		if (!iframeElement.contentWindow || !iframeElement.contentDocument) return;
++		if (!iframeElement.contentWindow || !iframeElement.contentDocument || typeof iframeElement.contentWindow.Element !== "function") return;
+ 		this.patchAttachShadow(iframeElement.contentWindow.Element, iframeElement.contentDocument);
+ 	}
+ 	/**
+diff --git a/dist/rrweb.js b/dist/rrweb.js
+index 1d40206..05d0e51 100644
+--- a/dist/rrweb.js
++++ b/dist/rrweb.js
+@@ -102,7 +102,14 @@ function getUntaintedPrototype$2(key) {
+ 			iframeEl.classList.add("rr-block");
+ 			iframeEl.setAttribute("__rrwebUntaintedMutationObserver", "");
+ 			untaintedBaseIframeCleanup$2[key] = () => iframeEl.remove();
+-		} else iframeEl.remove();
++		} else {
++			for (const name of Object.keys(testableAccessors$2)) {
++				if (typeof win[name] === "function" && win[name].prototype) {
++					untaintedBasePrototype$2[name] ??= win[name].prototype;
++				}
++			}
++			iframeEl.remove();
++		}
+ 		return untaintedBasePrototype$2[key] = untaintedObject;
+ 	} catch {
+ 		return defaultPrototype;
+@@ -5248,7 +5255,14 @@ function getUntaintedPrototype$1(key) {
+ 			iframeEl.classList.add("rr-block");
+ 			iframeEl.setAttribute("__rrwebUntaintedMutationObserver", "");
+ 			untaintedBaseIframeCleanup$1[key] = () => iframeEl.remove();
+-		} else iframeEl.remove();
++		} else {
++			for (const name of Object.keys(testableAccessors$1)) {
++				if (typeof win[name] === "function" && win[name].prototype) {
++					untaintedBasePrototype$1[name] ??= win[name].prototype;
++				}
++			}
++			iframeEl.remove();
++		}
+ 		return untaintedBasePrototype$1[key] = untaintedObject;
+ 	} catch {
+ 		return defaultPrototype;
+@@ -10230,7 +10244,14 @@ function getUntaintedPrototype(key) {
+ 			iframeEl.classList.add("rr-block");
+ 			iframeEl.setAttribute("__rrwebUntaintedMutationObserver", "");
+ 			untaintedBaseIframeCleanup[key] = () => iframeEl.remove();
+-		} else iframeEl.remove();
++		} else {
++			for (const name of Object.keys(testableAccessors)) {
++				if (typeof win[name] === "function" && win[name].prototype) {
++					untaintedBasePrototype[name] ??= win[name].prototype;
++				}
++			}
++			iframeEl.remove();
++		}
+ 		return untaintedBasePrototype[key] = untaintedObject;
+ 	} catch {
+ 		return defaultPrototype;
+@@ -12287,7 +12308,7 @@ var ShadowDomManager = class {
+ 	* Monkey patch 'attachShadow' of an IFrameElement to observe newly added shadow doms.
+ 	*/
+ 	observeAttachShadow(iframeElement) {
+-		if (!iframeElement.contentWindow || !iframeElement.contentDocument) return;
++		if (!iframeElement.contentWindow || !iframeElement.contentDocument || typeof iframeElement.contentWindow.Element !== "function") return;
+ 		this.patchAttachShadow(iframeElement.contentWindow.Element, iframeElement.contentDocument);
+ 	}
+ 	/**
