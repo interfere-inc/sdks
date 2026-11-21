@@ -2,7 +2,7 @@ pub use crate::prelude::*;
 #[allow(unused_imports)]
 use super::*;
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct UnsupportedMediaTypeErrorBodyCode {
     #[serde(default)]
     pub defined: String,
@@ -11,8 +11,8 @@ pub struct UnsupportedMediaTypeErrorBodyCode {
     pub status: String,
     #[serde(default)]
     pub message: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub data: Option<serde_json::Value>,
+    #[serde(default)]
+    pub data: UnsupportedMediaTypeErrorBodyCodeData,
 }
 
 impl UnsupportedMediaTypeErrorBodyCode {
@@ -28,7 +28,7 @@ pub struct UnsupportedMediaTypeErrorBodyCodeBuilder {
     code: Option<UnsupportedMediaTypeErrorBodyCodeCode>,
     status: Option<String>,
     message: Option<String>,
-    data: Option<serde_json::Value>,
+    data: Option<UnsupportedMediaTypeErrorBodyCodeData>,
 }
 
 impl UnsupportedMediaTypeErrorBodyCodeBuilder {
@@ -52,7 +52,7 @@ impl UnsupportedMediaTypeErrorBodyCodeBuilder {
         self
     }
 
-    pub fn data(mut self, value: serde_json::Value) -> Self {
+    pub fn data(mut self, value: UnsupportedMediaTypeErrorBodyCodeData) -> Self {
         self.data = Some(value);
         self
     }
@@ -63,13 +63,14 @@ impl UnsupportedMediaTypeErrorBodyCodeBuilder {
     /// - [`code`](UnsupportedMediaTypeErrorBodyCodeBuilder::code)
     /// - [`status`](UnsupportedMediaTypeErrorBodyCodeBuilder::status)
     /// - [`message`](UnsupportedMediaTypeErrorBodyCodeBuilder::message)
+    /// - [`data`](UnsupportedMediaTypeErrorBodyCodeBuilder::data)
     pub fn build(self) -> Result<UnsupportedMediaTypeErrorBodyCode, BuildError> {
         Ok(UnsupportedMediaTypeErrorBodyCode {
             defined: self.defined.ok_or_else(|| BuildError::missing_field("defined"))?,
             code: self.code.ok_or_else(|| BuildError::missing_field("code"))?,
             status: self.status.ok_or_else(|| BuildError::missing_field("status"))?,
             message: self.message.ok_or_else(|| BuildError::missing_field("message"))?,
-            data: self.data,
+            data: self.data.ok_or_else(|| BuildError::missing_field("data"))?,
         })
     }
 }

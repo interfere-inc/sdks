@@ -6,7 +6,7 @@
 //! ## Type Categories
 //!
 //! - **Request/Response Types**: 2239 types for API operations
-//! - **Model Types**: 611 types for data representation
+//! - **Model Types**: 618 types for data representation
 
 pub mod drain_drain_otlp_export_request_signal;
 pub mod traces_trace_activity_request_occurred_at;
@@ -217,7 +217,9 @@ pub mod bad_gateway_error_body_code_code;
 pub mod bad_gateway_error_body_code;
 pub mod bad_gateway_error_body;
 pub mod content_too_large_error_body_code_code;
+pub mod content_too_large_error_body_code_data;
 pub mod unsupported_media_type_error_body_code_code;
+pub mod unsupported_media_type_error_body_code_data;
 pub mod unsupported_media_type_error_body_code;
 pub mod unsupported_media_type_error_body;
 pub mod not_found_error_body_two_code;
@@ -232,9 +234,14 @@ pub mod conflict_error_body_zero_code;
 pub mod conflict_error_body_zero;
 pub mod conflict_error_body_one_code;
 pub mod conflict_error_body_one;
+pub mod conflict_error_body_zero_data_blockers_item;
+pub mod conflict_error_body_zero_data;
+pub mod conflict_error_body_one_data;
+pub mod conflict_error_body_code_data;
 pub mod bad_request_error_body_code_code;
 pub mod bad_request_error_body_code;
 pub mod bad_request_error_body;
+pub mod conflict_error_body_one_data_field;
 pub mod too_many_requests_error_body_code_code;
 pub mod rpc_status;
 pub mod auth_problem_code;
@@ -3068,7 +3075,9 @@ pub use bad_gateway_error_body_code_code::BadGatewayErrorBodyCodeCode;
 pub use bad_gateway_error_body_code::BadGatewayErrorBodyCode;
 pub use bad_gateway_error_body::BadGatewayErrorBody;
 pub use content_too_large_error_body_code_code::ContentTooLargeErrorBodyCodeCode;
+pub use content_too_large_error_body_code_data::ContentTooLargeErrorBodyCodeData;
 pub use unsupported_media_type_error_body_code_code::UnsupportedMediaTypeErrorBodyCodeCode;
+pub use unsupported_media_type_error_body_code_data::UnsupportedMediaTypeErrorBodyCodeData;
 pub use unsupported_media_type_error_body_code::UnsupportedMediaTypeErrorBodyCode;
 pub use unsupported_media_type_error_body::UnsupportedMediaTypeErrorBody;
 pub use not_found_error_body_two_code::NotFoundErrorBodyTwoCode;
@@ -3083,9 +3092,14 @@ pub use conflict_error_body_zero_code::ConflictErrorBodyZeroCode;
 pub use conflict_error_body_zero::ConflictErrorBodyZero;
 pub use conflict_error_body_one_code::ConflictErrorBodyOneCode;
 pub use conflict_error_body_one::ConflictErrorBodyOne;
+pub use conflict_error_body_zero_data_blockers_item::ConflictErrorBodyZeroDataBlockersItem;
+pub use conflict_error_body_zero_data::ConflictErrorBodyZeroData;
+pub use conflict_error_body_one_data::ConflictErrorBodyOneData;
+pub use conflict_error_body_code_data::ConflictErrorBodyCodeData;
 pub use bad_request_error_body_code_code::BadRequestErrorBodyCodeCode;
 pub use bad_request_error_body_code::BadRequestErrorBodyCode;
 pub use bad_request_error_body::BadRequestErrorBody;
+pub use conflict_error_body_one_data_field::ConflictErrorBodyOneDataField;
 pub use too_many_requests_error_body_code_code::TooManyRequestsErrorBodyCodeCode;
 pub use rpc_status::RpcStatus;
 pub use auth_problem_code::AuthProblemCode;

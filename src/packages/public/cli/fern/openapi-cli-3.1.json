@@ -62274,7 +62274,7 @@
           }
         }
       },
-      "ErrorResponse_e722459efa1895c7ae07d93a423d9ae54f251751e36386e8a768dacf698c5e0f": {
+      "ErrorResponse_8fc40817a4f86210b7897dd6fc2b09e0dece54af9e0d9923c0db509aafe7e768": {
         "description": "Request conflicts with current state",
         "content": {
           "application/json": {
@@ -62296,13 +62296,42 @@
                       "type": "string",
                       "default": "Several services share this namespace and name. Send resource to choose one."
                     },
-                    "data": {}
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "resources": {
+                          "type": "array",
+                          "maxItems": 50,
+                          "items": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "description": "Resources of the services sharing this namespace and name, null for the one without a resource, at most 50."
+                        },
+                        "truncated": {
+                          "type": "boolean",
+                          "description": "True when more services share the name than resources lists."
+                        }
+                      },
+                      "required": [
+                        "resources",
+                        "truncated"
+                      ],
+                      "title": "ServiceResourceRequiredDetails"
+                    }
                   },
                   "required": [
                     "defined",
                     "code",
                     "status",
-                    "message"
+                    "message",
+                    "data"
                   ]
                 },
                 {
@@ -79997,13 +80026,34 @@
                           "type": "string",
                           "default": "Avatar exceeds the size limit."
                         },
-                        "data": {}
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "sizeBytes": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 9007199254740991
+                            },
+                            "limit": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "exclusiveMinimum": 0
+                            }
+                          },
+                          "required": [
+                            "sizeBytes",
+                            "limit"
+                          ],
+                          "title": "AvatarFileTooLargeDetails"
+                        }
                       },
                       "required": [
                         "defined",
                         "code",
                         "status",
-                        "message"
+                        "message",
+                        "data"
                       ]
                     },
                     {
@@ -80036,13 +80086,33 @@
                           "type": "string",
                           "default": "Avatar content type is not supported."
                         },
-                        "data": {}
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "contentType": {
+                              "type": "string"
+                            },
+                            "supported": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              },
+                              "readOnly": true
+                            }
+                          },
+                          "required": [
+                            "contentType",
+                            "supported"
+                          ],
+                          "title": "AvatarUnsupportedContentTypeDetails"
+                        }
                       },
                       "required": [
                         "defined",
                         "code",
                         "status",
-                        "message"
+                        "message",
+                        "data"
                       ]
                     },
                     {
@@ -83641,13 +83711,39 @@
                           "type": "string",
                           "default": "A data source that apps, keys, sessions, findings, problems or an integration still refer to can't be deleted. Its release history is deleted with it."
                         },
-                        "data": {}
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "blockers": {
+                              "type": "array",
+                              "maxItems": 6,
+                              "items": {
+                                "enum": [
+                                  "integration",
+                                  "apps",
+                                  "keys",
+                                  "sessions",
+                                  "findings",
+                                  "problems"
+                                ],
+                                "type": "string",
+                                "description": "What still refers to the service: integration (a destination resource), apps, keys (public keys), sessions (replay sessions), findings or problems."
+                              },
+                              "description": "Each kind of record that still refers to the service. Remove these before deleting it."
+                            }
+                          },
+                          "required": [
+                            "blockers"
+                          ],
+                          "title": "ServiceInUseDetails"
+                        }
                       },
                       "required": [
                         "defined",
                         "code",
                         "status",
-                        "message"
+                        "message",
+                        "data"
                       ]
                     },
                     {
@@ -83666,13 +83762,42 @@
                           "type": "string",
                           "default": "Several services share this namespace and name. Send resource to choose one."
                         },
-                        "data": {}
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "resources": {
+                              "type": "array",
+                              "maxItems": 50,
+                              "items": {
+                                "anyOf": [
+                                  {
+                                    "type": "string"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "description": "Resources of the services sharing this namespace and name, null for the one without a resource, at most 50."
+                            },
+                            "truncated": {
+                              "type": "boolean",
+                              "description": "True when more services share the name than resources lists."
+                            }
+                          },
+                          "required": [
+                            "resources",
+                            "truncated"
+                          ],
+                          "title": "ServiceResourceRequiredDetails"
+                        }
                       },
                       "required": [
                         "defined",
                         "code",
                         "status",
-                        "message"
+                        "message",
+                        "data"
                       ]
                     },
                     {
@@ -83797,7 +83922,7 @@
             "$ref": "#/components/responses/ErrorResponse_0768de99929ccf4a57ca404cadf947d6ed908c08b524e366669e0129e7b0ef1d"
           },
           "409": {
-            "$ref": "#/components/responses/ErrorResponse_e722459efa1895c7ae07d93a423d9ae54f251751e36386e8a768dacf698c5e0f"
+            "$ref": "#/components/responses/ErrorResponse_8fc40817a4f86210b7897dd6fc2b09e0dece54af9e0d9923c0db509aafe7e768"
           },
           "503": {
             "$ref": "#/components/responses/ErrorResponse_b7d254f6bd68a887b2398a1b58fb8fe3913110d7236a6e4540d7d2aa990fb12b"
@@ -84021,7 +84146,7 @@
             }
           },
           "409": {
-            "$ref": "#/components/responses/ErrorResponse_e722459efa1895c7ae07d93a423d9ae54f251751e36386e8a768dacf698c5e0f"
+            "$ref": "#/components/responses/ErrorResponse_8fc40817a4f86210b7897dd6fc2b09e0dece54af9e0d9923c0db509aafe7e768"
           },
           "503": {
             "$ref": "#/components/responses/ErrorResponse_b7d254f6bd68a887b2398a1b58fb8fe3913110d7236a6e4540d7d2aa990fb12b"
@@ -84883,13 +85008,25 @@
                           "type": "string",
                           "default": "This name is already used by another surface. Try a different name."
                         },
-                        "data": {}
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "field": {
+                              "const": "name"
+                            }
+                          },
+                          "required": [
+                            "field"
+                          ],
+                          "title": "SurfaceNameConflictDetails"
+                        }
                       },
                       "required": [
                         "defined",
                         "code",
                         "status",
-                        "message"
+                        "message",
+                        "data"
                       ]
                     },
                     {

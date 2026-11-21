@@ -2,7 +2,7 @@ pub use crate::prelude::*;
 #[allow(unused_imports)]
 use super::*;
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct ConflictErrorBodyOne {
     #[serde(default)]
     pub defined: String,
@@ -11,8 +11,7 @@ pub struct ConflictErrorBodyOne {
     pub status: String,
     #[serde(default)]
     pub message: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub data: Option<serde_json::Value>,
+    pub data: ConflictErrorBodyOneData,
 }
 
 impl ConflictErrorBodyOne {
@@ -28,7 +27,7 @@ pub struct ConflictErrorBodyOneBuilder {
     code: Option<ConflictErrorBodyOneCode>,
     status: Option<String>,
     message: Option<String>,
-    data: Option<serde_json::Value>,
+    data: Option<ConflictErrorBodyOneData>,
 }
 
 impl ConflictErrorBodyOneBuilder {
@@ -52,7 +51,7 @@ impl ConflictErrorBodyOneBuilder {
         self
     }
 
-    pub fn data(mut self, value: serde_json::Value) -> Self {
+    pub fn data(mut self, value: ConflictErrorBodyOneData) -> Self {
         self.data = Some(value);
         self
     }
@@ -63,13 +62,14 @@ impl ConflictErrorBodyOneBuilder {
     /// - [`code`](ConflictErrorBodyOneBuilder::code)
     /// - [`status`](ConflictErrorBodyOneBuilder::status)
     /// - [`message`](ConflictErrorBodyOneBuilder::message)
+    /// - [`data`](ConflictErrorBodyOneBuilder::data)
     pub fn build(self) -> Result<ConflictErrorBodyOne, BuildError> {
         Ok(ConflictErrorBodyOne {
             defined: self.defined.ok_or_else(|| BuildError::missing_field("defined"))?,
             code: self.code.ok_or_else(|| BuildError::missing_field("code"))?,
             status: self.status.ok_or_else(|| BuildError::missing_field("status"))?,
             message: self.message.ok_or_else(|| BuildError::missing_field("message"))?,
-            data: self.data,
+            data: self.data.ok_or_else(|| BuildError::missing_field("data"))?,
         })
     }
 }
