@@ -1,7 +1,7 @@
 import { HttpResponse, http } from "msw";
 import { delivered, network } from "../test/edge-network.fixture";
 import { trace } from "@opentelemetry/api";
-import { BasicTracerProvider } from "@opentelemetry/sdk-trace-base";
+import { TracerProvider } from "@opentelemetry/sdk-trace";
 import type { MockInstance } from "vitest";
 import { afterEach, beforeAll, beforeEach, expect, test, vi } from "vitest";
 
@@ -38,7 +38,7 @@ beforeEach(() => {
 
 afterEach(async () => {
   const providers = registration.mock.calls.flatMap(([provider]) =>
-    provider instanceof BasicTracerProvider ? [provider] : [],
+    provider instanceof TracerProvider ? [provider] : [],
   );
 
   await Promise.all(providers.map(async (provider) => provider.shutdown()));

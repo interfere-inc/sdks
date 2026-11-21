@@ -1,4 +1,8 @@
-import { StackContextManager } from "@opentelemetry/sdk-trace-web";
+import {
+  InMemorySpanExporter,
+  SimpleSpanProcessor,
+  StackContextManager,
+} from "@opentelemetry/sdk-trace";
 import { USER_ACTION_EVENT_NAME } from "@interfere/types/data/correlation-events";
 
 import { context, propagation, trace } from "@opentelemetry/api";
@@ -6,10 +10,6 @@ import {
   InMemoryLogRecordExporter,
   SimpleLogRecordProcessor,
 } from "@opentelemetry/sdk-logs";
-import {
-  InMemorySpanExporter,
-  SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
 import { HttpResponse, http } from "msw";
 import { expect, onTestFinished, test, vi } from "vitest";
 
@@ -45,7 +45,7 @@ test("a native click emits a user action, stamps synchronous work with its actio
     additionalLogRecordProcessors: [
       new SimpleLogRecordProcessor({ exporter: logs }),
     ],
-    additionalSpanProcessors: [new SimpleSpanProcessor(spans)],
+    additionalSpanProcessors: [new SimpleSpanProcessor({ exporter: spans })],
     clientOptions: {
       baseUrl: "https://sdk.invalid",
       publicKeyHeader: { apiKey: "test-key" },

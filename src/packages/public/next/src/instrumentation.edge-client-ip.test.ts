@@ -1,7 +1,7 @@
 import { HttpResponse, http } from "msw";
 import { registeredTracerProvider } from "@interfere/server-core/ownership";
 import { trace } from "@opentelemetry/api";
-import { BasicTracerProvider } from "@opentelemetry/sdk-trace-base";
+import { TracerProvider } from "@opentelemetry/sdk-trace";
 import { afterEach, beforeAll, beforeEach, expect, test, vi } from "vitest";
 import { delivered, network, requests } from "../test/edge-network.fixture";
 
@@ -33,7 +33,7 @@ beforeEach(() => {
 afterEach(async () => {
   const provider = registeredTracerProvider();
 
-  if (provider instanceof BasicTracerProvider) {
+  if (provider instanceof TracerProvider) {
     await provider.shutdown();
   }
 

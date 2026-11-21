@@ -18,6 +18,7 @@
     "./browser-storage": "./src/browser/browser-storage.ts",
     "./cli": "./src/cli.ts",
     "./injected-configuration": "./src/injected-configuration.ts",
+    "./fetch-network": "./src/fetch-network.ts",
     "./msw-server": "./src/msw-server.ts",
     "./native-browser": "./src/configs/native-browser.ts",
     "./node": "./src/configs/node.ts",
@@ -29,6 +30,7 @@
     "typecheck": "bun check"
   },
   "dependencies": {
+    "@mswjs/interceptors": "catalog:",
     "@vitest/browser-playwright": "catalog:",
     "@vitest/coverage-istanbul": "catalog:",
     "msw": "catalog:",

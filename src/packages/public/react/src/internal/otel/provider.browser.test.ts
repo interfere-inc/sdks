@@ -22,12 +22,12 @@ import {
   InMemoryMetricExporter,
   PeriodicExportingMetricReader,
 } from "@opentelemetry/sdk-metrics";
-import type { SpanProcessor } from "@opentelemetry/sdk-trace-base";
+import type { SpanProcessor } from "@opentelemetry/sdk-trace";
 import {
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 
 import {
   CompositePropagator,
@@ -66,7 +66,7 @@ function buildReader() {
 
 function captureSpans() {
   const exporter = new InMemorySpanExporter();
-  const processor = new SimpleSpanProcessor(exporter);
+  const processor = new SimpleSpanProcessor({ exporter });
 
   return { processor, spans: exporter.getFinishedSpans() };
 }
@@ -134,7 +134,7 @@ function headerPropagator(handle: OtelProviderHandle) {
 
 describe(buildOtelProvider, () => {
   let handle: OtelProviderHandle | null = null;
-  const foreignProviders: BasicTracerProvider[] = [];
+  const foreignProviders: TracerProvider[] = [];
 
   beforeEach(() => {
     worker.use(
@@ -414,9 +414,9 @@ describe(buildOtelProvider, () => {
       }),
     );
 
-    const processorLifecycle = new SimpleSpanProcessor(
-      new InMemorySpanExporter(),
-    );
+    const processorLifecycle = new SimpleSpanProcessor({
+      exporter: new InMemorySpanExporter(),
+    });
 
     const processor: SpanProcessor = {
       onStart: vi.fn<SpanProcessor["onStart"]>(),
@@ -756,8 +756,10 @@ describe(buildOtelProvider, () => {
     test("does not stomp a foreign global tracer provider installed before us", () => {
       const foreignExporter = new InMemorySpanExporter();
 
-      const foreignProvider = new BasicTracerProvider({
-        spanProcessors: [new SimpleSpanProcessor(foreignExporter)],
+      const foreignProvider = new TracerProvider({
+        spanProcessors: [
+          new SimpleSpanProcessor({ exporter: foreignExporter }),
+        ],
       });
 
       trace.setGlobalTracerProvider(foreignProvider);
@@ -789,8 +791,10 @@ describe(buildOtelProvider, () => {
 
       const foreignExporter = new InMemorySpanExporter();
 
-      const foreignProvider = new BasicTracerProvider({
-        spanProcessors: [new SimpleSpanProcessor(foreignExporter)],
+      const foreignProvider = new TracerProvider({
+        spanProcessors: [
+          new SimpleSpanProcessor({ exporter: foreignExporter }),
+        ],
       });
 
       expect(trace.setGlobalTracerProvider(foreignProvider)).toBe(true);

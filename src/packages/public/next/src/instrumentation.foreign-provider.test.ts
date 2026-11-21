@@ -1,13 +1,13 @@
 import {
   ProxyTracerProvider,
   context,
+  logs,
   propagation,
   trace,
 } from "@opentelemetry/api";
-import { logs } from "@opentelemetry/api-logs";
 import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
 import { W3CTraceContextPropagator } from "@opentelemetry/core";
-import { NodeTracerProvider } from "@opentelemetry/sdk-trace-node";
+import { TracerProvider } from "@opentelemetry/sdk-trace";
 import { HttpResponse, http, passthrough } from "msw";
 import { once } from "node:events";
 import { createServer } from "node:http";
@@ -31,14 +31,14 @@ const server = setupServer(
   http.post("https://collector.test/*", () => HttpResponse.json({})),
 );
 
-const foreignProviders: NodeTracerProvider[] = [];
+const foreignProviders: TracerProvider[] = [];
 
 const originalConsole = { ...console };
 
 let warn: MockInstance<Console["warn"]>;
 
 function registerForeignProvider() {
-  const provider = new NodeTracerProvider();
+  const provider = new TracerProvider();
 
   foreignProviders.push(provider);
 
@@ -76,7 +76,7 @@ async function load() {
 }
 
 beforeAll(() => {
-  server.listen({ onUnhandledRequest: "error" });
+  server.listen({ onUnhandledFrame: "error" });
 });
 
 beforeEach(() => {

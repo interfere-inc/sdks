@@ -3,8 +3,8 @@ import { LoggerProvider } from "@opentelemetry/sdk-logs";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
-import { WebTracerProvider } from "@opentelemetry/sdk-trace-web";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 
 import { registerBundledInstrumentations } from "./instrumentations.js";
 import { applyFetchSpanAttrs } from "./request-outcome.js";
@@ -15,7 +15,7 @@ const INGEST_RE = /\/v1\/ingest/u;
 
 describe(registerBundledInstrumentations, () => {
   const disposers: (() => void)[] = [];
-  const providers: WebTracerProvider[] = [];
+  const providers: TracerProvider[] = [];
   const loggerProviders: LoggerProvider[] = [];
 
   afterEach(async () => {
@@ -40,7 +40,7 @@ describe(registerBundledInstrumentations, () => {
   });
 
   function makeProvider() {
-    const p = new WebTracerProvider();
+    const p = new TracerProvider();
 
     providers.push(p);
 
@@ -132,8 +132,8 @@ describe(applyFetchSpanAttrs, () => {
   ) {
     const exporter = new InMemorySpanExporter();
 
-    const provider = new WebTracerProvider({
-      spanProcessors: [new SimpleSpanProcessor(exporter)],
+    const provider = new TracerProvider({
+      spanProcessors: [new SimpleSpanProcessor({ exporter })],
     });
 
     const span = provider

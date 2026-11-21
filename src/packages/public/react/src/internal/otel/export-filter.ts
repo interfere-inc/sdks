@@ -1,9 +1,6 @@
 import type { Span } from "@opentelemetry/api";
 import { hrTimeToMilliseconds } from "@opentelemetry/core";
-import type {
-  ReadableSpan,
-  SpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+import type { ReadableSpan, SpanProcessor } from "@opentelemetry/sdk-trace";
 
 const LONG_TASK_SCOPE = "@opentelemetry/instrumentation-long-task";
 

@@ -3,10 +3,10 @@ import { context, trace } from "@opentelemetry/api";
 import type { Context, ContextManager } from "@opentelemetry/api";
 import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
 import {
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import { NextRequest } from "next/server";
 import { NextFetchEvent } from "next/dist/server/web/spec-extension/fetch-event";
 
@@ -112,17 +112,17 @@ const event = new NextFetchEvent({
   context: undefined,
 });
 
-let provider: BasicTracerProvider;
+let provider: TracerProvider;
 
 beforeEach(() => {
   vi.stubEnv("NEXT_PUBLIC_INTERFERE_FORCE_ENABLE", "1");
 
   vi.stubEnv("INTERFERE_API_KEY", "interfere_pk_test_123");
 
-  provider = new BasicTracerProvider({
+  provider = new TracerProvider({
     spanProcessors: [
       nextSpanExceptionProcessor,
-      new SimpleSpanProcessor(new InMemorySpanExporter()),
+      new SimpleSpanProcessor({ exporter: new InMemorySpanExporter() }),
     ],
   });
 
@@ -176,7 +176,7 @@ describe.each(HOSTILE)("given %s", (_, hostile) => {
   });
 
   test("next's span adds no failure of its own when recording it", () => {
-    const bare = new BasicTracerProvider();
+    const bare = new TracerProvider();
 
     const expected = failureOf(() => {
       bare.getTracer("next.js").startSpan("bare").recordException(hostile());

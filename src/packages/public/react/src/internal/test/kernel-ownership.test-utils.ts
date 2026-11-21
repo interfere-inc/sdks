@@ -13,7 +13,7 @@ import {
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+} from "@opentelemetry/sdk-trace";
 import { HttpResponse, http } from "msw";
 import { afterEach, beforeEach, vi } from "vitest";
 
@@ -108,7 +108,9 @@ export function exporters() {
       _internalAdditionalLogRecordProcessors: [
         new SimpleLogRecordProcessor({ exporter: logs }),
       ],
-      _internalAdditionalSpanProcessors: [new SimpleSpanProcessor(spans)],
+      _internalAdditionalSpanProcessors: [
+        new SimpleSpanProcessor({ exporter: spans }),
+      ],
     },
     requestSpans: () =>
       spans

@@ -9,7 +9,7 @@ const server = setupServer();
 const requests: Request[] = [];
 
 beforeAll(() => {
-  server.listen({ onUnhandledRequest: "error" });
+  server.listen({ onUnhandledFrame: "error" });
 
   server.events.on("request:start", ({ request }) => requests.push(request));
 });

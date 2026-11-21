@@ -2,12 +2,11 @@ import { receiver } from "@interfere/test-utils/vitest/telemetry-receiver";
 import { attribute, exportedSpans } from "@interfere/test-utils/vitest/otlp";
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
 
-import { context, metrics, propagation, trace } from "@opentelemetry/api";
-import { logs } from "@opentelemetry/api-logs";
+import { context, logs, metrics, propagation, trace } from "@opentelemetry/api";
 import { UndiciInstrumentation } from "@opentelemetry/instrumentation-undici";
 import { LoggerProvider } from "@opentelemetry/sdk-logs";
 import { MeterProvider } from "@opentelemetry/sdk-metrics";
-import { NodeTracerProvider } from "@opentelemetry/sdk-trace-node";
+import { TracerProvider } from "@opentelemetry/sdk-trace";
 import {
   afterAll,
   afterEach,
@@ -24,9 +23,7 @@ let collector: Awaited<ReturnType<typeof receiver>>;
 
 let register: (typeof import("./register"))["register"];
 
-let registerProvider: MockInstance<
-  typeof NodeTracerProvider.prototype.register
->;
+let registerProvider: MockInstance<typeof trace.setGlobalTracerProvider>;
 
 let registerLogger: MockInstance<typeof logs.setGlobalLoggerProvider>;
 
@@ -45,7 +42,7 @@ beforeEach(async () => {
 
   vi.clearAllMocks();
 
-  registerProvider = vi.spyOn(NodeTracerProvider.prototype, "register");
+  registerProvider = vi.spyOn(trace, "setGlobalTracerProvider");
 
   registerLogger = vi.spyOn(logs, "setGlobalLoggerProvider");
 
@@ -79,8 +76,8 @@ afterEach(async () => {
   }
 
   await Promise.all([
-    ...registerProvider.mock.contexts.map(async (provider) =>
-      provider instanceof NodeTracerProvider ? provider.shutdown() : undefined,
+    ...registerProvider.mock.calls.map(async ([provider]) =>
+      provider instanceof TracerProvider ? provider.shutdown() : undefined,
     ),
     ...registerLogger.mock.calls.map(async ([provider]) =>
       provider instanceof LoggerProvider ? provider.shutdown() : undefined,
@@ -125,13 +122,13 @@ test.each<{
       omitUndefined({ consoleBridge: false, ignoreUrls, tracing }),
     );
 
-    const [tracerProvider] = registerProvider.mock.contexts;
+    const tracerProvider = registerProvider.mock.calls[0]?.[0];
     const loggerProvider = registerLogger.mock.calls[0]?.[0];
     const meterProvider = registerMeter.mock.calls[0]?.[0];
     const [instrumentation] = registerInstrumentation.mock.contexts;
 
     if (
-      !(tracerProvider instanceof NodeTracerProvider) ||
+      !(tracerProvider instanceof TracerProvider) ||
       !(loggerProvider instanceof LoggerProvider) ||
       !(meterProvider instanceof MeterProvider) ||
       !(instrumentation instanceof UndiciInstrumentation)
@@ -220,9 +217,9 @@ test("honors baked drain modes without exporting traces or logs", async () => {
 
   await register({ consoleBridge: false });
 
-  const [provider] = registerProvider.mock.contexts;
+  const provider = registerProvider.mock.calls[0]?.[0];
 
-  if (!(provider instanceof NodeTracerProvider)) {
+  if (!(provider instanceof TracerProvider)) {
     throw new TypeError("Expected a native tracer provider");
   }
 
@@ -254,9 +251,9 @@ test.each([
 
     await register({ consoleBridge: false });
 
-    const [provider] = registerProvider.mock.contexts;
+    const provider = registerProvider.mock.calls[0]?.[0];
 
-    if (!(provider instanceof NodeTracerProvider)) {
+    if (!(provider instanceof TracerProvider)) {
       throw new TypeError("Expected a native tracer provider");
     }
 
@@ -324,9 +321,9 @@ test.each([
 
     trace.getTracer("test").startSpan("identity").end();
 
-    const [provider] = registerProvider.mock.contexts;
+    const provider = registerProvider.mock.calls[0]?.[0];
 
-    assert(provider instanceof NodeTracerProvider);
+    assert(provider instanceof TracerProvider);
 
     await provider.forceFlush();
 

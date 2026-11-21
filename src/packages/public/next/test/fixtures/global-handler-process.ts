@@ -1,9 +1,9 @@
 import { once } from "node:events";
 import {
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import { trace } from "@opentelemetry/api";
 import {
   installGlobalHandlers,
@@ -12,8 +12,8 @@ import {
 
 const exporter = new InMemorySpanExporter();
 
-const provider = new BasicTracerProvider({
-  spanProcessors: [new SimpleSpanProcessor(exporter)],
+const provider = new TracerProvider({
+  spanProcessors: [new SimpleSpanProcessor({ exporter })],
 });
 
 const mode = process.argv.at(2);

@@ -1,9 +1,9 @@
-import { StackContextManager } from "@opentelemetry/sdk-trace-web";
-import { context, propagation } from "@opentelemetry/api";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  StackContextManager,
+} from "@opentelemetry/sdk-trace";
+import { context, propagation } from "@opentelemetry/api";
 import { HttpResponse, http } from "msw";
 import { onTestFinished, vi } from "vitest";
 
@@ -33,7 +33,7 @@ export function createErrorsKernel() {
   const exporter = new InMemorySpanExporter();
 
   const handle = buildOtelProvider({
-    additionalSpanProcessors: [new SimpleSpanProcessor(exporter)],
+    additionalSpanProcessors: [new SimpleSpanProcessor({ exporter })],
 
     getDeviceId: () => null,
     getSessionId: () => null,

@@ -4,7 +4,7 @@ import { isUrlIgnored } from "@opentelemetry/core";
 import type { ExportResult } from "@opentelemetry/core";
 import { resourceFromAttributes } from "@opentelemetry/resources";
 import type { ResourceMetrics } from "@opentelemetry/sdk-metrics";
-import type { ReadableSpan } from "@opentelemetry/sdk-trace-base";
+import type { ReadableSpan } from "@opentelemetry/sdk-trace";
 import { z } from "zod";
 
 import { PRODUCER_VERSION } from "../version.js";

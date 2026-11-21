@@ -30,11 +30,11 @@ import {
 import type { UrlRedactionPolicy } from "@interfere/types/sdk/url-redaction";
 
 import { context, trace } from "@opentelemetry/api";
-import type { SeverityNumber } from "@opentelemetry/api-logs";
+import type { SeverityNumber } from "@opentelemetry/api";
 
 import type { LogRecordProcessor } from "@opentelemetry/sdk-logs";
 import type { MetricReader } from "@opentelemetry/sdk-metrics";
-import type { SpanProcessor } from "@opentelemetry/sdk-trace-base";
+import type { SpanProcessor } from "@opentelemetry/sdk-trace";
 
 import type { PluginOverrides } from "../plugins/lib/loader.js";
 import type {

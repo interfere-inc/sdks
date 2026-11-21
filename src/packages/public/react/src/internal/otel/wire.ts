@@ -3,7 +3,7 @@ import type { ReleaseSlug } from "@interfere/types/releases/slug";
 import type { Context } from "@opentelemetry/api";
 import type { LogRecordProcessor } from "@opentelemetry/sdk-logs";
 import type { MetricReader } from "@opentelemetry/sdk-metrics";
-import type { SpanProcessor } from "@opentelemetry/sdk-trace-base";
+import type { SpanProcessor } from "@opentelemetry/sdk-trace";
 
 import {
   requestIdentityIsCurrent,

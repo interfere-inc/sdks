@@ -1,4 +1,4 @@
-import type { TimedEvent } from "@opentelemetry/sdk-trace-base";
+import type { TimedEvent } from "@opentelemetry/sdk-trace";
 
 const CAPTURE_STATE = Symbol.for("@interfere/next/capture-state");
 

@@ -11,7 +11,7 @@ import type { ExportResult } from "@opentelemetry/core";
 import { SpanKind } from "@opentelemetry/api";
 import { ExportResultCode } from "@opentelemetry/core";
 import { JsonTraceSerializer } from "@opentelemetry/otlp-transformer";
-import type { ReadableSpan, SpanExporter } from "@opentelemetry/sdk-trace-base";
+import type { ReadableSpan, SpanExporter } from "@opentelemetry/sdk-trace";
 
 import { fetchIngest, stampSentAt } from "../ingest-backoff/ingest-backoff.js";
 import {

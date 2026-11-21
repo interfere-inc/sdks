@@ -7,7 +7,7 @@ import {
   propagation,
   trace,
 } from "@opentelemetry/api";
-import { StackContextManager } from "@opentelemetry/sdk-trace-web";
+import { StackContextManager } from "@opentelemetry/sdk-trace";
 import { HttpResponse, http } from "msw";
 import {
   afterEach,

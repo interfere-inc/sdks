@@ -5,7 +5,7 @@
 //!
 //! ## Type Categories
 //!
-//! - **Request/Response Types**: 2302 types for API operations
+//! - **Request/Response Types**: 2291 types for API operations
 //! - **Model Types**: 624 types for data representation
 
 pub mod drain_drain_otlp_export_request_signal;
@@ -91,15 +91,6 @@ pub mod problems_dismiss_problems_request_args_reason_problem_id_kind;
 pub mod problems_dismiss_problems_request_args_reason_problem_id;
 pub mod problems_dismiss_problems_request_args_reason;
 pub mod problems_dismiss_problems_request_args;
-pub mod problems_mark_in_recovery_problems_request_args_fix_release_kind;
-pub mod problems_mark_in_recovery_problems_request_args_fix_release;
-pub mod problems_mark_in_recovery_problems_request_args_fix_sha_kind;
-pub mod problems_mark_in_recovery_problems_request_args_fix_sha;
-pub mod problems_mark_in_recovery_problems_request_args_fix_kind_kind;
-pub mod problems_mark_in_recovery_problems_request_args_fix_kind_pull_request;
-pub mod problems_mark_in_recovery_problems_request_args_fix_kind;
-pub mod problems_mark_in_recovery_problems_request_args_fix;
-pub mod problems_mark_in_recovery_problems_request_args;
 pub mod problems_restore_problems_request_args;
 pub mod problems_update_assignee_problems_request_args;
 pub mod problems_update_category_problems_request_args_category;
@@ -2444,7 +2435,6 @@ pub mod mutation_workspaces_update_basics_response;
 pub mod mutation_workspaces_update_default_surface_response;
 pub mod mutation_workspaces_update_enterprise_connection_response;
 pub mod mutation_problems_dismiss_response;
-pub mod mutation_problems_mark_in_recovery_response;
 pub mod mutation_problems_restore_response;
 pub mod mutation_problems_update_assignee_response;
 pub mod mutation_problems_update_category_response;
@@ -2837,7 +2827,6 @@ pub mod kanban_problems_request;
 pub mod list_problems_request;
 pub mod navigable_problems_request;
 pub mod dismiss_problems_request;
-pub mod mark_in_recovery_problems_request;
 pub mod restore_problems_request;
 pub mod update_assignee_problems_request;
 pub mod update_category_problems_request;
@@ -3018,15 +3007,6 @@ pub use problems_dismiss_problems_request_args_reason_problem_id_kind::DismissPr
 pub use problems_dismiss_problems_request_args_reason_problem_id::DismissProblemsRequestArgsReasonProblemId;
 pub use problems_dismiss_problems_request_args_reason::DismissProblemsRequestArgsReason;
 pub use problems_dismiss_problems_request_args::DismissProblemsRequestArgs;
-pub use problems_mark_in_recovery_problems_request_args_fix_release_kind::MarkInRecoveryProblemsRequestArgsFixReleaseKind;
-pub use problems_mark_in_recovery_problems_request_args_fix_release::MarkInRecoveryProblemsRequestArgsFixRelease;
-pub use problems_mark_in_recovery_problems_request_args_fix_sha_kind::MarkInRecoveryProblemsRequestArgsFixShaKind;
-pub use problems_mark_in_recovery_problems_request_args_fix_sha::MarkInRecoveryProblemsRequestArgsFixSha;
-pub use problems_mark_in_recovery_problems_request_args_fix_kind_kind::MarkInRecoveryProblemsRequestArgsFixKindKind;
-pub use problems_mark_in_recovery_problems_request_args_fix_kind_pull_request::MarkInRecoveryProblemsRequestArgsFixKindPullRequest;
-pub use problems_mark_in_recovery_problems_request_args_fix_kind::MarkInRecoveryProblemsRequestArgsFixKind;
-pub use problems_mark_in_recovery_problems_request_args_fix::MarkInRecoveryProblemsRequestArgsFix;
-pub use problems_mark_in_recovery_problems_request_args::MarkInRecoveryProblemsRequestArgs;
 pub use problems_restore_problems_request_args::RestoreProblemsRequestArgs;
 pub use problems_update_assignee_problems_request_args::UpdateAssigneeProblemsRequestArgs;
 pub use problems_update_category_problems_request_args_category::UpdateCategoryProblemsRequestArgsCategory;
@@ -5371,7 +5351,6 @@ pub use mutation_workspaces_update_basics_response::MutationWorkspacesUpdateBasi
 pub use mutation_workspaces_update_default_surface_response::MutationWorkspacesUpdateDefaultSurfaceResponse;
 pub use mutation_workspaces_update_enterprise_connection_response::MutationWorkspacesUpdateEnterpriseConnectionResponse;
 pub use mutation_problems_dismiss_response::MutationProblemsDismissResponse;
-pub use mutation_problems_mark_in_recovery_response::MutationProblemsMarkInRecoveryResponse;
 pub use mutation_problems_restore_response::MutationProblemsRestoreResponse;
 pub use mutation_problems_update_assignee_response::MutationProblemsUpdateAssigneeResponse;
 pub use mutation_problems_update_category_response::MutationProblemsUpdateCategoryResponse;
@@ -5764,7 +5743,6 @@ pub use kanban_problems_request::KanbanProblemsRequest;
 pub use list_problems_request::ListProblemsRequest;
 pub use navigable_problems_request::NavigableProblemsRequest;
 pub use dismiss_problems_request::DismissProblemsRequest;
-pub use mark_in_recovery_problems_request::MarkInRecoveryProblemsRequest;
 pub use restore_problems_request::RestoreProblemsRequest;
 pub use update_assignee_problems_request::UpdateAssigneeProblemsRequest;
 pub use update_category_problems_request::UpdateCategoryProblemsRequest;

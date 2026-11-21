@@ -1,7 +1,8 @@
 /* oxlint-disable typescript/no-unnecessary-condition */
+import { isString } from "@interfere/types/sdk/guards/json";
 import { MECHANISM_TYPE } from "@interfere/types/sdk/errors";
 import type { Span, Tracer } from "@opentelemetry/api";
-import type { ReadableSpan } from "@opentelemetry/sdk-trace-base";
+import type { ReadableSpan } from "@opentelemetry/sdk-trace";
 
 import { stampHttpSpanRoute } from "../http-span-route.js";
 import { ATTR_URL_FULL, ATTR_URL_PATH } from "../url-attrs.js";
@@ -260,13 +261,11 @@ export async function applyXhrSpanAttrs(
     return;
   }
 
-  const method = isReadableSpan(span)
-    ? String(
-        span.attributes["http.request.method"] ??
-          span.attributes["http.method"] ??
-          "XHR",
-      )
-    : "XHR";
+  const recordedMethod = isReadableSpan(span)
+    ? (span.attributes["http.request.method"] ?? span.attributes["http.method"])
+    : undefined;
+
+  const method = isString(recordedMethod) ? recordedMethod : "XHR";
 
   span.setAttribute(ATTR_URL_PATH, parsed.pathname);
 

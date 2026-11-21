@@ -16,12 +16,12 @@ import {
   DiagLogLevel,
   context,
   diag,
+  logs,
   propagation,
   trace,
 } from "@opentelemetry/api";
 // oxlint-disable-next-line import/no-namespace -- This API consumes the complete module namespace.
 import * as instrumentation from "@opentelemetry/instrumentation";
-import { logs } from "@opentelemetry/api-logs";
 import {
   InMemoryLogRecordExporter,
   LoggerProvider,
@@ -30,8 +30,8 @@ import {
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
-import { NodeTracerProvider } from "@opentelemetry/sdk-trace-node";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import { setImmediate } from "node:timers/promises";
 import { gunzipSync } from "node:zlib";
 import { mswServer } from "@interfere/test-config/msw-server";
@@ -61,13 +61,15 @@ vi.mock(
   }),
 );
 
+vi.mock(import("@opentelemetry/instrumentation"), { spy: true });
+
 await import("./instrumentation.js");
 
 await import("./internal/server/capture/global-handlers.js");
 
 const providerSpies = {
-  register: vi.spyOn(NodeTracerProvider.prototype, "register"),
-  flushTraces: vi.spyOn(NodeTracerProvider.prototype, "forceFlush"),
+  register: vi.spyOn(trace, "setGlobalTracerProvider"),
+  flushTraces: vi.spyOn(TracerProvider.prototype, "forceFlush"),
   flushLogs: vi.spyOn(LoggerProvider.prototype, "forceFlush"),
   registerInstrumentations: vi.spyOn(
     instrumentation,
@@ -149,12 +151,9 @@ beforeEach(() => {
   // oxlint-disable-next-line interfere-testing/no-test-doubles -- Reset the remote-config startup contract fixture between cases.
   vi.mocked(fetchAndCacheRemoteConfig).mockReset().mockResolvedValue(undefined);
 
-  providerSpies.register = vi.spyOn(NodeTracerProvider.prototype, "register");
+  providerSpies.register = vi.spyOn(trace, "setGlobalTracerProvider");
 
-  providerSpies.flushTraces = vi.spyOn(
-    NodeTracerProvider.prototype,
-    "forceFlush",
-  );
+  providerSpies.flushTraces = vi.spyOn(TracerProvider.prototype, "forceFlush");
 
   providerSpies.flushLogs = vi.spyOn(LoggerProvider.prototype, "forceFlush");
 
@@ -197,8 +196,8 @@ afterEach(async () => {
   uninstallGlobalHandlers();
 
   await Promise.all(
-    providerSpies.register.mock.contexts.map(async (provider) => {
-      if (!(provider instanceof NodeTracerProvider)) {
+    providerSpies.register.mock.calls.map(async ([provider]) => {
+      if (!(provider instanceof TracerProvider)) {
         throw new TypeError("Expected a native tracer provider registration");
       }
 
@@ -248,7 +247,9 @@ describe("managed resource", () => {
     await mod.register({
       ...quiet,
       ...options,
-      _internalAdditionalSpanProcessors: [new SimpleSpanProcessor(exporter)],
+      _internalAdditionalSpanProcessors: [
+        new SimpleSpanProcessor({ exporter }),
+      ],
     });
 
     trace.getTracer("resource").startSpan("probe").end();
@@ -396,7 +397,9 @@ describe("URL redaction", () => {
       captureUnhandledRejection: false,
       consoleBridge: false,
       ...options,
-      _internalAdditionalSpanProcessors: [new SimpleSpanProcessor(exporter)],
+      _internalAdditionalSpanProcessors: [
+        new SimpleSpanProcessor({ exporter }),
+      ],
     });
 
     const tracer = trace.getTracer("next-server");
@@ -879,7 +882,7 @@ describe("register / flush", () => {
 });
 
 beforeAll(() => {
-  server.listen({ onUnhandledRequest: "error" });
+  server.listen({ onUnhandledFrame: "error" });
 });
 
 afterAll(() => {
@@ -973,14 +976,17 @@ function warnings(fragment: string) {
 function hostOwnsOpenTelemetry() {
   const exporter = new InMemorySpanExporter();
 
-  const provider = new NodeTracerProvider({
-    spanProcessors: [new SimpleSpanProcessor(exporter)],
+  const provider = new TracerProvider({
+    spanProcessors: [new SimpleSpanProcessor({ exporter })],
   });
 
-  provider.register({
-    contextManager: new AsyncLocalStorageContextManager().enable(),
-    propagator: new W3CTraceContextPropagator(),
-  });
+  trace.setGlobalTracerProvider(provider);
+
+  context.setGlobalContextManager(
+    new AsyncLocalStorageContextManager().enable(),
+  );
+
+  propagation.setGlobalPropagator(new W3CTraceContextPropagator());
 
   return { exporter, provider };
 }

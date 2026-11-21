@@ -2,7 +2,7 @@ import { context, propagation } from "@opentelemetry/api";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+} from "@opentelemetry/sdk-trace";
 import type { RemotePluginConfig } from "@interfere/types/sdk/remote-config";
 import { setInjectedConfiguration } from "@interfere/test-config/injected-configuration";
 import {
@@ -54,7 +54,7 @@ function createRuntime(consent?: "required", remote?: RemotePluginConfig) {
     getDeviceId: () => kernel.device.getDeviceId(),
     getSessionId: () => kernel.session.getId(),
     sdkStack: [],
-    additionalSpanProcessors: [new SimpleSpanProcessor(exporter)],
+    additionalSpanProcessors: [new SimpleSpanProcessor({ exporter })],
   });
 
   kernel.attachOtel(otel, () => undefined);

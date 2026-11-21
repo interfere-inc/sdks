@@ -1,5 +1,5 @@
 /* oxlint-disable typescript/no-unsafe-assignment */
-import type { InMemorySpanExporter } from "@opentelemetry/sdk-trace-base";
+import type { InMemorySpanExporter } from "@opentelemetry/sdk-trace";
 
 import { setupErrorsPlugin } from "../../test/fixtures/errors.test-utils.js";
 import type { Kernel } from "../internal/kernel.js";

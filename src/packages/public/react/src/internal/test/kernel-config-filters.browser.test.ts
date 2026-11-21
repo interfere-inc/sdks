@@ -8,7 +8,7 @@ import { context, propagation, trace } from "@opentelemetry/api";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+} from "@opentelemetry/sdk-trace";
 import { DISABLE_ALL_PLUGINS } from "../../../test/fixtures/disable-all-plugins.js";
 import { createKernel } from "../kernel.js";
 import type { Kernel, KernelOptions } from "../kernel.js";
@@ -63,7 +63,9 @@ async function startKernel(filters: KernelOptions) {
   const kernel = await createKernel({
     opts: {
       ...filters,
-      _internalAdditionalSpanProcessors: [new SimpleSpanProcessor(exporter)],
+      _internalAdditionalSpanProcessors: [
+        new SimpleSpanProcessor({ exporter }),
+      ],
       apiHost: "https://kernel.invalid",
     },
   });

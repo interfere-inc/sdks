@@ -1,5 +1,5 @@
 import { MECHANISM_TYPE } from "@interfere/types/sdk/errors";
-import type { InMemorySpanExporter } from "@opentelemetry/sdk-trace-base";
+import type { InMemorySpanExporter } from "@opentelemetry/sdk-trace";
 
 import { Component } from "react";
 import type { ReactNode } from "react";

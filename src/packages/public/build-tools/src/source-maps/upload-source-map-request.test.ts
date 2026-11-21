@@ -16,7 +16,7 @@ const client = new InterfereClient({
   maxRetries: 0,
 });
 
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 
 afterEach(() => server.resetHandlers());
 

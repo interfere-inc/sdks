@@ -14,7 +14,7 @@ const origin = "https://receipt.test";
 const slug = releaseSlugSchema.parse("rel_bbbbbbbbbbbbbbbb");
 const sessionId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
 
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 
 afterEach(() => {
   server.resetHandlers();

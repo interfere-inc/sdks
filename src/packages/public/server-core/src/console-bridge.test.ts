@@ -1,6 +1,6 @@
 /* oxlint-disable eslint/no-console -- Verifies console method identity across bridge installation and disposal. */
 import { setImmediate } from "node:timers/promises";
-import { SeverityNumber, logs } from "@opentelemetry/api-logs";
+import { SeverityNumber, logs } from "@opentelemetry/api";
 import {
   InMemoryLogRecordExporter,
   LoggerProvider,

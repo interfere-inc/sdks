@@ -18,7 +18,7 @@ import {
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+} from "@opentelemetry/sdk-trace";
 import type { Kernel, KernelInternalOptions } from "../src/internal/kernel.js";
 import { createWrapperSingleton } from "../src/internal/wrapper-singleton.js";
 
@@ -276,7 +276,9 @@ const fixture = {
       _internalAdditionalLogRecordProcessors: [
         new SimpleLogRecordProcessor({ exporter: logExporter }),
       ],
-      _internalAdditionalSpanProcessors: [new SimpleSpanProcessor(exporter)],
+      _internalAdditionalSpanProcessors: [
+        new SimpleSpanProcessor({ exporter }),
+      ],
     };
 
     const kernel = await wrapper.init(internalOptions);

@@ -1,4 +1,4 @@
-import type { InMemorySpanExporter } from "@opentelemetry/sdk-trace-base";
+import type { InMemorySpanExporter } from "@opentelemetry/sdk-trace";
 import { HttpResponse } from "msw";
 import { expect } from "vitest";
 

@@ -1,9 +1,13 @@
 import { setInjectedConfiguration } from "@interfere/test-config/injected-configuration";
-import { SeverityNumber } from "@opentelemetry/api-logs";
+import {
+  SeverityNumber,
+  context,
+  propagation,
+  trace,
+} from "@opentelemetry/api";
 import { INTERFERE_BROWSER_EVENTS_LOGGER_NAME } from "@interfere/types/data/browser-event-loggers";
 import { isCorrelationId } from "@interfere/types/data/correlation-events";
 import { MECHANISM_TYPE } from "@interfere/types/sdk/errors";
-import { context, propagation, trace } from "@opentelemetry/api";
 import { HttpResponse, http } from "msw";
 import {
   afterEach,

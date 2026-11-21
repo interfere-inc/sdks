@@ -1,11 +1,11 @@
 import { trace } from "@opentelemetry/api";
-import { BasicTracerProvider } from "@opentelemetry/sdk-trace-base";
+import { TracerProvider } from "@opentelemetry/sdk-trace";
 import { register as registerInterfere } from "@interfere/next/instrumentation";
 
 export { onRequestError } from "@interfere/next/instrumentation";
 
 export async function register() {
-  trace.setGlobalTracerProvider(new BasicTracerProvider());
+  trace.setGlobalTracerProvider(new TracerProvider());
 
   await registerInterfere();
 

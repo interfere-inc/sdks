@@ -1,9 +1,8 @@
 /* oxlint-disable eslint/no-console */
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
 
-import { context, trace } from "@opentelemetry/api";
-import { SeverityNumber, logs } from "@opentelemetry/api-logs";
-import type { LoggerProvider } from "@opentelemetry/api-logs";
+import { SeverityNumber, context, logs, trace } from "@opentelemetry/api";
+import type { LoggerProvider } from "@opentelemetry/api";
 
 const ATTR_EXCEPTION_TYPE = "exception.type" as const;
 

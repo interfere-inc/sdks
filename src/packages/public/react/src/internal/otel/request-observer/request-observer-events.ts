@@ -1,7 +1,6 @@
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
-import { isSpanContextValid, trace } from "@opentelemetry/api";
+import { SeverityNumber, isSpanContextValid, trace } from "@opentelemetry/api";
 import type { Context, SpanContext } from "@opentelemetry/api";
-import { SeverityNumber } from "@opentelemetry/api-logs";
 import type { LoggerProvider } from "@opentelemetry/sdk-logs";
 
 import { ATTR_URL_FULL, ATTR_URL_PATH } from "../url-attrs.js";

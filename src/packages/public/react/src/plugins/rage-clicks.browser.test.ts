@@ -2,7 +2,7 @@ import { commands } from "@interfere/test-config/browser-platform";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+} from "@opentelemetry/sdk-trace";
 
 import { createPluginContext } from "../../test/fixtures/plugin-context.js";
 import rageClicksPlugin from "./rage-clicks.js";
@@ -35,7 +35,7 @@ describe("rage-clicks plugin", () => {
 
     exporter = new InMemorySpanExporter();
 
-    ctx = createPluginContext([new SimpleSpanProcessor(exporter)]);
+    ctx = createPluginContext([new SimpleSpanProcessor({ exporter })]);
   });
 
   afterEach(() => {

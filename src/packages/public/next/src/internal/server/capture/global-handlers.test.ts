@@ -1,10 +1,10 @@
 import { context, trace } from "@opentelemetry/api";
 import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
 import {
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 
 import {
   installGlobalHandlers,
@@ -15,7 +15,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 let exporter: InMemorySpanExporter;
 
-let provider: BasicTracerProvider;
+let provider: TracerProvider;
 
 function exceptionEvents() {
   return exporter
@@ -69,8 +69,8 @@ describe("global-handlers", () => {
 
     exporter = new InMemorySpanExporter();
 
-    provider = new BasicTracerProvider({
-      spanProcessors: [new SimpleSpanProcessor(exporter)],
+    provider = new TracerProvider({
+      spanProcessors: [new SimpleSpanProcessor({ exporter })],
     });
 
     trace.disable();

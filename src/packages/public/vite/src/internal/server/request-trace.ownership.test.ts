@@ -5,10 +5,10 @@ import { context, propagation, trace } from "@opentelemetry/api";
 import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
 import { W3CTraceContextPropagator } from "@opentelemetry/core";
 import {
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import { afterEach, expect, test, vi } from "vitest";
 
 await import("./register");
@@ -40,8 +40,10 @@ test("managed mode next to a registered provider delivers a throwing request mid
 
   vi.stubEnv("OTEL_BSP_SCHEDULE_DELAY", "20");
 
-  const host = new BasicTracerProvider({
-    spanProcessors: [new SimpleSpanProcessor(new InMemorySpanExporter())],
+  const host = new TracerProvider({
+    spanProcessors: [
+      new SimpleSpanProcessor({ exporter: new InMemorySpanExporter() }),
+    ],
   });
 
   trace.setGlobalTracerProvider(host);

@@ -2,10 +2,10 @@
 import { SpanStatusCode, context, trace } from "@opentelemetry/api";
 import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
 import {
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 
 import { notFound, redirect } from "next/navigation";
 
@@ -16,7 +16,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 let exporter: InMemorySpanExporter;
 
-let provider: BasicTracerProvider;
+let provider: TracerProvider;
 
 const REQUEST_CONTEXT = {
   routePath: "/test",
@@ -50,8 +50,8 @@ describe(withInterfereServerAction, () => {
 
     exporter = new InMemorySpanExporter();
 
-    provider = new BasicTracerProvider({
-      spanProcessors: [new SimpleSpanProcessor(exporter)],
+    provider = new TracerProvider({
+      spanProcessors: [new SimpleSpanProcessor({ exporter })],
     });
 
     trace.disable();

@@ -33,7 +33,7 @@ export default defineConfig({
           exclude: [
             "fsevents",
             "@opentelemetry/otlp-transformer",
-            "@opentelemetry/sdk-trace-node",
+            "@opentelemetry/sdk-trace",
             "@opentelemetry/context-async-hooks",
           ],
           include: ["@opentelemetry/api"],

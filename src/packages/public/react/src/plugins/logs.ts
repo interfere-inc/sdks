@@ -1,5 +1,5 @@
 /* oxlint-disable import/no-default-export */
-import { SeverityNumber } from "@opentelemetry/api-logs";
+import { SeverityNumber } from "@opentelemetry/api";
 
 import { onConsoleCall } from "../internal/console-patch/console-patch.js";
 import type { ConsoleLevel } from "../internal/console-patch/console-patch.js";

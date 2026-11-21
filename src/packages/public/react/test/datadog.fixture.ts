@@ -6,7 +6,7 @@ import {
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+} from "@opentelemetry/sdk-trace";
 import { correlateRequestTrace } from "../src/request-trace.js";
 import { createKernel } from "../src/internal/kernel.js";
 
@@ -87,7 +87,9 @@ async function install(options: Options) {
     },
     opts: {
       apiHost: location.origin,
-      _internalAdditionalSpanProcessors: [new SimpleSpanProcessor(spans)],
+      _internalAdditionalSpanProcessors: [
+        new SimpleSpanProcessor({ exporter: spans }),
+      ],
       _internalAdditionalLogRecordProcessors: [
         new SimpleLogRecordProcessor({ exporter: logs }),
       ],

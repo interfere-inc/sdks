@@ -104,7 +104,7 @@ beforeAll(() => {
 
   appRepo = initGitRepo("interfere-vite-app-root-", "app root");
 
-  server.listen({ onUnhandledRequest: "error" });
+  server.listen({ onUnhandledFrame: "error" });
 });
 
 afterAll(() => {

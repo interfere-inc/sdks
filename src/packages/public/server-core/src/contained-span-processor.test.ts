@@ -1,13 +1,13 @@
 import {
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import { afterEach, expect, test } from "vitest";
 
 import { containSpanProcessor } from "./contained-span-processor.js";
 
-const providers: BasicTracerProvider[] = [];
+const providers: TracerProvider[] = [];
 
 afterEach(async () => {
   await Promise.all(providers.map(async (provider) => provider.shutdown()));
@@ -18,7 +18,7 @@ afterEach(async () => {
 test("a throwing processor neither breaks span creation nor starves later processors", () => {
   const exporter = new InMemorySpanExporter();
 
-  const provider = new BasicTracerProvider({
+  const provider = new TracerProvider({
     spanProcessors: [
       containSpanProcessor({
         async forceFlush() {
@@ -37,7 +37,7 @@ test("a throwing processor neither breaks span creation nor starves later proces
           await Promise.resolve();
         },
       }),
-      new SimpleSpanProcessor(exporter),
+      new SimpleSpanProcessor({ exporter }),
     ],
   });
 

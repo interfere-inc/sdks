@@ -2,9 +2,9 @@ import { MECHANISM_TYPE } from "@interfere/types/sdk/errors";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
-import type { ReadableSpan } from "@opentelemetry/sdk-trace-base";
-import { WebTracerProvider } from "@opentelemetry/sdk-trace-web";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
+import type { ReadableSpan } from "@opentelemetry/sdk-trace";
 import { HttpResponse, delay, http } from "msw";
 import { afterEach, beforeEach, expect, test } from "vitest";
 
@@ -17,14 +17,14 @@ import { registerBundledInstrumentations } from "./instrumentations.js";
 const SEARCH_URL = `${location.origin}/api/search`;
 
 let exporter: InMemorySpanExporter;
-let provider: WebTracerProvider;
+let provider: TracerProvider;
 let dispose: () => void;
 
 beforeEach(() => {
   exporter = new InMemorySpanExporter();
 
-  provider = new WebTracerProvider({
-    spanProcessors: [new SimpleSpanProcessor(exporter)],
+  provider = new TracerProvider({
+    spanProcessors: [new SimpleSpanProcessor({ exporter })],
   });
 
   ({ dispose } = registerBundledInstrumentations({

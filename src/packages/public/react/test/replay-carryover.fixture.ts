@@ -1,8 +1,8 @@
 import {
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import { Kernel } from "../src/internal/kernel.js";
 import { SessionTracker } from "../src/tracking/api.js";
 import { clearExportCarryover } from "../src/internal/otel/export-carryover.js";
@@ -23,8 +23,8 @@ const target = {
 const ctx = new Kernel(new SessionTracker({ target }));
 const exporter = new InMemorySpanExporter();
 
-const provider = new BasicTracerProvider({
-  spanProcessors: [new SimpleSpanProcessor(exporter)],
+const provider = new TracerProvider({
+  spanProcessors: [new SimpleSpanProcessor({ exporter })],
 });
 
 ctx.getTracer = (name) => provider.getTracer(name);

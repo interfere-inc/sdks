@@ -10,7 +10,7 @@ import { context, propagation } from "@opentelemetry/api";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+} from "@opentelemetry/sdk-trace";
 
 import { Kernel } from "../../src/internal/kernel.js";
 import { buildOtelProvider } from "../../src/internal/otel/provider.js";
@@ -64,7 +64,7 @@ export async function startRecordingPluginRuntime(options: {
     getDeviceId: () => kernel.device.getDeviceId(),
     getSessionId: () => kernel.session.getId(),
     sdkStack: [],
-    additionalSpanProcessors: [new SimpleSpanProcessor(exporter)],
+    additionalSpanProcessors: [new SimpleSpanProcessor({ exporter })],
   });
 
   kernel.attachOtel(otel, () => undefined);

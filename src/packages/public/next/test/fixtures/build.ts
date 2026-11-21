@@ -36,7 +36,7 @@ export function capturedReleaseRequest(index: number) {
   return request;
 }
 
-beforeAll(() => releaseNetwork.listen({ onUnhandledRequest: "error" }));
+beforeAll(() => releaseNetwork.listen({ onUnhandledFrame: "error" }));
 
 afterEach(() => {
   releaseNetwork.resetHandlers();

@@ -21,7 +21,7 @@ const server = setupServer();
 let root: string;
 const receiptPath = ".cache/build-receipt.json";
 
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 
 beforeEach(async () => {
   root = await mkdtemp(path.join(tmpdir(), "vite-private-receipt-"));

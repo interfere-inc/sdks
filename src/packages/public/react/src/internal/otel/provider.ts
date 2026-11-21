@@ -41,9 +41,9 @@ import {
   AlwaysOnSampler,
   BatchSpanProcessor,
   ParentBasedSampler,
-} from "@opentelemetry/sdk-trace-base";
-import type { SpanProcessor } from "@opentelemetry/sdk-trace-base";
-import { WebTracerProvider } from "@opentelemetry/sdk-trace-web";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
+import type { SpanProcessor } from "@opentelemetry/sdk-trace";
 
 import { requestIdentity } from "./request-observer/request-identity.js";
 import { identityAttributes } from "../../tracking/view.js";
@@ -139,7 +139,7 @@ interface GatedAttributesInput {
 
 function stampGatedAttributes(
   target: {
-    setAttribute: (key: string, value: NonNullable<Attributes[string]>) => void;
+    setAttribute: (key: string, value: Attributes[string]) => void;
   },
   opts: GatedAttributesInput,
 ) {
@@ -254,13 +254,13 @@ export interface OtelProviderHandle {
   shutdown: () => Promise<void>;
   /** Writes the headers the propagation policy allows for a request: `traceparent` where absent plus merged session baggage. */
   traceHeaders: TraceHeaderWriter;
-  tracerProvider: WebTracerProvider;
+  tracerProvider: TracerProvider;
 }
 
 /**
  * Constructs the SDK's private OTel providers and trace-header writer.
  * Nothing here touches an OpenTelemetry API global: the
- * `WebTracerProvider` is passed to `registerInstrumentations(...)`
+ * `TracerProvider` is passed to `registerInstrumentations(...)`
  * explicitly, and Interfere never registers a global propagator or
  * context manager.
  *
@@ -305,12 +305,15 @@ export function buildOtelProvider(input: OtelProviderInput) {
     ...(input.additionalSpanProcessors ?? []),
 
     createExportFilterProcessor(
-      new BatchSpanProcessor(traceExporter, BROWSER_TRACE_BATCH_OPTIONS),
+      new BatchSpanProcessor({
+        exporter: traceExporter,
+        ...BROWSER_TRACE_BATCH_OPTIONS,
+      }),
       input.onExceptionSpan,
     ),
   ];
 
-  const tracerProvider = new WebTracerProvider({
+  const tracerProvider = new TracerProvider({
     resource,
     sampler: new ParentBasedSampler({
       localParentNotSampled: new AlwaysOnSampler(),

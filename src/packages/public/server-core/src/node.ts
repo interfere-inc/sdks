@@ -8,15 +8,20 @@ import {
 } from "@interfere/types/sdk/url-redaction";
 import type { UrlRedactionOption } from "@interfere/types/sdk/url-redaction";
 import type { TracingOwnership } from "@interfere/types/sdk/remote-config/tracing-ownership";
-import { context, propagation, trace } from "@opentelemetry/api";
+import {
+  SeverityNumber,
+  context,
+  logs,
+  propagation,
+  trace,
+} from "@opentelemetry/api";
 import type {
+  TracerProvider as ApiTracerProvider,
   Attributes,
   TextMapPropagator,
-  TracerProvider,
 } from "@opentelemetry/api";
-import { SeverityNumber, logs } from "@opentelemetry/api-logs";
 import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
-import { getStringFromEnv } from "@opentelemetry/core";
+import { getNumberFromEnv } from "@opentelemetry/core";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
 import { OTLPLogExporter } from "@opentelemetry/exporter-logs-otlp-http";
 import { CompressionAlgorithm } from "@opentelemetry/otlp-exporter-base";
@@ -28,15 +33,14 @@ import {
 import type { LogRecordProcessor } from "@opentelemetry/sdk-logs";
 import {
   AlwaysOnSampler,
-  BasicTracerProvider,
   BatchSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import type {
   IdGenerator,
   Sampler,
   SpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
-import { NodeTracerProvider } from "@opentelemetry/sdk-trace-node";
+} from "@opentelemetry/sdk-trace";
 
 import { bridgeConsoleToOtel } from "./console-bridge.js";
 import { serverCredentialHeaders } from "./credential.js";
@@ -49,7 +53,10 @@ import {
   registeredTracerProvider,
   resolveTracingMode,
 } from "./ownership.js";
-import { ATTRIBUTE_VALUE_LENGTH_LIMIT } from "./runtime.js";
+import {
+  ATTRIBUTE_VALUE_LENGTH_LIMIT,
+  configuredTraceOptions,
+} from "./runtime.js";
 import type { ServerPipeline } from "./runtime.js";
 import { exceptionSampler } from "./sampler.js";
 
@@ -90,17 +97,17 @@ export interface NodeRuntimeInput {
   vercel: boolean;
   propagator: TextMapPropagator;
   idGenerator?: IdGenerator;
-  registerPlatform?: (input: ManagedTracingInput) => Promise<TracerProvider>;
+  registerPlatform?: (input: ManagedTracingInput) => Promise<ApiTracerProvider>;
   instrument?: (
-    provider: TracerProvider,
+    provider: ApiTracerProvider,
     resource: ReturnType<typeof resourceFromAttributes>,
     requests: boolean,
   ) => Pick<ServerPipeline, "flush" | "shutdown">;
 }
 
 function canFlush(
-  provider: TracerProvider,
-): provider is TracerProvider & Pick<BasicTracerProvider, "forceFlush"> {
+  provider: ApiTracerProvider,
+): provider is ApiTracerProvider & Pick<TracerProvider, "forceFlush"> {
   return "forceFlush" in provider && typeof provider.forceFlush === "function";
 }
 
@@ -122,11 +129,9 @@ export async function startNodeRuntime(input: NodeRuntimeInput) {
     "x-interfere-producer-version": input.version,
   };
 
-  const spanLimits =
-    (getStringFromEnv("OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT") ??
-    getStringFromEnv("OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT"))
-      ? undefined
-      : { attributeValueLengthLimit: ATTRIBUTE_VALUE_LENGTH_LIMIT };
+  const { sampler: headSampler, spanLimits } = configuredTraceOptions(
+    ATTRIBUTE_VALUE_LENGTH_LIMIT,
+  );
 
   const compression =
     options.compression === "gzip"
@@ -140,22 +145,29 @@ export async function startNodeRuntime(input: NodeRuntimeInput) {
       ? []
       : [
           new BatchSpanProcessor(
-            new OTLPTraceExporter({
-              headers,
-              compression,
-              timeoutMillis: attemptTimeout,
-              url: drainUrl(input.apiUrl, "traces"),
+            omitUndefined({
+              exporter: new OTLPTraceExporter({
+                headers,
+                compression,
+                timeoutMillis: attemptTimeout,
+                url: drainUrl(input.apiUrl, "traces"),
+              }),
+              exportTimeoutMillis: batchTimeout,
+              maxExportBatchSize: getNumberFromEnv(
+                "OTEL_BSP_MAX_EXPORT_BATCH_SIZE",
+              ),
+              maxQueueSize: getNumberFromEnv("OTEL_BSP_MAX_QUEUE_SIZE"),
+              scheduledDelayMillis: getNumberFromEnv("OTEL_BSP_SCHEDULE_DELAY"),
             }),
-            { exportTimeoutMillis: batchTimeout },
           ),
         ]),
     ...(options._internalAdditionalSpanProcessors ?? []),
   ];
 
-  const sampler = exceptionSampler();
+  const sampler = exceptionSampler(headSampler);
 
-  let provider: TracerProvider;
-  let ownedProvider: BasicTracerProvider | undefined;
+  let provider: ApiTracerProvider;
+  let ownedProvider: TracerProvider | undefined;
   let loggerProvider: LoggerProvider | undefined;
   let ownsPropagator = false;
   let contextManager: AsyncLocalStorageContextManager | undefined;
@@ -194,7 +206,7 @@ export async function startNodeRuntime(input: NodeRuntimeInput) {
         console.warn(EXISTING_PROVIDER_WARNING);
       }
 
-      ownedProvider = new BasicTracerProvider(
+      ownedProvider = new TracerProvider(
         omitUndefined({
           resource,
           idGenerator: input.idGenerator,
@@ -214,7 +226,7 @@ export async function startNodeRuntime(input: NodeRuntimeInput) {
 
       ownsPropagator = false;
     } else {
-      const nodeProvider = new NodeTracerProvider(
+      const nodeProvider = new TracerProvider(
         omitUndefined({
           resource,
           idGenerator: input.idGenerator,
@@ -242,7 +254,7 @@ export async function startNodeRuntime(input: NodeRuntimeInput) {
         manager.disable();
       }
 
-      nodeProvider.register({ contextManager: null, propagator: null });
+      trace.setGlobalTracerProvider(nodeProvider);
     }
 
     const hostLogger =

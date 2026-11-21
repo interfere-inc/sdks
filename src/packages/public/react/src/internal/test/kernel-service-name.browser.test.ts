@@ -6,7 +6,7 @@ import { context, propagation, trace } from "@opentelemetry/api";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+} from "@opentelemetry/sdk-trace";
 
 import { DISABLE_ALL_PLUGINS } from "../../../test/fixtures/disable-all-plugins.js";
 import { createKernel } from "../kernel.js";
@@ -74,7 +74,9 @@ async function resourceServiceName(serviceName: string | undefined) {
   const kernel = await createKernel({
     opts: omitUndefined({
       apiHost: "https://kernel.invalid",
-      _internalAdditionalSpanProcessors: [new SimpleSpanProcessor(spans)],
+      _internalAdditionalSpanProcessors: [
+        new SimpleSpanProcessor({ exporter: spans }),
+      ],
       serviceName,
       serviceNamespace: "shop",
     }),

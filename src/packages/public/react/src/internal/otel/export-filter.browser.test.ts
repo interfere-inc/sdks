@@ -1,19 +1,19 @@
 import {
-  BasicTracerProvider,
   BatchSpanProcessor,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 
 import { createExportFilterProcessor } from "./export-filter.js";
 import { describe, expect, test, vi } from "vitest";
 
-function exportedNames(record: (provider: BasicTracerProvider) => void) {
+function exportedNames(record: (provider: TracerProvider) => void) {
   const exporter = new InMemorySpanExporter();
 
-  const provider = new BasicTracerProvider({
+  const provider = new TracerProvider({
     spanProcessors: [
-      createExportFilterProcessor(new SimpleSpanProcessor(exporter)),
+      createExportFilterProcessor(new SimpleSpanProcessor({ exporter })),
     ],
   });
 
@@ -23,7 +23,7 @@ function exportedNames(record: (provider: BasicTracerProvider) => void) {
 }
 
 function endAfter(
-  provider: BasicTracerProvider,
+  provider: TracerProvider,
   scope: string,
   name: string,
   durationMs: number,
@@ -72,10 +72,10 @@ describe("exception delivery", () => {
 
     const exporter = new InMemorySpanExporter();
 
-    const provider = new BasicTracerProvider({
+    const provider = new TracerProvider({
       spanProcessors: [
         createExportFilterProcessor(
-          new BatchSpanProcessor(exporter, { scheduledDelayMillis: 60_000 }),
+          new BatchSpanProcessor({ exporter, scheduledDelayMillis: 60_000 }),
         ),
       ],
     });
@@ -102,10 +102,10 @@ describe("exception span notification", () => {
   test("reports spans whose exception event was added directly, as network failures are", () => {
     const onExceptionSpan = vi.fn<() => void>();
 
-    const provider = new BasicTracerProvider({
+    const provider = new TracerProvider({
       spanProcessors: [
         createExportFilterProcessor(
-          new SimpleSpanProcessor(new InMemorySpanExporter()),
+          new SimpleSpanProcessor({ exporter: new InMemorySpanExporter() }),
           onExceptionSpan,
         ),
       ],

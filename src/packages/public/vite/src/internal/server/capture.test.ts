@@ -1,9 +1,9 @@
 import { trace } from "@opentelemetry/api";
 import {
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 
 import { captureError } from "./capture.js";
 import {
@@ -18,8 +18,8 @@ import {
 
 const exporter = new InMemorySpanExporter();
 
-const provider = new BasicTracerProvider({
-  spanProcessors: [new SimpleSpanProcessor(exporter)],
+const provider = new TracerProvider({
+  spanProcessors: [new SimpleSpanProcessor({ exporter })],
 });
 
 beforeAll(() => {

@@ -1,5 +1,5 @@
 import { trace } from "@opentelemetry/api";
-import { BasicTracerProvider } from "@opentelemetry/sdk-trace-base";
+import { TracerProvider } from "@opentelemetry/sdk-trace";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 
 await import("./ownership.js");
@@ -25,7 +25,7 @@ test("auto owns tracing only when no provider is registered and warns once on ad
   expect(resolveTracingMode("auto")).toBe("managed");
   expect(warn).not.toHaveBeenCalled();
 
-  const host = new BasicTracerProvider();
+  const host = new TracerProvider();
 
   trace.setGlobalTracerProvider(host);
 
@@ -49,7 +49,7 @@ test("explicit application tracing adopts a registered provider silently", async
 
   const warn = vi.spyOn(console, "warn");
 
-  const host = new BasicTracerProvider();
+  const host = new TracerProvider();
 
   trace.setGlobalTracerProvider(host);
 

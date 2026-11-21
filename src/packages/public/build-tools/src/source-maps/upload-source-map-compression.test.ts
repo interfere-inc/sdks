@@ -13,7 +13,7 @@ const releaseSlug = "rel_aaaaaaaaaaaaaaaa";
 const base = `${origin}/v3/releases/${releaseSlug}/source-maps`;
 const server = setupServer();
 
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 
 afterEach(() => server.resetHandlers());
 

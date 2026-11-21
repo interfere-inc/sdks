@@ -1,5 +1,5 @@
 import { browserStorage } from "@interfere/test-config/browser-storage";
-import { WebTracerProvider } from "@opentelemetry/sdk-trace-web";
+import { TracerProvider } from "@opentelemetry/sdk-trace";
 import { HttpResponse, http } from "msw";
 import { expect, onTestFinished, test } from "vitest";
 
@@ -19,7 +19,7 @@ function install(options: { propagateTo?: string[] } = {}) {
     }),
   );
 
-  const provider = new WebTracerProvider();
+  const provider = new TracerProvider();
 
   const handle = registerBundledInstrumentations({
     ...options,

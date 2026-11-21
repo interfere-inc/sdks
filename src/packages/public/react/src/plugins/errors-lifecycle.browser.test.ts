@@ -1,4 +1,4 @@
-import type { InMemorySpanExporter } from "@opentelemetry/sdk-trace-base";
+import type { InMemorySpanExporter } from "@opentelemetry/sdk-trace";
 
 import { createErrorsKernel } from "../../test/fixtures/errors.test-utils.js";
 import { createError } from "../../test/fixtures/errors.js";

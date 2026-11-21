@@ -1,9 +1,8 @@
 import { INTERFERE_BROWSER_EVENTS_LOGGER_NAME } from "@interfere/types/data/browser-event-loggers";
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
 import { PAGE_VIEW_EVENT_NAME } from "@interfere/types/data/correlation-events";
-import { ROOT_CONTEXT } from "@opentelemetry/api";
+import { ROOT_CONTEXT, SeverityNumber } from "@opentelemetry/api";
 import type { Context } from "@opentelemetry/api";
-import { SeverityNumber } from "@opentelemetry/api-logs";
 import type { EventLoggerProvider } from "./event-logger.js";
 
 import type { View, ViewIds, ViewTrigger } from "../../tracking/view.js";

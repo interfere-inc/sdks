@@ -80,6 +80,7 @@ export function createFetchInstrumentation(
     return state;
   };
 
+  // oxlint-disable-next-line typescript/no-deprecated -- The browser SDK restores native request functions on disposal. browser-api 0.2 keeps its patches installed after disable().
   const instrumentation = new FetchInstrumentation({
     enabled: false,
     ignoreNetworkEvents: true,

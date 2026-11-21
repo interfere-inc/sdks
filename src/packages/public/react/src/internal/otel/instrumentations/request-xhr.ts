@@ -28,6 +28,7 @@ export function createXhrInstrumentation(
   const cancellations = new WeakMap<XMLHttpRequest, string>();
   const spans = new WeakMap<XMLHttpRequest, Span>();
 
+  // oxlint-disable-next-line typescript/no-deprecated -- The browser SDK restores native request functions on disposal. browser-api 0.2 keeps its patches installed after disable().
   const instrumentation = new XMLHttpRequestInstrumentation({
     enabled: false,
     ignoreNetworkEvents: true,

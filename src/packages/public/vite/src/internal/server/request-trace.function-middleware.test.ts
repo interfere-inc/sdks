@@ -2,10 +2,10 @@
 import { SpanStatusCode, context, trace } from "@opentelemetry/api";
 import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
 import {
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 
 import { interfereFunctionMiddleware } from "../../tanstack-start";
@@ -13,15 +13,15 @@ import { withRequestSpan } from "./request-trace.js";
 
 let exporter: InMemorySpanExporter;
 
-let provider: BasicTracerProvider;
+let provider: TracerProvider;
 
 beforeEach(() => {
   vi.stubEnv("INTERFERE_API_KEY", "interfere_ak_test");
 
   exporter = new InMemorySpanExporter();
 
-  provider = new BasicTracerProvider({
-    spanProcessors: [new SimpleSpanProcessor(exporter)],
+  provider = new TracerProvider({
+    spanProcessors: [new SimpleSpanProcessor({ exporter })],
   });
 
   trace.setGlobalTracerProvider(provider);

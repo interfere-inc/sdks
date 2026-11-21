@@ -1,14 +1,14 @@
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
 import { EXCEPTION_DELIVERY_ATTRIBUTE } from "@interfere/types/sdk/exception-delivery";
 import { SpanStatusCode, context, trace } from "@opentelemetry/api";
-import type { Sampler } from "@opentelemetry/sdk-trace-base";
+import type { Sampler } from "@opentelemetry/sdk-trace";
 import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
 import {
   AlwaysOffSampler,
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 
 type Capture = typeof import("./capture.js");
@@ -26,10 +26,10 @@ const REQUEST = { method: "GET", path: "/api/orders" };
 function recordingProvider(sampler?: Sampler) {
   const exporter = new InMemorySpanExporter();
 
-  const provider = new BasicTracerProvider(
+  const provider = new TracerProvider(
     omitUndefined({
       sampler,
-      spanProcessors: [new SimpleSpanProcessor(exporter)],
+      spanProcessors: [new SimpleSpanProcessor({ exporter })],
     }),
   );
 

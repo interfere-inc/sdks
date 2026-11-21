@@ -1,7 +1,6 @@
 /* oxlint-disable interfere-testing/no-test-doubles -- Real passthrough wrappers model a foreign SDK's own patches; Interfere's behaviour is never replaced. */
 import type { SessionId } from "@interfere/types/data/session";
 import type { Attributes } from "@opentelemetry/api";
-import type { AnyValueMap } from "@opentelemetry/api-logs";
 import {
   InMemoryLogRecordExporter,
   SimpleLogRecordProcessor,
@@ -9,7 +8,7 @@ import {
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+} from "@opentelemetry/sdk-trace";
 
 import { onConsoleCall } from "../src/internal/console-patch/console-patch.js";
 import { Kernel } from "../src/internal/kernel.js";
@@ -178,7 +177,9 @@ function installInterfere(options: InterfereOptions = {}) {
     additionalLogRecordProcessors: [
       new SimpleLogRecordProcessor({ exporter: logExporter }),
     ],
-    additionalSpanProcessors: [new SimpleSpanProcessor(spanExporter)],
+    additionalSpanProcessors: [
+      new SimpleSpanProcessor({ exporter: spanExporter }),
+    ],
     canPersistExports: () => false,
     clientOptions: target,
     getDeviceId: () => "device-fixture",
@@ -258,10 +259,7 @@ function isText(value: unknown): value is boolean | number | string {
   return ["string", "number", "boolean"].includes(typeof value);
 }
 
-function textOf(
-  attributes: AnyValueMap | Attributes | undefined,
-  keys: string[],
-) {
+function textOf(attributes: Attributes | undefined, keys: string[]) {
   for (const key of keys) {
     const value = attributes?.[key];
 

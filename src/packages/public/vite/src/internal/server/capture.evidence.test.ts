@@ -1,23 +1,23 @@
 import { trace } from "@opentelemetry/api";
 import {
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 
 import { captureError } from "./capture.js";
 
 let exporter: InMemorySpanExporter;
-let provider: BasicTracerProvider;
+let provider: TracerProvider;
 
 beforeEach(() => {
   vi.stubEnv("INTERFERE_API_KEY", "interfere_pk_test_123");
 
   exporter = new InMemorySpanExporter();
 
-  provider = new BasicTracerProvider({
-    spanProcessors: [new SimpleSpanProcessor(exporter)],
+  provider = new TracerProvider({
+    spanProcessors: [new SimpleSpanProcessor({ exporter })],
   });
 
   trace.disable();

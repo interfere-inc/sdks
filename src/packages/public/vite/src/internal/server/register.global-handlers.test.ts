@@ -1,7 +1,6 @@
 import { receiver } from "@interfere/test-utils/vitest/telemetry-receiver";
 import { attribute, exceptions } from "@interfere/test-utils/vitest/otlp";
-import { context, metrics, propagation, trace } from "@opentelemetry/api";
-import { logs } from "@opentelemetry/api-logs";
+import { context, logs, metrics, propagation, trace } from "@opentelemetry/api";
 import {
   afterAll,
   assert,

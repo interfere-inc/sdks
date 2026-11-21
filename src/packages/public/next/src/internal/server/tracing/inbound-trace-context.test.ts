@@ -5,10 +5,10 @@ import {
   trace,
 } from "@opentelemetry/api";
 import {
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import { expect, onTestFinished, test } from "vitest";
 
 import { CacheSafeTraceContextPropagator } from "./cache-safe-trace-context.js";
@@ -35,8 +35,8 @@ test.each([
 
     const exporter = new InMemorySpanExporter();
 
-    const provider = new BasicTracerProvider({
-      spanProcessors: [new SimpleSpanProcessor(exporter)],
+    const provider = new TracerProvider({
+      spanProcessors: [new SimpleSpanProcessor({ exporter })],
     });
 
     onTestFinished(async () => provider.shutdown());

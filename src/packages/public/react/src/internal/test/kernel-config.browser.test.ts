@@ -12,11 +12,11 @@ import {
 } from "@opentelemetry/api";
 import { hrTimeToMilliseconds } from "@opentelemetry/core";
 import {
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
-import { StackContextManager } from "@opentelemetry/sdk-trace-web";
+  StackContextManager,
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import {
   InMemoryLogRecordExporter,
   SimpleLogRecordProcessor,
@@ -120,8 +120,8 @@ test.each([
 
     const hostSpan =
       host === "recording"
-        ? new BasicTracerProvider({
-            spanProcessors: [new SimpleSpanProcessor(hostSpans)],
+        ? new TracerProvider({
+            spanProcessors: [new SimpleSpanProcessor({ exporter: hostSpans })],
           })
             .getTracer("host")
             .startSpan("host-work")
@@ -140,7 +140,9 @@ test.each([
 
     const creating = createKernel({
       opts: {
-        _internalAdditionalSpanProcessors: [new SimpleSpanProcessor(exporter)],
+        _internalAdditionalSpanProcessors: [
+          new SimpleSpanProcessor({ exporter }),
+        ],
         apiHost: "https://kernel.invalid",
       },
     });

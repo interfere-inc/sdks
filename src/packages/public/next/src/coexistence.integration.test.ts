@@ -28,7 +28,7 @@ beforeAll(async () => {
     "@types/react",
     "@types/react-dom",
     "@opentelemetry/api",
-    "@opentelemetry/sdk-trace-base",
+    "@opentelemetry/sdk-trace",
   ]);
 
   cleanups.push(async () => app.close());

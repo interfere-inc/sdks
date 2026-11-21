@@ -2,7 +2,7 @@
 import type {
   InMemorySpanExporter,
   ReadableSpan,
-} from "@opentelemetry/sdk-trace-base";
+} from "@opentelemetry/sdk-trace";
 
 import { setupErrorsPlugin } from "../../test/fixtures/errors.test-utils.js";
 import { expect, onTestFinished, test } from "vitest";

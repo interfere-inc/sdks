@@ -18,7 +18,7 @@ beforeAll(() => {
     requests.push(request.clone()),
   );
 
-  network.listen({ onUnhandledRequest: "error" });
+  network.listen({ onUnhandledFrame: "error" });
 });
 
 beforeEach(() => {

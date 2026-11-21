@@ -316,7 +316,7 @@ Your app's own origin always receives trace headers, as do the backend hosts lis
 `tracing.spanProcessors` takes standard OpenTelemetry processors. They run after Interfere adds session and device details and before export. This one removes an attribute:
 
 ```ts
-import type { SpanProcessor } from "@opentelemetry/sdk-trace-base";
+import type { SpanProcessor } from "@opentelemetry/sdk-trace";
 
 const dropTenant: SpanProcessor = {
   onStart() {},

@@ -1,8 +1,8 @@
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
-import { WebTracerProvider } from "@opentelemetry/sdk-trace-web";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import { HttpResponse, http } from "msw";
 import { expect, onTestFinished, test } from "vitest";
 
@@ -36,8 +36,8 @@ test.each([
 
     const exporter = new InMemorySpanExporter();
 
-    const provider = new WebTracerProvider({
-      spanProcessors: [new SimpleSpanProcessor(exporter)],
+    const provider = new TracerProvider({
+      spanProcessors: [new SimpleSpanProcessor({ exporter })],
     });
 
     const handle = registerBundledInstrumentations({

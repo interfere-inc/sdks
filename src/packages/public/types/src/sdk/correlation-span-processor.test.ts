@@ -1,9 +1,9 @@
 import { ROOT_CONTEXT, propagation } from "@opentelemetry/api";
 import {
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import { expect, test } from "vitest";
 
 import { correlationSpanProcessor } from "./correlation-span-processor.js";
@@ -11,10 +11,10 @@ import { correlationSpanProcessor } from "./correlation-span-processor.js";
 test("stamps only interfere.* baggage from the parent context", async () => {
   const exporter = new InMemorySpanExporter();
 
-  const provider = new BasicTracerProvider({
+  const provider = new TracerProvider({
     spanProcessors: [
       correlationSpanProcessor(),
-      new SimpleSpanProcessor(exporter),
+      new SimpleSpanProcessor({ exporter }),
     ],
   });
 

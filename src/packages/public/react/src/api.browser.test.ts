@@ -1,10 +1,10 @@
 /* oxlint-disable typescript/only-throw-error, typescript/require-await */
 import { context, propagation, trace } from "@opentelemetry/api";
-import { StackContextManager } from "@opentelemetry/sdk-trace-web";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  StackContextManager,
+} from "@opentelemetry/sdk-trace";
 
 import { Kernel } from "./internal/kernel.js";
 import { SessionTracker } from "./tracking/api.js";
@@ -92,7 +92,7 @@ describe("api", () => {
   describe(span, () => {
     beforeEach(() => {
       const handle = buildOtelProvider({
-        additionalSpanProcessors: [new SimpleSpanProcessor(exporter)],
+        additionalSpanProcessors: [new SimpleSpanProcessor({ exporter })],
 
         getDeviceId: () => kernel.device.getDeviceId(),
         getSessionId: () => kernel.session.getId(),

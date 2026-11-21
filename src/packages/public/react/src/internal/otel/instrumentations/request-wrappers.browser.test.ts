@@ -3,9 +3,9 @@ import {
   InMemorySpanExporter,
   NoopSpanProcessor,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
-import type { ReadableSpan, Span } from "@opentelemetry/sdk-trace-base";
-import { WebTracerProvider } from "@opentelemetry/sdk-trace-web";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
+import type { ReadableSpan, Span } from "@opentelemetry/sdk-trace";
 import { HttpResponse, http } from "msw";
 import { expect, onTestFinished, test } from "vitest";
 
@@ -34,7 +34,7 @@ test("one upstream wrapper per request API, inert after dispose, and requests st
 
   const started: string[] = [];
 
-  const provider = new WebTracerProvider({
+  const provider = new TracerProvider({
     spanProcessors: [
       new (class extends NoopSpanProcessor {
         override onStart(span: Span) {
@@ -149,9 +149,9 @@ test("a reused XHR keeps no instrumentation listener once each request span ends
 
   let endedRequests = 0;
 
-  const provider = new WebTracerProvider({
+  const provider = new TracerProvider({
     spanProcessors: [
-      new SimpleSpanProcessor(exporter),
+      new SimpleSpanProcessor({ exporter }),
       new (class extends NoopSpanProcessor {
         override onEnd(span: ReadableSpan) {
           if (span.attributes["url.full"] === url) {
@@ -210,8 +210,8 @@ test("ending open requests as the page leaves exports a just-completed request s
 
   const exporter = new InMemorySpanExporter();
 
-  const provider = new WebTracerProvider({
-    spanProcessors: [new SimpleSpanProcessor(exporter)],
+  const provider = new TracerProvider({
+    spanProcessors: [new SimpleSpanProcessor({ exporter })],
   });
 
   const handle = registerBundledInstrumentations({

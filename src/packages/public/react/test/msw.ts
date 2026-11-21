@@ -1,3 +1,4 @@
+import { HttpNetworkFrame, WebSocketNetworkFrame } from "msw/experimental";
 import { setupWorker } from "msw/browser";
 import type { RequestHandler } from "msw";
 import { afterEach } from "vitest";
@@ -55,7 +56,25 @@ export function addBaselineHandlers(...handlers: RequestHandler[]) {
 
 async function startWorker() {
   await worker.start({
-    onUnhandledRequest: (request) => {
+    onUnhandledFrame({ frame }) {
+      if (frame instanceof WebSocketNetworkFrame) {
+        const { url } = frame.data.connection.client;
+
+        if (url.host !== location.host) {
+          unhandled.push(`WS ${url.href}`);
+
+          throw new Error(`Unexpected WebSocket: ${url.href}`);
+        }
+
+        return;
+      }
+
+      if (!(frame instanceof HttpNetworkFrame)) {
+        throw new TypeError(`Unexpected network protocol: ${frame.protocol}`);
+      }
+
+      const { request } = frame.data;
+
       if (new URL(request.url).origin !== location.origin) {
         unhandled.push(`${request.method} ${request.url}`);
       }
@@ -64,15 +83,23 @@ async function startWorker() {
   });
 }
 
+async function restartWorker() {
+  await worker.stop();
+
+  await startWorker();
+}
+
 let ready = startWorker();
 
 await ready;
 
-// WARNING: msw closes its service-worker client on beforeunload, which would send every later fetch to the real network; this listener runs after msw's, stops and restarts the worker (a bare start is a no-op while msw still counts itself enabled), and fetches wait for it, so a synthetic beforeunload in a browser test keeps mocking.
-globalThis.addEventListener("beforeunload", () => {
-  worker.stop();
+// WARNING: MSW closes its client on a non-persisted pagehide. Tests dispatch the event without navigating, so restore the worker before the next fetch.
+window.addEventListener("pagehide", (event) => {
+  if (event.persisted || event.isTrusted) {
+    return;
+  }
 
-  ready = startWorker();
+  ready = restartWorker();
 });
 
 afterEach(async () => {

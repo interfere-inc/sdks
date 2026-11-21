@@ -1,8 +1,6 @@
 import type { TracingOwnership } from "@interfere/types/sdk/remote-config/tracing-ownership";
-import { ProxyTracerProvider, trace } from "@opentelemetry/api";
-import type { TracerProvider } from "@opentelemetry/api";
-import { logs } from "@opentelemetry/api-logs";
-import type { LoggerProvider } from "@opentelemetry/api-logs";
+import { ProxyTracerProvider, logs, trace } from "@opentelemetry/api";
+import type { LoggerProvider, TracerProvider } from "@opentelemetry/api";
 
 /** Logged once when managed `register()` finds a tracer provider another owner registered first. */
 export const EXISTING_PROVIDER_WARNING =
@@ -74,7 +72,7 @@ export function resolveTracingMode(
  *
  * WARNING: `_getDelegate` is the proxy's internal marker; a registered
  * provider is returned directly and has no such method. Re-check when
- * `@opentelemetry/api-logs` changes its proxy shape.
+ * `@opentelemetry/api` changes its proxy shape.
  */
 export function registeredLoggerProvider() {
   const provider = logs.getLoggerProvider();

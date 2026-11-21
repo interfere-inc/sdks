@@ -1,10 +1,10 @@
 import { context, trace } from "@opentelemetry/api";
 import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
 import {
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 
 import { captureError, onRequestError } from "./capture.js";
 import type { onRequestError as publicOnRequestError } from "../../../instrumentation.js";
@@ -21,7 +21,7 @@ import {
 
 let exporter: InMemorySpanExporter;
 
-let provider: BasicTracerProvider;
+let provider: TracerProvider;
 
 const controlFlow = (digest: string) =>
   Object.assign(new Error("control flow"), { digest });
@@ -46,8 +46,8 @@ describe("onRequestError route context", () => {
 
     exporter = new InMemorySpanExporter();
 
-    provider = new BasicTracerProvider({
-      spanProcessors: [new SimpleSpanProcessor(exporter)],
+    provider = new TracerProvider({
+      spanProcessors: [new SimpleSpanProcessor({ exporter })],
     });
 
     trace.disable();
@@ -268,8 +268,8 @@ describe("next control-flow sentinels are never captured as errors", () => {
 
     exporter = new InMemorySpanExporter();
 
-    provider = new BasicTracerProvider({
-      spanProcessors: [new SimpleSpanProcessor(exporter)],
+    provider = new TracerProvider({
+      spanProcessors: [new SimpleSpanProcessor({ exporter })],
     });
 
     trace.disable();

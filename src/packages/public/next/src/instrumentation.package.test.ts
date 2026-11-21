@@ -99,7 +99,7 @@ test.each(["edge-light", "workerd", "worker"])(
       source,
       `
 import { correlationSpanProcessor, register } from "@interfere/next/instrumentation";
-import type { SpanProcessor } from "@opentelemetry/sdk-trace-base";
+import type { SpanProcessor } from "@opentelemetry/sdk-trace";
 const processor: SpanProcessor = correlationSpanProcessor();
 void processor;
 const pending: Promise<void> = register({ tracing: "application" });

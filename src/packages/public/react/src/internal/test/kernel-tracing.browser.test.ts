@@ -1,8 +1,12 @@
 import { setInjectedConfiguration } from "@interfere/test-config/injected-configuration";
-import { SeverityNumber } from "@opentelemetry/api-logs";
+import {
+  SeverityNumber,
+  context,
+  propagation,
+  trace,
+} from "@opentelemetry/api";
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
 
-import { context, propagation, trace } from "@opentelemetry/api";
 import {
   InMemoryLogRecordExporter,
   SimpleLogRecordProcessor,
@@ -10,7 +14,7 @@ import {
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+} from "@opentelemetry/sdk-trace";
 
 import { DISABLE_ALL_PLUGINS } from "../../../test/fixtures/disable-all-plugins.js";
 import { createKernel } from "../kernel.js";
@@ -52,15 +56,7 @@ afterEach(async () => {
   }
 });
 
-test("exports SDK spans and logs when tracing uses its default", async () => {
-  expect.hasAssertions();
-
-  const tracing = undefined;
-
-  const spans = new InMemorySpanExporter();
-  const logs = new InMemoryLogRecordExporter();
-  const requests: Request[] = [];
-
+function recordTracingRequests(requests: Request[]) {
   worker.use(
     http.get(`${location.origin}/tracing-test`, ({ request }) =>
       HttpResponse.json({ baggage: request.headers.get("baggage") }),
@@ -78,11 +74,25 @@ test("exports SDK spans and logs when tracing uses its default", async () => {
       return new HttpResponse(null, { status: 204 });
     }),
   );
+}
+
+test("exports SDK spans and logs when tracing uses its default", async () => {
+  expect.hasAssertions();
+
+  const tracing = undefined;
+
+  const spans = new InMemorySpanExporter();
+  const logs = new InMemoryLogRecordExporter();
+  const requests: Request[] = [];
+
+  recordTracingRequests(requests);
 
   const kernel = await createKernel({
     opts: omitUndefined({
       apiHost: "https://kernel.invalid",
-      _internalAdditionalSpanProcessors: [new SimpleSpanProcessor(spans)],
+      _internalAdditionalSpanProcessors: [
+        new SimpleSpanProcessor({ exporter: spans }),
+      ],
       _internalAdditionalLogRecordProcessors: [
         new SimpleLogRecordProcessor({ exporter: logs }),
       ],
@@ -187,28 +197,14 @@ test("does not export SDK spans or logs when tracing is disabled", async () => {
   const logs = new InMemoryLogRecordExporter();
   const requests: Request[] = [];
 
-  worker.use(
-    http.get(`${location.origin}/tracing-test`, ({ request }) =>
-      HttpResponse.json({ baggage: request.headers.get("baggage") }),
-    ),
-    http.get("https://kernel.invalid/v3/config", () =>
-      HttpResponse.json({ plugins: DISABLE_ALL_PLUGINS }),
-    ),
-    http.post(
-      "https://kernel.invalid/v3/session",
-      () => new HttpResponse(null, { status: 204 }),
-    ),
-    http.all("https://kernel.invalid/*", ({ request }) => {
-      requests.push(request);
-
-      return new HttpResponse(null, { status: 204 });
-    }),
-  );
+  recordTracingRequests(requests);
 
   const kernel = await createKernel({
     opts: omitUndefined({
       apiHost: "https://kernel.invalid",
-      _internalAdditionalSpanProcessors: [new SimpleSpanProcessor(spans)],
+      _internalAdditionalSpanProcessors: [
+        new SimpleSpanProcessor({ exporter: spans }),
+      ],
       _internalAdditionalLogRecordProcessors: [
         new SimpleLogRecordProcessor({ exporter: logs }),
       ],

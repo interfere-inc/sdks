@@ -1,0 +1,12 @@
+diff --git a/build/index.mjs b/build/index.mjs
+--- a/build/index.mjs
++++ b/build/index.mjs
+@@ -2,7 +2,7 @@
+ import { bypass } from "msw/utils/bypass";
+ import { InMemoryHandlersController, InterceptorSource, defineNetwork } from "msw/experimental";
+ import { createRequestId, resolveWebSocketUrl } from "@mswjs/interceptors";
+-import { FetchInterceptor } from "@mswjs/interceptors/fetch";
++import { FetchInterceptor } from "@mswjs/interceptors/fetch/web";
+ import { WebSocketInterceptor } from "@mswjs/interceptors/WebSocket";
+ //#region src/index.ts
+ function setupNetwork() {

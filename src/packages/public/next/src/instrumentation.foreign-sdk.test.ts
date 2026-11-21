@@ -6,11 +6,11 @@ import { SERVER_TRACING_GLOBAL } from "@interfere/types/sdk/server-tracing";
 import {
   context,
   isSpanContextValid,
+  logs,
   propagation,
   trace,
 } from "@opentelemetry/api";
 import type { ProxyTracerProvider } from "@opentelemetry/api";
-import { logs } from "@opentelemetry/api-logs";
 import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
 import {
   CompositePropagator,
@@ -18,10 +18,10 @@ import {
   W3CTraceContextPropagator,
 } from "@opentelemetry/core";
 import {
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import { once } from "node:events";
 import { HttpResponse, http } from "msw";
 import {
@@ -84,7 +84,7 @@ beforeEach(() => {
 afterEach(async () => {
   const provider = (
     trace.getTracerProvider() as ProxyTracerProvider
-  ).getDelegate() as Partial<BasicTracerProvider>;
+  ).getDelegate() as Partial<TracerProvider>;
 
   await provider.shutdown?.();
 
@@ -124,8 +124,8 @@ const REQUEST_CONTEXT = {
 function hostOwnsOpenTelemetry() {
   const exporter = new InMemorySpanExporter();
 
-  const provider = new BasicTracerProvider({
-    spanProcessors: [new SimpleSpanProcessor(exporter)],
+  const provider = new TracerProvider({
+    spanProcessors: [new SimpleSpanProcessor({ exporter })],
   });
 
   const registered = {

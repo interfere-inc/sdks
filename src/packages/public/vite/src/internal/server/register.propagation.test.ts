@@ -1,11 +1,10 @@
 import { receiver } from "@interfere/test-utils/vitest/telemetry-receiver";
 import { attribute, exportedSpans } from "@interfere/test-utils/vitest/otlp";
-import { context, metrics, propagation, trace } from "@opentelemetry/api";
-import { logs } from "@opentelemetry/api-logs";
+import { context, logs, metrics, propagation, trace } from "@opentelemetry/api";
 import { UndiciInstrumentation } from "@opentelemetry/instrumentation-undici";
 import { LoggerProvider } from "@opentelemetry/sdk-logs";
 import { MeterProvider } from "@opentelemetry/sdk-metrics";
-import { NodeTracerProvider } from "@opentelemetry/sdk-trace-node";
+import { TracerProvider } from "@opentelemetry/sdk-trace";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import type { MockInstance } from "vitest";
 
@@ -13,7 +12,7 @@ await import("./register");
 
 await import("./request-trace");
 
-let providers: MockInstance<typeof NodeTracerProvider.prototype.register>;
+let providers: MockInstance<typeof trace.setGlobalTracerProvider>;
 let loggers: MockInstance<typeof logs.setGlobalLoggerProvider>;
 let meters: MockInstance<typeof metrics.setGlobalMeterProvider>;
 
@@ -33,7 +32,7 @@ beforeEach(async () => {
 
   vi.clearAllMocks();
 
-  providers = vi.spyOn(NodeTracerProvider.prototype, "register");
+  providers = vi.spyOn(trace, "setGlobalTracerProvider");
 
   loggers = vi.spyOn(logs, "setGlobalLoggerProvider");
 
@@ -63,8 +62,8 @@ afterEach(async () => {
   }
 
   await Promise.all([
-    ...providers.mock.contexts.map(async (provider) =>
-      provider instanceof NodeTracerProvider ? provider.shutdown() : undefined,
+    ...providers.mock.calls.map(async ([provider]) =>
+      provider instanceof TracerProvider ? provider.shutdown() : undefined,
     ),
     ...loggers.mock.calls.map(async ([provider]) => {
       if (provider instanceof LoggerProvider) {
@@ -193,10 +192,8 @@ test.each([
     ).toStrictEqual(expect.arrayContaining([null, "customer=value"]));
 
     await Promise.all(
-      tracers.mock.contexts.map(async (provider) =>
-        provider instanceof NodeTracerProvider
-          ? provider.forceFlush()
-          : undefined,
+      tracers.mock.calls.map(async ([provider]) =>
+        provider instanceof TracerProvider ? provider.forceFlush() : undefined,
       ),
     );
 

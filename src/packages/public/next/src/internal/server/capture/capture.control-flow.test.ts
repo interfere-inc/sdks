@@ -1,10 +1,10 @@
 import { context, trace } from "@opentelemetry/api";
 import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
 import {
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import { DynamicServerError } from "next/dist/client/components/hooks-server-context.js";
 import { StaticGenBailoutError } from "next/dist/client/components/static-generation-bailout.js";
 import { BailoutToCSRError } from "next/dist/shared/lib/lazy-dynamic/bailout-to-csr.js";
@@ -16,7 +16,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 let exporter: InMemorySpanExporter;
 
-let provider: BasicTracerProvider;
+let provider: TracerProvider;
 
 function withDigest(digest: string) {
   return Object.assign(new Error("control flow"), { digest });
@@ -82,8 +82,8 @@ describe("framework control flow is never captured as an error", () => {
 
     exporter = new InMemorySpanExporter();
 
-    provider = new BasicTracerProvider({
-      spanProcessors: [new SimpleSpanProcessor(exporter)],
+    provider = new TracerProvider({
+      spanProcessors: [new SimpleSpanProcessor({ exporter })],
     });
 
     trace.disable();

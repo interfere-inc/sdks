@@ -1,5 +1,5 @@
 import { createError } from "../../test/fixtures/errors.js";
-import type { InMemorySpanExporter } from "@opentelemetry/sdk-trace-base";
+import type { InMemorySpanExporter } from "@opentelemetry/sdk-trace";
 
 import { setupErrorsPlugin } from "../../test/fixtures/errors.test-utils.js";
 

@@ -37,7 +37,7 @@ let file: Parameters<
 let createCalls: Request[];
 
 beforeAll(() => {
-  server.listen({ onUnhandledRequest: "error" });
+  server.listen({ onUnhandledFrame: "error" });
 });
 
 beforeEach(async () => {

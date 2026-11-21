@@ -1,8 +1,8 @@
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
-import { WebTracerProvider } from "@opentelemetry/sdk-trace-web";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import { http } from "msw";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import { worker } from "../../../../test/msw.js";
@@ -15,7 +15,7 @@ import { response } from "./failed-response.fixture.js";
 import type { ResponseEvidence } from "./response-discriminators.js";
 
 let exporter: InMemorySpanExporter;
-let provider: WebTracerProvider;
+let provider: TracerProvider;
 let handle: BundledInstrumentations;
 const base = `${globalThis.location.origin}/application-errors`;
 
@@ -30,8 +30,8 @@ function install(captureFailedRequests?: CaptureFailedRequestsOption) {
 beforeEach(() => {
   exporter = new InMemorySpanExporter();
 
-  provider = new WebTracerProvider({
-    spanProcessors: [new SimpleSpanProcessor(exporter)],
+  provider = new TracerProvider({
+    spanProcessors: [new SimpleSpanProcessor({ exporter })],
   });
 
   install();

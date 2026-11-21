@@ -3,7 +3,7 @@ import { createCompressor } from "../compression/compressor-host.js";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+} from "@opentelemetry/sdk-trace";
 import { gunzipSync } from "fflate";
 import { HttpResponse, http } from "msw";
 import { createPluginContext } from "../../../../test/fixtures/plugin-context.js";
@@ -45,7 +45,7 @@ function input(overrides: Partial<DeliverInput> = {}) {
 describe("plugins/replay/delivery", () => {
   test("records no replay.chunk span for a routine chunk", async () => {
     const exporter = new InMemorySpanExporter();
-    const ctx = createPluginContext([new SimpleSpanProcessor(exporter)]);
+    const ctx = createPluginContext([new SimpleSpanProcessor({ exporter })]);
 
     worker.use(
       http.post("https://collector.test/v3/replay/upload/:id", () =>
@@ -64,7 +64,7 @@ describe("plugins/replay/delivery", () => {
 
   test("records the replay.chunk span on the kernel tracer for an exception snapshot", async () => {
     const exporter = new InMemorySpanExporter();
-    const ctx = createPluginContext([new SimpleSpanProcessor(exporter)]);
+    const ctx = createPluginContext([new SimpleSpanProcessor({ exporter })]);
 
     worker.use(
       http.post("https://collector.test/v3/replay/upload/:id", () =>
@@ -295,7 +295,7 @@ describe("plugins/replay/delivery keepalive", () => {
 
   test("gzips an oversized unload chunk synchronously so it fits the keepalive budget", async () => {
     const exporter = new InMemorySpanExporter();
-    const ctx = createPluginContext([new SimpleSpanProcessor(exporter)]);
+    const ctx = createPluginContext([new SimpleSpanProcessor({ exporter })]);
     const requests = captureUploads();
     const bodyJson = `${"x".repeat(70_000)}\n`;
 
@@ -331,7 +331,7 @@ describe("plugins/replay/delivery keepalive", () => {
 
   test("sends an unload chunk that stays over the budget after gzip without keepalive, records it on the span and releases the budget", async () => {
     const exporter = new InMemorySpanExporter();
-    const ctx = createPluginContext([new SimpleSpanProcessor(exporter)]);
+    const ctx = createPluginContext([new SimpleSpanProcessor({ exporter })]);
     const requests = captureUploads();
 
     await expect(

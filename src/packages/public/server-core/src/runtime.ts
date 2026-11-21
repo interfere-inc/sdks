@@ -22,11 +22,35 @@ import {
 } from "@opentelemetry/api";
 import type { Attributes, TracerProvider } from "@opentelemetry/api";
 
+import { getNumberFromEnv } from "@opentelemetry/core";
+
 import { contain, containAsync } from "./contain.js";
-import { CAPTURE_KIND_ATTRIBUTE } from "./sampler.js";
+import { CAPTURE_KIND_ATTRIBUTE, configuredSampler } from "./sampler.js";
 
 /** Longest span attribute or status message a managed pipeline exports. */
 export const ATTRIBUTE_VALUE_LENGTH_LIMIT = 65_536;
+
+export function configuredTraceOptions(defaultValueLengthLimit?: number) {
+  const spanLimits = omitUndefined({
+    attributeValueLengthLimit:
+      getNumberFromEnv("OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT") ??
+      getNumberFromEnv("OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT") ??
+      defaultValueLengthLimit,
+    attributeCountLimit:
+      getNumberFromEnv("OTEL_SPAN_ATTRIBUTE_COUNT_LIMIT") ??
+      getNumberFromEnv("OTEL_ATTRIBUTE_COUNT_LIMIT"),
+    linkCountLimit: getNumberFromEnv("OTEL_SPAN_LINK_COUNT_LIMIT"),
+    eventCountLimit: getNumberFromEnv("OTEL_SPAN_EVENT_COUNT_LIMIT"),
+    attributePerEventCountLimit: getNumberFromEnv(
+      "OTEL_SPAN_ATTRIBUTE_PER_EVENT_COUNT_LIMIT",
+    ),
+    attributePerLinkCountLimit: getNumberFromEnv(
+      "OTEL_SPAN_ATTRIBUTE_PER_LINK_COUNT_LIMIT",
+    ),
+  });
+
+  return { sampler: configuredSampler(), spanLimits };
+}
 
 export interface CapturePolicy {
   errors: "host" | "interfere";

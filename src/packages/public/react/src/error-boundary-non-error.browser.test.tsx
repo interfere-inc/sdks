@@ -1,4 +1,4 @@
-import type { InMemorySpanExporter } from "@opentelemetry/sdk-trace-base";
+import type { InMemorySpanExporter } from "@opentelemetry/sdk-trace";
 import { page } from "vitest/browser";
 import { cleanup, render } from "vitest-browser-react";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";

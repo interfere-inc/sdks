@@ -3,8 +3,7 @@ import { receiver } from "@interfere/test-utils/vitest/telemetry-receiver";
 import { exceptions, exportedSpans } from "@interfere/test-utils/vitest/otlp";
 import { EXCEPTION_DELIVERY_ATTRIBUTE } from "@interfere/types/sdk/exception-delivery";
 
-import { context, metrics, propagation, trace } from "@opentelemetry/api";
-import { logs } from "@opentelemetry/api-logs";
+import { context, logs, metrics, propagation, trace } from "@opentelemetry/api";
 import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
 import { W3CTraceContextPropagator } from "@opentelemetry/core";
 import { UndiciInstrumentation } from "@opentelemetry/instrumentation-undici";
@@ -14,11 +13,10 @@ import {
   SimpleLogRecordProcessor,
 } from "@opentelemetry/sdk-logs";
 import {
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
-import { NodeTracerProvider } from "@opentelemetry/sdk-trace-node";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import { setImmediate } from "node:timers/promises";
 import {
   afterAll,
@@ -43,9 +41,7 @@ let register: (typeof import("./register"))["register"];
 
 let captureError: (typeof import("./capture"))["captureError"];
 
-let registerProvider: MockInstance<
-  typeof NodeTracerProvider.prototype.register
->;
+let registerProvider: MockInstance<typeof trace.setGlobalTracerProvider>;
 
 let registerLogger: MockInstance<typeof logs.setGlobalLoggerProvider>;
 
@@ -74,7 +70,7 @@ beforeAll(async () => {
 beforeEach(async () => {
   vi.clearAllMocks();
 
-  registerProvider = vi.spyOn(NodeTracerProvider.prototype, "register");
+  registerProvider = vi.spyOn(trace, "setGlobalTracerProvider");
 
   registerLogger = vi.spyOn(logs, "setGlobalLoggerProvider");
 
@@ -104,8 +100,8 @@ afterEach(async () => {
   Object.assign(console, originalConsole);
 
   await Promise.all(
-    registerProvider.mock.contexts.map(async (provider) =>
-      provider instanceof NodeTracerProvider ? provider.shutdown() : undefined,
+    registerProvider.mock.calls.map(async ([provider]) =>
+      provider instanceof TracerProvider ? provider.shutdown() : undefined,
     ),
   );
 
@@ -131,11 +127,13 @@ afterAll(async () => {
 function hostOwnsOpenTelemetry() {
   const exporter = new InMemorySpanExporter();
 
-  const provider = new BasicTracerProvider({
-    spanProcessors: [new SimpleSpanProcessor(exporter)],
+  const provider = new TracerProvider({
+    spanProcessors: [new SimpleSpanProcessor({ exporter })],
   });
 
-  trace.setGlobalTracerProvider(provider);
+  expect(trace.setGlobalTracerProvider(provider)).toBe(true);
+
+  registerProvider.mockClear();
 
   context.setGlobalContextManager(
     new AsyncLocalStorageContextManager().enable(),

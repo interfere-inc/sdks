@@ -1,9 +1,9 @@
 import { ROOT_CONTEXT, propagation, trace } from "@opentelemetry/api";
 import {
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import { expect, test } from "vitest";
 
 import { correlationSpanProcessor } from "./instrumentation.js";
@@ -15,8 +15,8 @@ test("host providers correlate request and child spans from interfere.* baggage 
 
   const exporter = new InMemorySpanExporter();
 
-  const provider = new BasicTracerProvider({
-    spanProcessors: [processor, new SimpleSpanProcessor(exporter)],
+  const provider = new TracerProvider({
+    spanProcessors: [processor, new SimpleSpanProcessor({ exporter })],
   });
 
   const parent = propagation.setBaggage(

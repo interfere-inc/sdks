@@ -109,6 +109,8 @@ describe(createUrlRedactionSpanProcessor, () => {
 
     const attributes = {
       "http.request.header.referer": ["https://shop.test/r?sig=s", null],
+      "http.url": { path: "/?token=secret" },
+      "url.original": [["/?token=secret"]],
       "http.response.status_code": 500,
       "url.fragment": "frag",
       "url.full": "https://user:pw@shop.test/a?token=t&page=2#frag",
@@ -145,6 +147,8 @@ describe(createUrlRedactionSpanProcessor, () => {
     });
 
     expect(attributes).toStrictEqual({
+      "http.url": "REDACTED",
+      "url.original": ["REDACTED"],
       "http.request.header.referer": ["https://shop.test/r?sig=REDACTED", null],
       "http.response.status_code": 500,
       "url.full": "https://REDACTED:REDACTED@shop.test/a?token=REDACTED&page=2",

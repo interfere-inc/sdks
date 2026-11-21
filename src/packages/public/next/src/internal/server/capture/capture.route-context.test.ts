@@ -1,17 +1,17 @@
 import { context, trace } from "@opentelemetry/api";
 import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
 import {
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 
 import { onRequestError } from "./capture.js";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 let exporter: InMemorySpanExporter;
 
-let provider: BasicTracerProvider;
+let provider: TracerProvider;
 
 const ROUTE = {
   routePath: "/api/x",
@@ -39,8 +39,8 @@ describe("onRequestError request context", () => {
 
     exporter = new InMemorySpanExporter();
 
-    provider = new BasicTracerProvider({
-      spanProcessors: [new SimpleSpanProcessor(exporter)],
+    provider = new TracerProvider({
+      spanProcessors: [new SimpleSpanProcessor({ exporter })],
     });
 
     trace.disable();

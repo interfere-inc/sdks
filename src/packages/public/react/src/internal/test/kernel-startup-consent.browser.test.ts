@@ -7,7 +7,7 @@ import { context, propagation, trace } from "@opentelemetry/api";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+} from "@opentelemetry/sdk-trace";
 import { afterEach, beforeAll, expect, onTestFinished, test, vi } from "vitest";
 
 import { DISABLE_ALL_PLUGINS } from "../../../test/fixtures/disable-all-plugins.js";
@@ -78,7 +78,10 @@ test("attaches the saved device to spans created during tracing startup", async 
 
   browserStorage.local.set("interfere:device_id", deviceId);
 
-  const processor = new SimpleSpanProcessor(new InMemorySpanExporter());
+  const processor = new SimpleSpanProcessor({
+    exporter: new InMemorySpanExporter(),
+  });
+
   const started = vi.spyOn(processor, "onStart");
 
   const kernel = await createKernel({
@@ -129,7 +132,9 @@ test("stamps device attributes on exceptions captured before the provider settle
 
   const kernel = await createKernel({
     opts: {
-      _internalAdditionalSpanProcessors: [new SimpleSpanProcessor(exporter)],
+      _internalAdditionalSpanProcessors: [
+        new SimpleSpanProcessor({ exporter }),
+      ],
     },
   });
 
@@ -167,7 +172,10 @@ async function createHeldKernel() {
     errors: true,
   });
 
-  const processor = new SimpleSpanProcessor(new InMemorySpanExporter());
+  const processor = new SimpleSpanProcessor({
+    exporter: new InMemorySpanExporter(),
+  });
+
   const ended = vi.spyOn(processor, "onEnd");
 
   const kernel = await createKernel({

@@ -1,9 +1,9 @@
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
-import type { ReadableSpan } from "@opentelemetry/sdk-trace-base";
-import { WebTracerProvider } from "@opentelemetry/sdk-trace-web";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
+import type { ReadableSpan } from "@opentelemetry/sdk-trace";
 import { HttpResponse, http } from "msw";
 import { afterEach, beforeEach, expect, test } from "vitest";
 
@@ -16,14 +16,14 @@ const PAGE_URL = `${location.origin}/projects`;
 const PREFETCH_HEADERS = { RSC: "1", "Next-Router-Prefetch": "1" };
 
 let exporter: InMemorySpanExporter;
-let provider: WebTracerProvider;
+let provider: TracerProvider;
 let dispose: () => void;
 
 beforeEach(() => {
   exporter = new InMemorySpanExporter();
 
-  provider = new WebTracerProvider({
-    spanProcessors: [new SimpleSpanProcessor(exporter)],
+  provider = new TracerProvider({
+    spanProcessors: [new SimpleSpanProcessor({ exporter })],
   });
 
   ({ dispose } = registerBundledInstrumentations({

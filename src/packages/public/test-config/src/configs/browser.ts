@@ -56,6 +56,8 @@ export const browser = (
       base,
       defineProject({
         plugins: [browserNetworkPlugin, serveSharedSetupFiles],
+        resolve: { conditions: ["browser"] },
+        optimizeDeps: { include: ["msw > @mswjs/interceptors > debug"] },
         test: {
           browser: {
             commands: {

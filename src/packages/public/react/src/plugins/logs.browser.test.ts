@@ -1,5 +1,4 @@
-import { context, propagation } from "@opentelemetry/api";
-import { SeverityNumber } from "@opentelemetry/api-logs";
+import { SeverityNumber, context, propagation } from "@opentelemetry/api";
 import {
   InMemoryLogRecordExporter,
   SimpleLogRecordProcessor,

@@ -2,7 +2,7 @@ import { EventType } from "@rrweb/types";
 import type { eventWithTime } from "@rrweb/types";
 import { expect, test, vi } from "vitest";
 
-import { StackContextManager } from "@opentelemetry/sdk-trace-web";
+import { StackContextManager } from "@opentelemetry/sdk-trace";
 import { toRecordOptions } from "../config.js";
 import { startReplayRecorder } from "./recorder.js";
 

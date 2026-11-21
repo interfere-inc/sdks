@@ -2,7 +2,7 @@ import { context, propagation } from "@opentelemetry/api";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+} from "@opentelemetry/sdk-trace";
 
 import { Kernel } from "../../src/internal/kernel.js";
 import { buildOtelProvider } from "../../src/internal/otel/provider.js";
@@ -29,7 +29,7 @@ export function createTracedKernel() {
   const kernel = new Kernel(new SessionTracker({ target: TARGET }));
 
   const handle = buildOtelProvider({
-    additionalSpanProcessors: [new SimpleSpanProcessor(exporter)],
+    additionalSpanProcessors: [new SimpleSpanProcessor({ exporter })],
     clientOptions: TARGET,
     getDeviceId: () => kernel.device.getDeviceId(),
     getSessionId: () => kernel.session.getId(),

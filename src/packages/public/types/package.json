@@ -148,7 +148,7 @@
     "@interfere/test-config": "workspace:*",
     "@interfere/test-utils": "workspace:^",
     "@interfere/typescript-config": "workspace:^",
-    "@opentelemetry/sdk-trace-base": "catalog:",
+    "@opentelemetry/sdk-trace": "catalog:",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "tsdown": "catalog:",

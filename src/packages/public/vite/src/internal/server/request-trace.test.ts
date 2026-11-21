@@ -17,17 +17,17 @@ import {
   W3CTraceContextPropagator,
 } from "@opentelemetry/core";
 import {
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 
 import { traceMeta, withRequestSpan } from "./request-trace.js";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 let exporter: InMemorySpanExporter;
 
-let provider: BasicTracerProvider;
+let provider: TracerProvider;
 
 describe("request-trace", () => {
   beforeEach(() => {
@@ -37,8 +37,8 @@ describe("request-trace", () => {
 
     exporter = new InMemorySpanExporter();
 
-    provider = new BasicTracerProvider({
-      spanProcessors: [new SimpleSpanProcessor(exporter)],
+    provider = new TracerProvider({
+      spanProcessors: [new SimpleSpanProcessor({ exporter })],
     });
 
     trace.disable();
@@ -202,7 +202,7 @@ describe("trace meta ownership", () => {
 
     propagation.setGlobalPropagator(new W3CTraceContextPropagator());
 
-    const span = new BasicTracerProvider()
+    const span = new TracerProvider()
       .getTracer("ownership")
       .startSpan("render");
 

@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-deprecated -- The browser SDK restores native request functions on disposal. browser-api 0.2 keeps its patches installed after disable(). */
 import type { Span } from "@opentelemetry/api";
 import type { FetchInstrumentation } from "@opentelemetry/instrumentation-fetch";
 import type { XMLHttpRequestInstrumentation } from "@opentelemetry/instrumentation-xml-http-request";
@@ -28,7 +29,7 @@ function isXhrMemory(
   return value instanceof WeakMap;
 }
 
-// WARNING: These are private members of @opentelemetry/instrumentation-fetch and -xml-http-request 0.223.0, which offer no fetch response hook and no XHR request hook; upstream-request-contract.browser.test.ts fails when they change.
+// WARNING: These are private members of @opentelemetry/instrumentation-fetch and -xml-http-request which offer no fetch response hook and no XHR request hook; upstream-request-contract.browser.test.ts fails when they change.
 function readMember<T>(
   instrumentation: Instrumentation,
   name: string,
@@ -38,7 +39,9 @@ function readMember<T>(
   const member: unknown = Reflect.get(instrumentation, name);
 
   if (!guard(member)) {
-    throw new TypeError(`Upstream instrumentation member  changed shape`);
+    throw new TypeError(
+      `Upstream instrumentation member ${name} changed shape`,
+    );
   }
 
   return member;

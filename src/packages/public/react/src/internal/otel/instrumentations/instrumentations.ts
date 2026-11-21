@@ -14,7 +14,6 @@ import { DocumentLoadInstrumentation } from "@opentelemetry/instrumentation-docu
 import { LongTaskInstrumentation } from "@opentelemetry/instrumentation-long-task";
 import type { ObserverCallbackInformation } from "@opentelemetry/instrumentation-long-task";
 import type { LoggerProvider } from "@opentelemetry/sdk-logs";
-import type { WebTracerProvider } from "@opentelemetry/sdk-trace-web";
 
 import { THIRD_PARTY_IGNORE } from "../../third-party-hosts.js";
 import { excludeFromExport } from "../export-filter.js";
@@ -120,7 +119,7 @@ export interface InstrumentationsInput {
    * The kernel's private provider — instrumentations register against
    * it, not the global one, so customer OTel setups stay untouched.
    */
-  tracerProvider: WebTracerProvider;
+  tracerProvider: TracerProvider;
 }
 
 export interface BundledInstrumentations {

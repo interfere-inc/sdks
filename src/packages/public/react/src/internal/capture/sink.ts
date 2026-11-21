@@ -1,6 +1,5 @@
 import type { NonErrorException } from "@interfere/types/sdk/errors";
-import type { Attributes, Context } from "@opentelemetry/api";
-import type { LogRecord } from "@opentelemetry/api-logs";
+import type { Attributes, Context, LogRecord } from "@opentelemetry/api";
 
 /**
  * Where the kernel's captured exceptions and log records go. `OtelSink`

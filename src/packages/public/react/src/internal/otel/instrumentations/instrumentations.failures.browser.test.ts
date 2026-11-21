@@ -3,8 +3,8 @@ import type { Attributes, Span } from "@opentelemetry/api";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
-import { WebTracerProvider } from "@opentelemetry/sdk-trace-web";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 
 import {
   applyFetchSpanAttrs,
@@ -14,7 +14,7 @@ import {
 import { resolveFailureRanges } from "./failure-policy.js";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-let provider: WebTracerProvider;
+let provider: TracerProvider;
 
 let exporter: InMemorySpanExporter;
 
@@ -28,8 +28,8 @@ beforeEach(() => {
 
   exporter = new InMemorySpanExporter();
 
-  provider = new WebTracerProvider({
-    spanProcessors: [new SimpleSpanProcessor(exporter)],
+  provider = new TracerProvider({
+    spanProcessors: [new SimpleSpanProcessor({ exporter })],
   });
 });
 

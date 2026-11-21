@@ -112,7 +112,6 @@
     "@interfere/server-core": "workspace:^",
     "@interfere/types": "workspace:^",
     "@opentelemetry/api": "catalog:",
-    "@opentelemetry/api-logs": "catalog:",
     "@opentelemetry/context-async-hooks": "catalog:",
     "@opentelemetry/core": "catalog:",
     "@opentelemetry/instrumentation": "catalog:",
@@ -120,8 +119,7 @@
     "@opentelemetry/resources": "catalog:",
     "@opentelemetry/sdk-logs": "catalog:",
     "@opentelemetry/sdk-metrics": "catalog:",
-    "@opentelemetry/sdk-trace-base": "catalog:",
-    "@opentelemetry/sdk-trace-node": "catalog:",
+    "@opentelemetry/sdk-trace": "catalog:",
     "@vercel/otel": "catalog:",
     "chalk": "catalog:",
     "zod": "catalog:"

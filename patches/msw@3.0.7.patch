@@ -1,0 +1,24 @@
+diff --git a/lib/_chunks/interceptor-source.js b/lib/_chunks/interceptor-source.js
+--- a/lib/_chunks/interceptor-source.js
++++ b/lib/_chunks/interceptor-source.js
+@@ -182,7 +182,7 @@
+ //#region src/core/experimental/define-network.ts
+ function colorlessPromiseAll(values) {
+ 	const promises = [];
+-	for (const value of values) if (value instanceof Promise) promises.push(value);
++	for (const value of values) if (value != null && (typeof value === "object" || typeof value === "function") && typeof value.then === "function") promises.push(Promise.resolve(value));
+ 	if (promises.length > 0) return Promise.all(promises).then(() => {});
+ }
+ let NetworkReadyState = /* @__PURE__ */ function(NetworkReadyState) {
+diff --git a/lib/iife/index.js b/lib/iife/index.js
+--- a/lib/iife/index.js
++++ b/lib/iife/index.js
+@@ -30182,7 +30182,7 @@
+ 	//#region src/core/experimental/define-network.ts
+ 	function colorlessPromiseAll(values) {
+ 		const promises = [];
+-		for (const value of values) if (value instanceof Promise) promises.push(value);
++		for (const value of values) if (value != null && (typeof value === "object" || typeof value === "function") && typeof value.then === "function") promises.push(Promise.resolve(value));
+ 		if (promises.length > 0) return Promise.all(promises).then(() => {});
+ 	}
+ 	/**

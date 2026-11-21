@@ -7,7 +7,7 @@ import type {
   FetchSpanRequest,
   PageExitWatch,
 } from "./network-failure-types.js";
-import type { ReadableSpan } from "@opentelemetry/sdk-trace-base";
+import type { ReadableSpan } from "@opentelemetry/sdk-trace";
 
 import {
   ATTR_HTTP_CANCELLATION_INITIATOR,

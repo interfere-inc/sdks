@@ -8,17 +8,17 @@ import {
   ROOT_CONTEXT,
   SpanKind,
   context,
+  logs,
   propagation,
   trace,
 } from "@opentelemetry/api";
-import { logs } from "@opentelemetry/api-logs";
 import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
 import { W3CTraceContextPropagator } from "@opentelemetry/core";
 import {
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import {
   InMemoryLogRecordExporter,
   LoggerProvider,
@@ -41,7 +41,7 @@ import { ServerRuntime } from "./runtime.js";
 let collector: Awaited<ReturnType<typeof receiver>>;
 let runtime: ServerRuntime;
 let input: NodeRuntimeInput;
-let host: BasicTracerProvider | undefined;
+let host: TracerProvider | undefined;
 let manager: AsyncLocalStorageContextManager | undefined;
 let hostLogger: LoggerProvider | undefined;
 
@@ -236,8 +236,8 @@ test.each([
   async (errors, copies) => {
     const exporter = new InMemorySpanExporter();
 
-    host = new BasicTracerProvider({
-      spanProcessors: [new SimpleSpanProcessor(exporter)],
+    host = new TracerProvider({
+      spanProcessors: [new SimpleSpanProcessor({ exporter })],
     });
 
     trace.setGlobalTracerProvider(host);
@@ -357,7 +357,7 @@ test("platform drain keeps its provider alive after SDK shutdown", async () => {
       logDrain: true,
       vercel: true,
       registerPlatform: async ({ spanProcessors }) => {
-        host = new BasicTracerProvider({ spanProcessors });
+        host = new TracerProvider({ spanProcessors });
 
         trace.setGlobalTracerProvider(host);
 
@@ -391,8 +391,8 @@ test("platform drain keeps its provider alive after SDK shutdown", async () => {
 test("explicit managed mode isolates errors from an existing host", async () => {
   const exporter = new InMemorySpanExporter();
 
-  host = new BasicTracerProvider({
-    spanProcessors: [new SimpleSpanProcessor(exporter)],
+  host = new TracerProvider({
+    spanProcessors: [new SimpleSpanProcessor({ exporter })],
   });
 
   trace.setGlobalTracerProvider(host);
@@ -469,7 +469,7 @@ test("console level and compression apply while preserving a host propagator and
 });
 
 test("application logger remains usable after the SDK releases its console bridge", async () => {
-  host = new BasicTracerProvider();
+  host = new TracerProvider();
 
   trace.setGlobalTracerProvider(host);
 

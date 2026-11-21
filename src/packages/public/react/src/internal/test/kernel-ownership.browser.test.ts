@@ -1,5 +1,5 @@
 import { context, propagation } from "@opentelemetry/api";
-import { StackContextManager } from "@opentelemetry/sdk-trace-web";
+import { StackContextManager } from "@opentelemetry/sdk-trace";
 import { expect, test, vi } from "vitest";
 
 import { ATTR_REQUEST_TRACE_ID } from "../otel/request-observer/request-observer-events.js";

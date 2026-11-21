@@ -3,19 +3,17 @@ import { W3CTraceContextPropagator } from "@opentelemetry/core";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
-import type { ReadableSpan } from "@opentelemetry/sdk-trace-base";
-import {
   StackContextManager,
-  WebTracerProvider,
-} from "@opentelemetry/sdk-trace-web";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
+import type { ReadableSpan } from "@opentelemetry/sdk-trace";
 import { registerBundledInstrumentations } from "../src/internal/otel/instrumentations/instrumentations.js";
 import type { BundledInstrumentations } from "../src/internal/otel/instrumentations/instrumentations.js";
 import { w3cTraceHeaders } from "./trace-headers.test-utils.js";
 import { createCountSignal } from "./fixtures/upload-signal.js";
 
 let handle: BundledInstrumentations | undefined;
-let provider: WebTracerProvider | undefined;
+let provider: TracerProvider | undefined;
 let exporter = new InMemorySpanExporter();
 const suspectCorsSpans: ReadableSpan[] = [];
 const suspectCorsSignal = createCountSignal(suspectCorsSpans);
@@ -61,8 +59,8 @@ const fixture = {
 
     propagation.setGlobalPropagator(new W3CTraceContextPropagator());
 
-    provider = new WebTracerProvider({
-      spanProcessors: [new ObservedSpanProcessor(exporter)],
+    provider = new TracerProvider({
+      spanProcessors: [new ObservedSpanProcessor({ exporter })],
     });
 
     handle = registerBundledInstrumentations({

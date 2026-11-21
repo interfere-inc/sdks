@@ -3,10 +3,10 @@ import { context, propagation, trace } from "@opentelemetry/api";
 import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
 import { W3CTraceContextPropagator } from "@opentelemetry/core";
 import {
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import { describe, vi } from "vitest";
 
 describe("shared server contract", () => {
@@ -26,7 +26,7 @@ describe("shared server contract", () => {
 
     const { runtime } = await import("./internal/server/runtime.js");
 
-    let host: BasicTracerProvider | undefined;
+    let host: TracerProvider | undefined;
     let manager: AsyncLocalStorageContextManager | undefined;
 
     return {
@@ -49,8 +49,8 @@ describe("shared server contract", () => {
       installHost: () => {
         const exporter = new InMemorySpanExporter();
 
-        const provider = new BasicTracerProvider({
-          spanProcessors: [new SimpleSpanProcessor(exporter)],
+        const provider = new TracerProvider({
+          spanProcessors: [new SimpleSpanProcessor({ exporter })],
         });
 
         host = provider;

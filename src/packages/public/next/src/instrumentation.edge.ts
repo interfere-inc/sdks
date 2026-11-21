@@ -16,13 +16,14 @@ import {
 } from "@opentelemetry/resources";
 import {
   AlwaysOnSampler,
-  BasicTracerProvider,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 
 import { resolveReleaseSlug } from "./internal/release-slug.js";
 import { readInterfereEnv } from "./internal/env.js";
 import { runtime } from "./internal/server/runtime.js";
+import { configuredTraceOptions } from "@interfere/server-core/runtime";
 import { contain } from "@interfere/server-core/contain";
 import { FetchTraceExporter } from "./internal/server/exporters/edge-exporter.js";
 import type { ServerInstrumentationOptions } from "./internal/server/instrumentation-options.js";
@@ -64,10 +65,10 @@ function edgeExportCredential(credential: ServerCredential) {
  * `package.json`'s `edge-light` / `workerd` / `worker` export conditions when
  * Next.js compiles `instrumentation.ts` for the Edge runtime.
  *
- * The Node entry's pipeline (`NodeTracerProvider`, `AsyncLocalStorage`, undici,
+ * The Node entry's pipeline (`TracerProvider`, `AsyncLocalStorage`, undici,
  * console bridge) can't run on edge, so this builds an edge-safe pipeline
  * instead: a
- * `BasicTracerProvider` + `SimpleSpanProcessor` exporting via {@link FetchTraceExporter}.
+ * `TracerProvider` + `SimpleSpanProcessor` exporting via {@link FetchTraceExporter}.
  * Edge always exports directly because Vercel Trace Drains do not forward custom Edge spans.
  * `tracing: "auto"` (default) adopts a registered provider, otherwise uses managed tracing.
  * `tracing: "managed"` registers that provider globally unless
@@ -119,9 +120,12 @@ function start(opts: ServerInstrumentationOptions) {
   const isolated = mode === "application" || existingProvider !== null;
   const urlRedaction = resolveUrlRedaction(opts.privacy?.urls);
 
-  const provider = new BasicTracerProvider(
+  const { sampler, spanLimits } = configuredTraceOptions();
+
+  const provider = new TracerProvider(
     omitUndefined({
-      sampler: isolated ? new AlwaysOnSampler() : undefined,
+      sampler: isolated ? new AlwaysOnSampler() : sampler,
+      spanLimits,
       resource: resourceFromAttributes(
         omitUndefined({
           "deployment.environment.name": env.nodeEnvironment,
@@ -140,8 +144,8 @@ function start(opts: ServerInstrumentationOptions) {
       spanProcessors: [
         containSpanProcessor(createUrlRedactionSpanProcessor(urlRedaction)),
         nextSpanExceptionProcessor,
-        new SimpleSpanProcessor(
-          new FetchTraceExporter({
+        new SimpleSpanProcessor({
+          exporter: new FetchTraceExporter({
             baseUrl: env.apiUrl,
             ...edgeExportCredential(credential),
             headers: omitUndefined({
@@ -152,7 +156,7 @@ function start(opts: ServerInstrumentationOptions) {
                   : undefined,
             }),
           }),
-        ),
+        }),
       ],
     }),
   );

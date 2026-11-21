@@ -8,16 +8,16 @@ import {
   propagation,
   trace,
 } from "@opentelemetry/api";
-import { StackContextManager } from "@opentelemetry/sdk-trace-web";
+import {
+  InMemorySpanExporter,
+  SimpleSpanProcessor,
+  StackContextManager,
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import type {
   LogRecordProcessor,
   ReadableLogRecord,
 } from "@opentelemetry/sdk-logs";
-import {
-  BasicTracerProvider,
-  InMemorySpanExporter,
-  SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
 
 import { DISABLE_ALL_PLUGINS } from "../../../test/fixtures/disable-all-plugins.js";
 import { buildKernel, ingestHandlers } from "../../../test/fixtures/kernel.js";
@@ -54,7 +54,7 @@ const WAIT_OPTS = { timeout: 5000 };
 
 const ownedKernels = new Set<Awaited<ReturnType<typeof createKernel>>>();
 
-const providers = new Set<BasicTracerProvider>();
+const providers = new Set<TracerProvider>();
 
 let priorUrl: string;
 
@@ -67,8 +67,8 @@ let priorLogLevel: ReturnType<typeof getLogLevel>;
 function withInMemoryTracer<T>(fn: (exporter: InMemorySpanExporter) => T) {
   const exporter = new InMemorySpanExporter();
 
-  const provider = new BasicTracerProvider({
-    spanProcessors: [new SimpleSpanProcessor(exporter)],
+  const provider = new TracerProvider({
+    spanProcessors: [new SimpleSpanProcessor({ exporter })],
   });
 
   providers.add(provider);
@@ -425,8 +425,8 @@ describe("Kernel", () => {
       const privateExporter = new InMemorySpanExporter();
       const globalExporter = new InMemorySpanExporter();
 
-      const globalProvider = new BasicTracerProvider({
-        spanProcessors: [new SimpleSpanProcessor(globalExporter)],
+      const globalProvider = new TracerProvider({
+        spanProcessors: [new SimpleSpanProcessor({ exporter: globalExporter })],
       });
 
       const { kernel, tracker } = buildKernel();
@@ -449,7 +449,7 @@ describe("Kernel", () => {
         kernel.attachOtel(
           buildOtelProvider({
             additionalSpanProcessors: [
-              new SimpleSpanProcessor(privateExporter),
+              new SimpleSpanProcessor({ exporter: privateExporter }),
             ],
 
             getDeviceId: () => tracker.getDeviceId(),
@@ -645,8 +645,11 @@ describe(createKernel, () => {
   test("runs public processors before wrapper processors and owns their lifecycle", async () => {
     const exporter = new InMemorySpanExporter();
 
-    const processor = new SimpleSpanProcessor(new InMemorySpanExporter());
-    const wrapper = new SimpleSpanProcessor(exporter);
+    const processor = new SimpleSpanProcessor({
+      exporter: new InMemorySpanExporter(),
+    });
+
+    const wrapper = new SimpleSpanProcessor({ exporter });
 
     const onStart = vi.spyOn(processor, "onStart");
 
@@ -705,7 +708,9 @@ describe(createKernel, () => {
   });
 
   test("tracing false leaves wrapper processors inactive", async () => {
-    const processor = new SimpleSpanProcessor(new InMemorySpanExporter());
+    const processor = new SimpleSpanProcessor({
+      exporter: new InMemorySpanExporter(),
+    });
 
     const onStart = vi.spyOn(processor, "onStart");
 

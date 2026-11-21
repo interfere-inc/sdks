@@ -1,6 +1,6 @@
-import { StackContextManager } from "@opentelemetry/sdk-trace-web";
+import { StackContextManager } from "@opentelemetry/sdk-trace";
 import { context, propagation } from "@opentelemetry/api";
-import type { SpanProcessor } from "@opentelemetry/sdk-trace-base";
+import type { SpanProcessor } from "@opentelemetry/sdk-trace";
 import { HttpResponse, http } from "msw";
 import { onTestFinished } from "vitest";
 

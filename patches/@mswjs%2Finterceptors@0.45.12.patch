@@ -1,0 +1,10 @@
+diff --git a/lib/browser/interceptors/fetch/web.d.ts b/lib/browser/interceptors/fetch/web.d.ts
+--- a/lib/browser/interceptors/fetch/web.d.ts
++++ b/lib/browser/interceptors/fetch/web.d.ts
+@@ -1,5 +1,4 @@
+-import { t as Interceptor } from "../../interceptor-dtJZ_9QT.js";
+-import { n as HttpRequestEventMap } from "../../http-CB9rQ7i_.js";
++import { Interceptor, type HttpRequestEventMap } from "@mswjs/interceptors";
+ //#region src/interceptors/fetch/web.d.ts
+ /**
+  * Intercept `fetch` requests in the browser.

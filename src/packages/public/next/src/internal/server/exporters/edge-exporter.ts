@@ -7,7 +7,7 @@ import { InterfereClient } from "@interfere/javascript";
 import { ExportResultCode } from "@opentelemetry/core";
 import type { ExportResult } from "@opentelemetry/core";
 import { JsonTraceSerializer } from "@opentelemetry/otlp-transformer";
-import type { ReadableSpan, SpanExporter } from "@opentelemetry/sdk-trace-base";
+import type { ReadableSpan, SpanExporter } from "@opentelemetry/sdk-trace";
 import { exportTracePayload } from "../tracing/trace-payload";
 
 const NEXT_ORIGINAL_FETCH = "_nextOriginalFetch";

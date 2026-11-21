@@ -6,8 +6,8 @@ import {
   ParentBasedSampler,
   SamplingDecision,
   TraceIdRatioBasedSampler,
-} from "@opentelemetry/sdk-trace-base";
-import type { Sampler, SamplingResult } from "@opentelemetry/sdk-trace-base";
+} from "@opentelemetry/sdk-trace";
+import type { Sampler, SamplingResult } from "@opentelemetry/sdk-trace";
 
 export const CAPTURE_KIND_ATTRIBUTE = "interfere.capture.kind";
 
@@ -32,7 +32,7 @@ const SAMPLERS = new Map<string, () => Sampler>([
   ],
 ]);
 
-function configuredSampler() {
+export function configuredSampler() {
   const build = SAMPLERS.get(getStringFromEnv("OTEL_TRACES_SAMPLER") ?? "");
 
   return build
@@ -77,6 +77,6 @@ class ExceptionSampler implements Sampler {
 }
 
 /** Applies the OTEL_TRACES_SAMPLER head-sampling policy to ordinary spans while always keeping Interfere exception spans. */
-export function exceptionSampler() {
-  return new ExceptionSampler(configuredSampler());
+export function exceptionSampler(delegate: Sampler) {
+  return new ExceptionSampler(delegate);
 }

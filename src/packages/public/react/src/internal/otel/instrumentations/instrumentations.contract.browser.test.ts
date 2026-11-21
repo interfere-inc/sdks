@@ -8,8 +8,8 @@ import { LoggerProvider } from "@opentelemetry/sdk-logs";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
-import { WebTracerProvider } from "@opentelemetry/sdk-trace-web";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 
 import { registerBundledInstrumentations } from "./instrumentations.js";
 import { afterEach, describe, expect, test, vi } from "vitest";
@@ -19,15 +19,15 @@ interface Harness {
   exporter: InMemorySpanExporter;
   loggerProvider: LoggerProvider;
   logs: ReadWriteLogRecord[];
-  provider: WebTracerProvider;
+  provider: TracerProvider;
   setPageEventsEnabled: (enabled: boolean) => void;
 }
 
 function setupBundle(opts?: { pageEvents?: boolean }) {
   const exporter = new InMemorySpanExporter();
 
-  const provider = new WebTracerProvider({
-    spanProcessors: [new SimpleSpanProcessor(exporter)],
+  const provider = new TracerProvider({
+    spanProcessors: [new SimpleSpanProcessor({ exporter })],
   });
 
   const logs: ReadWriteLogRecord[] = [];

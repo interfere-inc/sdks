@@ -4,10 +4,10 @@ import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-ho
 import { W3CTraceContextPropagator } from "@opentelemetry/core";
 import { resolveUrlRedaction } from "@interfere/types/sdk/url-redaction";
 import {
-  BasicTracerProvider,
   BatchSpanProcessor,
   InMemorySpanExporter,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import { expect, test, vi } from "vitest";
 
 import { withRequestSpan } from "./request-trace";
@@ -18,9 +18,9 @@ test("on workerd, a finished request exports its server span in the browser's tr
 
   const exporter = new InMemorySpanExporter();
 
-  const provider = new BasicTracerProvider({
+  const provider = new TracerProvider({
     spanProcessors: [
-      new BatchSpanProcessor(exporter, { scheduledDelayMillis: 60_000 }),
+      new BatchSpanProcessor({ exporter, scheduledDelayMillis: 60_000 }),
     ],
   });
 

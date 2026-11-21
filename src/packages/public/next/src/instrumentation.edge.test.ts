@@ -9,10 +9,10 @@ import type { ProxyTracerProvider } from "@opentelemetry/api";
 import { context, trace } from "@opentelemetry/api";
 import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
 import {
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import type { MockInstance } from "vitest";
 import { afterEach, beforeAll, beforeEach, expect, test, vi } from "vitest";
 
@@ -56,7 +56,7 @@ beforeEach(() => {
 afterEach(async () => {
   try {
     const providers = registration.mock.calls.flatMap(([provider]) =>
-      provider instanceof BasicTracerProvider ? [provider] : [],
+      provider instanceof TracerProvider ? [provider] : [],
     );
 
     await Promise.all(providers.map(async (provider) => provider.shutdown()));
@@ -263,8 +263,8 @@ test("application mode registers no global provider and captures errors through 
 async function raiseInsideApplicationSpan(message: string) {
   const exporter = new InMemorySpanExporter();
 
-  const application = new BasicTracerProvider({
-    spanProcessors: [new SimpleSpanProcessor(exporter)],
+  const application = new TracerProvider({
+    spanProcessors: [new SimpleSpanProcessor({ exporter })],
   });
 
   trace.setGlobalTracerProvider(application);
@@ -344,7 +344,7 @@ test('errors: "host" leaves an error raised inside a recording application span 
 });
 
 test("a foreign edge provider registered first stays global and Interfere warns once (E1)", async () => {
-  const foreign = new BasicTracerProvider();
+  const foreign = new TracerProvider();
 
   expect(trace.setGlobalTracerProvider(foreign)).toBe(true);
 

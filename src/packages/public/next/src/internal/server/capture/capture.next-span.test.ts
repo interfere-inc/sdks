@@ -1,10 +1,10 @@
 import { context, trace } from "@opentelemetry/api";
 import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
 import {
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 
 import { captureError, onRequestError } from "./capture.js";
 import { nextSpanExceptionProcessor } from "./next-span-exceptions.js";
@@ -12,7 +12,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 let exporter: InMemorySpanExporter;
 
-let provider: BasicTracerProvider;
+let provider: TracerProvider;
 
 const ROUTE = {
   routePath: "/api/x",
@@ -51,10 +51,10 @@ describe("Next's own span exception events", () => {
 
     exporter = new InMemorySpanExporter();
 
-    provider = new BasicTracerProvider({
+    provider = new TracerProvider({
       spanProcessors: [
         nextSpanExceptionProcessor,
-        new SimpleSpanProcessor(exporter),
+        new SimpleSpanProcessor({ exporter }),
       ],
     });
 

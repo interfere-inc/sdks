@@ -1,9 +1,6 @@
 import { context, propagation } from "@opentelemetry/api";
 import { W3CTraceContextPropagator } from "@opentelemetry/core";
-import {
-  StackContextManager,
-  WebTracerProvider,
-} from "@opentelemetry/sdk-trace-web";
+import { StackContextManager, TracerProvider } from "@opentelemetry/sdk-trace";
 import { registerBundledInstrumentations } from "../src/internal/otel/instrumentations/instrumentations.js";
 import { w3cTraceHeaders } from "./trace-headers.test-utils.js";
 import type { BundledInstrumentations } from "../src/internal/otel/instrumentations/instrumentations.js";
@@ -26,7 +23,7 @@ const fixture = {
       ...options,
       ignoreUrls: [],
       traceHeaders: w3cTraceHeaders(),
-      tracerProvider: new WebTracerProvider(),
+      tracerProvider: new TracerProvider(),
     });
   },
   async request(

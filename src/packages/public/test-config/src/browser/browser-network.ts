@@ -1,3 +1,4 @@
+import { HttpNetworkFrame, WebSocketNetworkFrame } from "msw/experimental";
 import { setupWorker } from "msw/browser";
 import { afterAll, beforeAll, beforeEach } from "vitest";
 
@@ -90,7 +91,24 @@ beforeAll(async () => {
 
   await network.start({
     quiet: true,
-    onUnhandledRequest(request, print) {
+    onUnhandledFrame({ frame }) {
+      if (frame instanceof WebSocketNetworkFrame) {
+        const { url } = frame.data.connection.client;
+
+        if (url.host !== location.host) {
+          unexpectedRequests.push(`WS ${url.href}`);
+
+          throw new Error(`Unexpected WebSocket: ${url.href}`);
+        }
+
+        return;
+      }
+
+      if (!(frame instanceof HttpNetworkFrame)) {
+        throw new TypeError(`Unexpected network protocol: ${frame.protocol}`);
+      }
+
+      const { request } = frame.data;
       const url = new URL(request.url);
 
       if (
@@ -107,7 +125,7 @@ beforeAll(async () => {
 
       unexpectedRequests.push(`${request.method} ${request.url}`);
 
-      print.error();
+      throw new Error(`Unexpected request: ${request.method} ${request.url}`);
     },
     serviceWorker: { url: "/mockServiceWorker.js" },
   });
@@ -136,5 +154,5 @@ beforeEach(async ({ onTestFinished }) => {
 afterAll(async () => {
   await settleInflightFetches();
 
-  network.stop();
+  await network.stop();
 });

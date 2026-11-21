@@ -9,7 +9,7 @@ import { RELEASE_SLUG_GLOBAL } from "@interfere/types/sdk/injected-globals";
 import { SERVER_TRACING_GLOBAL } from "@interfere/types/sdk/server-tracing";
 import { SERVICE_NAME_GLOBAL } from "@interfere/types/sdk/service-name";
 import { trace } from "@opentelemetry/api";
-import { BasicTracerProvider } from "@opentelemetry/sdk-trace-base";
+import { TracerProvider } from "@opentelemetry/sdk-trace";
 import type { MockInstance } from "vitest";
 import { PRODUCER_VERSION } from "./internal/version.js";
 import { afterEach, beforeAll, beforeEach, expect, test, vi } from "vitest";
@@ -64,7 +64,7 @@ beforeEach(() => {
 afterEach(async () => {
   try {
     const providers = registration.mock.calls.flatMap(([provider]) =>
-      provider instanceof BasicTracerProvider ? [provider] : [],
+      provider instanceof TracerProvider ? [provider] : [],
     );
 
     await Promise.all(providers.map(async (provider) => provider.shutdown()));
@@ -87,6 +87,64 @@ afterEach(async () => {
 
     vi.restoreAllMocks();
   }
+});
+
+test("managed edge tracing honors the configured head sampler", async () => {
+  vi.stubEnv("OTEL_TRACES_SAMPLER", "always_off");
+
+  const { register } = await import("./instrumentation.edge.js");
+
+  await register();
+
+  const span = trace.getTracer("edge-test").startSpan("sampled-out");
+
+  expect(span.isRecording()).toBe(false);
+
+  span.end();
+
+  expect(requests).toStrictEqual([]);
+});
+
+test("managed edge tracing applies the span-specific attribute limit before the general limit", async () => {
+  vi.stubEnv("OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT", "6");
+
+  vi.stubEnv("OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT", "3");
+
+  const { register } = await import("./instrumentation.edge.js");
+
+  const { flushServerTelemetry } =
+    await import("./internal/server/exporters/server-flush.js");
+
+  await register();
+
+  const span = trace.getTracer("edge-test").startSpan("limits");
+
+  span.setAttribute("example", "abcdefgh");
+
+  span.end();
+
+  await flushServerTelemetry();
+
+  await delivered();
+
+  await expect(requests[0]?.json()).resolves.toMatchObject({
+    resourceSpans: [
+      {
+        scopeSpans: [
+          {
+            spans: [
+              {
+                // oxlint-disable-next-line typescript/no-unsafe-assignment -- Vitest asymmetric matchers accept the remaining span attributes.
+                attributes: expect.arrayContaining([
+                  { key: "example", value: { stringValue: "abc" } },
+                ]),
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  });
 });
 
 test.each([
@@ -157,6 +215,8 @@ test.each([
     const { flushServerTelemetry } =
       await import("./internal/server/exporters/server-flush.js");
 
+    const fetchCalls = vi.spyOn(globalThis, "fetch");
+
     await register(serviceName ? { serviceName } : {});
 
     const span = trace
@@ -181,7 +241,12 @@ test.each([
     expect(request?.url).toBe("https://edge.invalid/drain/v1/traces");
 
     expect(request?.method).toBe("POST");
-    expect(request?.keepalive).toBe(true);
+
+    expect(fetchCalls).toHaveBeenCalledWith(
+      request?.url,
+      expect.objectContaining({ keepalive: true }),
+    );
+
     expect(request?.headers.get("content-type")).toBe("application/json");
 
     expect(request?.headers.get("x-interfere-producer-version")).toBe(

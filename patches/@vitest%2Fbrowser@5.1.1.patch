@@ -1,0 +1,49 @@
+diff --git a/dist/client.js b/dist/client.js
+--- a/dist/client.js
++++ b/dist/client.js
+@@ -439,6 +439,7 @@
+ 		timeout: -1
+ 	});
+ 	let openPromise;
++	let pendingOpen;
+ 	function reconnect(reset = false) {
+ 		if (reset) {
+ 			tries = reconnectTries;
+@@ -447,20 +448,25 @@
+ 		registerWS();
+ 	}
+ 	function registerWS() {
+-		openPromise = new Promise((resolve, reject) => {
++		if (!pendingOpen) {
++			const opening = Promise.withResolvers();
++			openPromise = opening.promise;
+ 			const timeout = setTimeout(() => {
+-				reject(new Error(`Cannot connect to the server in ${connectTimeout / 1e3} seconds`));
+-			}, connectTimeout);
+-			if (ctx.ws.OPEN === ctx.ws.readyState) {
+-				resolve();
+-			}
+-			// still have a listener even if it's already open to update tries
+-			ctx.ws.addEventListener("open", () => {
+-				tries = reconnectTries;
+-				resolve();
++				pendingOpen = undefined;
++				opening.reject(new Error(`Cannot connect to the server in ${connectTimeout / 1e3} seconds`));
++			}, connectTimeout);
++			pendingOpen = () => {
+ 				clearTimeout(timeout);
+-			});
+-		});
++				pendingOpen = undefined;
++				opening.resolve();
++			};
++		}
++		const connected = () => {
++			tries = reconnectTries;
++			pendingOpen?.();
++		};
++		if (ctx.ws.OPEN === ctx.ws.readyState) connected();
++		ctx.ws.addEventListener("open", connected);
+ 		ctx.ws.addEventListener("message", (v) => {
+ 			onMessage(v.data);
+ 		});

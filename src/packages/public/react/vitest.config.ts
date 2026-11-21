@@ -14,7 +14,7 @@ const browserProject = browser({
     exclude: ["fsevents", "@opentelemetry/otlp-transformer"],
     include: [
       "@opentelemetry/api",
-      "@opentelemetry/sdk-trace-base > @opentelemetry/semantic-conventions",
+      "@opentelemetry/sdk-trace > @opentelemetry/semantic-conventions",
       "react-dom/client",
       "react/compiler-runtime",
       "workbox-background-sync/lib/QueueStore.js",

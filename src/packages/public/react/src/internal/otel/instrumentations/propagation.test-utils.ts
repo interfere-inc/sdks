@@ -4,12 +4,10 @@ import { W3CTraceContextPropagator } from "@opentelemetry/core";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
-import type { ReadableSpan } from "@opentelemetry/sdk-trace-base";
-import {
   StackContextManager,
-  WebTracerProvider,
-} from "@opentelemetry/sdk-trace-web";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
+import type { ReadableSpan } from "@opentelemetry/sdk-trace";
 import { afterEach, beforeEach, vi } from "vitest";
 
 import { w3cTraceHeaders } from "../../../../test/trace-headers.test-utils.js";
@@ -28,7 +26,7 @@ export const FOREIGN =
 /** Registers the propagation instrumentations against a fresh private provider per test, resolves the first suspect-CORS span, resets the OpenTelemetry globals and clears the origin memo between tests. */
 export function propagationHarness() {
   let exporter = new InMemorySpanExporter();
-  let provider: WebTracerProvider | undefined;
+  let provider: TracerProvider | undefined;
   let instrumentations: BundledInstrumentations | undefined;
   let activity: ActivityMonitor | undefined;
   let failedRequests = Promise.withResolvers<ReadableSpan[]>();
@@ -44,9 +42,9 @@ export function propagationHarness() {
 
     const failures: ReadableSpan[] = [];
 
-    provider = new WebTracerProvider({
+    provider = new TracerProvider({
       spanProcessors: [
-        new SimpleSpanProcessor(exporter),
+        new SimpleSpanProcessor({ exporter }),
         {
           onStart: () => undefined,
           onEnd: (span) => {

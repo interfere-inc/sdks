@@ -1,18 +1,18 @@
+import { TraceState } from "@opentelemetry/core";
 import { setInjectedConfiguration } from "@interfere/test-config/injected-configuration";
 import { MECHANISM_TYPE } from "@interfere/types/sdk/errors";
 import {
   ROOT_CONTEXT,
   TraceFlags,
   context,
-  createTraceState,
   propagation,
   trace,
 } from "@opentelemetry/api";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
-import { StackContextManager } from "@opentelemetry/sdk-trace-web";
+  StackContextManager,
+} from "@opentelemetry/sdk-trace";
 import { HttpResponse, http } from "msw";
 import { afterEach, beforeEach, expect, test } from "vitest";
 
@@ -96,7 +96,9 @@ test("an exception under an unsampled host context exports as its own root linke
   context.setGlobalContextManager(new StackContextManager().enable());
 
   const kernel = await boot({
-    _internalAdditionalSpanProcessors: [new SimpleSpanProcessor(spans)],
+    _internalAdditionalSpanProcessors: [
+      new SimpleSpanProcessor({ exporter: spans }),
+    ],
   });
 
   kernel.syncProviderConfig({});
@@ -105,7 +107,7 @@ test("an exception under an unsampled host context exports as its own root linke
     spanId: "00f067aa0ba902b7",
     traceFlags: TraceFlags.NONE,
     traceId: "4bf92f3577b34da6a3ce929d0e0e4736",
-    traceState: createTraceState("vendor=abc"),
+    traceState: new TraceState("vendor=abc"),
   };
 
   context.with(trace.setSpanContext(ROOT_CONTEXT, host), () => {

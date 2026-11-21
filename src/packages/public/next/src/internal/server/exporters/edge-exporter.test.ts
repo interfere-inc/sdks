@@ -8,10 +8,10 @@ import { exportTracePayload } from "../tracing/trace-payload";
 import { HttpResponse, http } from "msw";
 import { network } from "../../../../test/edge-network.fixture";
 import {
-  BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import type { MockInstance } from "vitest";
 
 import { FetchTraceExporter } from "./edge-exporter.js";
@@ -19,8 +19,8 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(FetchTraceExporter, () => {
   let fetchMock: MockInstance<typeof fetch>;
-  let provider: BasicTracerProvider;
-  let bareProvider: BasicTracerProvider;
+  let provider: TracerProvider;
+  let bareProvider: TracerProvider;
   let spanExporter: InMemorySpanExporter;
 
   const makeSpan = () => {
@@ -47,22 +47,22 @@ describe(FetchTraceExporter, () => {
 
     fetchMock = vi.spyOn(globalThis, "fetch");
 
-    provider = new BasicTracerProvider({
+    provider = new TracerProvider({
       spanProcessors: [
-        new SimpleSpanProcessor(
-          new FetchTraceExporter({
+        new SimpleSpanProcessor({
+          exporter: new FetchTraceExporter({
             baseUrl: "https://collector.test",
             workspaceTelemetryKeyHeader: { apiKey: "test-key" },
             headers: { "x-interfere-producer-version": "test" },
           }),
-        ),
+        }),
       ],
     });
 
     spanExporter = new InMemorySpanExporter();
 
-    bareProvider = new BasicTracerProvider({
-      spanProcessors: [new SimpleSpanProcessor(spanExporter)],
+    bareProvider = new TracerProvider({
+      spanProcessors: [new SimpleSpanProcessor({ exporter: spanExporter })],
     });
   });
 

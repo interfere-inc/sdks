@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-deprecated -- Exercises interoperability with the upstream fetch and XHR instrumentation installed in customer applications. */
 import { ROOT_CONTEXT, context, propagation, trace } from "@opentelemetry/api";
 import { W3CTraceContextPropagator } from "@opentelemetry/core";
 import { registerInstrumentations } from "@opentelemetry/instrumentation";
@@ -6,15 +7,15 @@ import { XMLHttpRequestInstrumentation } from "@opentelemetry/instrumentation-xm
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
-import {
   StackContextManager,
-  WebTracerProvider,
-} from "@opentelemetry/sdk-trace-web";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import { HttpResponse, http } from "msw";
 import { afterEach, beforeEach, expect, onTestFinished, test } from "vitest";
 
 import { worker } from "../../../../test/msw.js";
+import { composeFetchPatch } from "./upstream-request-members.js";
+import { applyXhrSpanAttrs } from "./request-outcome.js";
 
 const URL_ECHO = `${location.origin}/upstream-contract`;
 
@@ -59,8 +60,8 @@ afterEach(() => {
 function provider() {
   const exporter = new InMemorySpanExporter();
 
-  const tracerProvider = new WebTracerProvider({
-    spanProcessors: [new SimpleSpanProcessor(exporter)],
+  const tracerProvider = new TracerProvider({
+    spanProcessors: [new SimpleSpanProcessor({ exporter })],
   });
 
   onTestFinished(async () => tracerProvider.shutdown());
@@ -227,3 +228,53 @@ test("the XHR instrumentation has no request hook: without a global propagator i
     1,
   ]);
 });
+
+test("identifies the incompatible fetch hook when the upstream implementation changes", () => {
+  const instrumentation = new FetchInstrumentation({ enabled: false });
+
+  Object.defineProperty(instrumentation, "_patchConstructor", {
+    value: undefined,
+  });
+
+  expect(() =>
+    composeFetchPatch(instrumentation, (patched) => patched),
+  ).toThrow(
+    new TypeError(
+      "Upstream instrumentation member _patchConstructor changed shape",
+    ),
+  );
+});
+
+test.each([
+  { attributes: { "http.request.method": "PATCH" }, method: "PATCH" },
+  { attributes: { "http.method": "DELETE" }, method: "DELETE" },
+  { attributes: { "http.request.method": 7 }, method: "XHR" },
+])(
+  "uses $method for an XHR span with $attributes",
+  async ({ attributes, method }) => {
+    const { tracerProvider, exporter } = provider();
+
+    const span = tracerProvider
+      .getTracer("xhr-contract")
+      .startSpan("request", { attributes });
+
+    const xhr = new XMLHttpRequest();
+
+    Object.defineProperty(xhr, "responseURL", { value: URL_ECHO });
+
+    await applyXhrSpanAttrs(
+      span,
+      xhr,
+      null,
+      { dispose: () => undefined, leftSince: () => false },
+      () => true,
+      undefined,
+    );
+
+    span.end();
+
+    expect(exporter.getFinishedSpans().at(-1)?.name).toBe(
+      `${method} /upstream-contract`,
+    );
+  },
+);

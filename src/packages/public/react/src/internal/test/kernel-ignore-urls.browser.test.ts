@@ -4,7 +4,7 @@ import { context, propagation, trace } from "@opentelemetry/api";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+} from "@opentelemetry/sdk-trace";
 
 import { DISABLE_ALL_PLUGINS } from "../../../test/fixtures/disable-all-plugins.js";
 import { createKernel } from "../kernel.js";
@@ -64,7 +64,9 @@ test("skips fetch spans for customer ignoreUrls", async () => {
   ownedKernel = await createKernel({
     opts: {
       apiHost: "https://kernel.invalid",
-      _internalAdditionalSpanProcessors: [new SimpleSpanProcessor(spans)],
+      _internalAdditionalSpanProcessors: [
+        new SimpleSpanProcessor({ exporter: spans }),
+      ],
       tracing: { ignoreUrls: [/\/ignored-test$/u] },
     },
   });

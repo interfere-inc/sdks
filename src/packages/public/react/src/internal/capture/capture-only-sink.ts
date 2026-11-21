@@ -15,12 +15,12 @@ import { createUrlRedactionSpanProcessor } from "@interfere/types/sdk/url-redact
 import type { UrlRedactionPolicy } from "@interfere/types/sdk/url-redaction";
 
 import { context, isSpanContextValid, trace } from "@opentelemetry/api";
-import type { AttributeValue, Attributes, Context } from "@opentelemetry/api";
 import type {
   AnyValue,
-  LogAttributes,
+  Attributes,
+  Context,
   LogRecord,
-} from "@opentelemetry/api-logs";
+} from "@opentelemetry/api";
 
 import { identityAttributes } from "../../tracking/view.js";
 import { SESSION_START_EVENT_NAME } from "../../tracking/session.js";
@@ -86,7 +86,7 @@ function randomHex(bytes: number) {
   return bytesToHex(crypto.getRandomValues(new Uint8Array(bytes)));
 }
 
-function otlpValue(value: AnyValue | AttributeValue) {
+function otlpValue(value: AnyValue) {
   // oxlint-disable-next-line anti-slop/no-runtime-typeof -- OTLP JSON encodes each attribute by its primitive kind.
   switch (typeof value) {
     case "boolean": {
@@ -106,7 +106,7 @@ function otlpValue(value: AnyValue | AttributeValue) {
   }
 }
 
-function keyValues(attributes: Attributes | LogAttributes) {
+function keyValues(attributes: Attributes) {
   return Object.entries(attributes).flatMap(([key, value]) =>
     value === undefined ? [] : [{ key, value: otlpValue(value) }],
   );

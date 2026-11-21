@@ -29,7 +29,7 @@ export default defineConfig({
             "@opentelemetry/api",
             "@opentelemetry/context-async-hooks",
             "@opentelemetry/core",
-            "@opentelemetry/sdk-trace-base",
+            "@opentelemetry/sdk-trace",
             "zod",
           ],
           rolldownOptions: {

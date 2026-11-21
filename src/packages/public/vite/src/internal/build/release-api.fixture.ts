@@ -72,7 +72,7 @@ const server = setupServer(
 );
 
 export function startReleaseApi() {
-  server.listen({ onUnhandledRequest: "error" });
+  server.listen({ onUnhandledFrame: "error" });
 }
 
 export function stopReleaseApi() {

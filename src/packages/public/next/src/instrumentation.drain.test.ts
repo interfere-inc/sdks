@@ -5,9 +5,8 @@ import { mswServer } from "@interfere/test-config/msw-server";
 import { once } from "node:events";
 import { HttpResponse, delay, http } from "msw";
 import type { ProxyTracerProvider } from "@opentelemetry/api";
-import { context, propagation, trace } from "@opentelemetry/api";
-import { logs } from "@opentelemetry/api-logs";
-import { BasicTracerProvider } from "@opentelemetry/sdk-trace-base";
+import { context, logs, propagation, trace } from "@opentelemetry/api";
+import { TracerProvider } from "@opentelemetry/sdk-trace";
 import { PLATFORM_GLOBAL } from "@interfere/types/integrations/platforms/hosting";
 import { LOG_SOURCING_GLOBAL } from "@interfere/types/sdk/log-sourcing";
 import { BACKEND_HOSTS_GLOBAL } from "@interfere/types/sdk/remote-config/backend-hosts";
@@ -82,7 +81,7 @@ beforeEach(() => {
 afterEach(async () => {
   const provider = (
     trace.getTracerProvider() as ProxyTracerProvider
-  ).getDelegate() as Partial<BasicTracerProvider>;
+  ).getDelegate() as Partial<TracerProvider>;
 
   await provider.shutdown?.();
 
@@ -231,7 +230,7 @@ test.each(["full", "drain"] as const)(
 
     vi.stubEnv("NEXT_PUBLIC_INTERFERE_FORCE_ENABLE", "1");
 
-    const foreignTracer = new BasicTracerProvider().getTracer("foreign");
+    const foreignTracer = new TracerProvider().getTracer("foreign");
 
     trace.setGlobalTracerProvider({ getTracer: () => foreignTracer });
 

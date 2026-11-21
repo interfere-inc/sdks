@@ -2,7 +2,7 @@ import { HttpResponse, http } from "msw";
 import { worker } from "../../test/msw.js";
 
 /* oxlint-disable typescript/no-unsafe-return */
-import type { InMemorySpanExporter } from "@opentelemetry/sdk-trace-base";
+import type { InMemorySpanExporter } from "@opentelemetry/sdk-trace";
 
 import { setupErrorsPlugin } from "../../test/fixtures/errors.test-utils.js";
 

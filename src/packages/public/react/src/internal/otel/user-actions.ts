@@ -1,11 +1,10 @@
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
 import { INTERFERE_BROWSER_EVENTS_LOGGER_NAME } from "@interfere/types/data/browser-event-loggers";
 import { USER_ACTION_EVENT_NAME } from "@interfere/types/data/correlation-events";
-import { ROOT_CONTEXT } from "@opentelemetry/api";
+import { ROOT_CONTEXT, SeverityNumber } from "@opentelemetry/api";
 import type { Attributes } from "@opentelemetry/api";
-import { SeverityNumber } from "@opentelemetry/api-logs";
 import type { EventLoggerProvider } from "./event-logger.js";
-import { getElementXPath } from "@opentelemetry/sdk-trace-web";
+import { getElementXPath } from "@opentelemetry/web-common";
 import { v7 as uuidv7 } from "uuid";
 
 import type { ViewIds } from "../../tracking/view.js";
@@ -51,6 +50,7 @@ function interactionAttrs(
   if (desc.privacy) {
     attributes["ui.target.privacy"] = desc.privacy;
 
+    // oxlint-disable-next-line typescript/no-deprecated -- The persisted target_xpath field uses OTel’s unoptimized XPath format.
     attributes["target_xpath"] = getElementXPath(element, false);
   }
 

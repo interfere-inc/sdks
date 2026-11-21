@@ -1,4 +1,4 @@
-import type { InMemorySpanExporter } from "@opentelemetry/sdk-trace-base";
+import type { InMemorySpanExporter } from "@opentelemetry/sdk-trace";
 
 import { setupErrorsPlugin } from "../../test/fixtures/errors.test-utils.js";
 import { beforeEach, expect, test } from "vitest";

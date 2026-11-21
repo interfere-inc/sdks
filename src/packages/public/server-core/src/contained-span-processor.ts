@@ -1,4 +1,4 @@
-import type { SpanProcessor } from "@opentelemetry/sdk-trace-base";
+import type { SpanProcessor } from "@opentelemetry/sdk-trace";
 
 import { contain } from "./contain.js";
 

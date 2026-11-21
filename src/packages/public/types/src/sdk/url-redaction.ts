@@ -1,4 +1,5 @@
-import { isPlainRecord } from "./guards/json.ts";
+import type { Attributes as SpanAttributes } from "@opentelemetry/api";
+import { isPlainRecord, isString } from "./guards/json.ts";
 
 /** Query parameters and fragments to redact in SDK telemetry. Parameter names match case-insensitively. */
 export interface UrlRedactionOptions {
@@ -24,13 +25,6 @@ export interface UrlRedactionPolicy {
   readonly fragment: boolean;
   readonly redactsValue: (name: string) => boolean;
 }
-
-type AttributeScalar = boolean | number | string;
-
-type SpanAttributes = Record<
-  string,
-  AttributeScalar | readonly (AttributeScalar | null | undefined)[] | undefined
->;
 
 interface RedactableSpan {
   attributes: SpanAttributes;
@@ -245,15 +239,20 @@ function rewrite(
 ) {
   const value = attributes[key];
 
-  // oxlint-disable-next-line anti-slop/no-runtime-typeof -- OTel attribute values may be scalars or scalar arrays; only strings hold URLs.
-  if (typeof value === "string") {
+  if (isString(value)) {
     attributes[key] = redact(value);
-    // oxlint-disable-next-line anti-slop/no-runtime-typeof -- Arrays are the only object attribute values.
-  } else if (typeof value === "object") {
-    attributes[key] = value.map((item) =>
-      // oxlint-disable-next-line anti-slop/no-runtime-typeof -- Array members may be any scalar; only strings hold URLs.
-      typeof item === "string" ? redact(item) : item,
-    );
+  } else if (Array.isArray(value)) {
+    const items: readonly unknown[] = value;
+
+    attributes[key] = items.map((item) => {
+      if (isString(item)) {
+        return redact(item);
+      }
+
+      return isPlainRecord(item) || Array.isArray(item) ? REDACTED : item;
+    });
+  } else if (isPlainRecord(value)) {
+    attributes[key] = REDACTED;
   }
 }
 

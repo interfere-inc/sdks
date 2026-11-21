@@ -1,10 +1,10 @@
 import { context, trace } from "@opentelemetry/api";
 import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
 import {
-  BasicTracerProvider,
   BatchSpanProcessor,
   InMemorySpanExporter,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+} from "@opentelemetry/sdk-trace";
 import { expect, onTestFinished, test, vi } from "vitest";
 import { flushServerTelemetry, setServerFlush } from "./server-flush";
 
@@ -20,7 +20,7 @@ test("flushes only after the request span carrying the capture ends", async () =
   const pending = platformWaitUntil();
   const delivered: string[] = [];
 
-  const request = new BasicTracerProvider()
+  const request = new TracerProvider()
     .getTracer("test")
     .startSpan("GET /failure");
 
@@ -134,9 +134,9 @@ test("flushes the global provider from a bundle where register() never ran", asy
 
   const exporter = new InMemorySpanExporter();
 
-  const provider = new BasicTracerProvider({
+  const provider = new TracerProvider({
     spanProcessors: [
-      new BatchSpanProcessor(exporter, { scheduledDelayMillis: 60_000 }),
+      new BatchSpanProcessor({ exporter, scheduledDelayMillis: 60_000 }),
     ],
   });
 

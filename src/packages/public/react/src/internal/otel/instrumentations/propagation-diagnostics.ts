@@ -1,5 +1,5 @@
 import type { Span } from "@opentelemetry/api";
-import { RandomIdGenerator } from "@opentelemetry/sdk-trace-base";
+import { RandomIdGenerator } from "@opentelemetry/sdk-trace";
 import { isPlainRecord } from "@interfere/types/sdk/guards/json";
 
 import type {
