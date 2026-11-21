@@ -9,7 +9,7 @@ pub enum QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContent {
 
         QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceGap(QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceGap),
 
-        QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentNewAssigneeUserId(QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentNewAssigneeUserId),
+        QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentNewAssigneeGroupId(QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentNewAssigneeGroupId),
 
         QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentCategory(QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentCategory),
 
@@ -45,8 +45,8 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContent {
         matches!(self, Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceGap(_))
     }
 
-    pub fn is_query_problems_previous_accounts_response_item_timeline_events_item_content_new_assignee_user_id(&self) -> bool {
-        matches!(self, Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentNewAssigneeUserId(_))
+    pub fn is_query_problems_previous_accounts_response_item_timeline_events_item_content_new_assignee_group_id(&self) -> bool {
+        matches!(self, Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentNewAssigneeGroupId(_))
     }
 
     pub fn is_query_problems_previous_accounts_response_item_timeline_events_item_content_category(&self) -> bool {
@@ -126,16 +126,16 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContent {
                 }
     }
 
-    pub fn as_query_problems_previous_accounts_response_item_timeline_events_item_content_new_assignee_user_id(&self) -> Option<&QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentNewAssigneeUserId> {
+    pub fn as_query_problems_previous_accounts_response_item_timeline_events_item_content_new_assignee_group_id(&self) -> Option<&QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentNewAssigneeGroupId> {
         match self {
-                    Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentNewAssigneeUserId(value) => Some(value),
+                    Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentNewAssigneeGroupId(value) => Some(value),
                     _ => None,
                 }
     }
 
-    pub fn into_query_problems_previous_accounts_response_item_timeline_events_item_content_new_assignee_user_id(self) -> Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentNewAssigneeUserId> {
+    pub fn into_query_problems_previous_accounts_response_item_timeline_events_item_content_new_assignee_group_id(self) -> Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentNewAssigneeGroupId> {
         match self {
-                    Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentNewAssigneeUserId(value) => Some(value),
+                    Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentNewAssigneeGroupId(value) => Some(value),
                     _ => None,
                 }
     }
@@ -314,7 +314,7 @@ impl fmt::Display for QueryProblemsPreviousAccountsResponseItemTimelineEventsIte
         match self {
             Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKind(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceGap(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
-            Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentNewAssigneeUserId(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentNewAssigneeGroupId(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentCategory(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentFour(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDescription(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),

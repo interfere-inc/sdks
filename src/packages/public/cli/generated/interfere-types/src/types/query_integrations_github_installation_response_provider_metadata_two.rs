@@ -30,6 +30,8 @@ pub struct QueryIntegrationsGithubInstallationResponseProviderMetadataTwo {
     #[serde(rename = "requiredPermissions")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub required_permissions: Option<HashMap<String, String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub groups: Option<QueryIntegrationsGithubInstallationResponseProviderMetadataTwoGroups>,
     pub provider: QueryIntegrationsGithubInstallationResponseProviderMetadataTwoProvider,
     #[serde(rename = "repositoryDiscoveryRequestedAt")]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -58,6 +60,7 @@ pub struct QueryIntegrationsGithubInstallationResponseProviderMetadataTwoBuilder
     account_id: Option<String>,
     permissions: Option<HashMap<String, String>>,
     required_permissions: Option<HashMap<String, String>>,
+    groups: Option<QueryIntegrationsGithubInstallationResponseProviderMetadataTwoGroups>,
     provider: Option<QueryIntegrationsGithubInstallationResponseProviderMetadataTwoProvider>,
     repository_discovery_requested_at: Option<i64>,
     repository_scans: Option<HashMap<String, QueryIntegrationsGithubInstallationResponseProviderMetadataTwoRepositoryScansValue>>,
@@ -114,6 +117,11 @@ impl QueryIntegrationsGithubInstallationResponseProviderMetadataTwoBuilder {
         self
     }
 
+    pub fn groups(mut self, value: QueryIntegrationsGithubInstallationResponseProviderMetadataTwoGroups) -> Self {
+        self.groups = Some(value);
+        self
+    }
+
     pub fn provider(mut self, value: QueryIntegrationsGithubInstallationResponseProviderMetadataTwoProvider) -> Self {
         self.provider = Some(value);
         self
@@ -146,6 +154,7 @@ impl QueryIntegrationsGithubInstallationResponseProviderMetadataTwoBuilder {
             account_id: self.account_id,
             permissions: self.permissions,
             required_permissions: self.required_permissions,
+            groups: self.groups,
             provider: self.provider.ok_or_else(|| BuildError::missing_field("provider"))?,
             repository_discovery_requested_at: self.repository_discovery_requested_at,
             repository_scans: self.repository_scans,

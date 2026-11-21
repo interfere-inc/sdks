@@ -9,7 +9,7 @@ pub enum TimelineEventContent {
 
         TimelineEventContentEvidenceGap(TimelineEventContentEvidenceGap),
 
-        TimelineEventContentNewAssigneeUserId(TimelineEventContentNewAssigneeUserId),
+        TimelineEventContentNewAssigneeGroupId(TimelineEventContentNewAssigneeGroupId),
 
         TimelineEventContentCategory(TimelineEventContentCategory),
 
@@ -45,8 +45,8 @@ impl TimelineEventContent {
         matches!(self, Self::TimelineEventContentEvidenceGap(_))
     }
 
-    pub fn is_timeline_event_content_new_assignee_user_id(&self) -> bool {
-        matches!(self, Self::TimelineEventContentNewAssigneeUserId(_))
+    pub fn is_timeline_event_content_new_assignee_group_id(&self) -> bool {
+        matches!(self, Self::TimelineEventContentNewAssigneeGroupId(_))
     }
 
     pub fn is_timeline_event_content_category(&self) -> bool {
@@ -126,16 +126,16 @@ impl TimelineEventContent {
                 }
     }
 
-    pub fn as_timeline_event_content_new_assignee_user_id(&self) -> Option<&TimelineEventContentNewAssigneeUserId> {
+    pub fn as_timeline_event_content_new_assignee_group_id(&self) -> Option<&TimelineEventContentNewAssigneeGroupId> {
         match self {
-                    Self::TimelineEventContentNewAssigneeUserId(value) => Some(value),
+                    Self::TimelineEventContentNewAssigneeGroupId(value) => Some(value),
                     _ => None,
                 }
     }
 
-    pub fn into_timeline_event_content_new_assignee_user_id(self) -> Option<TimelineEventContentNewAssigneeUserId> {
+    pub fn into_timeline_event_content_new_assignee_group_id(self) -> Option<TimelineEventContentNewAssigneeGroupId> {
         match self {
-                    Self::TimelineEventContentNewAssigneeUserId(value) => Some(value),
+                    Self::TimelineEventContentNewAssigneeGroupId(value) => Some(value),
                     _ => None,
                 }
     }
@@ -314,7 +314,7 @@ impl fmt::Display for TimelineEventContent {
         match self {
             Self::TimelineEventContentActionKind(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::TimelineEventContentEvidenceGap(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
-            Self::TimelineEventContentNewAssigneeUserId(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::TimelineEventContentNewAssigneeGroupId(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::TimelineEventContentCategory(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::TimelineEventContentFour(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::TimelineEventContentDescription(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),

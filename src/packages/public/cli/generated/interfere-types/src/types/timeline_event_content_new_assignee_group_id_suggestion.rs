@@ -3,7 +3,7 @@ pub use crate::prelude::*;
 use super::*;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
-pub struct TimelineEventContentNewAssigneeUserIdSuggestion {
+pub struct TimelineEventContentNewAssigneeGroupIdSuggestion {
     #[serde(default)]
     pub version: String,
     #[serde(rename = "suggestionId")]
@@ -13,25 +13,25 @@ pub struct TimelineEventContentNewAssigneeUserIdSuggestion {
     #[serde(with = "crate::core::number_serializers")]
     pub confidence: f64,
     #[serde(default)]
-    pub signals: Vec<TimelineEventContentNewAssigneeUserIdSuggestionSignalsItem>,
+    pub signals: Vec<TimelineEventContentNewAssigneeGroupIdSuggestionSignalsItem>,
 }
 
-impl TimelineEventContentNewAssigneeUserIdSuggestion {
-    pub fn builder() -> TimelineEventContentNewAssigneeUserIdSuggestionBuilder {
-        <TimelineEventContentNewAssigneeUserIdSuggestionBuilder as Default>::default()
+impl TimelineEventContentNewAssigneeGroupIdSuggestion {
+    pub fn builder() -> TimelineEventContentNewAssigneeGroupIdSuggestionBuilder {
+        <TimelineEventContentNewAssigneeGroupIdSuggestionBuilder as Default>::default()
     }
 }
 
 #[derive(Clone, PartialEq, Default, Debug)]
 #[non_exhaustive]
-pub struct TimelineEventContentNewAssigneeUserIdSuggestionBuilder {
+pub struct TimelineEventContentNewAssigneeGroupIdSuggestionBuilder {
     version: Option<String>,
     suggestion_id: Option<String>,
     confidence: Option<f64>,
-    signals: Option<Vec<TimelineEventContentNewAssigneeUserIdSuggestionSignalsItem>>,
+    signals: Option<Vec<TimelineEventContentNewAssigneeGroupIdSuggestionSignalsItem>>,
 }
 
-impl TimelineEventContentNewAssigneeUserIdSuggestionBuilder {
+impl TimelineEventContentNewAssigneeGroupIdSuggestionBuilder {
     pub fn version(mut self, value: impl Into<String>) -> Self {
         self.version = Some(value.into());
         self
@@ -47,19 +47,19 @@ impl TimelineEventContentNewAssigneeUserIdSuggestionBuilder {
         self
     }
 
-    pub fn signals(mut self, value: Vec<TimelineEventContentNewAssigneeUserIdSuggestionSignalsItem>) -> Self {
+    pub fn signals(mut self, value: Vec<TimelineEventContentNewAssigneeGroupIdSuggestionSignalsItem>) -> Self {
         self.signals = Some(value);
         self
     }
 
-    /// Consumes the builder and constructs a [`TimelineEventContentNewAssigneeUserIdSuggestion`].
+    /// Consumes the builder and constructs a [`TimelineEventContentNewAssigneeGroupIdSuggestion`].
     /// This method will fail if any of the following fields are not set:
-    /// - [`version`](TimelineEventContentNewAssigneeUserIdSuggestionBuilder::version)
-    /// - [`suggestion_id`](TimelineEventContentNewAssigneeUserIdSuggestionBuilder::suggestion_id)
-    /// - [`confidence`](TimelineEventContentNewAssigneeUserIdSuggestionBuilder::confidence)
-    /// - [`signals`](TimelineEventContentNewAssigneeUserIdSuggestionBuilder::signals)
-    pub fn build(self) -> Result<TimelineEventContentNewAssigneeUserIdSuggestion, BuildError> {
-        Ok(TimelineEventContentNewAssigneeUserIdSuggestion {
+    /// - [`version`](TimelineEventContentNewAssigneeGroupIdSuggestionBuilder::version)
+    /// - [`suggestion_id`](TimelineEventContentNewAssigneeGroupIdSuggestionBuilder::suggestion_id)
+    /// - [`confidence`](TimelineEventContentNewAssigneeGroupIdSuggestionBuilder::confidence)
+    /// - [`signals`](TimelineEventContentNewAssigneeGroupIdSuggestionBuilder::signals)
+    pub fn build(self) -> Result<TimelineEventContentNewAssigneeGroupIdSuggestion, BuildError> {
+        Ok(TimelineEventContentNewAssigneeGroupIdSuggestion {
             version: self.version.ok_or_else(|| BuildError::missing_field("version"))?,
             suggestion_id: self.suggestion_id.ok_or_else(|| BuildError::missing_field("suggestion_id"))?,
             confidence: self.confidence.ok_or_else(|| BuildError::missing_field("confidence"))?,

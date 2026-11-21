@@ -4,7 +4,7 @@ use super::*;
 
 #[non_exhaustive]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum QueryProblemsGetByIdResponseTimelineEventsItemContentNewAssigneeUserIdSuggestionSignalsItemKind {
+pub enum QueryProblemsGetByIdResponseTimelineEventsItemContentNewAssigneeGroupIdSuggestionSignalsItemKind {
     Store,
     History,
     People,
@@ -14,7 +14,7 @@ pub enum QueryProblemsGetByIdResponseTimelineEventsItemContentNewAssigneeUserIdS
     /// it will be captured here with the raw string value.
     __Unknown(String),
 }
-impl Serialize for QueryProblemsGetByIdResponseTimelineEventsItemContentNewAssigneeUserIdSuggestionSignalsItemKind {
+impl Serialize for QueryProblemsGetByIdResponseTimelineEventsItemContentNewAssigneeGroupIdSuggestionSignalsItemKind {
     fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         match self {
             Self::Store => serializer.serialize_str("store"),
@@ -26,7 +26,7 @@ impl Serialize for QueryProblemsGetByIdResponseTimelineEventsItemContentNewAssig
     }
 }
 
-impl<'de> Deserialize<'de> for QueryProblemsGetByIdResponseTimelineEventsItemContentNewAssigneeUserIdSuggestionSignalsItemKind {
+impl<'de> Deserialize<'de> for QueryProblemsGetByIdResponseTimelineEventsItemContentNewAssigneeGroupIdSuggestionSignalsItemKind {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         let value = String::deserialize(deserializer)?;
         match value.as_str() {
@@ -39,7 +39,7 @@ impl<'de> Deserialize<'de> for QueryProblemsGetByIdResponseTimelineEventsItemCon
     }
 }
 
-impl fmt::Display for QueryProblemsGetByIdResponseTimelineEventsItemContentNewAssigneeUserIdSuggestionSignalsItemKind {
+impl fmt::Display for QueryProblemsGetByIdResponseTimelineEventsItemContentNewAssigneeGroupIdSuggestionSignalsItemKind {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Store => write!(f, "store"),

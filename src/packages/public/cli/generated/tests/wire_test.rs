@@ -1576,6 +1576,11 @@ async fn wire_unlink_surface_mapping() {
 }
 
 #[tokio::test]
+async fn wire_update_groups_enabled() {
+    run_case("update_groups_enabled").await;
+}
+
+#[tokio::test]
 async fn wire_update_slack_chat_routing() {
     run_case("update_slack_chat_routing").await;
 }
@@ -2718,6 +2723,11 @@ async fn wire_unlink_surface_destination_mapping_error() {
 #[tokio::test]
 async fn wire_unlink_surface_mapping_error() {
     run_case("unlink_surface_mapping_error").await;
+}
+
+#[tokio::test]
+async fn wire_update_groups_enabled_error() {
+    run_case("update_groups_enabled_error").await;
 }
 
 #[tokio::test]

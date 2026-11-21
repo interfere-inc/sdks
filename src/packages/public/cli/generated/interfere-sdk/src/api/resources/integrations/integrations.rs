@@ -1304,6 +1304,77 @@ impl IntegrationsClient {
             .await
     }
 
+    /// Turn platform-backed groups (GitHub teams) on or off for a GitHub integration. While off, its synced groups are hidden from assignee flows and ignored by automations. Turning it on needs the groups entitlement. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
+    ///
+    /// # Arguments
+    ///
+    /// * `workspace` - Workspace URL slug, using lowercase letters, numbers, and hyphens.
+    /// * `options` - Additional request options such as headers, timeout, etc.
+    ///
+    /// # Returns
+    ///
+    /// JSON response from the API
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use interfere_sdk::prelude::*;
+    ///
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     let config = ClientConfig {
+    ///         api_key: Some("<value>".to_string()),
+    ///         ..Default::default()
+    ///     };
+    ///     let client = InterfereClient::new(config).expect("Failed to build client");
+    ///     client
+    ///         .integrations
+    ///         .update_groups_enabled(
+    ///             &"workspaceSlug".to_string(),
+    ///             &UpdateGroupsEnabledIntegrationsRequest {
+    ///                 args: UpdateGroupsEnabledIntegrationsRequestArgs {
+    ///                     connection_id: "connectionId".to_string(),
+    ///                     enabled: true,
+    ///                     ..Default::default()
+    ///                 },
+    ///             },
+    ///             None,
+    ///         )
+    ///         .await;
+    /// }
+    /// ```
+    pub async fn update_groups_enabled(
+        &self,
+        workspace: &str,
+        request: &UpdateGroupsEnabledIntegrationsRequest,
+        options: Option<RequestOptions>,
+    ) -> Result<MutationIntegrationsUpdateGroupsEnabledResponse, ApiError> {
+        let endpoint_auth_headers = self
+            .http_client
+            .resolve_endpoint_auth_headers(&options, &[&["clerkSession"] as &[&str]])
+            .await?;
+        let options = {
+            let mut o = options.unwrap_or_default();
+            for (header_key, header_value) in endpoint_auth_headers {
+                o.additional_headers.insert(header_key, header_value);
+            }
+            o.max_retries = Some(0);
+            Some(o)
+        };
+        self.http_client
+            .execute_request(
+                Method::POST,
+                &format!(
+                    "v3/workspaces/{}/actions/integrations.updateGroupsEnabled",
+                    workspace
+                ),
+                Some(serde_json::to_value(request).map_err(ApiError::Serialization)?),
+                None,
+                options,
+            )
+            .await
+    }
+
     /// Change Slack chat routing for an integration. Inspect the installation and channel selection first. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
     ///
     /// # Arguments

@@ -30,6 +30,8 @@ pub struct QueryIntegrationsSlackInstallationResponseProviderMetadataTwo {
     #[serde(rename = "requiredPermissions")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub required_permissions: Option<HashMap<String, String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub groups: Option<QueryIntegrationsSlackInstallationResponseProviderMetadataTwoGroups>,
     pub provider: QueryIntegrationsSlackInstallationResponseProviderMetadataTwoProvider,
     #[serde(rename = "repositoryDiscoveryRequestedAt")]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -58,6 +60,7 @@ pub struct QueryIntegrationsSlackInstallationResponseProviderMetadataTwoBuilder 
     account_id: Option<String>,
     permissions: Option<HashMap<String, String>>,
     required_permissions: Option<HashMap<String, String>>,
+    groups: Option<QueryIntegrationsSlackInstallationResponseProviderMetadataTwoGroups>,
     provider: Option<QueryIntegrationsSlackInstallationResponseProviderMetadataTwoProvider>,
     repository_discovery_requested_at: Option<i64>,
     repository_scans: Option<HashMap<String, QueryIntegrationsSlackInstallationResponseProviderMetadataTwoRepositoryScansValue>>,
@@ -114,6 +117,11 @@ impl QueryIntegrationsSlackInstallationResponseProviderMetadataTwoBuilder {
         self
     }
 
+    pub fn groups(mut self, value: QueryIntegrationsSlackInstallationResponseProviderMetadataTwoGroups) -> Self {
+        self.groups = Some(value);
+        self
+    }
+
     pub fn provider(mut self, value: QueryIntegrationsSlackInstallationResponseProviderMetadataTwoProvider) -> Self {
         self.provider = Some(value);
         self
@@ -146,6 +154,7 @@ impl QueryIntegrationsSlackInstallationResponseProviderMetadataTwoBuilder {
             account_id: self.account_id,
             permissions: self.permissions,
             required_permissions: self.required_permissions,
+            groups: self.groups,
             provider: self.provider.ok_or_else(|| BuildError::missing_field("provider"))?,
             repository_discovery_requested_at: self.repository_discovery_requested_at,
             repository_scans: self.repository_scans,

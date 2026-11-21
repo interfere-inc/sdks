@@ -732,6 +732,17 @@ Remove an app's integration mapping. Inspect the selected mapping before unlinki
 | `--workspace-slug` | `string` | Yes |  |
 | `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
 
+#### `interfere integrations update-groups-enabled`
+
+Turn platform-backed groups (GitHub teams) on or off for a GitHub integration. While off, its synced groups are hidden from assignee flows and ignored by automations. Turning it on needs the groups entitlement. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
+
+`POST /v3/workspaces/{workspaceSlug}/actions/integrations.updateGroupsEnabled`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
+
 #### `interfere integrations update-slack-chat-routing`
 
 Change Slack chat routing for an integration. Inspect the installation and channel selection first. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.

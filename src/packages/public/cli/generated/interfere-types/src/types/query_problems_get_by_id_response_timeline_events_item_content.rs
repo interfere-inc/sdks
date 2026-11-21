@@ -9,7 +9,7 @@ pub enum QueryProblemsGetByIdResponseTimelineEventsItemContent {
 
         QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGap(QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGap),
 
-        QueryProblemsGetByIdResponseTimelineEventsItemContentNewAssigneeUserId(QueryProblemsGetByIdResponseTimelineEventsItemContentNewAssigneeUserId),
+        QueryProblemsGetByIdResponseTimelineEventsItemContentNewAssigneeGroupId(QueryProblemsGetByIdResponseTimelineEventsItemContentNewAssigneeGroupId),
 
         QueryProblemsGetByIdResponseTimelineEventsItemContentCategory(QueryProblemsGetByIdResponseTimelineEventsItemContentCategory),
 
@@ -45,8 +45,8 @@ impl QueryProblemsGetByIdResponseTimelineEventsItemContent {
         matches!(self, Self::QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGap(_))
     }
 
-    pub fn is_query_problems_get_by_id_response_timeline_events_item_content_new_assignee_user_id(&self) -> bool {
-        matches!(self, Self::QueryProblemsGetByIdResponseTimelineEventsItemContentNewAssigneeUserId(_))
+    pub fn is_query_problems_get_by_id_response_timeline_events_item_content_new_assignee_group_id(&self) -> bool {
+        matches!(self, Self::QueryProblemsGetByIdResponseTimelineEventsItemContentNewAssigneeGroupId(_))
     }
 
     pub fn is_query_problems_get_by_id_response_timeline_events_item_content_category(&self) -> bool {
@@ -126,16 +126,16 @@ impl QueryProblemsGetByIdResponseTimelineEventsItemContent {
                 }
     }
 
-    pub fn as_query_problems_get_by_id_response_timeline_events_item_content_new_assignee_user_id(&self) -> Option<&QueryProblemsGetByIdResponseTimelineEventsItemContentNewAssigneeUserId> {
+    pub fn as_query_problems_get_by_id_response_timeline_events_item_content_new_assignee_group_id(&self) -> Option<&QueryProblemsGetByIdResponseTimelineEventsItemContentNewAssigneeGroupId> {
         match self {
-                    Self::QueryProblemsGetByIdResponseTimelineEventsItemContentNewAssigneeUserId(value) => Some(value),
+                    Self::QueryProblemsGetByIdResponseTimelineEventsItemContentNewAssigneeGroupId(value) => Some(value),
                     _ => None,
                 }
     }
 
-    pub fn into_query_problems_get_by_id_response_timeline_events_item_content_new_assignee_user_id(self) -> Option<QueryProblemsGetByIdResponseTimelineEventsItemContentNewAssigneeUserId> {
+    pub fn into_query_problems_get_by_id_response_timeline_events_item_content_new_assignee_group_id(self) -> Option<QueryProblemsGetByIdResponseTimelineEventsItemContentNewAssigneeGroupId> {
         match self {
-                    Self::QueryProblemsGetByIdResponseTimelineEventsItemContentNewAssigneeUserId(value) => Some(value),
+                    Self::QueryProblemsGetByIdResponseTimelineEventsItemContentNewAssigneeGroupId(value) => Some(value),
                     _ => None,
                 }
     }
@@ -314,7 +314,7 @@ impl fmt::Display for QueryProblemsGetByIdResponseTimelineEventsItemContent {
         match self {
             Self::QueryProblemsGetByIdResponseTimelineEventsItemContentActionKind(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGap(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
-            Self::QueryProblemsGetByIdResponseTimelineEventsItemContentNewAssigneeUserId(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::QueryProblemsGetByIdResponseTimelineEventsItemContentNewAssigneeGroupId(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsGetByIdResponseTimelineEventsItemContentCategory(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsGetByIdResponseTimelineEventsItemContentFour(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsGetByIdResponseTimelineEventsItemContentDescription(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),

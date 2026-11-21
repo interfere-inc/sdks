@@ -7,6 +7,9 @@ pub struct QueryProblemsKanbanResponseItem {
     #[serde(rename = "affectedUsers")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub affected_users: Option<i64>,
+    #[serde(rename = "assigneeGroupId")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub assignee_group_id: Option<String>,
     #[serde(rename = "assigneeUserId")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub assignee_user_id: Option<String>,
@@ -151,6 +154,7 @@ impl QueryProblemsKanbanResponseItem {
 #[non_exhaustive]
 pub struct QueryProblemsKanbanResponseItemBuilder {
     affected_users: Option<i64>,
+    assignee_group_id: Option<String>,
     assignee_user_id: Option<String>,
     awaiting_input_since: Option<f64>,
     category: Option<QueryProblemsKanbanResponseItemCategory>,
@@ -196,6 +200,11 @@ pub struct QueryProblemsKanbanResponseItemBuilder {
 impl QueryProblemsKanbanResponseItemBuilder {
     pub fn affected_users(mut self, value: i64) -> Self {
         self.affected_users = Some(value);
+        self
+    }
+
+    pub fn assignee_group_id(mut self, value: impl Into<String>) -> Self {
+        self.assignee_group_id = Some(value.into());
         self
     }
 
@@ -413,6 +422,7 @@ impl QueryProblemsKanbanResponseItemBuilder {
     pub fn build(self) -> Result<QueryProblemsKanbanResponseItem, BuildError> {
         Ok(QueryProblemsKanbanResponseItem {
             affected_users: self.affected_users,
+            assignee_group_id: self.assignee_group_id,
             assignee_user_id: self.assignee_user_id,
             awaiting_input_since: self.awaiting_input_since,
             category: self.category,

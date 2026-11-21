@@ -1,0 +1,64 @@
+pub use crate::prelude::*;
+#[allow(unused_imports)]
+use super::*;
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq, Eq, Hash)]
+pub struct ConnectionProviderMetadataTwoGroups {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub account: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub enabled: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub status: Option<ConnectionProviderMetadataTwoGroupsStatus>,
+    /// Milliseconds since the Unix epoch in UTC.
+    #[serde(rename = "syncedAt")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub synced_at: Option<i64>,
+}
+
+impl ConnectionProviderMetadataTwoGroups {
+    pub fn builder() -> ConnectionProviderMetadataTwoGroupsBuilder {
+        <ConnectionProviderMetadataTwoGroupsBuilder as Default>::default()
+    }
+}
+
+#[derive(Clone, PartialEq, Default, Debug)]
+#[non_exhaustive]
+pub struct ConnectionProviderMetadataTwoGroupsBuilder {
+    account: Option<String>,
+    enabled: Option<bool>,
+    status: Option<ConnectionProviderMetadataTwoGroupsStatus>,
+    synced_at: Option<i64>,
+}
+
+impl ConnectionProviderMetadataTwoGroupsBuilder {
+    pub fn account(mut self, value: impl Into<String>) -> Self {
+        self.account = Some(value.into());
+        self
+    }
+
+    pub fn enabled(mut self, value: bool) -> Self {
+        self.enabled = Some(value);
+        self
+    }
+
+    pub fn status(mut self, value: ConnectionProviderMetadataTwoGroupsStatus) -> Self {
+        self.status = Some(value);
+        self
+    }
+
+    pub fn synced_at(mut self, value: i64) -> Self {
+        self.synced_at = Some(value);
+        self
+    }
+
+    /// Consumes the builder and constructs a [`ConnectionProviderMetadataTwoGroups`].
+    pub fn build(self) -> Result<ConnectionProviderMetadataTwoGroups, BuildError> {
+        Ok(ConnectionProviderMetadataTwoGroups {
+            account: self.account,
+            enabled: self.enabled,
+            status: self.status,
+            synced_at: self.synced_at,
+        })
+    }
+}

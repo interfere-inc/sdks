@@ -1,5 +1,5 @@
 diff --git a/dist/pool/index.mjs b/dist/pool/index.mjs
-index 333d12d..b030f18 100644
+index 333d12df2a47fd04c00d227cfb24a3eda6f5fef8..957b74b0991b7372b69d0759fc552973786f56c0 100644
 --- a/dist/pool/index.mjs
 +++ b/dist/pool/index.mjs
 @@ -53719,18 +53719,7 @@ function get_escaped_char(char) {
@@ -119,7 +119,16 @@ index 333d12d..b030f18 100644
  }
  var CloudflarePoolWorker = class {
  	name = "cloudflare-pool";
-@@ -79040,14 +79073,17 @@ var CloudflarePoolWorker = class {
+@@ -78997,6 +79030,8 @@ var CloudflarePoolWorker = class {
+ 		this.socket = await connectToMiniflareSocket(this.mf, getRunnerName(this.options.project));
+ 	}
+ 	async stop() {
++		// WARNING: Vitest expects stop() to remove the worker's listeners; a frame the runtime sends while it disposes (an alarm's dynamic import) otherwise reaches the message wrapper after the socket is gone, and its assertion throws uncaught and ends the whole Vitest process before any report is written.
++		for (const event of ["message", "error", "exit"]) this.off(event);
+ 		this.socket?.close();
+ 		this.socket = void 0;
+ 		this.moduleFetchRequestIds.clear();
+@@ -79040,14 +79075,17 @@ var CloudflarePoolWorker = class {
  			}
  		};
  		const rpcResponse = message;
@@ -140,7 +149,7 @@ index 333d12d..b030f18 100644
  	}
  	on(event, callback) {
  		assert(this.socket, "Message received from Worker before initialisation");
-@@ -79512,9 +79548,10 @@ async function buildProjectMiniflareOptions(ctx, project, customOptions, main) {
+@@ -79512,9 +79550,10 @@ async function buildProjectMiniflareOptions(ctx, project, customOptions, main) {
  	}
  	return {
  		...SHARED_MINIFLARE_OPTIONS,
@@ -153,7 +162,7 @@ index 333d12d..b030f18 100644
  		workers: [runnerWorker, ...auxiliaryWorkers]
  	};
 diff --git a/dist/worker/index.mjs b/dist/worker/index.mjs
-index c0d13f1..f43860f 100644
+index c0d13f14d95ef11e16430aa095d65a34726fd321..f43860fd4ec733eff40e97f8322a3ec40e98bb83 100644
 --- a/dist/worker/index.mjs
 +++ b/dist/worker/index.mjs
 @@ -1144,6 +1144,15 @@ var __VITEST_POOL_WORKERS_RUNNER_DURABLE_OBJECT__ = class extends DurableObject

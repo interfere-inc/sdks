@@ -4499,6 +4499,39 @@
                       "type": "string"
                     }
                   },
+                  "groups": {
+                    "type": "object",
+                    "properties": {
+                      "account": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "enabled": {
+                        "type": "boolean"
+                      },
+                      "status": {
+                        "enum": [
+                          "synced",
+                          "missing_permission",
+                          "unsupported_account",
+                          "failed"
+                        ],
+                        "type": "string"
+                      },
+                      "syncedAt": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC."
+                      }
+                    }
+                  },
                   "provider": {
                     "const": "github"
                   },
@@ -4715,6 +4748,39 @@
                       "type": "string"
                     }
                   },
+                  "groups": {
+                    "type": "object",
+                    "properties": {
+                      "account": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "enabled": {
+                        "type": "boolean"
+                      },
+                      "status": {
+                        "enum": [
+                          "synced",
+                          "missing_permission",
+                          "unsupported_account",
+                          "failed"
+                        ],
+                        "type": "string"
+                      },
+                      "syncedAt": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC."
+                      }
+                    }
+                  },
                   "provider": {
                     "const": "ghe_cloud"
                   },
@@ -4929,6 +4995,39 @@
                     },
                     "additionalProperties": {
                       "type": "string"
+                    }
+                  },
+                  "groups": {
+                    "type": "object",
+                    "properties": {
+                      "account": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "enabled": {
+                        "type": "boolean"
+                      },
+                      "status": {
+                        "enum": [
+                          "synced",
+                          "missing_permission",
+                          "unsupported_account",
+                          "failed"
+                        ],
+                        "type": "string"
+                      },
+                      "syncedAt": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC."
+                      }
                     }
                   },
                   "provider": {
@@ -7205,7 +7304,29 @@
               {
                 "type": "object",
                 "properties": {
+                  "newAssigneeGroupId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
                   "newAssigneeUserId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "prevAssigneeGroupId": {
                     "anyOf": [
                       {
                         "type": "string",
@@ -17777,6 +17898,39 @@
                           "type": "string"
                         }
                       },
+                      "groups": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "enum": [
+                              "synced",
+                              "missing_permission",
+                              "unsupported_account",
+                              "failed"
+                            ],
+                            "type": "string"
+                          },
+                          "syncedAt": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
+                          }
+                        }
+                      },
                       "provider": {
                         "const": "github"
                       },
@@ -17993,6 +18147,39 @@
                           "type": "string"
                         }
                       },
+                      "groups": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "enum": [
+                              "synced",
+                              "missing_permission",
+                              "unsupported_account",
+                              "failed"
+                            ],
+                            "type": "string"
+                          },
+                          "syncedAt": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
+                          }
+                        }
+                      },
                       "provider": {
                         "const": "ghe_cloud"
                       },
@@ -18207,6 +18394,39 @@
                         },
                         "additionalProperties": {
                           "type": "string"
+                        }
+                      },
+                      "groups": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "enum": [
+                              "synced",
+                              "missing_permission",
+                              "unsupported_account",
+                              "failed"
+                            ],
+                            "type": "string"
+                          },
+                          "syncedAt": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
+                          }
                         }
                       },
                       "provider": {
@@ -19207,6 +19427,39 @@
                           "type": "string"
                         }
                       },
+                      "groups": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "enum": [
+                              "synced",
+                              "missing_permission",
+                              "unsupported_account",
+                              "failed"
+                            ],
+                            "type": "string"
+                          },
+                          "syncedAt": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
+                          }
+                        }
+                      },
                       "provider": {
                         "const": "github"
                       },
@@ -19423,6 +19676,39 @@
                           "type": "string"
                         }
                       },
+                      "groups": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "enum": [
+                              "synced",
+                              "missing_permission",
+                              "unsupported_account",
+                              "failed"
+                            ],
+                            "type": "string"
+                          },
+                          "syncedAt": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
+                          }
+                        }
+                      },
                       "provider": {
                         "const": "ghe_cloud"
                       },
@@ -19637,6 +19923,39 @@
                         },
                         "additionalProperties": {
                           "type": "string"
+                        }
+                      },
+                      "groups": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "enum": [
+                              "synced",
+                              "missing_permission",
+                              "unsupported_account",
+                              "failed"
+                            ],
+                            "type": "string"
+                          },
+                          "syncedAt": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
+                          }
                         }
                       },
                       "provider": {
@@ -20643,6 +20962,39 @@
                         "type": "string"
                       }
                     },
+                    "groups": {
+                      "type": "object",
+                      "properties": {
+                        "account": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "status": {
+                          "enum": [
+                            "synced",
+                            "missing_permission",
+                            "unsupported_account",
+                            "failed"
+                          ],
+                          "type": "string"
+                        },
+                        "syncedAt": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Milliseconds since the Unix epoch in UTC."
+                        }
+                      }
+                    },
                     "provider": {
                       "const": "github"
                     },
@@ -20859,6 +21211,39 @@
                         "type": "string"
                       }
                     },
+                    "groups": {
+                      "type": "object",
+                      "properties": {
+                        "account": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "status": {
+                          "enum": [
+                            "synced",
+                            "missing_permission",
+                            "unsupported_account",
+                            "failed"
+                          ],
+                          "type": "string"
+                        },
+                        "syncedAt": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Milliseconds since the Unix epoch in UTC."
+                        }
+                      }
+                    },
                     "provider": {
                       "const": "ghe_cloud"
                     },
@@ -21073,6 +21458,39 @@
                       },
                       "additionalProperties": {
                         "type": "string"
+                      }
+                    },
+                    "groups": {
+                      "type": "object",
+                      "properties": {
+                        "account": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "status": {
+                          "enum": [
+                            "synced",
+                            "missing_permission",
+                            "unsupported_account",
+                            "failed"
+                          ],
+                          "type": "string"
+                        },
+                        "syncedAt": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Milliseconds since the Unix epoch in UTC."
+                        }
                       }
                     },
                     "provider": {
@@ -22284,6 +22702,39 @@
                           "type": "string"
                         }
                       },
+                      "groups": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "enum": [
+                              "synced",
+                              "missing_permission",
+                              "unsupported_account",
+                              "failed"
+                            ],
+                            "type": "string"
+                          },
+                          "syncedAt": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
+                          }
+                        }
+                      },
                       "provider": {
                         "const": "github"
                       },
@@ -22500,6 +22951,39 @@
                           "type": "string"
                         }
                       },
+                      "groups": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "enum": [
+                              "synced",
+                              "missing_permission",
+                              "unsupported_account",
+                              "failed"
+                            ],
+                            "type": "string"
+                          },
+                          "syncedAt": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
+                          }
+                        }
+                      },
                       "provider": {
                         "const": "ghe_cloud"
                       },
@@ -22714,6 +23198,39 @@
                         },
                         "additionalProperties": {
                           "type": "string"
+                        }
+                      },
+                      "groups": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "enum": [
+                              "synced",
+                              "missing_permission",
+                              "unsupported_account",
+                              "failed"
+                            ],
+                            "type": "string"
+                          },
+                          "syncedAt": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
+                          }
                         }
                       },
                       "provider": {
@@ -23714,6 +24231,39 @@
                           "type": "string"
                         }
                       },
+                      "groups": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "enum": [
+                              "synced",
+                              "missing_permission",
+                              "unsupported_account",
+                              "failed"
+                            ],
+                            "type": "string"
+                          },
+                          "syncedAt": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
+                          }
+                        }
+                      },
                       "provider": {
                         "const": "github"
                       },
@@ -23930,6 +24480,39 @@
                           "type": "string"
                         }
                       },
+                      "groups": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "enum": [
+                              "synced",
+                              "missing_permission",
+                              "unsupported_account",
+                              "failed"
+                            ],
+                            "type": "string"
+                          },
+                          "syncedAt": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
+                          }
+                        }
+                      },
                       "provider": {
                         "const": "ghe_cloud"
                       },
@@ -24144,6 +24727,39 @@
                         },
                         "additionalProperties": {
                           "type": "string"
+                        }
+                      },
+                      "groups": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "enum": [
+                              "synced",
+                              "missing_permission",
+                              "unsupported_account",
+                              "failed"
+                            ],
+                            "type": "string"
+                          },
+                          "syncedAt": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
+                          }
                         }
                       },
                       "provider": {
@@ -25144,6 +25760,39 @@
                           "type": "string"
                         }
                       },
+                      "groups": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "enum": [
+                              "synced",
+                              "missing_permission",
+                              "unsupported_account",
+                              "failed"
+                            ],
+                            "type": "string"
+                          },
+                          "syncedAt": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
+                          }
+                        }
+                      },
                       "provider": {
                         "const": "github"
                       },
@@ -25360,6 +26009,39 @@
                           "type": "string"
                         }
                       },
+                      "groups": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "enum": [
+                              "synced",
+                              "missing_permission",
+                              "unsupported_account",
+                              "failed"
+                            ],
+                            "type": "string"
+                          },
+                          "syncedAt": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
+                          }
+                        }
+                      },
                       "provider": {
                         "const": "ghe_cloud"
                       },
@@ -25574,6 +26256,39 @@
                         },
                         "additionalProperties": {
                           "type": "string"
+                        }
+                      },
+                      "groups": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "enum": [
+                              "synced",
+                              "missing_permission",
+                              "unsupported_account",
+                              "failed"
+                            ],
+                            "type": "string"
+                          },
+                          "syncedAt": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
+                          }
                         }
                       },
                       "provider": {
@@ -26580,6 +27295,39 @@
                           "type": "string"
                         }
                       },
+                      "groups": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "enum": [
+                              "synced",
+                              "missing_permission",
+                              "unsupported_account",
+                              "failed"
+                            ],
+                            "type": "string"
+                          },
+                          "syncedAt": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
+                          }
+                        }
+                      },
                       "provider": {
                         "const": "github"
                       },
@@ -26796,6 +27544,39 @@
                           "type": "string"
                         }
                       },
+                      "groups": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "enum": [
+                              "synced",
+                              "missing_permission",
+                              "unsupported_account",
+                              "failed"
+                            ],
+                            "type": "string"
+                          },
+                          "syncedAt": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
+                          }
+                        }
+                      },
                       "provider": {
                         "const": "ghe_cloud"
                       },
@@ -27010,6 +27791,39 @@
                         },
                         "additionalProperties": {
                           "type": "string"
+                        }
+                      },
+                      "groups": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "enum": [
+                              "synced",
+                              "missing_permission",
+                              "unsupported_account",
+                              "failed"
+                            ],
+                            "type": "string"
+                          },
+                          "syncedAt": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
+                          }
                         }
                       },
                       "provider": {
@@ -28010,6 +28824,39 @@
                         "type": "string"
                       }
                     },
+                    "groups": {
+                      "type": "object",
+                      "properties": {
+                        "account": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "status": {
+                          "enum": [
+                            "synced",
+                            "missing_permission",
+                            "unsupported_account",
+                            "failed"
+                          ],
+                          "type": "string"
+                        },
+                        "syncedAt": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Milliseconds since the Unix epoch in UTC."
+                        }
+                      }
+                    },
                     "provider": {
                       "const": "github"
                     },
@@ -28226,6 +29073,39 @@
                         "type": "string"
                       }
                     },
+                    "groups": {
+                      "type": "object",
+                      "properties": {
+                        "account": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "status": {
+                          "enum": [
+                            "synced",
+                            "missing_permission",
+                            "unsupported_account",
+                            "failed"
+                          ],
+                          "type": "string"
+                        },
+                        "syncedAt": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Milliseconds since the Unix epoch in UTC."
+                        }
+                      }
+                    },
                     "provider": {
                       "const": "ghe_cloud"
                     },
@@ -28440,6 +29320,39 @@
                       },
                       "additionalProperties": {
                         "type": "string"
+                      }
+                    },
+                    "groups": {
+                      "type": "object",
+                      "properties": {
+                        "account": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "status": {
+                          "enum": [
+                            "synced",
+                            "missing_permission",
+                            "unsupported_account",
+                            "failed"
+                          ],
+                          "type": "string"
+                        },
+                        "syncedAt": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Milliseconds since the Unix epoch in UTC."
+                        }
                       }
                     },
                     "provider": {
@@ -29657,6 +30570,39 @@
                           "type": "string"
                         }
                       },
+                      "groups": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "enum": [
+                              "synced",
+                              "missing_permission",
+                              "unsupported_account",
+                              "failed"
+                            ],
+                            "type": "string"
+                          },
+                          "syncedAt": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
+                          }
+                        }
+                      },
                       "provider": {
                         "const": "github"
                       },
@@ -29873,6 +30819,39 @@
                           "type": "string"
                         }
                       },
+                      "groups": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "enum": [
+                              "synced",
+                              "missing_permission",
+                              "unsupported_account",
+                              "failed"
+                            ],
+                            "type": "string"
+                          },
+                          "syncedAt": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
+                          }
+                        }
+                      },
                       "provider": {
                         "const": "ghe_cloud"
                       },
@@ -30087,6 +31066,39 @@
                         },
                         "additionalProperties": {
                           "type": "string"
+                        }
+                      },
+                      "groups": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "enum": [
+                              "synced",
+                              "missing_permission",
+                              "unsupported_account",
+                              "failed"
+                            ],
+                            "type": "string"
+                          },
+                          "syncedAt": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
+                          }
                         }
                       },
                       "provider": {
@@ -31087,6 +32099,39 @@
                           "type": "string"
                         }
                       },
+                      "groups": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "enum": [
+                              "synced",
+                              "missing_permission",
+                              "unsupported_account",
+                              "failed"
+                            ],
+                            "type": "string"
+                          },
+                          "syncedAt": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
+                          }
+                        }
+                      },
                       "provider": {
                         "const": "github"
                       },
@@ -31303,6 +32348,39 @@
                           "type": "string"
                         }
                       },
+                      "groups": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "enum": [
+                              "synced",
+                              "missing_permission",
+                              "unsupported_account",
+                              "failed"
+                            ],
+                            "type": "string"
+                          },
+                          "syncedAt": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
+                          }
+                        }
+                      },
                       "provider": {
                         "const": "ghe_cloud"
                       },
@@ -31517,6 +32595,39 @@
                         },
                         "additionalProperties": {
                           "type": "string"
+                        }
+                      },
+                      "groups": {
+                        "type": "object",
+                        "properties": {
+                          "account": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "enum": [
+                              "synced",
+                              "missing_permission",
+                              "unsupported_account",
+                              "failed"
+                            ],
+                            "type": "string"
+                          },
+                          "syncedAt": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
+                          }
                         }
                       },
                       "provider": {
@@ -34675,6 +35786,24 @@
                   }
                 ]
               },
+              "assigneeGroupId": {
+                "anyOf": [
+                  {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
               "assigneeUserId": {
                 "anyOf": [
                   {
@@ -35241,6 +36370,7 @@
             },
             "required": [
               "affectedUsers",
+              "assigneeGroupId",
               "assigneeUserId",
               "awaitingInputSince",
               "category",
@@ -35306,6 +36436,24 @@
                       "type": "integer",
                       "minimum": -9007199254740991,
                       "maximum": 9007199254740991
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "assigneeGroupId": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uuid"
                     },
                     {
                       "type": "null"
@@ -37051,7 +38199,29 @@
                       {
                         "type": "object",
                         "properties": {
+                          "newAssigneeGroupId": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "uuid"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
                           "newAssigneeUserId": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "uuid"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "prevAssigneeGroupId": {
                             "anyOf": [
                               {
                                 "type": "string",
@@ -39918,6 +41088,7 @@
           },
           "required": [
             "affectedUsers",
+            "assigneeGroupId",
             "assigneeUserId",
             "awaitingInputSince",
             "category",
@@ -39974,6 +41145,24 @@
                         "type": "integer",
                         "minimum": -9007199254740991,
                         "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "assigneeGroupId": {
+                "anyOf": [
+                  {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid"
                       },
                       {
                         "type": "null"
@@ -42371,7 +43560,29 @@
                         {
                           "type": "object",
                           "properties": {
+                            "newAssigneeGroupId": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
                             "newAssigneeUserId": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "prevAssigneeGroupId": {
                               "anyOf": [
                                 {
                                   "type": "string",
@@ -45712,6 +46923,7 @@
             },
             "required": [
               "affectedUsers",
+              "assigneeGroupId",
               "assigneeUserId",
               "awaitingInputSince",
               "category",
@@ -45783,6 +46995,24 @@
                 }
               ]
             },
+            "assigneeGroupId": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "assigneeUserId": {
               "anyOf": [
                 {
@@ -46570,6 +47800,7 @@
           },
           "required": [
             "affectedUsers",
+            "assigneeGroupId",
             "assigneeUserId",
             "awaitingInputSince",
             "category",
@@ -46637,6 +47868,24 @@
                 }
               ]
             },
+            "assigneeGroupId": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "assigneeUserId": {
               "anyOf": [
                 {
@@ -47418,6 +48667,7 @@
           },
           "required": [
             "affectedUsers",
+            "assigneeGroupId",
             "assigneeUserId",
             "awaitingInputSince",
             "category",
@@ -47473,6 +48723,24 @@
                       "type": "integer",
                       "minimum": -9007199254740991,
                       "maximum": 9007199254740991
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "assigneeGroupId": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uuid"
                     },
                     {
                       "type": "null"
@@ -48271,6 +49539,7 @@
           },
           "required": [
             "affectedUsers",
+            "assigneeGroupId",
             "assigneeUserId",
             "awaitingInputSince",
             "category",
@@ -54911,6 +56180,18 @@
         ]
       },
       "Mutation_integrations_unlinkSurfaceMappingResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "const": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success"
+        ]
+      },
+      "Mutation_integrations_updateGroupsEnabledResponse": {
         "type": "object",
         "properties": {
           "success": {
@@ -72251,6 +73532,101 @@
         }
       }
     },
+    "/v3/workspaces/{workspaceSlug}/actions/integrations.updateGroupsEnabled": {
+      "post": {
+        "operationId": "integrations_updateGroupsEnabled",
+        "summary": "integrations updateGroupsEnabled",
+        "description": "Turn platform-backed groups (GitHub teams) on or off for a GitHub integration. While off, its synced groups are hidden from assignee flows and ignored by automations. Turning it on needs the groups entitlement. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.",
+        "tags": [
+          "integrations"
+        ],
+        "parameters": [
+          {
+            "name": "workspaceSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
+            },
+            "x-fern-parameter-name": "workspace"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "args": {
+                    "type": "object",
+                    "properties": {
+                      "connectionId": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "enabled": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "connectionId",
+                      "enabled"
+                    ]
+                  }
+                },
+                "required": [
+                  "args"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mutation_integrations_updateGroupsEnabledResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/RpcValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse_b32e7e47d27147b78e9ca9c8927315e0c48a5a54a03868590623df7e2ff7d2af"
+          },
+          "403": {
+            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
+          },
+          "503": {
+            "$ref": "#/components/responses/ErrorResponse_a4a8a71ed4a33ddc602b7e2cf4dd0b51ef37c46db1b01870377abdbd6cbda1b5"
+          }
+        },
+        "x-fern-sdk-method-name": "update-groups-enabled",
+        "x-cloudflare-labels": [
+          "cf-api-endpoint"
+        ],
+        "security": [
+          {
+            "clerkSession": []
+          }
+        ],
+        "x-interfere-read-only": false,
+        "x-internal": false,
+        "x-fern-sdk-group-name": [
+          "integrations"
+        ],
+        "x-fern-retries": {
+          "disabled": true
+        }
+      }
+    },
     "/v3/workspaces/{workspaceSlug}/actions/integrations.updateSlackChatRouting": {
       "post": {
         "operationId": "integrations_updateSlackChatRouting",
@@ -74858,6 +76234,17 @@
                         "format": "uuid"
                       },
                       "assigneeUserId": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "assigneeGroupId": {
                         "anyOf": [
                           {
                             "type": "string",

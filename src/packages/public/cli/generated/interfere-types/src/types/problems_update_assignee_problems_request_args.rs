@@ -10,6 +10,9 @@ pub struct UpdateAssigneeProblemsRequestArgs {
     #[serde(rename = "assigneeUserId")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub assignee_user_id: Option<String>,
+    #[serde(rename = "assigneeGroupId")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub assignee_group_id: Option<String>,
     #[serde(rename = "timelineEventId")]
     #[serde(default)]
     pub timeline_event_id: String,
@@ -26,6 +29,7 @@ impl UpdateAssigneeProblemsRequestArgs {
 pub struct UpdateAssigneeProblemsRequestArgsBuilder {
     problem_id: Option<String>,
     assignee_user_id: Option<String>,
+    assignee_group_id: Option<String>,
     timeline_event_id: Option<String>,
 }
 
@@ -37,6 +41,11 @@ impl UpdateAssigneeProblemsRequestArgsBuilder {
 
     pub fn assignee_user_id(mut self, value: impl Into<String>) -> Self {
         self.assignee_user_id = Some(value.into());
+        self
+    }
+
+    pub fn assignee_group_id(mut self, value: impl Into<String>) -> Self {
+        self.assignee_group_id = Some(value.into());
         self
     }
 
@@ -53,6 +62,7 @@ impl UpdateAssigneeProblemsRequestArgsBuilder {
         Ok(UpdateAssigneeProblemsRequestArgs {
             problem_id: self.problem_id.ok_or_else(|| BuildError::missing_field("problem_id"))?,
             assignee_user_id: self.assignee_user_id,
+            assignee_group_id: self.assignee_group_id,
             timeline_event_id: self.timeline_event_id.ok_or_else(|| BuildError::missing_field("timeline_event_id"))?,
         })
     }

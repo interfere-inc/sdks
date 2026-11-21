@@ -30,6 +30,8 @@ pub struct QueryIntegrationsSlackInstallationResponseProviderMetadataAccountId {
     #[serde(rename = "requiredPermissions")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub required_permissions: Option<HashMap<String, String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub groups: Option<QueryIntegrationsSlackInstallationResponseProviderMetadataAccountIdGroups>,
     pub provider: QueryIntegrationsSlackInstallationResponseProviderMetadataAccountIdProvider,
     #[serde(rename = "repositoryDiscoveryRequestedAt")]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -58,6 +60,7 @@ pub struct QueryIntegrationsSlackInstallationResponseProviderMetadataAccountIdBu
     account_id: Option<String>,
     permissions: Option<HashMap<String, String>>,
     required_permissions: Option<HashMap<String, String>>,
+    groups: Option<QueryIntegrationsSlackInstallationResponseProviderMetadataAccountIdGroups>,
     provider: Option<QueryIntegrationsSlackInstallationResponseProviderMetadataAccountIdProvider>,
     repository_discovery_requested_at: Option<i64>,
     repository_scans: Option<HashMap<String, QueryIntegrationsSlackInstallationResponseProviderMetadataAccountIdRepositoryScansValue>>,
@@ -114,6 +117,11 @@ impl QueryIntegrationsSlackInstallationResponseProviderMetadataAccountIdBuilder 
         self
     }
 
+    pub fn groups(mut self, value: QueryIntegrationsSlackInstallationResponseProviderMetadataAccountIdGroups) -> Self {
+        self.groups = Some(value);
+        self
+    }
+
     pub fn provider(mut self, value: QueryIntegrationsSlackInstallationResponseProviderMetadataAccountIdProvider) -> Self {
         self.provider = Some(value);
         self
@@ -146,6 +154,7 @@ impl QueryIntegrationsSlackInstallationResponseProviderMetadataAccountIdBuilder 
             account_id: self.account_id,
             permissions: self.permissions,
             required_permissions: self.required_permissions,
+            groups: self.groups,
             provider: self.provider.ok_or_else(|| BuildError::missing_field("provider"))?,
             repository_discovery_requested_at: self.repository_discovery_requested_at,
             repository_scans: self.repository_scans,
