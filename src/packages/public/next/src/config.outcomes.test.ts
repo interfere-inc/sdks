@@ -80,6 +80,8 @@ test("reports no_maps through the production compile hook", async () => {
       ),
     );
 
+    vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test_123");
+
     const config = await withInterfere()(PHASE_DEVELOPMENT_SERVER);
 
     const compile = config.compiler?.runAfterProductionCompile;
@@ -210,6 +212,8 @@ test("reports cleanup_failed through the production compile hook", async () => {
       );
     }
 
+    vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test_123");
+
     const config = await withInterfere()(PHASE_DEVELOPMENT_SERVER);
 
     const compile = config.compiler?.runAfterProductionCompile;
@@ -302,6 +306,8 @@ test("links the services page when the release has no app", async () => {
         () => HttpResponse.json({ fileCount: 1, ok: true }),
       ),
     );
+
+    vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test_123");
 
     const config = await withInterfere()(PHASE_DEVELOPMENT_SERVER);
 

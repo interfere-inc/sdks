@@ -1,6 +1,9 @@
 /* oxlint-disable typescript/no-unsafe-assignment */
 import { setupServer } from "msw/node";
-import { deriveReleaseSlug } from "@interfere/types/releases/slug";
+import {
+  LOCAL_DEV_RELEASE_SLUG,
+  deriveReleaseSlug,
+} from "@interfere/types/releases/slug";
 import { createReleaseRequest } from "@interfere/types/releases/definition";
 import { releaseSourceIdEnvKeys } from "@interfere/types/integrations";
 
@@ -116,6 +119,7 @@ async function resolvePluginConfig(
     command?: ConfigEnv["command"];
     env?: Record<string, string>;
     logger?: Logger;
+    preview?: boolean;
   } = {},
 ) {
   if (input.env) {
@@ -137,6 +141,9 @@ async function resolvePluginConfig(
       root: input.root ?? projectDir,
     },
     input.command ?? "build",
+    undefined,
+    undefined,
+    input.preview,
   );
 }
 
@@ -1322,6 +1329,117 @@ describe("interfere vite plugin", () => {
 
       expect(configRequests).toHaveLength(0);
       expect(releaseRequests).toHaveLength(0);
+    });
+
+    test("registers no release for vite preview", async () => {
+      vi.stubEnv("VITEST", "");
+
+      vi.stubEnv("VITEST_WORKER_ID", "");
+
+      await resolvePluginConfig(interfere(), {
+        command: "serve",
+        preview: true,
+      });
+
+      expect(releaseRequests).toHaveLength(0);
+    });
+
+    test("registers no release during vite serve when a public key is set", async () => {
+      vi.stubEnv("VITEST", "");
+
+      vi.stubEnv("VITEST_WORKER_ID", "");
+
+      await resolvePluginConfig(interfere(), { command: "serve" });
+
+      expect(releaseRequests).toHaveLength(0);
+    });
+
+    test("warns once when the dev server cannot mint a local development release token", async () => {
+      vi.stubEnv("VITEST", "");
+
+      vi.stubEnv("VITEST_WORKER_ID", "");
+
+      vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", undefined);
+
+      const capture = captureLogger();
+
+      await resolvePluginConfig(interfere(), {
+        command: "serve",
+        logger: capture.logger,
+      });
+
+      expect(
+        capture.warns.filter((message) =>
+          message.includes("could not mint a local development release token"),
+        ),
+      ).toHaveLength(1);
+    });
+
+    test("registers only the local development release during vite serve and uploads nothing", async () => {
+      vi.stubEnv("VITEST", "");
+
+      vi.stubEnv("VITEST_WORKER_ID", "");
+
+      vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", undefined);
+
+      const plugin = interfere();
+
+      await resolvePluginConfig(plugin, { command: "serve" });
+
+      const closeBundle = plugin.closeBundle as () => Promise<void>;
+
+      await closeBundle();
+
+      expect(configRequests).toHaveLength(0);
+      expect(releaseRequests).toHaveLength(1);
+      expect(uploadRequests).toHaveLength(0);
+      expect(finalizeRequests).toHaveLength(0);
+
+      expect(
+        releaseRequests[0]?.headers.get("x-interfere-public-key"),
+      ).toBeNull();
+
+      await expect(releaseRequests[0]?.json()).resolves.toMatchObject({
+        buildId: LOCAL_DEV_RELEASE_SLUG,
+        destination: null,
+        slug: LOCAL_DEV_RELEASE_SLUG,
+        source: { commitSha: null },
+      });
+    });
+
+    test("bakes the local development release token and slug into the dev server", async () => {
+      vi.stubEnv("VITEST", "");
+
+      vi.stubEnv("VITEST_WORKER_ID", "");
+
+      vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", undefined);
+
+      server.use(
+        http.post(`${RELEASE_API}/v3/releases`, () =>
+          HttpResponse.json({
+            build: { hash: gitSha },
+            destination: {
+              environment: null,
+              id: "release_local",
+              slug: LOCAL_DEV_RELEASE_SLUG,
+            },
+            org: { id: "org_1", slug: "acme" },
+            source: { id: "source_1" },
+            surface: null,
+            token: "interfere_release_local",
+          }),
+        ),
+      );
+
+      const define = await callConfigDefine(interfere(), { command: "serve" });
+
+      expect(define["import.meta.env.VITE_INTERFERE_RELEASE_TOKEN"]).toBe(
+        JSON.stringify("interfere_release_local"),
+      );
+
+      expect(define[DEV_RELEASE_SLUG_KEY]).toBe(
+        JSON.stringify(LOCAL_DEV_RELEASE_SLUG),
+      );
     });
 
     test("passes the resolved deploy environment to the release pipeline", async () => {

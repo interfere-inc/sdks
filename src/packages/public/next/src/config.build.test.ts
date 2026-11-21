@@ -1,5 +1,7 @@
 import { http } from "msw";
 import { releaseSourceIdEnvKeys } from "@interfere/types/integrations";
+import { createReleaseRequest } from "@interfere/types/releases/definition";
+import { LOCAL_DEV_RELEASE_SLUG } from "@interfere/types/releases/slug";
 import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import {
@@ -77,6 +79,12 @@ function prepareBuildProject(
   writeFileSync(path.join(projectDir, "instrumentation-client.ts"), "");
 
   process.chdir(projectDir);
+}
+
+function compileHookPhase() {
+  vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test_123");
+
+  return PHASE_DEVELOPMENT_SERVER;
 }
 
 describe("withInterfere build pipeline", () => {
@@ -301,7 +309,7 @@ describe("withInterfere build pipeline", () => {
           compiler: {
             runAfterProductionCompile: vi.fn<() => Promise<void>>(),
           },
-        })(PHASE_DEVELOPMENT_SERVER);
+        })(compileHookPhase());
 
         const { compiler } = output;
 
@@ -345,7 +353,7 @@ describe("withInterfere build pipeline", () => {
         compiler: {
           runAfterProductionCompile: existingHook,
         },
-      })(PHASE_DEVELOPMENT_SERVER);
+      })(compileHookPhase());
 
       expect(output.productionBrowserSourceMaps).toBe(true);
 
@@ -451,7 +459,7 @@ describe("withInterfere build pipeline", () => {
         compiler: {
           runAfterProductionCompile: existingHook,
         },
-      })(PHASE_DEVELOPMENT_SERVER);
+      })(compileHookPhase());
 
       expect(output.productionBrowserSourceMaps).toBe(true);
 
@@ -524,7 +532,7 @@ describe("withInterfere build pipeline", () => {
               runAfterProductionCompile: vi.fn<() => Promise<void>>(),
             },
           },
-        )(PHASE_DEVELOPMENT_SERVER);
+        )(compileHookPhase());
 
         const { compiler } = output;
 
@@ -639,7 +647,7 @@ describe("withInterfere build pipeline", () => {
         compiler: {
           runAfterProductionCompile: vi.fn<() => Promise<void>>(),
         },
-      })(PHASE_DEVELOPMENT_SERVER);
+      })(compileHookPhase());
 
       const { compiler } = output;
 
@@ -890,6 +898,132 @@ describe("release binding preflight", () => {
           request.headers.has("x-interfere-public-key"),
         ),
       ).toStrictEqual([]);
+    });
+  });
+
+  test("the dev server mints the shared local-development release and bakes its token and slug without a public key", async () => {
+    expect.hasAssertions();
+
+    await withTempProject("next-dev-release-token-", async (projectDir) => {
+      prepareBuildProject(projectDir, "cli", "interfere_ak_test_123");
+
+      vi.stubEnv("INTERFERE_PUBLIC_KEY", undefined);
+
+      createReleaseFixture(projectDir, { releaseToken: "irt_next_dev" });
+
+      const nextConfig = withInterfere();
+
+      await nextConfig(PHASE_DEVELOPMENT_SERVER);
+
+      const config = await nextConfig(PHASE_DEVELOPMENT_SERVER);
+
+      const baked = JSON.stringify(config.turbopack);
+
+      expect(baked).toContain(
+        String.raw`\"__INTERFERE_RELEASE_TOKEN__\":\"irt_next_dev\"`,
+      );
+
+      expect(baked).toContain(
+        String.raw`\"__INTERFERE_RELEASE_SLUG__\":\"${LOCAL_DEV_RELEASE_SLUG}\"`,
+      );
+
+      expect(baked).not.toContain("__INTERFERE_PUBLIC_KEY__");
+
+      const registrations = releaseRequests.filter(
+        (request) =>
+          request.method === "POST" &&
+          new URL(request.url).pathname === "/v3/releases",
+      );
+
+      expect(registrations).toHaveLength(1);
+
+      expect(registrations[0]?.headers.has("x-interfere-public-key")).toBe(
+        false,
+      );
+
+      expect(
+        createReleaseRequest.parse(await registrations[0]?.clone().json()),
+      ).toMatchObject({ destination: null, slug: LOCAL_DEV_RELEASE_SLUG });
+    });
+  });
+
+  test("the dev server mints no release when a public key is set", async () => {
+    expect.hasAssertions();
+
+    await withTempProject("next-dev-public-key-", async (projectDir) => {
+      prepareBuildProject(projectDir, "cli", "interfere_ak_test_123");
+
+      vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test_123");
+
+      createReleaseFixture(projectDir, { releaseToken: "irt_next_dev" });
+
+      const config = await withInterfere()(PHASE_DEVELOPMENT_SERVER);
+
+      expect(JSON.stringify(config.turbopack)).not.toContain(
+        "__INTERFERE_RELEASE_TOKEN__",
+      );
+
+      expect(
+        releaseRequests.filter((request) => request.method === "POST"),
+      ).toHaveLength(0);
+    });
+  });
+
+  test("the dev server warns when INTERFERE_API_KEY is not a valid key and mints nothing", async () => {
+    expect.hasAssertions();
+
+    await withTempProject("next-dev-bad-key-", async (projectDir) => {
+      prepareBuildProject(projectDir, "cli", "not-an-interfere-key");
+
+      vi.stubEnv("INTERFERE_PUBLIC_KEY", undefined);
+
+      createReleaseFixture(projectDir);
+
+      const warn = vi.spyOn(log, "warn");
+
+      await withInterfere()(PHASE_DEVELOPMENT_SERVER);
+
+      expect(
+        warn.mock.calls.filter(
+          ([title]) =>
+            title === "Could not mint a local development release token",
+        ),
+      ).toHaveLength(1);
+
+      expect(
+        releaseRequests.filter((request) => request.method === "POST"),
+      ).toHaveLength(0);
+    });
+  });
+
+  test("the dev server warns once when it cannot mint a local-development token", async () => {
+    expect.hasAssertions();
+
+    await withTempProject("next-dev-mint-failure-", async (projectDir) => {
+      prepareBuildProject(projectDir, "cli", "interfere_ak_test_123");
+
+      vi.stubEnv("INTERFERE_PUBLIC_KEY", undefined);
+
+      createReleaseFixture(projectDir, { failure: "register" });
+
+      const warn = vi.spyOn(log, "warn");
+
+      const nextConfig = withInterfere();
+
+      await nextConfig(PHASE_DEVELOPMENT_SERVER);
+
+      const config = await nextConfig(PHASE_DEVELOPMENT_SERVER);
+
+      expect(JSON.stringify(config.turbopack)).not.toContain(
+        "__INTERFERE_RELEASE_TOKEN__",
+      );
+
+      expect(
+        warn.mock.calls.filter(
+          ([title]) =>
+            title === "Could not mint a local development release token",
+        ),
+      ).toHaveLength(1);
     });
   });
 

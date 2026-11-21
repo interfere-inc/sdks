@@ -9,7 +9,14 @@ import { PUBLIC_KEY_HEADER } from "@interfere/constants/api";
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
 import { InterfereClient } from "@interfere/javascript";
 import type { Interfere } from "@interfere/javascript";
+import {
+  PHASE_DEVELOPMENT_SERVER,
+  PHASE_PRODUCTION_BUILD,
+} from "next/constants.js";
 import { createReleaseResponse } from "@interfere/types/releases/definition";
+import { localDevReleaseRequest } from "@interfere/types/releases/local-dev";
+import { LOCAL_DEV_RELEASE_SLUG } from "@interfere/types/releases/slug";
+import type { ReleaseSlug } from "@interfere/types/releases/slug";
 import { isInterfereApiKey } from "@interfere/types/sdk/build-diagnostics";
 import { INGEST_URL_GLOBAL } from "@interfere/types/sdk/injected-globals";
 import { LOG_SOURCING_GLOBAL } from "@interfere/types/sdk/log-sourcing";
@@ -30,7 +37,24 @@ interface BuildPreflight {
   readonly releaseConfig: ResolvedBuildConfig["releaseConfig"];
   readonly surfaceConfig: SurfaceConfig | undefined;
   readonly registeredRelease: ResolvedBuildConfig["registeredRelease"];
+  readonly releaseSlug?: ReleaseSlug;
 }
+
+export function preflightMode(phase: string, config: ResolvedBuildConfig) {
+  if (phase === PHASE_PRODUCTION_BUILD) {
+    return "build" satisfies PreflightMode;
+  }
+
+  return phase === PHASE_DEVELOPMENT_SERVER &&
+    config.apiKey &&
+    !config.publicKey
+    ? ("development" satisfies PreflightMode)
+    : null;
+}
+
+type PreflightMode = "build" | "development";
+
+const LOCAL_DEV_MINT_BUDGET_MS = 5000;
 
 const WITHOUT_PREFLIGHT: BuildPreflight = {
   releaseConfig: undefined,
@@ -117,6 +141,67 @@ async function registerRelease(
   }
 }
 
+function localDevelopmentClient(config: ResolvedBuildConfig) {
+  if (!config.apiKey || !isInterfereApiKey(config.apiKey)) {
+    return null;
+  }
+
+  return new InterfereClient({
+    baseUrl: config.apiUrl,
+    apiKey: { token: config.apiKey },
+    headers: {
+      "x-interfere-producer-version": PRODUCER_VERSION,
+      "x-interfere-service": config.serviceName,
+    },
+    maxRetries: 0,
+    timeoutInSeconds: 10,
+  });
+}
+
+function warnLocalDevelopmentMint(reason: string) {
+  log.warn("Could not mint a local development release token", [
+    "The dev server sends no browser events.",
+    reason,
+  ]);
+}
+
+async function mintLocalDevelopmentRelease(config: ResolvedBuildConfig) {
+  const client = localDevelopmentClient(config);
+
+  if (!client) {
+    warnLocalDevelopmentMint(
+      "INTERFERE_API_KEY is not a valid Interfere API key.",
+    );
+
+    return WITHOUT_PREFLIGHT;
+  }
+
+  const registeredRelease = await client.releases
+    .createRelease(
+      localDevReleaseRequest({
+        producerVersion: PRODUCER_VERSION,
+        service: config.serviceName ? { name: config.serviceName } : undefined,
+      }),
+      { abortSignal: AbortSignal.timeout(LOCAL_DEV_MINT_BUDGET_MS) },
+    )
+    .then((response) => createReleaseResponse.parse(response))
+    .catch(() => null);
+
+  if (registeredRelease?.token) {
+    return {
+      ...WITHOUT_PREFLIGHT,
+      registeredRelease,
+      releaseSlug: LOCAL_DEV_RELEASE_SLUG,
+    } satisfies BuildPreflight;
+  }
+
+  warnLocalDevelopmentMint(
+    "Check that Interfere is reachable, that INTERFERE_API_KEY has the release:write scope and that a service name resolves.",
+  );
+
+  return WITHOUT_PREFLIGHT;
+}
+
 // oxlint-disable-next-line typescript/promise-function-async -- Ineligible builds do not start asynchronous preflight work.
 function preflightBuild(config: ResolvedBuildConfig) {
   const client = releaseClient(config);
@@ -159,26 +244,35 @@ function preflightBuild(config: ResolvedBuildConfig) {
 }
 
 /**
- * Next evaluates the production config more than once per build, through the
- * same `withInterfere` result. One preflight per resolved build config keeps
- * that to one release registration and one set of warnings.
+ * Next evaluates the config more than once, through the same `withInterfere`
+ * result. One preflight per resolved build config, or per credential for the
+ * development mint, keeps that to one release registration and one set of
+ * warnings.
  */
 export function createBuildPreflight() {
   const preflights = new Map<string, ReturnType<typeof preflightBuild>>();
 
   const withBuildPreflight: (
-    enabled: boolean,
+    mode: PreflightMode | null,
     config: ResolvedBuildConfig,
     configured: (preflight: BuildPreflight) => NextConfig,
     // oxlint-disable-next-line typescript/promise-function-async -- Preserve synchronous configuration when no production preflight is needed.
-  ) => NextConfig | Promise<NextConfig> = (enabled, config, configured) => {
-    const key = JSON.stringify(config);
+  ) => NextConfig | Promise<NextConfig> = (mode, config, configured) => {
+    const key =
+      mode === "development"
+        ? `development:${config.apiUrl}:${config.apiKey}:${config.serviceName}`
+        : `${mode}:${JSON.stringify(config)}`;
 
-    if (enabled && !preflights.has(key)) {
-      preflights.set(key, preflightBuild(config));
+    if (mode && !preflights.has(key)) {
+      preflights.set(
+        key,
+        mode === "development"
+          ? mintLocalDevelopmentRelease(config)
+          : preflightBuild(config),
+      );
     }
 
-    const pending = enabled ? (preflights.get(key) ?? null) : null;
+    const pending = mode ? (preflights.get(key) ?? null) : null;
 
     async function complete() {
       return configured((await pending) ?? WITHOUT_PREFLIGHT);

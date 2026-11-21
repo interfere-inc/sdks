@@ -1,4 +1,7 @@
-import { registerBuildRelease } from "./internal/build/register-release";
+import {
+  registerBuildRelease,
+  registerLocalDevRelease,
+} from "./internal/build/register-release";
 import {
   DIAGNOSTIC_CONTEXT,
   preflightViteBinding,
@@ -13,6 +16,7 @@ import {
 } from "@interfere/build/config";
 import { API_URL } from "@interfere/constants/api";
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
+import { LOCAL_DEV_RELEASE_SLUG } from "@interfere/types/releases/slug";
 import type { ReleaseSlug } from "@interfere/types/releases/slug";
 import { checkReleaseConfig } from "@interfere/types/sdk/build-diagnostics";
 import { resolveDeployEnvironment } from "@interfere/types/sdk/deploy-environment";
@@ -416,6 +420,8 @@ export function interfere(options: InterfereViteOptions = {}) {
   let registeredRelease: Awaited<ReturnType<typeof registerBuildRelease>> =
     null;
 
+  let localDevReleaseFailed = false;
+
   const resolveBuildConfig = createBuildConfigResolver((result) => {
     receipt?.observeConfig(result);
 
@@ -524,7 +530,7 @@ export function interfere(options: InterfereViteOptions = {}) {
         }
       },
     },
-    async config(userConfig, { command, mode }) {
+    async config(userConfig, { command, isPreview, mode }) {
       const env = loadEnv(mode, resolveEnvDir(userConfig), "");
 
       mirrorKeysForDevServer(command, env);
@@ -539,8 +545,12 @@ export function interfere(options: InterfereViteOptions = {}) {
       // oxlint-disable-next-line node/no-process-env
       const releaseEnv = { ...env, ...process.env };
 
+      const apiKey = pickEnvValue(releaseEnv, "INTERFERE_API_KEY");
+
+      const apiUrl = pickEnvValue(releaseEnv, "INTERFERE_API_URL") ?? API_URL;
+
       const release = checkReleaseConfig(DIAGNOSTIC_CONTEXT, {
-        apiKey: pickEnvValue(releaseEnv, "INTERFERE_API_KEY"),
+        apiKey,
         commitSha: browser.commitSha,
         releaseSlug: browser.releaseSlug,
       });
@@ -552,11 +562,34 @@ export function interfere(options: InterfereViteOptions = {}) {
 
       if (registersRelease) {
         releaseConfig = await preflightViteBinding({
-          apiUrl: pickEnvValue(releaseEnv, "INTERFERE_API_URL") ?? API_URL,
+          apiUrl,
           apiKey: release.apiKey,
           publicKey: browser.publicKey,
           serviceName: browser.serviceName,
         });
+      }
+
+      const mintsLocalDevRelease =
+        command === "serve" &&
+        !isPreview &&
+        !browser.publicKey &&
+        apiKey !== undefined &&
+        !isTestEnv();
+
+      registeredRelease ??= mintsLocalDevRelease
+        ? await registerLocalDevRelease({
+            apiUrl,
+            apiKey,
+            serviceName: browser.serviceName,
+          })
+        : null;
+
+      if (mintsLocalDevRelease) {
+        localDevReleaseFailed = !registeredRelease?.token;
+      }
+
+      if (command === "serve" && registeredRelease?.token) {
+        browser.releaseSlug = LOCAL_DEV_RELEASE_SLUG;
       }
 
       registeredRelease ??=
@@ -565,7 +598,7 @@ export function interfere(options: InterfereViteOptions = {}) {
         browser.commitSha &&
         browser.releaseSlug
           ? await registerBuildRelease({
-              apiUrl: pickEnvValue(releaseEnv, "INTERFERE_API_URL") ?? API_URL,
+              apiUrl,
               apiKey: release.apiKey,
               publicKey: browser.publicKey,
               serviceName: browser.serviceName,
@@ -626,6 +659,14 @@ export function interfere(options: InterfereViteOptions = {}) {
       };
 
       uploadAfterAppBuild ||= config.builder !== undefined;
+
+      if (localDevReleaseFailed) {
+        localDevReleaseFailed = false;
+
+        config.logger.warn(
+          "[interfere] The dev server could not mint a local development release token with INTERFERE_API_KEY, so the browser sends no events. Check that Interfere is reachable, that the key has the release:write scope and that a service name resolves.",
+        );
+      }
 
       if (config.command === "build") {
         await receipt?.configure(config, {

@@ -93,6 +93,7 @@ const REMOVED_BUILD_ID_RE = /Removed: interfere\.buildId/u;
 beforeEach(() => {
   releaseNetwork.use(
     http.get("*/v3/releases/config", () => HttpResponse.error()),
+    http.post("*/v3/releases", () => HttpResponse.error()),
     http.get("*/v3/config", () => HttpResponse.json({})),
   );
 
@@ -241,6 +242,8 @@ describe(withInterfere, () => {
 
     await withTempProject("next-config-", async (projectDir) => {
       vi.stubEnv("INTERFERE_API_KEY", "interfere_ak_test_xxx");
+
+      vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test_xxx");
 
       process.chdir(projectDir);
 

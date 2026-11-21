@@ -21,6 +21,7 @@ import { PHASE_PRODUCTION_BUILD } from "next/constants.js";
 
 import {
   createBuildPreflight,
+  preflightMode,
   surfaceGlobals,
 } from "./internal/build/preflight.js";
 import { resolveBrowserApiHost } from "./internal/build/browser-api-host.js";
@@ -108,7 +109,7 @@ export interface ResolvedBuildConfig {
   readonly environment: string | null;
   readonly publicKey: string | null;
   /**
-   * The release a production build registered during preflight. Its token is
+   * The release a production build registered during preflight, or the shared local-development release the dev server minted. Its token is
    * stamped into the bundle as `__INTERFERE_RELEASE_TOKEN__` and the build
    * pipeline reuses it, so a build creates its release once.
    */
@@ -135,7 +136,7 @@ export interface ResolvedBuildConfig {
    * The surface configuration snapshot a production build resolves once by
    * public key. The server globals baked by the value-injection loader read
    * this object, so one build cannot see two different responses. Absent
-   * for the dev server and for builds without a public key.
+   * for the dev server and for builds without a public key; the dev server's only preflight result is its minted token.
    */
   readonly surfaceConfig?: SurfaceConfig | undefined;
 }
@@ -259,14 +260,13 @@ function buildInterfereConfig(
 ) {
   const config = resolveBuildConfig(settings, phase);
 
-  return withBuildPreflight(
-    !settings.disable && phase === PHASE_PRODUCTION_BUILD,
-    config,
-    (preflight) =>
-      buildResolvedInterfereConfig(phase, settings, nextConfig, {
-        ...config,
-        ...preflight,
-      }),
+  const mode = settings.disable ? null : preflightMode(phase, config);
+
+  return withBuildPreflight(mode, config, (preflight) =>
+    buildResolvedInterfereConfig(phase, settings, nextConfig, {
+      ...config,
+      ...preflight,
+    }),
   );
 }
 
