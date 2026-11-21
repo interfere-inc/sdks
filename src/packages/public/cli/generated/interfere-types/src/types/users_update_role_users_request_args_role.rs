@@ -8,6 +8,11 @@ pub enum UpdateRoleUsersRequestArgsRole {
     OrgOwner,
     OrgAdmin,
     OrgMember,
+    OrgProduct,
+    OrgSupport,
+    OrgViewer,
+    OrgBilling,
+    OrgAuditor,
     /// This variant is used for forward compatibility.
     /// If the server sends a value not recognized by the current SDK version,
     /// it will be captured here with the raw string value.
@@ -19,6 +24,11 @@ impl Serialize for UpdateRoleUsersRequestArgsRole {
             Self::OrgOwner => serializer.serialize_str("org:owner"),
             Self::OrgAdmin => serializer.serialize_str("org:admin"),
             Self::OrgMember => serializer.serialize_str("org:member"),
+            Self::OrgProduct => serializer.serialize_str("org:product"),
+            Self::OrgSupport => serializer.serialize_str("org:support"),
+            Self::OrgViewer => serializer.serialize_str("org:viewer"),
+            Self::OrgBilling => serializer.serialize_str("org:billing"),
+            Self::OrgAuditor => serializer.serialize_str("org:auditor"),
             Self::__Unknown(val) => serializer.serialize_str(val),
         }
     }
@@ -31,6 +41,11 @@ impl<'de> Deserialize<'de> for UpdateRoleUsersRequestArgsRole {
             "org:owner" => Ok(Self::OrgOwner),
             "org:admin" => Ok(Self::OrgAdmin),
             "org:member" => Ok(Self::OrgMember),
+            "org:product" => Ok(Self::OrgProduct),
+            "org:support" => Ok(Self::OrgSupport),
+            "org:viewer" => Ok(Self::OrgViewer),
+            "org:billing" => Ok(Self::OrgBilling),
+            "org:auditor" => Ok(Self::OrgAuditor),
             _ => Ok(Self::__Unknown(value)),
         }
     }
@@ -42,6 +57,11 @@ impl fmt::Display for UpdateRoleUsersRequestArgsRole {
             Self::OrgOwner => write!(f, "org:owner"),
             Self::OrgAdmin => write!(f, "org:admin"),
             Self::OrgMember => write!(f, "org:member"),
+            Self::OrgProduct => write!(f, "org:product"),
+            Self::OrgSupport => write!(f, "org:support"),
+            Self::OrgViewer => write!(f, "org:viewer"),
+            Self::OrgBilling => write!(f, "org:billing"),
+            Self::OrgAuditor => write!(f, "org:auditor"),
             Self::__Unknown(val) => write!(f, "{}", val),
         }
     }

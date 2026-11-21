@@ -26,7 +26,7 @@
     "catalog": {
       "@babel/core": "7.29.13",
       "@changesets/cli": "3.0.3",
-      "@cloudflare/vitest-plugin": "1.6.0",
+      "@cloudflare/vitest-plugin": "1.8.2",
       "@datadog/browser-rum": "7.17.0",
       "@fingerprintjs/fingerprintjs": "5.3.0",
       "@jridgewell/trace-mapping": "0.3.31",
@@ -105,7 +105,7 @@
   "packageManager": "bun@1.4.4",
   "patchedDependencies": {
     "@changesets/cli@3.0.3": "patches/@changesets%2Fcli@3.0.3.patch",
-    "@cloudflare/vitest-plugin@1.6.0": "patches/@cloudflare%2Fvitest-plugin@1.6.0.patch",
+    "@cloudflare/vitest-plugin@1.8.2": "patches/@cloudflare%2Fvitest-plugin@1.8.2.patch",
     "msw@2.15.0": "patches/msw@2.15.0.patch",
     "rrweb@2.2.0": "patches/rrweb@2.2.0.patch",
     "vitest@5.1.0": "patches/vitest@5.1.0.patch"

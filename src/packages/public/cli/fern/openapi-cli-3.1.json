@@ -72483,7 +72483,12 @@
                         "enum": [
                           "org:owner",
                           "org:admin",
-                          "org:member"
+                          "org:member",
+                          "org:product",
+                          "org:support",
+                          "org:viewer",
+                          "org:billing",
+                          "org:auditor"
                         ],
                         "type": "string"
                       }
@@ -72588,7 +72593,12 @@
                         "enum": [
                           "org:owner",
                           "org:admin",
-                          "org:member"
+                          "org:member",
+                          "org:product",
+                          "org:support",
+                          "org:viewer",
+                          "org:billing",
+                          "org:auditor"
                         ],
                         "type": "string"
                       }
@@ -72881,7 +72891,12 @@
                         "enum": [
                           "org:owner",
                           "org:admin",
-                          "org:member"
+                          "org:member",
+                          "org:product",
+                          "org:support",
+                          "org:viewer",
+                          "org:billing",
+                          "org:auditor"
                         ],
                         "type": "string"
                       }
@@ -73072,7 +73087,12 @@
                         "enum": [
                           "org:owner",
                           "org:admin",
-                          "org:member"
+                          "org:member",
+                          "org:product",
+                          "org:support",
+                          "org:viewer",
+                          "org:billing",
+                          "org:auditor"
                         ],
                         "type": "string"
                       },
