@@ -118,8 +118,49 @@ export function shouldDropUnresolvableStack(stacks: readonly string[]) {
 
 const MAX_CAUSE_DEPTH = 5;
 
-const COMPONENT_STACK_RE =
-  /^(?:in|at)\s+(?<name>[^\s(]+)(?:\s+\((?<fileName>[^\s:)]+):(?<line>\d+)(?::(?<column>\d+))?\))?/u;
+const V8_COMPONENT_FRAME_RE =
+  /^(?:in|at)\s+(?:(?<name>[^\s(]+)\s+\((?<location>[^()]*)\)|(?<bare>\S+))/u;
+
+const GECKO_COMPONENT_FRAME_RE = /^(?<name>[^@\s]*)@(?<location>\S+)$/u;
+
+const FRAME_LOCATION_PARTS_RE =
+  /^(?<file>.+?):(?<line>\d+)(?::(?<column>\d+))?$/u;
+
+function componentFrame(line: string) {
+  const groups = (
+    V8_COMPONENT_FRAME_RE.exec(line) ?? GECKO_COMPONENT_FRAME_RE.exec(line)
+  )?.groups;
+
+  if (!groups) {
+    return null;
+  }
+
+  const { bare, location, name } = groups;
+  const parts = FRAME_LOCATION_PARTS_RE.exec(location ?? bare ?? "")?.groups;
+  const located = parts?.["file"] && Number(parts["line"]) > 0 ? parts : null;
+  const fn = name || (located ? undefined : bare);
+
+  if (!fn && !located) {
+    return null;
+  }
+
+  const frame: IngestedFrame = {};
+
+  if (located) {
+    frame.file = located["file"];
+    frame.line = Number(located["line"]);
+
+    if (located["column"]) {
+      frame.column = Number(located["column"]);
+    }
+  }
+
+  if (fn) {
+    frame.fn = fn;
+  }
+
+  return frame;
+}
 
 /**
  * Parses a React `errorInfo.componentStack` string into synthetic frames.
@@ -130,49 +171,22 @@ const COMPONENT_STACK_RE =
  * React produces different formats across versions:
  *   - React 16–18 legacy:    `    in ComponentName`
  *                            `    in ComponentName (created by Parent)`
- *   - React 19 owner stacks: `    at ComponentName`
- *                            `    at ComponentName (file.tsx:10:5)`
+ *   - React 19, V8:          `    at ComponentName (https://host/app.js:10:5)`
+ *                            `    at https://host/app.js:10:5`
+ *                            `    at Suspense (<anonymous>)`
+ *   - React 19, Gecko/JSC:   `ComponentName@https://host/app.js:10:5`
+ *                            `@https://host/app.js:10:5`
+ *                            `Suspense@unknown:0:0`
  */
 export function parseReactComponentStack(componentStack: string) {
   const frames: IngestedFrame[] = [];
 
   for (const rawLine of componentStack.split("\n")) {
-    const line = rawLine.trim();
+    const frame = componentFrame(rawLine.trim());
 
-    if (!line) {
-      continue;
+    if (frame) {
+      frames.push({ ...frame, id: `react-${frames.length}` });
     }
-
-    const match = COMPONENT_STACK_RE.exec(line);
-
-    if (!match) {
-      continue;
-    }
-
-    const [, name, fileName, lineStr, colStr] = match;
-
-    if (!name) {
-      continue;
-    }
-
-    const frame: IngestedFrame = {
-      fn: name,
-      id: `react-${frames.length}`,
-    };
-
-    if (fileName) {
-      frame.file = fileName;
-    }
-
-    if (lineStr) {
-      frame.line = Number(lineStr);
-    }
-
-    if (colStr) {
-      frame.column = Number(colStr);
-    }
-
-    frames.push(frame);
   }
 
   return frames;

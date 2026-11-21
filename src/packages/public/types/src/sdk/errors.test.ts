@@ -597,6 +597,58 @@ describe(parseReactComponentStack, () => {
     ]);
   });
 
+  test("keeps the browser URL of React 19 production frames in V8 form", () => {
+    const stack = [
+      "    at d (https://assets.interfere.com/app-assets/route-session-B1x.js:1:2345)",
+      "    at https://assets.interfere.com/assets/Match-BUdeJLcb.js:1:3575",
+      "    at Suspense (<anonymous>)",
+      "    at main (<anonymous>)",
+    ].join("\n");
+
+    expect(parseReactComponentStack(stack)).toStrictEqual([
+      {
+        column: 2345,
+        file: "https://assets.interfere.com/app-assets/route-session-B1x.js",
+        fn: "d",
+        id: "react-0",
+        line: 1,
+      },
+      {
+        column: 3575,
+        file: "https://assets.interfere.com/assets/Match-BUdeJLcb.js",
+        id: "react-1",
+        line: 1,
+      },
+      { fn: "Suspense", id: "react-2" },
+      { fn: "main", id: "react-3" },
+    ]);
+  });
+
+  test("keeps the browser URL of React 19 production frames in Gecko and JavaScriptCore form", () => {
+    const stack = [
+      "d@https://assets.interfere.com/app-assets/route-session-B1x.js:1:2345",
+      "@https://assets.interfere.com/assets/Match-BUdeJLcb.js:1:3575",
+      "Suspense@unknown:0:0",
+    ].join("\n");
+
+    expect(parseReactComponentStack(stack)).toStrictEqual([
+      {
+        column: 2345,
+        file: "https://assets.interfere.com/app-assets/route-session-B1x.js",
+        fn: "d",
+        id: "react-0",
+        line: 1,
+      },
+      {
+        column: 3575,
+        file: "https://assets.interfere.com/assets/Match-BUdeJLcb.js",
+        id: "react-1",
+        line: 1,
+      },
+      { fn: "Suspense", id: "react-2" },
+    ]);
+  });
+
   test("returns an empty array for empty / blank input", () => {
     expect(parseReactComponentStack("")).toStrictEqual([]);
     expect(parseReactComponentStack("\n\n   \n")).toStrictEqual([]);
