@@ -1,7 +1,7 @@
 import { chromium } from "@playwright/test";
 import type { Browser } from "@playwright/test";
 import { HttpResponse } from "msw";
-import { afterAll, beforeAll, expect, test } from "vitest";
+import { afterAll, beforeAll, expect, test, vi } from "vitest";
 import { application } from "@interfere/test-utils/vitest/packed-application";
 import { receiver } from "@interfere/test-utils/vitest/telemetry-receiver";
 import { exceptions } from "@interfere/test-utils/vitest/otlp";
@@ -9,53 +9,102 @@ import { createReleaseRequest } from "@interfere/types/releases/definition";
 import { LOCAL_DEV_RELEASE_SLUG } from "@interfere/types/releases/slug";
 
 const TOKEN = "interfere_release_local_dev";
+const SETUP_MS = 120_000;
+const COMPILE_MS = 60_000;
+const EXPORT_MS = 15_000;
 
 let app: Awaited<ReturnType<typeof application>>;
 let collector: Awaited<ReturnType<typeof receiver>>;
 let dev: Awaited<ReturnType<typeof app.start>>;
 let browser: Browser;
+let browserExports: typeof collector.requests;
 
-beforeAll(async () => {
-  collector = await receiver({
-    respond: (request) =>
-      request.method === "POST" &&
-      new URL(request.url, "http://receiver").pathname === "/v3/releases"
-        ? HttpResponse.json({
-            build: { hash: "0123456789abcdef0123456789abcdef01234567" },
-            destination: {
-              environment: null,
-              id: "release_local_dev",
-              slug: LOCAL_DEV_RELEASE_SLUG,
-            },
-            org: { id: "org_local_dev", slug: "local-dev" },
-            source: { id: "source_local_dev" },
-            surface: null,
-            token: TOKEN,
-          })
-        : undefined,
-  });
+function drainRequests() {
+  return collector.requests.filter((request) =>
+    new URL(request.url, "http://receiver").pathname.startsWith("/drain/v1/"),
+  );
+}
 
-  app = await application(`${import.meta.dirname}/..`, [
-    "@interfere/vite",
-    "@interfere/react",
-    "react",
-    "react-dom",
-    "vite",
-  ]);
+beforeAll(
+  async () => {
+    collector = await receiver({
+      respond: (request) =>
+        request.method === "POST" &&
+        new URL(request.url, "http://receiver").pathname === "/v3/releases"
+          ? HttpResponse.json({
+              build: { hash: "0123456789abcdef0123456789abcdef01234567" },
+              destination: {
+                environment: null,
+                id: "release_local_dev",
+                slug: LOCAL_DEV_RELEASE_SLUG,
+              },
+              org: { id: "org_local_dev", slug: "local-dev" },
+              source: { id: "source_local_dev" },
+              surface: null,
+              token: TOKEN,
+            })
+          : undefined,
+    });
 
-  await app.copyFixture("acceptance");
+    app = await application(`${import.meta.dirname}/..`, [
+      "@interfere/vite",
+      "@interfere/react",
+      "react",
+      "react-dom",
+      "vite",
+    ]);
 
-  await app.copyFixture("dev-server");
+    await app.copyFixture("acceptance");
 
-  dev = await app.start("serve.ts", {
-    INTERFERE_API_KEY: "interfere_ak_local_dev",
-    INTERFERE_API_URL: collector.url,
-    ACCEPTANCE_INGEST_URL: collector.url,
-    INTERFERE_SOURCE_ID: "0123456789abcdef0123456789abcdef01234567",
-  });
+    await app.copyFixture("dev-server");
 
-  browser = await chromium.launch({ headless: true });
-}, 120_000);
+    dev = await app.start("serve.ts", {
+      INTERFERE_API_KEY: "interfere_ak_local_dev",
+      INTERFERE_API_URL: collector.url,
+      ACCEPTANCE_INGEST_URL: collector.url,
+      INTERFERE_SOURCE_ID: "0123456789abcdef0123456789abcdef01234567",
+    });
+
+    browser = await chromium.launch({ headless: true });
+
+    const context = await browser.newContext();
+
+    await context.addInitScript(() => {
+      Object.assign(globalThis, { __INTERFERE_FORCE_ENABLE__: true });
+    });
+
+    await context.route("https://**/*", async (route) =>
+      route.abort("blockedbyclient"),
+    );
+
+    const page = await context.newPage();
+
+    await page.goto(dev.url, { timeout: COMPILE_MS });
+
+    await page
+      .getByLabel("Session", { exact: true })
+      .filter({ hasText: /\S/u })
+      .waitFor({ timeout: COMPILE_MS });
+
+    await page.getByRole("button", { name: "Capture", exact: true }).click();
+
+    browserExports = await vi.waitFor(
+      () => {
+        if (exceptions(collector.requests, "acceptance-manual").length === 0) {
+          throw new Error(
+            "The browser has not exported the captured exception",
+          );
+        }
+
+        return drainRequests();
+      },
+      { timeout: EXPORT_MS },
+    );
+
+    await context.close();
+  },
+  SETUP_MS + COMPILE_MS + EXPORT_MS,
+);
 
 afterAll(async () => {
   await browser.close();
@@ -82,43 +131,15 @@ test("the dev server registers the local development release without a destinati
   ).toMatchObject({ destination: null, slug: LOCAL_DEV_RELEASE_SLUG });
 });
 
-test("a dev server with an API key and no public key exports browser telemetry under its minted release token", async () => {
+test("a dev server with an API key and no public key exports browser telemetry under its minted release token", () => {
   expect.hasAssertions();
 
-  const context = await browser.newContext();
+  expect(exceptions(collector.requests, "acceptance-manual")).toHaveLength(1);
 
-  await context.addInitScript(() => {
-    Object.assign(globalThis, { __INTERFERE_FORCE_ENABLE__: true });
-  });
+  expect(browserExports.length).toBeGreaterThan(0);
 
-  await context.route("https://**/*", async (route) =>
-    route.abort("blockedbyclient"),
-  );
-
-  const page = await context.newPage();
-
-  await page.goto(dev.url);
-
-  await page
-    .getByRole("button", { name: "Capture", exact: true })
-    .click({ timeout: 60_000 });
-
-  await expect
-    .poll(() => exceptions(collector.requests, "acceptance-manual").length, {
-      timeout: 15_000,
-    })
-    .toBe(1);
-
-  const exports = collector.requests.filter((request) =>
-    new URL(request.url, "http://receiver").pathname.startsWith("/drain/v1/"),
-  );
-
-  expect(exports.length).toBeGreaterThan(0);
-
-  for (const request of exports) {
+  for (const request of browserExports) {
     expect(request.headers.get("x-interfere-release-token")).toBe(TOKEN);
     expect(request.headers.get("x-interfere-public-key")).toBeNull();
   }
-
-  await context.close();
 });
