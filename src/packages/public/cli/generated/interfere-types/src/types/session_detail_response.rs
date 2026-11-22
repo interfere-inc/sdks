@@ -2,7 +2,7 @@ pub use crate::prelude::*;
 #[allow(unused_imports)]
 use super::*;
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct SessionDetailResponse {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub browser: Option<String>,
@@ -39,7 +39,8 @@ pub struct SessionDetailResponse {
     #[serde(default)]
     pub session_record_id: String,
     #[serde(rename = "surfaceId")]
-    pub surface_id: SessionDetailResponseSurfaceId,
+    #[serde(default)]
+    pub surface_id: String,
 }
 
 impl SessionDetailResponse {
@@ -62,7 +63,7 @@ pub struct SessionDetailResponseBuilder {
     sequence: Option<f64>,
     session_id: Option<String>,
     session_record_id: Option<String>,
-    surface_id: Option<SessionDetailResponseSurfaceId>,
+    surface_id: Option<String>,
 }
 
 impl SessionDetailResponseBuilder {
@@ -121,8 +122,8 @@ impl SessionDetailResponseBuilder {
         self
     }
 
-    pub fn surface_id(mut self, value: SessionDetailResponseSurfaceId) -> Self {
-        self.surface_id = Some(value);
+    pub fn surface_id(mut self, value: impl Into<String>) -> Self {
+        self.surface_id = Some(value.into());
         self
     }
 

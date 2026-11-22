@@ -5,7 +5,7 @@ use super::*;
 /// Query parameters for list
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq, Eq, Hash)]
 pub struct ListQueryRequest {
-    /// Last session lastEventAt, converted from epoch milliseconds to UTC YYYY-MM-DD HH:mm:ss. Send together with cursor_session_id and cursor_device_id.
+    /// Last session lastEventAt, converted from epoch milliseconds to UTC YYYY-MM-DD HH:mm:ss. Send together with cursor_session_id, cursor_surface_id and cursor_device_id.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cursor_last_event_at: Option<String>,
     /// Last session sessionId from the previous page; breaks ties in descending last-event time.
@@ -13,7 +13,7 @@ pub struct ListQueryRequest {
     pub cursor_session_id: Option<String>,
     /// Last session surfaceId from the previous page.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub cursor_surface_id: Option<SessionsListRequestCursorSurfaceId>,
+    pub cursor_surface_id: Option<String>,
     /// Last session deviceId from the previous page.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cursor_device_id: Option<String>,
@@ -44,7 +44,7 @@ impl ListQueryRequest {
 pub struct ListQueryRequestBuilder {
     cursor_last_event_at: Option<String>,
     cursor_session_id: Option<String>,
-    cursor_surface_id: Option<SessionsListRequestCursorSurfaceId>,
+    cursor_surface_id: Option<String>,
     cursor_device_id: Option<String>,
     date_from: Option<NaiveDate>,
     date_to: Option<NaiveDate>,
@@ -64,8 +64,8 @@ impl ListQueryRequestBuilder {
         self
     }
 
-    pub fn cursor_surface_id(mut self, value: SessionsListRequestCursorSurfaceId) -> Self {
-        self.cursor_surface_id = Some(value);
+    pub fn cursor_surface_id(mut self, value: impl Into<String>) -> Self {
+        self.cursor_surface_id = Some(value.into());
         self
     }
 

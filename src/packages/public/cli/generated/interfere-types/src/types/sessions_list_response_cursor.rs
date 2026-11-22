@@ -9,7 +9,7 @@ pub struct SessionsListResponseCursor {
     #[serde(default)]
     pub cursor_session_id: String,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub cursor_surface_id: Option<SessionsListResponseCursorCursorSurfaceId>,
+    pub cursor_surface_id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cursor_device_id: Option<String>,
 }
@@ -25,7 +25,7 @@ impl SessionsListResponseCursor {
 pub struct SessionsListResponseCursorBuilder {
     cursor_last_event_at: Option<String>,
     cursor_session_id: Option<String>,
-    cursor_surface_id: Option<SessionsListResponseCursorCursorSurfaceId>,
+    cursor_surface_id: Option<String>,
     cursor_device_id: Option<String>,
 }
 
@@ -40,8 +40,8 @@ impl SessionsListResponseCursorBuilder {
         self
     }
 
-    pub fn cursor_surface_id(mut self, value: SessionsListResponseCursorCursorSurfaceId) -> Self {
-        self.cursor_surface_id = Some(value);
+    pub fn cursor_surface_id(mut self, value: impl Into<String>) -> Self {
+        self.cursor_surface_id = Some(value.into());
         self
     }
 

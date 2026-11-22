@@ -323,7 +323,7 @@ impl SessionsClient {
     /// # Arguments
     ///
     /// * `workspace` - Workspace URL slug, using lowercase letters, numbers, and hyphens.
-    /// * `cursor_last_event_at` - Last session lastEventAt, converted from epoch milliseconds to UTC YYYY-MM-DD HH:mm:ss. Send together with cursor_session_id and cursor_device_id.
+    /// * `cursor_last_event_at` - Last session lastEventAt, converted from epoch milliseconds to UTC YYYY-MM-DD HH:mm:ss. Send together with cursor_session_id, cursor_surface_id and cursor_device_id.
     /// * `cursor_session_id` - Last session sessionId from the previous page; breaks ties in descending last-event time.
     /// * `cursor_surface_id` - Last session surfaceId from the previous page.
     /// * `cursor_device_id` - Last session deviceId from the previous page.
@@ -399,7 +399,7 @@ impl SessionsClient {
                 QueryBuilder::new()
                     .string("cursor_last_event_at", request.cursor_last_event_at.clone())
                     .string("cursor_session_id", request.cursor_session_id.clone())
-                    .serialize("cursor_surface_id", request.cursor_surface_id.clone())
+                    .string("cursor_surface_id", request.cursor_surface_id.clone())
                     .string("cursor_device_id", request.cursor_device_id.clone())
                     .date("date_from", request.date_from.clone())
                     .date("date_to", request.date_to.clone())

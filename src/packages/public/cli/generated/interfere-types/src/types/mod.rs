@@ -5,8 +5,8 @@
 //!
 //! ## Type Categories
 //!
-//! - **Request/Response Types**: 2299 types for API operations
-//! - **Model Types**: 626 types for data representation
+//! - **Request/Response Types**: 2291 types for API operations
+//! - **Model Types**: 624 types for data representation
 
 pub mod drain_drain_otlp_export_request_signal;
 pub mod traces_trace_activity_request_occurred_at;
@@ -214,8 +214,6 @@ pub mod unsupported_media_type_error_body_code_code;
 pub mod unsupported_media_type_error_body_code_data;
 pub mod unsupported_media_type_error_body_code;
 pub mod unsupported_media_type_error_body;
-pub mod sessions_list_request_cursor_surface_id_one;
-pub mod sessions_list_request_cursor_surface_id;
 pub mod not_found_error_body_two_code;
 pub mod not_found_error_body_two;
 pub mod not_found_error_body_three_code;
@@ -418,8 +416,6 @@ pub mod tiptap_mark_type;
 pub mod tiptap_mark;
 pub mod rpc_unexpected_error;
 pub mod workspace_summary;
-pub mod session_summary_surface_id_one;
-pub mod session_summary_surface_id;
 pub mod session_summary;
 pub mod connection_provider;
 pub mod connection_provider_metadata_zero_provider;
@@ -2559,11 +2555,7 @@ pub mod session_detail_response_events_item_problem_icon;
 pub mod session_detail_response_events_item_problem;
 pub mod session_detail_response_events_item;
 pub mod session_detail_response_navigations_item;
-pub mod session_detail_response_surface_id_one;
-pub mod session_detail_response_surface_id;
 pub mod session_detail_response;
-pub mod sessions_list_response_cursor_cursor_surface_id_one;
-pub mod sessions_list_response_cursor_cursor_surface_id;
 pub mod sessions_list_response_cursor;
 pub mod sessions_list_response;
 pub mod link_cli_destination_response;
@@ -2701,8 +2693,6 @@ pub mod problem_timeseries_response_data_item;
 pub mod problem_timeseries_response;
 pub mod problem_sessions_response_availability;
 pub mod problem_sessions_response_sessions_item_consumer;
-pub mod problem_sessions_response_sessions_item_surface_id_one;
-pub mod problem_sessions_response_sessions_item_surface_id;
 pub mod problem_sessions_response_sessions_item;
 pub mod problem_sessions_response;
 pub mod submit_problem_feedback_response;
@@ -3140,8 +3130,6 @@ pub use unsupported_media_type_error_body_code_code::UnsupportedMediaTypeErrorBo
 pub use unsupported_media_type_error_body_code_data::UnsupportedMediaTypeErrorBodyCodeData;
 pub use unsupported_media_type_error_body_code::UnsupportedMediaTypeErrorBodyCode;
 pub use unsupported_media_type_error_body::UnsupportedMediaTypeErrorBody;
-pub use sessions_list_request_cursor_surface_id_one::SessionsListRequestCursorSurfaceIdOne;
-pub use sessions_list_request_cursor_surface_id::SessionsListRequestCursorSurfaceId;
 pub use not_found_error_body_two_code::NotFoundErrorBodyTwoCode;
 pub use not_found_error_body_two::NotFoundErrorBodyTwo;
 pub use not_found_error_body_three_code::NotFoundErrorBodyThreeCode;
@@ -3344,8 +3332,6 @@ pub use tiptap_mark_type::TiptapMarkType;
 pub use tiptap_mark::TiptapMark;
 pub use rpc_unexpected_error::RpcUnexpectedError;
 pub use workspace_summary::WorkspaceSummary;
-pub use session_summary_surface_id_one::SessionSummarySurfaceIdOne;
-pub use session_summary_surface_id::SessionSummarySurfaceId;
 pub use session_summary::SessionSummary;
 pub use connection_provider::ConnectionProvider;
 pub use connection_provider_metadata_zero_provider::ConnectionProviderMetadataZeroProvider;
@@ -5485,11 +5471,7 @@ pub use session_detail_response_events_item_problem_icon::SessionDetailResponseE
 pub use session_detail_response_events_item_problem::SessionDetailResponseEventsItemProblem;
 pub use session_detail_response_events_item::SessionDetailResponseEventsItem;
 pub use session_detail_response_navigations_item::SessionDetailResponseNavigationsItem;
-pub use session_detail_response_surface_id_one::SessionDetailResponseSurfaceIdOne;
-pub use session_detail_response_surface_id::SessionDetailResponseSurfaceId;
 pub use session_detail_response::SessionDetailResponse;
-pub use sessions_list_response_cursor_cursor_surface_id_one::SessionsListResponseCursorCursorSurfaceIdOne;
-pub use sessions_list_response_cursor_cursor_surface_id::SessionsListResponseCursorCursorSurfaceId;
 pub use sessions_list_response_cursor::SessionsListResponseCursor;
 pub use sessions_list_response::SessionsListResponse;
 pub use link_cli_destination_response::LinkCliDestinationResponse;
@@ -5627,8 +5609,6 @@ pub use problem_timeseries_response_data_item::ProblemTimeseriesResponseDataItem
 pub use problem_timeseries_response::ProblemTimeseriesResponse;
 pub use problem_sessions_response_availability::ProblemSessionsResponseAvailability;
 pub use problem_sessions_response_sessions_item_consumer::ProblemSessionsResponseSessionsItemConsumer;
-pub use problem_sessions_response_sessions_item_surface_id_one::ProblemSessionsResponseSessionsItemSurfaceIdOne;
-pub use problem_sessions_response_sessions_item_surface_id::ProblemSessionsResponseSessionsItemSurfaceId;
 pub use problem_sessions_response_sessions_item::ProblemSessionsResponseSessionsItem;
 pub use problem_sessions_response::ProblemSessionsResponse;
 pub use submit_problem_feedback_response::SubmitProblemFeedbackResponse;
