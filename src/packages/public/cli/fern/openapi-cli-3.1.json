@@ -4214,8 +4214,15 @@
             "minLength": 1
           },
           "surfaceId": {
-            "type": "string",
-            "format": "uuid"
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "const": ""
+              }
+            ]
           }
         },
         "required": [
@@ -59120,8 +59127,15 @@
             "type": "string"
           },
           "surfaceId": {
-            "type": "string",
-            "format": "uuid"
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "const": ""
+              }
+            ]
           }
         },
         "required": [
@@ -59164,8 +59178,15 @@
                     "type": "string"
                   },
                   "cursor_surface_id": {
-                    "type": "string",
-                    "format": "uuid"
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      {
+                        "const": ""
+                      }
+                    ]
                   },
                   "cursor_device_id": {
                     "type": "string",
@@ -61469,8 +61490,15 @@
                   "type": "string"
                 },
                 "surfaceId": {
-                  "type": "string",
-                  "format": "uuid"
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    {
+                      "const": ""
+                    }
+                  ]
                 },
                 "urls": {
                   "anyOf": [
@@ -82263,7 +82291,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "description": "Last session lastEventAt, converted from epoch milliseconds to UTC YYYY-MM-DD HH:mm:ss. Send together with cursor_session_id, cursor_surface_id and cursor_device_id."
+              "description": "Last session lastEventAt, converted from epoch milliseconds to UTC YYYY-MM-DD HH:mm:ss. Send together with cursor_session_id and cursor_device_id."
             },
             "allowEmptyValue": true,
             "allowReserved": true
@@ -82284,8 +82312,15 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string",
-              "format": "uuid",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "const": ""
+                }
+              ],
               "description": "Last session surfaceId from the previous page."
             },
             "allowEmptyValue": true,

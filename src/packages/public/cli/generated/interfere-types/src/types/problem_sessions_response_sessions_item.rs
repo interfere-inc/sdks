@@ -2,7 +2,7 @@ pub use crate::prelude::*;
 #[allow(unused_imports)]
 use super::*;
 
-#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct ProblemSessionsResponseSessionsItem {
     #[serde(rename = "anonymousNumber")]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -65,8 +65,7 @@ pub struct ProblemSessionsResponseSessionsItem {
     #[serde(default)]
     pub session_record_id: String,
     #[serde(rename = "surfaceId")]
-    #[serde(default)]
-    pub surface_id: String,
+    pub surface_id: ProblemSessionsResponseSessionsItemSurfaceId,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub urls: Option<Vec<String>>,
 }
@@ -96,7 +95,7 @@ pub struct ProblemSessionsResponseSessionsItemBuilder {
     sequence: Option<f64>,
     session_id: Option<String>,
     session_record_id: Option<String>,
-    surface_id: Option<String>,
+    surface_id: Option<ProblemSessionsResponseSessionsItemSurfaceId>,
     urls: Option<Vec<String>>,
 }
 
@@ -181,8 +180,8 @@ impl ProblemSessionsResponseSessionsItemBuilder {
         self
     }
 
-    pub fn surface_id(mut self, value: impl Into<String>) -> Self {
-        self.surface_id = Some(value.into());
+    pub fn surface_id(mut self, value: ProblemSessionsResponseSessionsItemSurfaceId) -> Self {
+        self.surface_id = Some(value);
         self
     }
 
