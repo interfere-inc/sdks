@@ -1,4 +1,4 @@
-import { HttpNetworkFrame, WebSocketNetworkFrame } from "msw/experimental";
+import { checkUnhandledBrowserFrame } from "./browser-network-policy.ts";
 import { setupWorker } from "msw/browser";
 import { afterAll, beforeAll, beforeEach } from "vitest";
 
@@ -92,40 +92,7 @@ beforeAll(async () => {
   await network.start({
     quiet: true,
     onUnhandledFrame({ frame }) {
-      if (frame instanceof WebSocketNetworkFrame) {
-        const { url } = frame.data.connection.client;
-
-        if (url.host !== location.host) {
-          unexpectedRequests.push(`WS ${url.href}`);
-
-          throw new Error(`Unexpected WebSocket: ${url.href}`);
-        }
-
-        return;
-      }
-
-      if (!(frame instanceof HttpNetworkFrame)) {
-        throw new TypeError(`Unexpected network protocol: ${frame.protocol}`);
-      }
-
-      const { request } = frame.data;
-      const url = new URL(request.url);
-
-      if (
-        (url.origin === globalThis.location.origin &&
-          (/^(?:\/@(?:fs|id|vite)\/|\/__vitest|\/node_modules\/|\/src\/|\/test\/|\/mockServiceWorker\.js$|\/favicon\.ico$)/u.test(
-            url.pathname,
-          ) ||
-            (url.searchParams.has("browserv") &&
-              /\.browser\.test\.[cm]?[jt]sx?$/u.test(url.pathname)))) ||
-        /^https:\/\/clerk-[\da-f-]+\.clerk\.accounts\.dev\//u.test(request.url)
-      ) {
-        return;
-      }
-
-      unexpectedRequests.push(`${request.method} ${request.url}`);
-
-      throw new Error(`Unexpected request: ${request.method} ${request.url}`);
+      checkUnhandledBrowserFrame(frame, location, unexpectedRequests);
     },
     serviceWorker: { url: "/mockServiceWorker.js" },
   });
