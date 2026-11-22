@@ -1659,7 +1659,7 @@ Lists sessions in descending last-event order. For the next page, send both curs
 | `--end-user-id` | `string (uuid)` | Yes |  |
 | `--cursor-last-event-at` | `string` | No |  |
 | `--cursor-session-id` | `string` | No |  |
-| `--cursor-surface-id` | `string (uuid)` | No |  |
+| `--cursor-surface-id` | `string` | No |  |
 | `--cursor-device-id` | `string` | No |  |
 | `--date-from` | `string (date)` | Yes |  |
 | `--date-to` | `string (date)` | Yes |  |
