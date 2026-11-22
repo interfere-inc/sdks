@@ -3,9 +3,7 @@
     "build": "tsdown && cargo build --locked --release",
     "lint:oxlint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/cli",
     "test": "cargo test --locked",
-    "test:wire": "cargo test --locked --manifest-path generated/Cargo.toml --target-dir target --test wire_test",
-    "typecheck": "bun check && cargo fmt --check && cargo clippy --locked --bin interfere --tests -- -D warnings",
-    "typegen": "fern generate --local --force && yq -i '.package.version = strenv(npm_package_version)' Cargo.toml && yq -i '.package.version = strenv(npm_package_version)' generated/Cargo.toml && yq -i '.lib.path = (.lib.path // \"src/lib.rs\") | ... comments = \"\"' generated/Cargo.toml && yq -i '.lib.path = (.lib.path // \"src/lib.rs\") | ... comments = \"\"' generated/interfere-sdk/Cargo.toml && yq -i '.lib.path = (.lib.path // \"src/lib.rs\") | ... comments = \"\"' generated/interfere-types/Cargo.toml && oxfmt generated/Cargo.toml generated/interfere-sdk/Cargo.toml generated/interfere-types/Cargo.toml && cargo update --workspace && cargo update --manifest-path generated/Cargo.toml --workspace && grep -rlF '<CLI>' generated/src | xargs -r perl -pi -e 's/<CLI>/interfere/g'"
+    "test:wire": "cargo test --locked --manifest-path generated/Cargo.toml --target-dir target --test wire_test"
   },
   "name": "@interfere/cli",
   "version": "1.18.0",
