@@ -60697,6 +60697,12 @@
             ],
             "type": "string"
           },
+          "historyFrom": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "Earliest retained service-version history when the requested window is partial; older builds are not shown."
+          },
           "repository": {
             "anyOf": [
               {
