@@ -10,6 +10,15 @@
     "test": {
       "dependsOn": ["$TURBO_EXTENDS$", "build"],
       "tags": ["$TURBO_EXTENDS$", "test-other-browsers"]
+    },
+    "build:js": {
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "$TURBO_ROOT$/src/packages/public/tsdown.config.ts"
+      ]
+    },
+    "build": {
+      "dependsOn": ["$TURBO_EXTENDS$", "build:js"]
     }
   }
 }

@@ -1,5 +1,23 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "tags": ["public"],
-  "extends": ["//"]
+  "tags": ["public", "compiled"],
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["$TURBO_EXTENDS$", "build:js", "build:types"],
+      "outputs": []
+    },
+    "build:js": {
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "$TURBO_ROOT$/src/packages/public/tsdown.config.ts"
+      ]
+    },
+    "build:types": {
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "$TURBO_ROOT$/src/packages/public/tsdown.config.ts"
+      ]
+    }
+  }
 }

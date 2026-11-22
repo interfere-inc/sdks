@@ -134,6 +134,7 @@
   },
   "scripts": {
     "build": "tsdown",
+    "build:js": "tsdown --no-clean --no-dts",
     "lint:oxlint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/types",
     "test": "node ../test-config/src/cli.ts run --config ../../../../vitest.config.ts",
     "typecheck": "bun check"

@@ -6,6 +6,9 @@
     "test": {
       "dependsOn": ["$TURBO_EXTENDS$", "build"],
       "tags": ["$TURBO_EXTENDS$", "test-react"]
+    },
+    "build": {
+      "dependsOn": ["$TURBO_EXTENDS$", "build:js"]
     }
   }
 }

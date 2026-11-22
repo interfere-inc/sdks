@@ -8,10 +8,17 @@
       "tags": ["test-vite"]
     },
     "build": {
-      "env": ["!VITE_*"]
+      "env": ["!VITE_*"],
+      "dependsOn": ["$TURBO_EXTENDS$", "build:js"]
     },
     "typegen": {
       "env": ["!VITE_*"]
+    },
+    "build:js": {
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "$TURBO_ROOT$/src/packages/public/tsdown.config.ts"
+      ]
     }
   }
 }
