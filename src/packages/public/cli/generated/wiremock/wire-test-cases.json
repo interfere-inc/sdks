@@ -2823,7 +2823,7 @@
       "requiresAuth": true,
       "response": {
         "status": 200,
-        "body": "{\n  \"ownership\": \"datasource\",\n  \"historyFrom\": 1,\n  \"repository\": {\n    \"name\": \"name\",\n    \"workingDirectory\": \"workingDirectory\"\n  },\n  \"failingCommit\": \"failingCommit\",\n  \"failingCommitUnavailable\": \"repository_unlinked\",\n  \"builds\": [\n    {\n      \"environment\": \"environment\",\n      \"serviceName\": \"serviceName\",\n      \"version\": \"version\",\n      \"commitSha\": \"commitSha\",\n      \"firstSeenAt\": 1,\n      \"lastSeenAt\": 1\n    }\n  ]\n}"
+        "body": "{\n  \"ownership\": \"datasource\",\n  \"repository\": {\n    \"name\": \"name\",\n    \"workingDirectory\": \"workingDirectory\"\n  },\n  \"failingCommit\": \"failingCommit\",\n  \"failingCommitUnavailable\": \"repository_unlinked\",\n  \"builds\": [\n    {\n      \"environment\": \"environment\",\n      \"serviceName\": \"serviceName\",\n      \"version\": \"version\",\n      \"commitSha\": \"commitSha\",\n      \"firstSeenAt\": 1,\n      \"lastSeenAt\": 1\n    }\n  ]\n}"
       }
     },
     {

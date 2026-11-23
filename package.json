@@ -103,13 +103,13 @@
   "patchedDependencies": {
     "@changesets/cli@3.0.3": "patches/@changesets%2Fcli@3.0.3.patch",
     "@cloudflare/vitest-plugin@1.8.4": "patches/@cloudflare%2Fvitest-plugin@1.8.4.patch",
-    "@mswjs/interceptors@0.45.12": "patches/@mswjs%2Finterceptors@0.45.12.patch",
     "@msw/cloudflare@0.2.0": "patches/@msw%2Fcloudflare@0.2.0.patch",
+    "@mswjs/interceptors@0.45.12": "patches/@mswjs%2Finterceptors@0.45.12.patch",
     "@vitest/browser@5.1.1": "patches/@vitest%2Fbrowser@5.1.1.patch",
+    "msw@3.0.7": "patches/msw@3.0.7.patch",
     "rrweb@2.2.2": "patches/rrweb@2.2.2.patch",
     "undici@7.30.1": "patches/undici@7.30.1.patch",
     "undici@8.12.4": "patches/undici@8.12.4.patch",
-    "vitest@5.1.1": "patches/vitest@5.1.1.patch",
-    "msw@3.0.7": "patches/msw@3.0.7.patch"
+    "vitest@5.1.1": "patches/vitest@5.1.1.patch"
   }
 }

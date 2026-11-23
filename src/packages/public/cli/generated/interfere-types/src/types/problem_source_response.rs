@@ -5,10 +5,6 @@ use super::*;
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct ProblemSourceResponse {
     pub ownership: ProblemSourceResponseOwnership,
-    /// Earliest retained service-version history when the requested window is partial; older builds are not shown.
-    #[serde(rename = "historyFrom")]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub history_from: Option<i64>,
     /// The repository linked to the failing code; null when none is linked
     #[serde(skip_serializing_if = "Option::is_none")]
     pub repository: Option<ProblemSourceResponseRepository>,
@@ -34,7 +30,6 @@ impl ProblemSourceResponse {
 #[non_exhaustive]
 pub struct ProblemSourceResponseBuilder {
     ownership: Option<ProblemSourceResponseOwnership>,
-    history_from: Option<i64>,
     repository: Option<ProblemSourceResponseRepository>,
     failing_commit: Option<String>,
     failing_commit_unavailable: Option<ProblemSourceResponseFailingCommitUnavailable>,
@@ -44,11 +39,6 @@ pub struct ProblemSourceResponseBuilder {
 impl ProblemSourceResponseBuilder {
     pub fn ownership(mut self, value: ProblemSourceResponseOwnership) -> Self {
         self.ownership = Some(value);
-        self
-    }
-
-    pub fn history_from(mut self, value: i64) -> Self {
-        self.history_from = Some(value);
         self
     }
 
@@ -79,7 +69,6 @@ impl ProblemSourceResponseBuilder {
     pub fn build(self) -> Result<ProblemSourceResponse, BuildError> {
         Ok(ProblemSourceResponse {
             ownership: self.ownership.ok_or_else(|| BuildError::missing_field("ownership"))?,
-            history_from: self.history_from,
             repository: self.repository,
             failing_commit: self.failing_commit,
             failing_commit_unavailable: self.failing_commit_unavailable,
