@@ -8,7 +8,6 @@ pub struct QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentAct
     pub action_kind: QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindActionKind,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub repository: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindRepository>,
-    /// Milliseconds since the Unix epoch in UTC.
     #[serde(rename = "repositoryAccessReadyAt")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub repository_access_ready_at: Option<i64>,
@@ -51,10 +50,11 @@ pub struct QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentAct
     pub placeholder: Option<String>,
     #[serde(default)]
     pub question: String,
-    /// Milliseconds since the Unix epoch in UTC.
     #[serde(rename = "respondedAt")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub responded_at: Option<i64>,
+    #[serde(default)]
+    #[serde(with = "crate::core::number_serializers::option")]
+    pub responded_at: Option<f64>,
     #[serde(rename = "selectedOptionId")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub selected_option_id: Option<String>,
@@ -90,7 +90,7 @@ pub struct QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentAct
     options: Option<Vec<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindOptionsItem>>,
     placeholder: Option<String>,
     question: Option<String>,
-    responded_at: Option<i64>,
+    responded_at: Option<f64>,
     selected_option_id: Option<String>,
     selected_option_ids: Option<Vec<String>>,
 }
@@ -186,7 +186,7 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKin
         self
     }
 
-    pub fn responded_at(mut self, value: i64) -> Self {
+    pub fn responded_at(mut self, value: f64) -> Self {
         self.responded_at = Some(value);
         self
     }

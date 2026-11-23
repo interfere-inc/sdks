@@ -23,10 +23,11 @@ pub struct QueryIntegrationsInstallationResponseProviderMetadataSlug {
     #[serde(rename = "oauthScopes")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub oauth_scopes: Option<Vec<String>>,
-    /// Milliseconds since the Unix epoch in UTC.
     #[serde(rename = "consentCheckedAt")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub consent_checked_at: Option<i64>,
+    #[serde(default)]
+    #[serde(with = "crate::core::number_serializers::option")]
+    pub consent_checked_at: Option<f64>,
 }
 
 impl QueryIntegrationsInstallationResponseProviderMetadataSlug {
@@ -47,7 +48,7 @@ pub struct QueryIntegrationsInstallationResponseProviderMetadataSlugBuilder {
     slug: Option<String>,
     provider: Option<QueryIntegrationsInstallationResponseProviderMetadataSlugProvider>,
     oauth_scopes: Option<Vec<String>>,
-    consent_checked_at: Option<i64>,
+    consent_checked_at: Option<f64>,
 }
 
 impl QueryIntegrationsInstallationResponseProviderMetadataSlugBuilder {
@@ -96,7 +97,7 @@ impl QueryIntegrationsInstallationResponseProviderMetadataSlugBuilder {
         self
     }
 
-    pub fn consent_checked_at(mut self, value: i64) -> Self {
+    pub fn consent_checked_at(mut self, value: f64) -> Self {
         self.consent_checked_at = Some(value);
         self
     }

@@ -10,7 +10,6 @@ pub struct TimelineEventContentActionKindEvidenceStatus {
     #[serde(rename = "requestedEvidenceArrived")]
     #[serde(default)]
     pub requested_evidence_arrived: bool,
-    /// Milliseconds since the Unix epoch in UTC.
     #[serde(rename = "checkedAt")]
     #[serde(default)]
     pub checked_at: i64,

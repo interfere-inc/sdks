@@ -33,7 +33,6 @@ pub struct QueryIntegrationsGheServerInstallationResponseProviderMetadataThree {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub groups: Option<QueryIntegrationsGheServerInstallationResponseProviderMetadataThreeGroups>,
     pub provider: QueryIntegrationsGheServerInstallationResponseProviderMetadataThreeProvider,
-    /// Milliseconds since the Unix epoch in UTC.
     #[serde(rename = "repositoryDiscoveryRequestedAt")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub repository_discovery_requested_at: Option<i64>,

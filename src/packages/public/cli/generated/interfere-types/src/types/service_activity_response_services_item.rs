@@ -7,7 +7,6 @@ pub struct ServiceActivityResponseServicesItem {
     #[serde(rename = "serviceId")]
     #[serde(default)]
     pub service_id: String,
-    /// Milliseconds since the Unix epoch in UTC.
     #[serde(rename = "lastSeenAt")]
     #[serde(default)]
     pub last_seen_at: i64,

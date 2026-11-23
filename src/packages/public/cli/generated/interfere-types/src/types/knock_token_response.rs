@@ -2,12 +2,12 @@ pub use crate::prelude::*;
 #[allow(unused_imports)]
 use super::*;
 
-#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct KnockTokenResponse {
-    /// Seconds since the Unix epoch in UTC.
     #[serde(rename = "expiresAt")]
     #[serde(default)]
-    pub expires_at: i64,
+    #[serde(with = "crate::core::number_serializers")]
+    pub expires_at: f64,
     #[serde(rename = "userToken")]
     #[serde(default)]
     pub user_token: String,
@@ -22,12 +22,12 @@ impl KnockTokenResponse {
 #[derive(Clone, PartialEq, Default, Debug)]
 #[non_exhaustive]
 pub struct KnockTokenResponseBuilder {
-    expires_at: Option<i64>,
+    expires_at: Option<f64>,
     user_token: Option<String>,
 }
 
 impl KnockTokenResponseBuilder {
-    pub fn expires_at(mut self, value: i64) -> Self {
+    pub fn expires_at(mut self, value: f64) -> Self {
         self.expires_at = Some(value);
         self
     }

@@ -6,7 +6,6 @@ use super::*;
 pub struct QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindEvidenceStatusReceipt {
     #[serde(rename = "requiredEvidence")]
     pub required_evidence: QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindEvidenceStatusReceiptRequiredEvidence,
-    /// Milliseconds since the Unix epoch in UTC.
     #[serde(rename = "observedAt")]
     #[serde(default)]
     pub observed_at: i64,

@@ -4,7 +4,6 @@ use super::*;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq, Eq, Hash)]
 pub struct RollWorkspacePublicKeyRequest {
-    /// Milliseconds since the Unix epoch in UTC.
     #[serde(rename = "expectedUpdatedAt")]
     #[serde(default)]
     pub expected_updated_at: i64,
