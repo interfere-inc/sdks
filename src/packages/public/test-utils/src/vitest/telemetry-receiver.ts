@@ -28,6 +28,8 @@ export async function receiver(
 ) {
   const requests: ReceivedRequest[] = [];
 
+  const arrivals = new EventTarget();
+
   const failures = new Map<
     string,
     { status: number; remaining: number; body: string }
@@ -119,6 +121,8 @@ export async function receiver(
       };
 
       requests.push(entry);
+
+      arrivals.dispatchEvent(new Event("request"));
 
       if (failure && failure.remaining > 0) {
         failure.remaining -= 1;
@@ -294,6 +298,17 @@ export async function receiver(
     },
     stall(path: string, ms: number) {
       stalls.set(path, async () => setTimeout(ms));
+    },
+    async arrived(path: string, count = 1) {
+      const matching = () =>
+        requests.filter((request) => request.url.startsWith(path));
+
+      while (matching().length < count) {
+        // oxlint-disable-next-line eslint/no-await-in-loop -- Each wake-up re-reads the history, so a request recorded between two waits is never missed.
+        await once(arrivals, "request");
+      }
+
+      return matching();
     },
     hold(path: string, until: Promise<unknown>) {
       stalls.set(path, async () => {

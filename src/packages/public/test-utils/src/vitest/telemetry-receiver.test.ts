@@ -367,3 +367,25 @@ test("holds a matching request body until its release settles and stalls another
     "recorded tail",
   ]);
 });
+
+test("resolves arrived once enough matching requests are recorded, however they interleave with the wait", async () => {
+  await fetch(`${collector.url}/v3/replay/first`, {
+    method: "POST",
+    body: "one",
+  });
+
+  expect(
+    (await collector.arrived("/v3/replay/")).map(({ body }) => body),
+  ).toStrictEqual(["one"]);
+
+  const second = collector.arrived("/v3/replay/", 2);
+
+  await fetch(`${collector.url}/drain`, { method: "POST", body: "other" });
+
+  await fetch(`${collector.url}/v3/replay/second`, {
+    method: "POST",
+    body: "two",
+  });
+
+  expect((await second).map(({ body }) => body)).toStrictEqual(["one", "two"]);
+});

@@ -172,9 +172,7 @@ test("navigating away right after a small page renders delivers its buffered rep
 
   teardown.resolve(undefined);
 
-  await expect
-    .poll(() => replayRequests().length, { timeout: 4000 })
-    .toBeGreaterThan(0);
+  await collector.arrived("/v3/replay/");
 
   expect(replayText()).toContain("Customer application");
 
@@ -217,9 +215,7 @@ test("navigating away from a bulky page after its first flush delivers the snaps
 
   teardown.resolve(undefined);
 
-  await expect
-    .poll(() => replayRequests().length, { timeout: 4000 })
-    .toBeGreaterThan(flushed);
+  await collector.arrived("/v3/replay/", flushed + 1);
 
   expect(replayRequests().at(-1)?.body).toContain("navigated");
 });
