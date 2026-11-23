@@ -1911,6 +1911,11 @@ async fn wire_serviceactivity() {
 }
 
 #[tokio::test]
+async fn wire_createservice() {
+    run_case("createservice").await;
+}
+
+#[tokio::test]
 async fn wire_deleteservice() {
     run_case("deleteservice").await;
 }
@@ -3043,6 +3048,11 @@ async fn wire_submitworkspacefeedback_error() {
 #[tokio::test]
 async fn wire_serviceactivity_error() {
     run_case("serviceactivity_error").await;
+}
+
+#[tokio::test]
+async fn wire_createservice_error() {
+    run_case("createservice_error").await;
 }
 
 #[tokio::test]

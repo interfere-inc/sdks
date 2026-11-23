@@ -3321,6 +3321,25 @@
       }
     },
     {
+      "id": "createservice",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/services",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "name": "name",
+        "type": "other"
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"id\": \"id\"\n}"
+      }
+    },
+    {
       "id": "deleteservice",
       "method": "DELETE",
       "path": "/v3/workspaces/{workspace}/services",
@@ -7900,6 +7919,26 @@
         "workspace": "workspaceSlug"
       },
       "body": null,
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "createservice_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/services",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "name": "name",
+        "type": "other"
+      },
       "queryMatchers": [],
       "headerMatchers": [],
       "requiresAuth": true,

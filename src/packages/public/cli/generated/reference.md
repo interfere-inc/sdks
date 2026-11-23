@@ -1568,6 +1568,17 @@ List provisioned SCIM groups and their workspace role mappings. Pass the workspa
 
 ### `interfere services`
 
+#### `interfere services create-service`
+
+Creates the service before its first telemetry, or finds the one with this namespace, name and resource, and stores the chosen type with type_source user. A user's type replaces a type inferred from telemetry and is never changed by telemetry afterwards. The call is idempotent. A website needs the org:surfaces:write permission, a backend or other service org:integration_settings:write.
+
+`POST /v3/workspaces/{workspaceSlug}/services`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
+
 #### `interfere services delete-service`
 
 Deletes an OpenTelemetry service and its release history: releases, release deployments and source-map uploads. A service that apps, keys, replay sessions, findings, problems or a destination integration still refer to answers SERVICE_IN_USE, whose details list those blockers. Stored telemetry is kept, and the service is created again when telemetry with the same namespace, name and resource arrives.

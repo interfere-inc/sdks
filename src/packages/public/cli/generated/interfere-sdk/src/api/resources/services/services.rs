@@ -70,6 +70,73 @@ impl ServicesClient {
             .await
     }
 
+    /// Creates the service before its first telemetry, or finds the one with this namespace, name and resource, and stores the chosen type with type_source user. A user's type replaces a type inferred from telemetry and is never changed by telemetry afterwards. The call is idempotent. A website needs the org:surfaces:write permission, a backend or other service org:integration_settings:write.
+    ///
+    /// # Arguments
+    ///
+    /// * `workspace` - Workspace URL slug, using lowercase letters, numbers, and hyphens.
+    /// * `options` - Additional request options such as headers, timeout, etc.
+    ///
+    /// # Returns
+    ///
+    /// JSON response from the API
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use interfere_sdk::prelude::*;
+    ///
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     let config = ClientConfig {
+    ///         api_key: Some("<value>".to_string()),
+    ///         ..Default::default()
+    ///     };
+    ///     let client = InterfereClient::new(config).expect("Failed to build client");
+    ///     client
+    ///         .services
+    ///         .create_service(
+    ///             &"workspaceSlug".to_string(),
+    ///             &CreateServiceRequest {
+    ///                 name: "name".to_string(),
+    ///                 r#type: CreateServiceRequestType::Other,
+    ///                 namespace: None,
+    ///                 resource: None,
+    ///             },
+    ///             None,
+    ///         )
+    ///         .await;
+    /// }
+    /// ```
+    pub async fn create_service(
+        &self,
+        workspace: &str,
+        request: &CreateServiceRequest,
+        options: Option<RequestOptions>,
+    ) -> Result<CreateServiceResponse, ApiError> {
+        let endpoint_auth_headers = self
+            .http_client
+            .resolve_endpoint_auth_headers(&options, &[&["clerkSession"] as &[&str]])
+            .await?;
+        let options = {
+            let mut o = options.unwrap_or_default();
+            for (header_key, header_value) in endpoint_auth_headers {
+                o.additional_headers.insert(header_key, header_value);
+            }
+            o.max_retries = Some(0);
+            Some(o)
+        };
+        self.http_client
+            .execute_request(
+                Method::POST,
+                &format!("v3/workspaces/{}/services", workspace),
+                Some(serde_json::to_value(request).map_err(ApiError::Serialization)?),
+                None,
+                options,
+            )
+            .await
+    }
+
     /// Deletes an OpenTelemetry service and its release history: releases, release deployments and source-map uploads. A service that apps, keys, replay sessions, findings, problems or a destination integration still refer to answers SERVICE_IN_USE, whose details list those blockers. Stored telemetry is kept, and the service is created again when telemetry with the same namespace, name and resource arrives.
     ///
     /// # Arguments

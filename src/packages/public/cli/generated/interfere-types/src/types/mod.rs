@@ -5,7 +5,7 @@
 //!
 //! ## Type Categories
 //!
-//! - **Request/Response Types**: 2292 types for API operations
+//! - **Request/Response Types**: 2295 types for API operations
 //! - **Model Types**: 625 types for data representation
 
 pub mod drain_drain_otlp_export_request_signal;
@@ -121,6 +121,7 @@ pub mod feedback_submit_problem_feedback_request_accuracy;
 pub mod feedback_submit_problem_feedback_request_actionability;
 pub mod feedback_submit_workspace_feedback_request_kind;
 pub mod feedback_submit_workspace_feedback_request_attachments_item;
+pub mod services_create_service_request_type;
 pub mod services_set_service_source_request_source;
 pub mod surface_keys_validate_key_request_expected;
 pub mod consumers_devices_by_end_user_devices_request_args;
@@ -2709,6 +2710,7 @@ pub mod service_activity_response_signals_item;
 pub mod service_activity_response_sdks_item_status;
 pub mod service_activity_response_sdks_item;
 pub mod service_activity_response;
+pub mod create_service_response;
 pub mod delete_service_response;
 pub mod set_service_reportable_environment_response;
 pub mod set_service_source_response;
@@ -2851,6 +2853,7 @@ pub mod create_tiers_request;
 pub mod update_tiers_request;
 pub mod submit_problem_feedback_request;
 pub mod submit_workspace_feedback_request;
+pub mod create_service_request;
 pub mod delete_service_request;
 pub mod set_service_reportable_environment_request;
 pub mod set_service_source_request;
@@ -3039,6 +3042,7 @@ pub use feedback_submit_problem_feedback_request_accuracy::SubmitProblemFeedback
 pub use feedback_submit_problem_feedback_request_actionability::SubmitProblemFeedbackRequestActionability;
 pub use feedback_submit_workspace_feedback_request_kind::SubmitWorkspaceFeedbackRequestKind;
 pub use feedback_submit_workspace_feedback_request_attachments_item::SubmitWorkspaceFeedbackRequestAttachmentsItem;
+pub use services_create_service_request_type::CreateServiceRequestType;
 pub use services_set_service_source_request_source::SetServiceSourceRequestSource;
 pub use surface_keys_validate_key_request_expected::ValidateKeyRequestExpected;
 pub use consumers_devices_by_end_user_devices_request_args::ByEndUserDevicesRequestArgs;
@@ -5627,6 +5631,7 @@ pub use service_activity_response_signals_item::ServiceActivityResponseSignalsIt
 pub use service_activity_response_sdks_item_status::ServiceActivityResponseSdksItemStatus;
 pub use service_activity_response_sdks_item::ServiceActivityResponseSdksItem;
 pub use service_activity_response::ServiceActivityResponse;
+pub use create_service_response::CreateServiceResponse;
 pub use delete_service_response::DeleteServiceResponse;
 pub use set_service_reportable_environment_response::SetServiceReportableEnvironmentResponse;
 pub use set_service_source_response::SetServiceSourceResponse;
@@ -5769,6 +5774,7 @@ pub use create_tiers_request::CreateTiersRequest;
 pub use update_tiers_request::UpdateTiersRequest;
 pub use submit_problem_feedback_request::SubmitProblemFeedbackRequest;
 pub use submit_workspace_feedback_request::SubmitWorkspaceFeedbackRequest;
+pub use create_service_request::CreateServiceRequest;
 pub use delete_service_request::DeleteServiceRequest;
 pub use set_service_reportable_environment_request::SetServiceReportableEnvironmentRequest;
 pub use set_service_source_request::SetServiceSourceRequest;

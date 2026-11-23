@@ -61711,6 +61711,18 @@
           "signals"
         ]
       },
+      "CreateServiceResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
       "DeleteServiceResponse": {
         "type": "object",
         "properties": {
@@ -84812,6 +84824,152 @@
       }
     },
     "/v3/workspaces/{workspaceSlug}/services": {
+      "post": {
+        "operationId": "createService",
+        "summary": "Create a service with the type its user chose",
+        "description": "Creates the service before its first telemetry, or finds the one with this namespace, name and resource, and stores the chosen type with type_source user. A user's type replaces a type inferred from telemetry and is never changed by telemetry afterwards. The call is idempotent. A website needs the org:surfaces:write permission, a backend or other service org:integration_settings:write.",
+        "tags": [
+          "Services"
+        ],
+        "parameters": [
+          {
+            "name": "workspaceSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
+            },
+            "x-fern-parameter-name": "workspace"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "namespace": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "default": ""
+                  },
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255
+                  },
+                  "resource": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 255
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "description": "Provider resource that tells apart services sharing a namespace and name, such as vercel:prj_abc for one Vercel project. Omit it to address the only service with this namespace and name; when several share it, the call answers SERVICE_RESOURCE_REQUIRED with their resources. Null or an empty string addresses the service without a resource."
+                  },
+                  "type": {
+                    "enum": [
+                      "other",
+                      "backend",
+                      "website"
+                    ],
+                    "type": "string",
+                    "description": "The kind of data source the user chose. It is stored with type_source user, so telemetry never changes it, and it replaces a type inferred from earlier telemetry."
+                  }
+                },
+                "required": [
+                  "name",
+                  "type"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateServiceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/RpcValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse_d7174de43f943d10193d5f31cc4615acb6d01e6a15ef9a1a861235cb9792319b"
+          },
+          "403": {
+            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse_aacd31107d1b82f7d854a3aa7c98c401a41a182720fd213babe309171722e17c"
+          },
+          "409": {
+            "description": "Request conflicts with current state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "defined": {
+                          "const": true
+                        },
+                        "code": {
+                          "const": "SERVICE_LIMIT_REACHED"
+                        },
+                        "status": {
+                          "const": 409
+                        },
+                        "message": {
+                          "type": "string",
+                          "default": "This workspace has reached its limit of services. Delete one before creating another."
+                        },
+                        "data": {}
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message"
+                      ]
+                    },
+                    {
+                      "$ref": "#/components/schemas/RpcUnexpectedError"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "$ref": "#/components/responses/ErrorResponse_b7d254f6bd68a887b2398a1b58fb8fe3913110d7236a6e4540d7d2aa990fb12b"
+          }
+        },
+        "x-cloudflare-labels": [
+          "cf-api-endpoint"
+        ],
+        "security": [
+          {
+            "clerkSession": []
+          }
+        ],
+        "x-interfere-read-only": false,
+        "x-fern-retries": {
+          "disabled": true
+        }
+      },
       "delete": {
         "operationId": "deleteService",
         "summary": "Delete a telemetry service",
