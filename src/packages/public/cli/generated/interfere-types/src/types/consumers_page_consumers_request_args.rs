@@ -14,6 +14,9 @@ pub struct PageConsumersRequestArgs {
     #[serde(rename = "lastSeenAfter")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub last_seen_after: Option<i64>,
+    #[serde(rename = "lastSeenBefore")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub last_seen_before: Option<i64>,
     #[serde(rename = "withoutCompany")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub without_company: Option<bool>,
@@ -40,6 +43,7 @@ pub struct PageConsumersRequestArgsBuilder {
     end_user_org_ids: Option<Vec<String>>,
     identity: Option<PageConsumersRequestArgsIdentity>,
     last_seen_after: Option<i64>,
+    last_seen_before: Option<i64>,
     without_company: Option<bool>,
     limit: Option<f64>,
     start: Option<PageConsumersRequestArgsStart>,
@@ -65,6 +69,11 @@ impl PageConsumersRequestArgsBuilder {
 
     pub fn last_seen_after(mut self, value: i64) -> Self {
         self.last_seen_after = Some(value);
+        self
+    }
+
+    pub fn last_seen_before(mut self, value: i64) -> Self {
+        self.last_seen_before = Some(value);
         self
     }
 
@@ -103,6 +112,7 @@ impl PageConsumersRequestArgsBuilder {
             end_user_org_ids: self.end_user_org_ids,
             identity: self.identity,
             last_seen_after: self.last_seen_after,
+            last_seen_before: self.last_seen_before,
             without_company: self.without_company,
             limit: self.limit.ok_or_else(|| BuildError::missing_field("limit"))?,
             start: self.start,

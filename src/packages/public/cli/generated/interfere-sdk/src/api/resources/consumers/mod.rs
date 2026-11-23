@@ -116,6 +116,7 @@ impl ConsumersClient {
     ///                     end_user_org_ids: None,
     ///                     identity: None,
     ///                     last_seen_after: None,
+    ///                     last_seen_before: None,
     ///                     without_company: None,
     ///                     limit: 1.1,
     ///                     start: None,
