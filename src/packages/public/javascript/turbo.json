@@ -1,13 +1,22 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "extends": ["//"],
-  "tags": ["public"],
+  "tags": ["public", "compiled"],
   "tasks": {
     "typecheck": {
-      "dependsOn": ["$TURBO_EXTENDS$", "build"]
+      "dependsOn": ["$TURBO_EXTENDS$", "build:types"]
     },
     "test": {
       "dependsOn": ["$TURBO_EXTENDS$", "build"]
+    },
+    "build": {
+      "dependsOn": ["$TURBO_EXTENDS$", "build:js", "build:types"]
+    },
+    "build:types": {
+      "outputs": ["$TURBO_EXTENDS$", "dist/**/*.d.cts"]
+    },
+    "build:js": {
+      "inputs": ["$TURBO_EXTENDS$", "runtime/**"]
     }
   }
 }

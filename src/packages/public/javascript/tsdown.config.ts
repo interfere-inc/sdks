@@ -18,11 +18,13 @@ const shared = {
 export default [
   {
     ...shared,
+    name: "node",
     platform: "node",
     outDir: "dist/node",
   },
   {
     ...shared,
+    name: "portable",
     platform: "neutral",
     outDir: "dist/portable",
     dts: false,

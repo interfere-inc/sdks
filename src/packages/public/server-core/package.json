@@ -18,73 +18,59 @@
   "imports": {
     "#otlp-http": {
       "workerd": {
-        "monorepo": "./src/otlp/web.ts",
         "types": "./dist/otlp/web.d.mts",
         "default": "./dist/otlp/web.mjs"
       },
       "edge-light": {
-        "monorepo": "./src/otlp/web.ts",
         "types": "./dist/otlp/web.d.mts",
         "default": "./dist/otlp/web.mjs"
       },
       "node": {
-        "monorepo": "./src/otlp/node.ts",
         "types": "./dist/otlp/node.d.mts",
         "default": "./dist/otlp/node.mjs"
       },
-      "monorepo": "./src/otlp/web.ts",
       "types": "./dist/otlp/web.d.mts",
       "default": "./dist/otlp/web.mjs"
     }
   },
   "exports": {
     "./runtime": {
-      "monorepo": "./src/runtime.ts",
       "types": "./dist/runtime.d.mts",
       "default": "./dist/runtime.mjs"
     },
     "./node": {
-      "monorepo": "./src/node.ts",
       "types": "./dist/node.d.mts",
       "default": "./dist/node.mjs"
     },
     "./ownership": {
-      "monorepo": "./src/ownership.ts",
       "types": "./dist/ownership.d.mts",
       "default": "./dist/ownership.mjs"
     },
     "./console-bridge": {
-      "monorepo": "./src/console-bridge.ts",
       "types": "./dist/console-bridge.d.mts",
       "default": "./dist/console-bridge.mjs"
     },
     "./contain": {
-      "monorepo": "./src/contain.ts",
       "types": "./dist/contain.d.mts",
       "default": "./dist/contain.mjs"
     },
     "./global-handlers": {
-      "monorepo": "./src/global-handlers.ts",
       "types": "./dist/global-handlers.d.mts",
       "default": "./dist/global-handlers.mjs"
     },
     "./shutdown": {
-      "monorepo": "./src/shutdown.ts",
       "types": "./dist/shutdown.d.mts",
       "default": "./dist/shutdown.mjs"
     },
     "./contained-span-processor": {
-      "monorepo": "./src/contained-span-processor.ts",
       "types": "./dist/contained-span-processor.d.mts",
       "default": "./dist/contained-span-processor.mjs"
     },
     "./credential": {
-      "monorepo": "./src/credential.ts",
       "types": "./dist/credential.d.mts",
       "default": "./dist/credential.mjs"
     },
     "./otlp-http": {
-      "monorepo": "./src/otlp-http.ts",
       "types": "./dist/otlp-http.d.mts",
       "default": "./dist/otlp-http.mjs"
     }
@@ -95,6 +81,8 @@
   "scripts": {
     "build": "tsdown",
     "build:js": "tsdown --no-clean --no-dts",
+    "build:types": "tsdown --no-clean --dts.dtsOnly",
+    "dev": "tsdown --no-clean --no-dts --watch",
     "lint:oxlint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --threads=2 src/packages/public/server-core",
     "test": "node ../test-config/src/cli.ts run --config ../../../../vitest.config.ts",
     "typecheck": "bun check"

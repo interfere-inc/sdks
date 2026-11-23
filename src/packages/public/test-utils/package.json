@@ -19,12 +19,10 @@
   "sideEffects": false,
   "exports": {
     "./playwright/*": {
-      "monorepo": "./src/playwright/*.ts",
       "types": "./dist/playwright/*.d.mts",
       "default": "./dist/playwright/*.mjs"
     },
     "./vitest/*": {
-      "monorepo": "./src/vitest/*.ts",
       "types": "./dist/vitest/*.d.mts",
       "default": "./dist/vitest/*.mjs"
     },
@@ -36,6 +34,8 @@
   "scripts": {
     "build": "tsdown",
     "build:js": "tsdown --no-clean --no-dts",
+    "build:types": "tsdown --no-clean --dts.dtsOnly",
+    "dev": "tsdown --no-clean --no-dts --watch",
     "lint:oxlint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/test-utils",
     "test": "node ../test-config/src/cli.ts run --config ../../../../vitest.config.ts",
     "typecheck": "bun check"

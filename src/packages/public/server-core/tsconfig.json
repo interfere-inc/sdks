@@ -1,7 +1,12 @@
 {
   "extends": "@interfere/typescript-config/base.json",
   "compilerOptions": {
-    "types": ["node", "vitest/globals"]
+    "types": ["node", "vitest/globals"],
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "paths": {
+      "#otlp-http": ["./src/otlp/web.ts"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

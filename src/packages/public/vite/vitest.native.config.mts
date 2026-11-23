@@ -1,4 +1,5 @@
 import { builtinModules } from "node:module";
+import { fileURLToPath } from "node:url";
 import { cloudflareTest } from "@cloudflare/vitest-plugin";
 import { defineConfig } from "vitest/config";
 
@@ -14,7 +15,17 @@ export default defineConfig({
       },
     }),
   ],
-  resolve: { conditions: ["workerd", "monorepo"] },
+  resolve: {
+    alias: {
+      "#request-flush": fileURLToPath(
+        new URL(
+          "src/internal/server/request-flush.workerd.ts",
+          import.meta.url,
+        ),
+      ),
+    },
+    conditions: ["workerd", "monorepo"],
+  },
   ssr: { resolve: { conditions: ["workerd", "monorepo"] } },
   test: {
     fsModuleCache: false,

@@ -1,6 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "tags": ["public"],
+  "tags": ["public", "compiled"],
   "extends": ["//"],
   "tasks": {
     "test": {
@@ -9,7 +9,7 @@
     },
     "build": {
       "env": ["!VITE_*"],
-      "dependsOn": ["$TURBO_EXTENDS$", "build:js"]
+      "dependsOn": ["$TURBO_EXTENDS$", "build:js", "build:types"]
     },
     "typegen": {
       "env": ["!VITE_*"]
@@ -19,6 +19,15 @@
         "$TURBO_EXTENDS$",
         "$TURBO_ROOT$/src/packages/public/tsdown.config.ts"
       ]
+    },
+    "build:types": {
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "$TURBO_ROOT$/src/packages/public/tsdown.config.ts"
+      ]
+    },
+    "typecheck": {
+      "dependsOn": ["$TURBO_EXTENDS$", "build:types"]
     }
   }
 }

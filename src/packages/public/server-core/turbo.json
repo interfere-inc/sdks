@@ -1,7 +1,7 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "tags": ["public"],
   "extends": ["//"],
+  "tags": ["public", "compiled"],
   "tasks": {
     "build:js": {
       "inputs": [
@@ -9,8 +9,14 @@
         "$TURBO_ROOT$/src/packages/public/tsdown.config.ts"
       ]
     },
+    "build:types": {
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "$TURBO_ROOT$/src/packages/public/tsdown.config.ts"
+      ]
+    },
     "build": {
-      "dependsOn": ["$TURBO_EXTENDS$", "build:js"]
+      "dependsOn": ["$TURBO_EXTENDS$", "build:js", "build:types"]
     }
   }
 }

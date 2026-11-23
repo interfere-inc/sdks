@@ -1,6 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "tags": ["public"],
+  "tags": ["public", "compiled"],
   "extends": ["//"],
   "tasks": {
     "test": {
@@ -8,7 +8,7 @@
       "tags": ["$TURBO_EXTENDS$", "test-react"]
     },
     "build": {
-      "dependsOn": ["$TURBO_EXTENDS$", "build:js"]
+      "dependsOn": ["$TURBO_EXTENDS$", "build:js", "build:types"]
     }
   }
 }

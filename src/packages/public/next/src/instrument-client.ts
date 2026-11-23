@@ -1,5 +1,6 @@
 import type { KernelOptions } from "@interfere/react/internal/kernel";
 import { createWrapperSingleton } from "@interfere/react/internal/wrapper-singleton";
+import type { WrapperSingleton } from "@interfere/react/internal/wrapper-singleton";
 
 import {
   buildIntegrationRan,
@@ -27,14 +28,19 @@ const wrapper = createWrapperSingleton({
   producerVersion: PRODUCER_VERSION,
 });
 
-export const {
-  close,
-  consent,
-  getKernel,
-  getKernelOrNull,
-  identity,
-  subscribeToKernel,
-} = wrapper;
+export const close: WrapperSingleton["close"] = wrapper.close;
+
+export const consent: WrapperSingleton["consent"] = wrapper.consent;
+
+export const getKernel: WrapperSingleton["getKernel"] = wrapper.getKernel;
+
+export const getKernelOrNull: WrapperSingleton["getKernelOrNull"] =
+  wrapper.getKernelOrNull;
+
+export const identity: WrapperSingleton["identity"] = wrapper.identity;
+
+export const subscribeToKernel: WrapperSingleton["subscribeToKernel"] =
+  wrapper.subscribeToKernel;
 
 export async function init(opts?: KernelOptions) {
   if (buildIntegrationRan()) {

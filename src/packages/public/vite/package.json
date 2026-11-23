@@ -31,43 +31,35 @@
   "imports": {
     "#request-flush": {
       "workerd": {
-        "monorepo": "./src/internal/server/request-flush.workerd.ts",
         "types": "./dist/internal/server/request-flush.workerd.d.mts",
         "default": "./dist/internal/server/request-flush.workerd.mjs"
       },
-      "monorepo": "./src/internal/server/request-flush.ts",
       "types": "./dist/internal/server/request-flush.d.mts",
       "default": "./dist/internal/server/request-flush.mjs"
     }
   },
   "exports": {
     "./plugin": {
-      "monorepo": "./src/plugin.ts",
       "types": "./dist/plugin.d.mts",
       "default": "./dist/plugin.mjs"
     },
     "./init": {
-      "monorepo": "./src/init.ts",
       "types": "./dist/init.d.mts",
       "default": "./dist/init.mjs"
     },
     "./provider": {
-      "monorepo": "./src/provider.tsx",
       "types": "./dist/provider.d.mts",
       "default": "./dist/provider.mjs"
     },
     "./server": {
-      "monorepo": "./src/server.ts",
       "types": "./dist/server.d.mts",
       "default": "./dist/server.mjs"
     },
     "./tanstack-start": {
-      "monorepo": "./src/tanstack-start.ts",
       "types": "./dist/tanstack-start.d.mts",
       "default": "./dist/tanstack-start.mjs"
     },
     "./release": {
-      "monorepo": "./src/release.ts",
       "types": "./dist/release.d.mts",
       "default": "./dist/release.mjs"
     }
@@ -78,6 +70,8 @@
   "scripts": {
     "build": "tsdown",
     "build:js": "tsdown --no-clean --no-dts",
+    "build:types": "tsdown --no-clean --dts.dtsOnly",
+    "dev": "tsdown --no-clean --no-dts --watch",
     "lint:oxlint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/vite",
     "test": "node ../test-config/src/cli.ts run --config ../../../../vitest.config.ts",
     "typecheck": "bun check"

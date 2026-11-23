@@ -29,62 +29,50 @@
   "sideEffects": false,
   "exports": {
     "./provider": {
-      "monorepo": "./src/provider.tsx",
       "types": "./dist/provider.d.mts",
       "default": "./dist/provider.mjs"
     },
     "./error-boundary": {
-      "monorepo": "./src/error-boundary.tsx",
       "types": "./dist/error-boundary.d.mts",
       "default": "./dist/error-boundary.mjs"
     },
     "./react-error-handler": {
-      "monorepo": "./src/react-error-handler.ts",
       "types": "./dist/react-error-handler.d.mts",
       "default": "./dist/react-error-handler.mjs"
     },
     "./api": {
-      "monorepo": "./src/api.ts",
       "types": "./dist/api.d.mts",
       "default": "./dist/api.mjs"
     },
     "./internal/kernel": {
-      "monorepo": "./src/internal/kernel.ts",
       "types": "./dist/internal/kernel.d.mts",
       "default": "./dist/internal/kernel.mjs"
     },
     "./internal/kernel-registry": {
-      "monorepo": "./src/internal/kernel-registry.ts",
       "types": "./dist/internal/kernel-registry.d.mts",
       "default": "./dist/internal/kernel-registry.mjs"
     },
     "./internal/version": {
-      "monorepo": "./src/internal/version.ts",
       "types": "./dist/internal/version.d.mts",
       "default": "./dist/internal/version.mjs"
     },
     "./internal/wrapper-singleton": {
-      "monorepo": "./src/internal/wrapper-singleton.ts",
       "types": "./dist/internal/wrapper-singleton.d.mts",
       "default": "./dist/internal/wrapper-singleton.mjs"
     },
     "./sw-runtime": {
-      "monorepo": "./src/internal/sw-queue.ts",
       "types": "./dist/internal/sw-queue.d.mts",
       "default": "./dist/internal/sw-queue.mjs"
     },
     "./util/global": {
-      "monorepo": "./src/util/global.ts",
       "types": "./dist/util/global.d.mts",
       "default": "./dist/util/global.mjs"
     },
     "./util/log": {
-      "monorepo": "./src/util/log.ts",
       "types": "./dist/util/log.d.mts",
       "default": "./dist/util/log.mjs"
     },
     "./request-trace": {
-      "monorepo": "./src/request-trace.ts",
       "types": "./dist/request-trace.d.mts",
       "default": "./dist/request-trace.mjs"
     }
@@ -95,6 +83,8 @@
   "scripts": {
     "build": "tsdown",
     "build:js": "tsdown --no-clean --no-dts",
+    "build:types": "TSDOWN_DECLARATIONS=1 tsdown",
+    "dev": "tsdown --no-clean --no-dts --watch",
     "lint:oxlint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/react",
     "test": "node ../test-config/src/cli.ts run --config ../../../../vitest.config.ts",
     "test:artifact": "bun run build && node --test --test-timeout=30000 test/recorder-artifact.test.mts test/react-key-deopt-artifact.test.mts",

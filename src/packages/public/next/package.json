@@ -30,65 +30,53 @@
   ],
   "exports": {
     "./config": {
-      "monorepo": "./src/config.ts",
       "types": "./dist/config.d.mts",
       "default": "./dist/config.mjs"
     },
     "./instrument-client": {
-      "monorepo": "./src/instrument-client.ts",
       "types": "./dist/instrument-client.d.mts",
       "default": "./dist/instrument-client.mjs"
     },
     "./instrumentation": {
       "edge-light": {
-        "monorepo": "./src/instrumentation.edge.ts",
         "types": "./dist/instrumentation.edge.d.mts",
         "default": "./dist/instrumentation.edge.mjs"
       },
       "workerd": {
-        "monorepo": "./src/instrumentation.edge.ts",
         "types": "./dist/instrumentation.edge.d.mts",
         "default": "./dist/instrumentation.edge.mjs"
       },
       "worker": {
-        "monorepo": "./src/instrumentation.edge.ts",
         "types": "./dist/instrumentation.edge.d.mts",
         "default": "./dist/instrumentation.edge.mjs"
       },
       "types": "./dist/instrumentation.d.mts",
       "node": {
-        "monorepo": "./src/instrumentation.ts",
         "types": "./dist/instrumentation.d.mts",
         "default": "./dist/instrumentation.mjs"
       },
       "import": {
-        "monorepo": "./src/instrumentation.ts",
         "types": "./dist/instrumentation.d.mts",
         "default": "./dist/instrumentation.mjs"
       },
       "default": {
-        "monorepo": "./src/instrumentation.edge.ts",
         "types": "./dist/instrumentation.edge.d.mts",
         "default": "./dist/instrumentation.edge.mjs"
       }
     },
     "./instrumentation-client": {
-      "monorepo": "./src/instrumentation-client.ts",
       "types": "./dist/instrumentation-client.d.mts",
       "default": "./dist/instrumentation-client.mjs"
     },
     "./provider": {
-      "monorepo": "./src/provider.tsx",
       "types": "./dist/provider.d.mts",
       "default": "./dist/provider.mjs"
     },
     "./server": {
-      "monorepo": "./src/server.ts",
       "types": "./dist/server.d.mts",
       "default": "./dist/server.mjs"
     },
     "./request-trace": {
-      "monorepo": "./src/request-trace.ts",
       "types": "./dist/request-trace.d.mts",
       "default": "./dist/request-trace.mjs"
     }
@@ -99,6 +87,8 @@
   "scripts": {
     "build": "tsdown",
     "build:js": "tsdown --no-clean --no-dts",
+    "build:types": "tsdown --no-clean --dts.dtsOnly",
+    "dev": "tsdown --no-clean --no-dts --watch",
     "lint:oxlint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/next",
     "test": "node ../test-config/src/cli.ts run --config ../../../../vitest.config.ts",
     "test:e2e": "playwright test",
