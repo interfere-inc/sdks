@@ -872,18 +872,6 @@ Rename a private API key identified from keys.private.listForSurface. The secret
 
 ### `interfere keys public`
 
-#### `interfere keys public create`
-
-Creates a publishable key for the app (surface).
-
-`POST /v3/workspaces/{workspaceSlug}/surfaces/{surfaceSlug}/publicKeys`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-| `--surface-slug` | `string` | Yes |  |
-| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
-
 #### `interfere keys public delete`
 
 Revokes a publishable key and all its rotation grace-period values. Requires app write permission. Repeating revocation of an existing key succeeds without changing its revocation time.
@@ -1792,17 +1780,6 @@ Do not assume a found Interfere key works. Call this for every public or secret 
 ---
 
 ### `interfere surfaces`
-
-#### `interfere surfaces create-surface`
-
-Creates an app (surface) in the workspace. Reuse the original request identity when retrying the same creation attempt.
-
-`POST /v3/workspaces/{workspaceSlug}/surfaces`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
 
 #### `interfere surfaces delete`
 

@@ -5,8 +5,8 @@
 //!
 //! ## Type Categories
 //!
-//! - **Request/Response Types**: 2299 types for API operations
-//! - **Model Types**: 626 types for data representation
+//! - **Request/Response Types**: 2292 types for API operations
+//! - **Model Types**: 625 types for data representation
 
 pub mod drain_drain_otlp_export_request_signal;
 pub mod traces_trace_activity_request_occurred_at;
@@ -108,8 +108,6 @@ pub mod surfaces_set_onboarded_surfaces_request_args;
 pub mod surfaces_set_sdk_plugin_surfaces_request_args_plugin;
 pub mod surfaces_set_sdk_plugin_surfaces_request_args;
 pub mod surfaces_update_name_surfaces_request_args;
-pub mod surfaces_create_surface_request_anonymous_replay_policy;
-pub mod surfaces_create_surface_request_type;
 pub mod surfaces_surface_events_timeseries_request_window;
 pub mod billing_create_billing_checkout_request_billing_interval;
 pub mod billing_create_billing_checkout_request_plan_zero;
@@ -235,7 +233,6 @@ pub mod conflict_error_body_code_data;
 pub mod bad_request_error_body_code_code;
 pub mod bad_request_error_body_code;
 pub mod bad_request_error_body;
-pub mod conflict_error_body_one_data_field;
 pub mod too_many_requests_error_body_code_code;
 pub mod rpc_status;
 pub mod auth_problem_code;
@@ -2723,15 +2720,12 @@ pub mod surface_activity_response_value_status;
 pub mod surface_activity_response_value;
 pub mod surface_activity_response;
 pub mod surface_sdk_status_response;
-pub mod create_surface_response_surface_type;
-pub mod create_surface_response_surface;
-pub mod create_surface_response;
 pub mod surface_events_timeseries_response_unavailable_linked_service_signals_item;
 pub mod surface_events_timeseries_response_window;
 pub mod surface_events_timeseries_response_bucket_rows_item;
 pub mod surface_events_timeseries_response_series;
 pub mod surface_events_timeseries_response;
-pub mod create_surface_public_key_response;
+pub mod roll_surface_public_key_response;
 pub mod read_public_key_response;
 pub mod revoke_surface_public_key_response;
 pub mod validate_key_response_outcome;
@@ -2851,7 +2845,6 @@ pub mod set_anonymous_user_tracking_surfaces_request;
 pub mod set_onboarded_surfaces_request;
 pub mod set_sdk_plugin_surfaces_request;
 pub mod update_name_surfaces_request;
-pub mod create_surface_request;
 pub mod create_billing_checkout_request;
 pub mod create_billing_portal_request;
 pub mod create_tiers_request;
@@ -2874,7 +2867,6 @@ pub mod for_workspace_public_request;
 pub mod revoke_public_request;
 pub mod revoke_workspace_key_public_request;
 pub mod update_name_public_request;
-pub mod create_public_request;
 pub mod rotate_public_request;
 pub mod mine_settings_request;
 pub mod set_workflow_channel_settings_request;
@@ -3034,8 +3026,6 @@ pub use surfaces_set_onboarded_surfaces_request_args::SetOnboardedSurfacesReques
 pub use surfaces_set_sdk_plugin_surfaces_request_args_plugin::SetSdkPluginSurfacesRequestArgsPlugin;
 pub use surfaces_set_sdk_plugin_surfaces_request_args::SetSdkPluginSurfacesRequestArgs;
 pub use surfaces_update_name_surfaces_request_args::UpdateNameSurfacesRequestArgs;
-pub use surfaces_create_surface_request_anonymous_replay_policy::CreateSurfaceRequestAnonymousReplayPolicy;
-pub use surfaces_create_surface_request_type::CreateSurfaceRequestType;
 pub use surfaces_surface_events_timeseries_request_window::SurfaceEventsTimeseriesRequestWindow;
 pub use billing_create_billing_checkout_request_billing_interval::CreateBillingCheckoutRequestBillingInterval;
 pub use billing_create_billing_checkout_request_plan_zero::CreateBillingCheckoutRequestPlanZero;
@@ -3161,7 +3151,6 @@ pub use conflict_error_body_code_data::ConflictErrorBodyCodeData;
 pub use bad_request_error_body_code_code::BadRequestErrorBodyCodeCode;
 pub use bad_request_error_body_code::BadRequestErrorBodyCode;
 pub use bad_request_error_body::BadRequestErrorBody;
-pub use conflict_error_body_one_data_field::ConflictErrorBodyOneDataField;
 pub use too_many_requests_error_body_code_code::TooManyRequestsErrorBodyCodeCode;
 pub use rpc_status::RpcStatus;
 pub use auth_problem_code::AuthProblemCode;
@@ -5649,15 +5638,12 @@ pub use surface_activity_response_value_status::SurfaceActivityResponseValueStat
 pub use surface_activity_response_value::SurfaceActivityResponseValue;
 pub use surface_activity_response::SurfaceActivityResponse;
 pub use surface_sdk_status_response::SurfaceSdkStatusResponse;
-pub use create_surface_response_surface_type::CreateSurfaceResponseSurfaceType;
-pub use create_surface_response_surface::CreateSurfaceResponseSurface;
-pub use create_surface_response::CreateSurfaceResponse;
 pub use surface_events_timeseries_response_unavailable_linked_service_signals_item::SurfaceEventsTimeseriesResponseUnavailableLinkedServiceSignalsItem;
 pub use surface_events_timeseries_response_window::SurfaceEventsTimeseriesResponseWindow;
 pub use surface_events_timeseries_response_bucket_rows_item::SurfaceEventsTimeseriesResponseBucketRowsItem;
 pub use surface_events_timeseries_response_series::SurfaceEventsTimeseriesResponseSeries;
 pub use surface_events_timeseries_response::SurfaceEventsTimeseriesResponse;
-pub use create_surface_public_key_response::CreateSurfacePublicKeyResponse;
+pub use roll_surface_public_key_response::RollSurfacePublicKeyResponse;
 pub use read_public_key_response::ReadPublicKeyResponse;
 pub use revoke_surface_public_key_response::RevokeSurfacePublicKeyResponse;
 pub use validate_key_response_outcome::ValidateKeyResponseOutcome;
@@ -5777,7 +5763,6 @@ pub use set_anonymous_user_tracking_surfaces_request::SetAnonymousUserTrackingSu
 pub use set_onboarded_surfaces_request::SetOnboardedSurfacesRequest;
 pub use set_sdk_plugin_surfaces_request::SetSdkPluginSurfacesRequest;
 pub use update_name_surfaces_request::UpdateNameSurfacesRequest;
-pub use create_surface_request::CreateSurfaceRequest;
 pub use create_billing_checkout_request::CreateBillingCheckoutRequest;
 pub use create_billing_portal_request::CreateBillingPortalRequest;
 pub use create_tiers_request::CreateTiersRequest;
@@ -5800,7 +5785,6 @@ pub use for_workspace_public_request::ForWorkspacePublicRequest;
 pub use revoke_public_request::RevokePublicRequest;
 pub use revoke_workspace_key_public_request::RevokeWorkspaceKeyPublicRequest;
 pub use update_name_public_request::UpdateNamePublicRequest;
-pub use create_public_request::CreatePublicRequest;
 pub use rotate_public_request::RotatePublicRequest;
 pub use mine_settings_request::MineSettingsRequest;
 pub use set_workflow_channel_settings_request::SetWorkflowChannelSettingsRequest;

@@ -3109,26 +3109,6 @@
       }
     },
     {
-      "id": "createsurface",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/surfaces",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "idempotencyKey": "idempotencyKey",
-        "name": "name",
-        "type": "nextjs"
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "{\n  \"publicKey\": \"publicKey\",\n  \"surface\": {\n    \"id\": \"id\",\n    \"name\": \"name\",\n    \"slug\": \"slug\",\n    \"type\": \"nextjs\"\n  }\n}"
-      }
-    },
-    {
       "id": "surfaceeventstimeseries",
       "method": "GET",
       "path": "/v3/workspaces/{workspace}/surfaces/{surfaceSlug}/events/timeseries",
@@ -3692,26 +3672,6 @@
       }
     },
     {
-      "id": "create_2",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/surfaces/{surfaceSlug}/publicKeys",
-      "params": {
-        "workspace": "workspaceSlug",
-        "surfaceSlug": "surfaceSlug"
-      },
-      "body": {
-        "idempotencyKey": "idempotencyKey",
-        "name": "name"
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "{\n  \"content\": \"content\",\n  \"name\": \"name\"\n}"
-      }
-    },
-    {
       "id": "rotate",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/surfaces/{surfaceSlug}/publicKeys/{publicKeyId}/roll",
@@ -4103,7 +4063,7 @@
       }
     },
     {
-      "id": "create_3",
+      "id": "create_2",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/support/threads/{threadId}/replies",
       "params": {
@@ -4159,7 +4119,7 @@
       }
     },
     {
-      "id": "create_4",
+      "id": "create_3",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/support/threads",
       "params": {
@@ -4341,7 +4301,7 @@
       }
     },
     {
-      "id": "create_5",
+      "id": "create_4",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/actions/members.invite",
       "params": {
@@ -7727,27 +7687,6 @@
       "expectError": true
     },
     {
-      "id": "createsurface_error",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/surfaces",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "idempotencyKey": "idempotencyKey",
-        "name": "name",
-        "type": "nextjs"
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
       "id": "surfaceeventstimeseries_error",
       "method": "GET",
       "path": "/v3/workspaces/{workspace}/surfaces/{surfaceSlug}/events/timeseries",
@@ -8340,27 +8279,6 @@
       "expectError": true
     },
     {
-      "id": "create_2_error",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/surfaces/{surfaceSlug}/publicKeys",
-      "params": {
-        "workspace": "workspaceSlug",
-        "surfaceSlug": "surfaceSlug"
-      },
-      "body": {
-        "idempotencyKey": "idempotencyKey",
-        "name": "name"
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
       "id": "rotate_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/surfaces/{surfaceSlug}/publicKeys/{publicKeyId}/roll",
@@ -8771,7 +8689,7 @@
       "expectError": true
     },
     {
-      "id": "create_3_error",
+      "id": "create_2_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/support/threads/{threadId}/replies",
       "params": {
@@ -8830,7 +8748,7 @@
       "expectError": true
     },
     {
-      "id": "create_4_error",
+      "id": "create_3_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/support/threads",
       "params": {
@@ -9022,7 +8940,7 @@
       "expectError": true
     },
     {
-      "id": "create_5_error",
+      "id": "create_4_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/actions/members.invite",
       "params": {

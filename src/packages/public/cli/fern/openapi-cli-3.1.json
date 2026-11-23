@@ -61846,52 +61846,6 @@
           "unanalysedSurfaceIds"
         ]
       },
-      "CreateSurfaceResponse": {
-        "type": "object",
-        "properties": {
-          "publicKey": {
-            "type": "string"
-          },
-          "surface": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string",
-                "format": "uuid",
-                "description": "Unique surface identifier."
-              },
-              "name": {
-                "type": "string",
-                "description": "Display name of the surface."
-              },
-              "slug": {
-                "type": "string",
-                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-                "description": "Surface URL slug, using lowercase letters, numbers, and hyphens."
-              },
-              "type": {
-                "enum": [
-                  "nextjs",
-                  "react",
-                  "generic"
-                ],
-                "type": "string",
-                "description": "Application framework used by the surface."
-              }
-            },
-            "required": [
-              "id",
-              "name",
-              "slug",
-              "type"
-            ]
-          }
-        },
-        "required": [
-          "publicKey",
-          "surface"
-        ]
-      },
       "SurfaceEventsTimeseriesResponse": {
         "type": "object",
         "properties": {
@@ -62015,7 +61969,7 @@
           "series"
         ]
       },
-      "CreateSurfacePublicKeyResponse": {
+      "RollSurfacePublicKeyResponse": {
         "type": "object",
         "properties": {
           "content": {
@@ -63858,70 +63812,6 @@
                     "message": {
                       "type": "string",
                       "default": "Support is temporarily unavailable."
-                    },
-                    "data": {}
-                  },
-                  "required": [
-                    "defined",
-                    "code",
-                    "status",
-                    "message"
-                  ]
-                },
-                {
-                  "$ref": "#/components/schemas/RpcUnexpectedError"
-                }
-              ]
-            }
-          }
-        }
-      },
-      "ErrorResponse_3cfb93c298ec62e03b5f0c773ae0ffe6465986e9ffe28eb614f7c3c4a859f869": {
-        "description": "Resource not found",
-        "content": {
-          "application/json": {
-            "schema": {
-              "oneOf": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "defined": {
-                      "const": true
-                    },
-                    "code": {
-                      "const": "SURFACE_NOT_FOUND"
-                    },
-                    "status": {
-                      "const": 404
-                    },
-                    "message": {
-                      "type": "string",
-                      "default": "Surface not found."
-                    },
-                    "data": {}
-                  },
-                  "required": [
-                    "defined",
-                    "code",
-                    "status",
-                    "message"
-                  ]
-                },
-                {
-                  "type": "object",
-                  "properties": {
-                    "defined": {
-                      "const": true
-                    },
-                    "code": {
-                      "const": "WORKSPACE_NOT_FOUND"
-                    },
-                    "status": {
-                      "const": 404
-                    },
-                    "message": {
-                      "type": "string",
-                      "default": "Workspace not found."
                     },
                     "data": {}
                   },
@@ -86124,194 +86014,6 @@
         }
       }
     },
-    "/v3/workspaces/{workspaceSlug}/surfaces": {
-      "post": {
-        "operationId": "createSurface",
-        "summary": "Create app",
-        "description": "Creates an app (surface) in the workspace. Reuse the original request identity when retrying the same creation attempt.",
-        "tags": [
-          "Surfaces"
-        ],
-        "parameters": [
-          {
-            "name": "workspaceSlug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
-            },
-            "x-fern-parameter-name": "workspace"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "anonymousReplayPolicy": {
-                    "enum": [
-                      "always",
-                      "on_error",
-                      "never"
-                    ],
-                    "type": "string",
-                    "description": "When sessions without an identified user record replay. Defaults to on_error when anonymous-user tracking is on, otherwise always."
-                  },
-                  "anonymousUserTracking": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Whether anonymous-user telemetry is collected."
-                  },
-                  "idempotencyKey": {
-                    "type": "string",
-                    "format": "uuid"
-                  },
-                  "name": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 48,
-                    "description": "Display name of the surface."
-                  },
-                  "type": {
-                    "enum": [
-                      "nextjs",
-                      "react",
-                      "generic"
-                    ],
-                    "type": "string",
-                    "description": "Application framework used by the surface."
-                  }
-                },
-                "required": [
-                  "idempotencyKey",
-                  "name",
-                  "type"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateSurfaceResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/RpcValidationError"
-          },
-          "401": {
-            "$ref": "#/components/responses/ErrorResponse_d7174de43f943d10193d5f31cc4615acb6d01e6a15ef9a1a861235cb9792319b"
-          },
-          "403": {
-            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
-          },
-          "404": {
-            "$ref": "#/components/responses/ErrorResponse_3cfb93c298ec62e03b5f0c773ae0ffe6465986e9ffe28eb614f7c3c4a859f869"
-          },
-          "409": {
-            "description": "Request conflicts with current state",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "defined": {
-                          "const": true
-                        },
-                        "code": {
-                          "const": "SURFACE_CREATION_CONFLICT"
-                        },
-                        "status": {
-                          "const": 409
-                        },
-                        "message": {
-                          "type": "string",
-                          "default": "This surface creation attempt no longer matches. Refresh before trying again."
-                        },
-                        "data": {}
-                      },
-                      "required": [
-                        "defined",
-                        "code",
-                        "status",
-                        "message"
-                      ]
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "defined": {
-                          "const": true
-                        },
-                        "code": {
-                          "const": "SURFACE_NAME_CONFLICT"
-                        },
-                        "status": {
-                          "const": 409
-                        },
-                        "message": {
-                          "type": "string",
-                          "default": "This name is already used by another surface. Try a different name."
-                        },
-                        "data": {
-                          "type": "object",
-                          "properties": {
-                            "field": {
-                              "const": "name"
-                            }
-                          },
-                          "required": [
-                            "field"
-                          ],
-                          "title": "SurfaceNameConflictDetails"
-                        }
-                      },
-                      "required": [
-                        "defined",
-                        "code",
-                        "status",
-                        "message",
-                        "data"
-                      ]
-                    },
-                    {
-                      "$ref": "#/components/schemas/RpcUnexpectedError"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "503": {
-            "$ref": "#/components/responses/ErrorResponse_b7d254f6bd68a887b2398a1b58fb8fe3913110d7236a6e4540d7d2aa990fb12b"
-          }
-        },
-        "x-cloudflare-labels": [
-          "cf-api-endpoint"
-        ],
-        "security": [
-          {
-            "clerkSession": []
-          }
-        ],
-        "x-interfere-read-only": false,
-        "x-fern-retries": {
-          "disabled": true
-        }
-      }
-    },
     "/v3/workspaces/{workspaceSlug}/surfaces/{surfaceSlug}/events/timeseries": {
       "get": {
         "operationId": "surfaceEventsTimeseries",
@@ -86390,7 +86092,68 @@
             "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
           },
           "404": {
-            "$ref": "#/components/responses/ErrorResponse_3cfb93c298ec62e03b5f0c773ae0ffe6465986e9ffe28eb614f7c3c4a859f869"
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "defined": {
+                          "const": true
+                        },
+                        "code": {
+                          "const": "SURFACE_NOT_FOUND"
+                        },
+                        "status": {
+                          "const": 404
+                        },
+                        "message": {
+                          "type": "string",
+                          "default": "Surface not found."
+                        },
+                        "data": {}
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "defined": {
+                          "const": true
+                        },
+                        "code": {
+                          "const": "WORKSPACE_NOT_FOUND"
+                        },
+                        "status": {
+                          "const": 404
+                        },
+                        "message": {
+                          "type": "string",
+                          "default": "Workspace not found."
+                        },
+                        "data": {}
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message"
+                      ]
+                    },
+                    {
+                      "$ref": "#/components/schemas/RpcUnexpectedError"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "503": {
             "$ref": "#/components/responses/ErrorResponse_b7d254f6bd68a887b2398a1b58fb8fe3913110d7236a6e4540d7d2aa990fb12b"
@@ -86405,112 +86168,6 @@
           }
         ],
         "x-interfere-read-only": true
-      }
-    },
-    "/v3/workspaces/{workspaceSlug}/surfaces/{surfaceSlug}/publicKeys": {
-      "post": {
-        "operationId": "keys_public_create",
-        "summary": "keys public create",
-        "description": "Creates a publishable key for the app (surface).",
-        "tags": [
-          "keys.public"
-        ],
-        "parameters": [
-          {
-            "name": "workspaceSlug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
-            },
-            "x-fern-parameter-name": "workspace"
-          },
-          {
-            "name": "surfaceSlug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-              "description": "Surface URL slug, using lowercase letters, numbers, and hyphens."
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "idempotencyKey": {
-                    "type": "string",
-                    "format": "uuid"
-                  },
-                  "name": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 64,
-                    "description": "Display name of the key."
-                  }
-                },
-                "required": [
-                  "idempotencyKey",
-                  "name"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateSurfacePublicKeyResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/RpcValidationError"
-          },
-          "401": {
-            "$ref": "#/components/responses/ErrorResponse_d7174de43f943d10193d5f31cc4615acb6d01e6a15ef9a1a861235cb9792319b"
-          },
-          "403": {
-            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
-          },
-          "404": {
-            "$ref": "#/components/responses/ErrorResponse_3cfb93c298ec62e03b5f0c773ae0ffe6465986e9ffe28eb614f7c3c4a859f869"
-          },
-          "409": {
-            "$ref": "#/components/responses/ErrorResponse_088cb09282d303295e75879da2c16585de0b7b9e07c53fe74d377c3985f2792c"
-          },
-          "503": {
-            "$ref": "#/components/responses/ErrorResponse_b7d254f6bd68a887b2398a1b58fb8fe3913110d7236a6e4540d7d2aa990fb12b"
-          }
-        },
-        "x-cloudflare-labels": [
-          "cf-api-endpoint"
-        ],
-        "security": [
-          {
-            "clerkSession": []
-          }
-        ],
-        "x-interfere-read-only": false,
-        "x-fern-sdk-group-name": [
-          "keys",
-          "public"
-        ],
-        "x-fern-sdk-method-name": "create",
-        "x-fern-retries": {
-          "disabled": true
-        }
       }
     },
     "/v3/workspaces/{workspaceSlug}/surfaces/{surfaceSlug}/publicKeys/{publicKeyId}/roll": {
@@ -86593,7 +86250,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateSurfacePublicKeyResponse"
+                  "$ref": "#/components/schemas/RollSurfacePublicKeyResponse"
                 }
               }
             }

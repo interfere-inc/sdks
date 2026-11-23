@@ -1856,11 +1856,6 @@ async fn wire_surfacesdkstatus() {
 }
 
 #[tokio::test]
-async fn wire_createsurface() {
-    run_case("createsurface").await;
-}
-
-#[tokio::test]
 async fn wire_surfaceeventstimeseries() {
     run_case("surfaceeventstimeseries").await;
 }
@@ -2006,11 +2001,6 @@ async fn wire_update_name_3() {
 }
 
 #[tokio::test]
-async fn wire_create_2() {
-    run_case("create_2").await;
-}
-
-#[tokio::test]
 async fn wire_rotate() {
     run_case("rotate").await;
 }
@@ -2106,8 +2096,8 @@ async fn wire_for_thread() {
 }
 
 #[tokio::test]
-async fn wire_create_3() {
-    run_case("create_3").await;
+async fn wire_create_2() {
+    run_case("create_2").await;
 }
 
 #[tokio::test]
@@ -2121,8 +2111,8 @@ async fn wire_list_15() {
 }
 
 #[tokio::test]
-async fn wire_create_4() {
-    run_case("create_4").await;
+async fn wire_create_3() {
+    run_case("create_3").await;
 }
 
 #[tokio::test]
@@ -2171,8 +2161,8 @@ async fn wire_pending() {
 }
 
 #[tokio::test]
-async fn wire_create_5() {
-    run_case("create_5").await;
+async fn wire_create_4() {
+    run_case("create_4").await;
 }
 
 #[tokio::test]
@@ -3001,11 +2991,6 @@ async fn wire_surfacesdkstatus_error() {
 }
 
 #[tokio::test]
-async fn wire_createsurface_error() {
-    run_case("createsurface_error").await;
-}
-
-#[tokio::test]
 async fn wire_surfaceeventstimeseries_error() {
     run_case("surfaceeventstimeseries_error").await;
 }
@@ -3151,11 +3136,6 @@ async fn wire_update_name_3_error() {
 }
 
 #[tokio::test]
-async fn wire_create_2_error() {
-    run_case("create_2_error").await;
-}
-
-#[tokio::test]
 async fn wire_rotate_error() {
     run_case("rotate_error").await;
 }
@@ -3251,8 +3231,8 @@ async fn wire_for_thread_error() {
 }
 
 #[tokio::test]
-async fn wire_create_3_error() {
-    run_case("create_3_error").await;
+async fn wire_create_2_error() {
+    run_case("create_2_error").await;
 }
 
 #[tokio::test]
@@ -3266,8 +3246,8 @@ async fn wire_list_15_error() {
 }
 
 #[tokio::test]
-async fn wire_create_4_error() {
-    run_case("create_4_error").await;
+async fn wire_create_3_error() {
+    run_case("create_3_error").await;
 }
 
 #[tokio::test]
@@ -3316,8 +3296,8 @@ async fn wire_pending_error() {
 }
 
 #[tokio::test]
-async fn wire_create_5_error() {
-    run_case("create_5_error").await;
+async fn wire_create_4_error() {
+    run_case("create_4_error").await;
 }
 
 #[tokio::test]

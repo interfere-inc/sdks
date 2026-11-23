@@ -4,7 +4,7 @@ use std::process::Command;
 fn product_groups_are_discoverable_without_credentials() {
     for args in [
         vec!["audit", "list", "--schema"],
-        vec!["keys", "public", "create", "--schema"],
+        vec!["keys", "public", "rotate", "--schema"],
         vec!["keys", "private", "create", "--schema"],
         vec!["billing", "invoices", "list", "--schema"],
         vec!["users", "invitations", "create", "--schema"],
