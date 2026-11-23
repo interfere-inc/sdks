@@ -1,5 +1,5 @@
-import { isNonErrorException } from "#sdk/errors";
-import type { NonErrorException } from "#sdk/errors";
+import { isNonErrorException } from "./errors";
+import type { NonErrorException } from "./errors";
 
 const MAX_THROW_SITE_LINES = 30;
 

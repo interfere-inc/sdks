@@ -10,11 +10,8 @@ import {
   truncateExceptionMessage,
   truncateExceptionStack,
 } from "./errors/truncate.ts";
-import type { IngestedFrame } from "#data/frame";
-import type {
-  ErrorMechanism,
-  ExceptionValue,
-} from "#sdk/plugins/payload/errors";
+import type { IngestedFrame } from "../data/frame";
+import type { ErrorMechanism, ExceptionValue } from "./plugins/payload/errors";
 
 /**
  * Structured taxonomy of capture sources, tagged onto each
@@ -299,8 +296,8 @@ export interface NonErrorException {
 }
 
 /** Preserves recoverable Errors and serializes other thrown values as structured exceptions. */
-// oxlint-disable-next-line anti-slop/no-unknown-parameters -- Public exception capture normalizes every JavaScript thrown value.
-export function toException(value: unknown) {
+// oxlint-disable-next-line anti-slop/no-unknown-parameters, interfere-types/no-explicit-return-types -- Public exception capture normalizes every JavaScript thrown value, and declaration emit infers `any` for the union of recovered, nested, DOM and serialized exceptions.
+export function toException(value: unknown): Error | NonErrorException {
   try {
     const recovered = recoverError(value);
 

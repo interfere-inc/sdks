@@ -1,6 +1,7 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, expectTypeOf, test } from "vitest";
 
 import { omitUndefined } from "./omit-undefined";
+import type { OmitUndefined } from "./omit-undefined";
 
 describe(omitUndefined, () => {
   test("removes undefined values and preserves other falsy values", () => {
@@ -81,5 +82,16 @@ describe(omitUndefined, () => {
     });
 
     expect(Object.keys(result)).toStrictEqual(["2", "10", "z", "a"]);
+  });
+
+  test("keeps properties typed any required instead of making them optional", () => {
+    type Parsed = ReturnType<typeof JSON.parse>;
+
+    type Result = OmitUndefined<{
+      parsed: Parsed;
+      skipped: string | undefined;
+    }>;
+
+    expectTypeOf<Pick<Result, "parsed">>().toEqualTypeOf<{ parsed: Parsed }>();
   });
 });

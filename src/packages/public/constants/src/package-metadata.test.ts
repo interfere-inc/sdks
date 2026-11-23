@@ -9,7 +9,6 @@ const execFileAsync = promisify(execFile);
 
 interface ConditionalExport {
   import?: { types?: string; default?: string };
-  monorepo?: string;
   require?: { types?: string; default?: string };
 }
 
@@ -36,6 +35,7 @@ function expectDualExport(entry: ConditionalExport | string | undefined) {
     throw new TypeError("expected conditional export object");
   }
 
+  expect(entry).not.toHaveProperty("monorepo");
   expect(entry.import?.types).toMatch(DTS_EXT);
   expect(entry.import?.default).toMatch(MJS_EXT);
 

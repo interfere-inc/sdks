@@ -9,14 +9,13 @@ const execFileAsync = promisify(execFile);
 
 interface PackageExport {
   import?: { types?: string; default?: string };
-  monorepo?: string;
   require?: { types?: string; default?: string };
 }
 
 interface PackageJson {
   exports?: Record<string, PackageExport | undefined>;
   files?: string[];
-  imports?: Record<string, PackageExport | undefined>;
+  imports?: unknown;
 }
 
 const DTS_EXT = /\.d\.mts$/u;
@@ -36,10 +35,10 @@ describe("@interfere/types package metadata", () => {
     expectDualPackageMap(pkg.exports);
   });
 
-  test("keeps package imports dual-format for generated CommonJS internals", async () => {
+  test("resolves internal modules relatively, with no package imports map", async () => {
     const pkg = await readPackageJson();
 
-    expectDualPackageMap(pkg.imports);
+    expect(pkg.imports).toBeUndefined();
   });
 
   test("publishes runtime files and declarations without source maps", async () => {
@@ -153,7 +152,7 @@ function expectDualPackageMap(
   expect(map).toStrictEqual(expect.any(Object));
 
   for (const [subpath, entry] of Object.entries(map ?? {})) {
-    expect(entry?.monorepo, subpath).toStrictEqual(expect.any(String));
+    expect(entry, subpath).not.toHaveProperty("monorepo");
     expect(entry?.import?.types, subpath).toMatch(DTS_EXT);
     expect(entry?.import?.default, subpath).toMatch(MJS_EXT);
 

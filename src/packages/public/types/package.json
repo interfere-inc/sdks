@@ -26,33 +26,8 @@
   ],
   "type": "module",
   "sideEffects": false,
-  "imports": {
-    "#data/*": {
-      "monorepo": "./src/data/*.ts",
-      "import": {
-        "types": "./dist/data/*.d.mts",
-        "default": "./dist/data/*.mjs"
-      },
-      "require": {
-        "types": "./dist/data/*.d.cts",
-        "default": "./dist/data/*.cjs"
-      }
-    },
-    "#sdk/*": {
-      "monorepo": "./src/sdk/*.ts",
-      "import": {
-        "types": "./dist/sdk/*.d.mts",
-        "default": "./dist/sdk/*.mjs"
-      },
-      "require": {
-        "types": "./dist/sdk/*.d.cts",
-        "default": "./dist/sdk/*.cjs"
-      }
-    }
-  },
   "exports": {
     "./data/*": {
-      "monorepo": "./src/data/*.ts",
       "import": {
         "types": "./dist/data/*.d.mts",
         "default": "./dist/data/*.mjs"
@@ -63,7 +38,6 @@
       }
     },
     "./sdk/plugins/*": {
-      "monorepo": "./src/sdk/plugins/*.ts",
       "import": {
         "types": "./dist/sdk/plugins/*.d.mts",
         "default": "./dist/sdk/plugins/*.mjs"
@@ -74,7 +48,6 @@
       }
     },
     "./sdk/*": {
-      "monorepo": "./src/sdk/*.ts",
       "import": {
         "types": "./dist/sdk/*.d.mts",
         "default": "./dist/sdk/*.mjs"
@@ -85,7 +58,6 @@
       }
     },
     "./releases/*": {
-      "monorepo": "./src/releases/*.ts",
       "import": {
         "types": "./dist/releases/*.d.mts",
         "default": "./dist/releases/*.mjs"
@@ -96,7 +68,6 @@
       }
     },
     "./events/*": {
-      "monorepo": "./src/events/*.ts",
       "import": {
         "types": "./dist/events/*.d.mts",
         "default": "./dist/events/*.mjs"
@@ -107,7 +78,6 @@
       }
     },
     "./integrations": {
-      "monorepo": "./src/integrations/index.ts",
       "import": {
         "types": "./dist/integrations/index.d.mts",
         "default": "./dist/integrations/index.mjs"
@@ -118,7 +88,6 @@
       }
     },
     "./integrations/platforms/*": {
-      "monorepo": "./src/integrations/platforms/*.ts",
       "import": {
         "types": "./dist/integrations/platforms/*.d.mts",
         "default": "./dist/integrations/platforms/*.mjs"
@@ -133,8 +102,9 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsdown",
     "build:js": "tsdown --no-clean --no-dts",
+    "build:types": "tsdown --no-clean --dts.dtsOnly",
+    "dev": "tsdown --no-clean --no-dts --watch",
     "lint:oxlint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/types",
     "test": "node ../test-config/src/cli.ts run --config ../../../../vitest.config.ts",
     "typecheck": "bun check"

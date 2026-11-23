@@ -31,7 +31,6 @@
   "sideEffects": false,
   "exports": {
     "./api": {
-      "monorepo": "./src/api.ts",
       "import": {
         "types": "./dist/api.d.mts",
         "default": "./dist/api.mjs"
@@ -42,7 +41,6 @@
       }
     },
     "./http": {
-      "monorepo": "./src/http.ts",
       "import": {
         "types": "./dist/http.d.mts",
         "default": "./dist/http.mjs"
@@ -53,7 +51,6 @@
       }
     },
     "./route-prefix": {
-      "monorepo": "./src/route-prefix.ts",
       "import": {
         "types": "./dist/route-prefix.d.mts",
         "default": "./dist/route-prefix.mjs"
@@ -64,7 +61,6 @@
       }
     },
     "./service-names": {
-      "monorepo": "./src/service-names.ts",
       "import": {
         "types": "./dist/service-names.d.mts",
         "default": "./dist/service-names.mjs"
@@ -76,7 +72,6 @@
     },
     "./package.json": "./package.json",
     "./staff": {
-      "monorepo": "./src/staff.ts",
       "import": {
         "types": "./dist/staff.d.mts",
         "default": "./dist/staff.mjs"
@@ -91,8 +86,9 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsdown",
     "build:js": "tsdown --no-clean --no-dts",
+    "build:types": "tsdown --no-clean --dts.dtsOnly",
+    "dev": "tsdown --no-clean --no-dts --watch",
     "lint:oxlint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/constants",
     "test": "node ../test-config/src/cli.ts run --config ../../../../vitest.config.ts",
     "typecheck": "bun check"

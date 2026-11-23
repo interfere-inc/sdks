@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { ingestedFrame } from "#data/frame";
+import { ingestedFrame } from "../data/frame";
 
 const baseEnrichedFrameSchema = z.object({
   column: z.number().nullable(),

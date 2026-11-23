@@ -1,5 +1,5 @@
 import type { NonErrorException } from "../errors.ts";
-import type { ErrorMechanism } from "#sdk/plugins/payload/errors";
+import type { ErrorMechanism } from "../plugins/payload/errors";
 
 /** A substring or regular expression matched against exception messages or script URLs. */
 export type ErrorFilterPattern = string | RegExp;

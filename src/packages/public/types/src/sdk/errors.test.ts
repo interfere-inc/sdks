@@ -1,4 +1,4 @@
-import type { ExceptionValue } from "#sdk/plugins/payload/errors";
+import type { ExceptionValue } from "./plugins/payload/errors";
 
 import {
   isNonErrorException,
