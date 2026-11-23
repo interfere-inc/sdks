@@ -59322,7 +59322,7 @@
           },
           "sessionRecordId": {
             "type": "string",
-            "pattern": "^[^:/]+[:/].+$"
+            "pattern": "^[^:/]*[:/].+$"
           },
           "surfaceId": {
             "anyOf": [
@@ -61687,7 +61687,7 @@
                 },
                 "sessionRecordId": {
                   "type": "string",
-                  "pattern": "^[^:/]+[:/].+$"
+                  "pattern": "^[^:/]*[:/].+$"
                 },
                 "surfaceId": {
                   "anyOf": [
@@ -82078,7 +82078,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "pattern": "^[^:/]+[:/].+$"
+              "pattern": "^[^:/]*[:/].+$"
             }
           },
           {
@@ -82286,7 +82286,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "pattern": "^[^:/]+[:/].+$"
+              "pattern": "^[^:/]*[:/].+$"
             }
           },
           {
