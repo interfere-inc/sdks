@@ -96,7 +96,6 @@
     "@interfere/helpers": "workspace:^",
     "@interfere/javascript": "workspace:^",
     "@interfere/types": "workspace:^",
-    "@opentelemetry/api": "catalog:",
     "@opentelemetry/core": "catalog:",
     "@opentelemetry/instrumentation": "catalog:",
     "@opentelemetry/instrumentation-document-load": "catalog:",
@@ -120,6 +119,7 @@
     "@datadog/browser-rum": "catalog:",
     "@interfere/test-config": "workspace:*",
     "@interfere/typescript-config": "workspace:^",
+    "@opentelemetry/api": "catalog:",
     "@opentelemetry/browser-instrumentation": "catalog:",
     "@rolldown/plugin-babel": "catalog:",
     "@rrweb/types": "catalog:",
@@ -146,6 +146,7 @@
     "vitest-browser-react": "catalog:"
   },
   "peerDependencies": {
+    "@opentelemetry/api": "^1.9.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

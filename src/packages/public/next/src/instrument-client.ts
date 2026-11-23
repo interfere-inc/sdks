@@ -42,13 +42,13 @@ export const identity: WrapperSingleton["identity"] = wrapper.identity;
 export const subscribeToKernel: WrapperSingleton["subscribeToKernel"] =
   wrapper.subscribeToKernel;
 
-export async function init(opts?: KernelOptions) {
+export const init: WrapperSingleton["init"] = async (opts) => {
   if (buildIntegrationRan()) {
     return initKernel(opts);
   }
 
   return initAfterHoistedImports(opts);
-}
+};
 
 async function initKernel(opts?: KernelOptions) {
   return interfereDisabled() ? null : wrapper.init(opts);

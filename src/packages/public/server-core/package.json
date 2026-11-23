@@ -91,7 +91,6 @@
     "@interfere/constants": "workspace:^",
     "@interfere/helpers": "workspace:^",
     "@interfere/types": "workspace:^",
-    "@opentelemetry/api": "catalog:",
     "@opentelemetry/context-async-hooks": "catalog:",
     "@opentelemetry/core": "catalog:",
     "@opentelemetry/otlp-exporter-base": "catalog:",
@@ -105,10 +104,14 @@
     "@interfere/test-config": "workspace:*",
     "@interfere/test-utils": "workspace:^",
     "@interfere/typescript-config": "workspace:^",
+    "@opentelemetry/api": "catalog:",
     "@types/node": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "@opentelemetry/api": "^1.9.0"
   },
   "engines": {
     "node": "24.x"

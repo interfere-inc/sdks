@@ -298,6 +298,36 @@ test("rejects invalid startup messages and cleans failed dependency installation
   await expect(readdir(scratch)).resolves.toStrictEqual([]);
 });
 
+test("installs required peer dependencies and skips optional ones", async () => {
+  const file = join(directory, "package.json");
+
+  await writeFile(
+    file,
+    JSON.stringify({
+      name: "@interfere/fixture",
+      version: "1.0.0",
+      files: ["index.cjs"],
+      exports: "./index.cjs",
+      peerDependencies: { absent: "1.0.0", external: "1.0.0" },
+      peerDependenciesMeta: { absent: { optional: true } },
+    }),
+  );
+
+  const app = await application(directory, ["@interfere/fixture"]);
+
+  try {
+    await expect(
+      readFile(join(app.root, "node_modules/external/package.json"), "utf8"),
+    ).resolves.toContain('"name":"external"');
+
+    await expect(
+      readFile(join(app.root, "node_modules/absent/package.json"), "utf8"),
+    ).rejects.toThrow("ENOENT");
+  } finally {
+    await app.close();
+  }
+});
+
 test("installs a listed package from a prebuilt tarball instead of packing it", async () => {
   const { tarball } = prebuilt;
 

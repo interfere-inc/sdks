@@ -1,4 +1,3 @@
-import type { KernelOptions } from "@interfere/react/internal/kernel";
 import { createWrapperSingleton } from "@interfere/react/internal/wrapper-singleton";
 import type { WrapperSingleton } from "@interfere/react/internal/wrapper-singleton";
 
@@ -21,7 +20,7 @@ const wrapper = createWrapperSingleton({
   producerVersion: PRODUCER_VERSION,
 });
 
-export async function init(opts?: KernelOptions) {
+export const init: WrapperSingleton["init"] = async (opts) => {
   if (import.meta.env.VITE_INTERFERE_DISABLED) {
     return null;
   }
@@ -29,7 +28,7 @@ export async function init(opts?: KernelOptions) {
   applyBrowserGlobals();
 
   return wrapper.init(opts);
-}
+};
 
 export const close: WrapperSingleton["close"] = wrapper.close;
 

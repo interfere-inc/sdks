@@ -24,6 +24,10 @@ const exec = promisify(execFile);
 const metadata = z.object({
   name: z.string(),
   dependencies: z.record(z.string(), z.string()).default({}),
+  peerDependencies: z.record(z.string(), z.string()).default({}),
+  peerDependenciesMeta: z
+    .record(z.string(), z.object({ optional: z.boolean().optional() }))
+    .default({}),
 });
 
 function childEnvironment(overrides: Record<string, string | undefined>) {
@@ -107,9 +111,13 @@ export async function application(
       destination,
     ]);
 
+    const requiredPeers = Object.keys(manifest.peerDependencies).filter(
+      (peer) => manifest.peerDependenciesMeta[peer]?.optional !== true,
+    );
+
     await Promise.all(
-      Object.keys(manifest.dependencies).map(async (dependency) =>
-        install(dependency, source),
+      [...Object.keys(manifest.dependencies), ...requiredPeers].map(
+        async (dependency) => install(dependency, source),
       ),
     );
   }
