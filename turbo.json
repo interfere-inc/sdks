@@ -30,7 +30,8 @@
         "!dist/**/*.d.ts",
         "!dist/**/*.d.mts.map",
         "!dist/**/*.d.cts.map",
-        "!dist/**/*.d.ts.map"
+        "!dist/**/*.d.ts.map",
+        "!dist/**/*.json"
       ]
     },
     "build:types": {
@@ -45,7 +46,7 @@
         "tsdown.config.*",
         "$TURBO_ROOT$/src/packages/public/typescript-config/*.json"
       ],
-      "outputs": ["dist/**/*.d.mts", "dist/**/*.d.mts.map"]
+      "outputs": ["dist/**/*.d.mts", "dist/**/*.d.mts.map", "dist/**/*.json"]
     },
     "typecheck": {
       "dependsOn": ["typegen", "^typegen", "^typecheck", "^build:types"]
