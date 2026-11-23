@@ -86,6 +86,40 @@ Build plugins use a workspace secret with `release:write` and a service name to 
 
 Keep the service name aligned between the build plugin, browser initialization and server registration. This is telemetry identity, separate from the CLI's `--workspace` selection.
 
+### Plain OpenTelemetry in the browser
+
+A website can send traces and logs with the stock OpenTelemetry browser exporters and no Interfere SDK. The credential is a release token, never a workspace secret: a secret in a page is public, and the gateway does not allow `Authorization` or `x-api-key` in browser requests.
+
+Mint the token at build time with a workspace secret that has `release:write`. The release names the service through the `x-interfere-service` header, and the response's `token` is the value to ship. Without that header the release has no service and `token` is `null`:
+
+```sh
+curl -sS https://api.interfere.com/v3/releases \
+  -H "x-api-key: $INTERFERE_API_KEY" \
+  -H "x-interfere-service: checkout-web" \
+  -H "content-type: application/json" \
+  -d '{"buildId":"'"$GITHUB_SHA"'","destination":null,"source":{"provider":"github","branch":"main","commitSha":"'"$GITHUB_SHA"'","commitMessage":"deploy"}}'
+```
+
+Build the token into the bundle, then point the OTLP/HTTP JSON exporter at the drain with it:
+
+```ts
+import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
+
+const exporter = new OTLPTraceExporter({
+  url: "https://api.interfere.com/drain/v1/traces",
+  headers: { "x-interfere-release-token": INTERFERE_RELEASE_TOKEN },
+});
+```
+
+Logs go to `/drain/v1/logs` and metrics to `/drain/v1/metrics` with the same header. Set `headers` on every exporter: a transport that uses `sendBeacon` cannot carry a custom header, so its exports are refused.
+
+- The token names the workspace, service and release. Interfere overwrites `service.name`, `service.namespace` and `interfere.release.slug` on every export with the token's values, so the resource attributes in the page do not choose the service.
+- The gateway answers the browser's CORS preflight for any origin and allows the `Content-Type` and `x-interfere-release-token` headers an OTLP exporter needs. It does not allow `Authorization` or `x-api-key`. A refused export still carries the CORS headers, so the page can read the problem.
+- A trace span must carry its `traceId` and `spanId`; the drain answers `400` to an export with a span that has neither. An OpenTelemetry exporter always sets both.
+- Revoking a release or pausing its service stops that token's data: a revoked release answers `401`, a paused service is acknowledged and dropped.
+
+Without the SDK there are no Interfere sessions (the exporter sends no `x-interfere-session`, `x-interfere-window` or `x-interfere-device`), no session replay and no identified users. Spans and logs land under the service, tied to the release.
+
 ### Legacy credentials
 
 `--public-key` and `INTERFERE_PUBLIC_KEY` are deprecated legacy inputs for older API operations. They remain documented for compatibility, not for new SDK setup. Per-App keys are deprecated; migrate builds to workspace secrets and release tokens.
