@@ -9,7 +9,6 @@ const entryMap = z.record(z.string(), z.string());
 
 const isWatch = process.argv.includes("--watch") || process.argv.includes("-w");
 
-// oxlint-disable-next-line node/no-process-env -- build:types selects its declaration-only output through the environment.
 const declarations = process.env["TSDOWN_DECLARATIONS"] === "1";
 
 const staging = "node_modules/.cache/declarations";
