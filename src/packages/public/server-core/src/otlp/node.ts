@@ -24,7 +24,7 @@ type CollectorOptions = Parameters<typeof createOtlpHttpExportDelegate>[0];
 
 async function collectorClient(url: URL, options: CollectorOptions) {
   const [{ Pool, RetryAgent }, { Agent }, agent] = await Promise.all([
-    import("undici"),
+    import("undici/index.js"),
     import("node:https"),
     options.agentFactory(url.protocol),
   ]);
