@@ -1,5 +1,30 @@
 # @interfere/react
 
+## 13.1.2
+
+### Patch Changes
+
+- 72fabef: Node telemetry exporters negotiate HTTP/2 with compatible collectors and support HTTP/1.1, and browser fetch and XHR tracing sanitizes request URLs before they reach span processors.
+
+- e8e3357: The React, Next.js, and Vite integrations now use OpenTelemetry 3 for tracing and log export, including in applications that already configure their own trace provider.
+- 5d39a3c: React component frames from production builds keep their source URL, line, and column, so Interfere maps each component frame to your source code.
+
+- Updated dependencies [64e0dab]
+- Updated dependencies [5d39a3c]
+- Updated dependencies [64e0dab]
+- Updated dependencies [989e833]
+  - @interfere/helpers@9.3.6
+  - @interfere/types@11.2.1
+
+### Network
+
+- Headers:
+  - 72fabef: Node collector requests identify the Interfere producer version in the `User-Agent` header.
+- Retries:
+  - 72fabef: Node exporters use Undici to retry transient collector failures within the configured export deadline, honoring `Retry-After`.
+- Data sent and consent:
+  - 5d39a3c: each React component frame in a captured exception includes the URL, line, and column of the component code, in the frames for Chrome, Firefox, and Safari.
+
 ## 13.1.1
 
 ### Patch Changes

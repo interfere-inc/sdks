@@ -13,7 +13,7 @@
     },
     "src/packages/public/build-tools": {
       "name": "@interfere/build",
-      "version": "0.6.1",
+      "version": "0.6.2",
       "dependencies": {
         "@interfere/javascript": "workspace:^",
         "@interfere/types": "workspace:^",
@@ -32,7 +32,7 @@
     },
     "src/packages/public/cli": {
       "name": "@interfere/cli",
-      "version": "1.18.0",
+      "version": "1.19.0",
       "bin": {
         "interfere": "dist/interfere.mjs",
       },
@@ -52,23 +52,23 @@
     },
     "src/packages/public/cli/platforms/darwin-arm64": {
       "name": "@interfere/cli-darwin-arm64",
-      "version": "1.18.0",
+      "version": "1.19.0",
     },
     "src/packages/public/cli/platforms/darwin-x64": {
       "name": "@interfere/cli-darwin-x64",
-      "version": "1.18.0",
+      "version": "1.19.0",
     },
     "src/packages/public/cli/platforms/linux-arm64": {
       "name": "@interfere/cli-linux-arm64",
-      "version": "1.18.0",
+      "version": "1.19.0",
     },
     "src/packages/public/cli/platforms/linux-x64": {
       "name": "@interfere/cli-linux-x64",
-      "version": "1.18.0",
+      "version": "1.19.0",
     },
     "src/packages/public/cli/platforms/win32-x64": {
       "name": "@interfere/cli-win32-x64",
-      "version": "1.18.0",
+      "version": "1.19.0",
     },
     "src/packages/public/constants": {
       "name": "@interfere/constants",
@@ -89,7 +89,7 @@
     },
     "src/packages/public/helpers": {
       "name": "@interfere/helpers",
-      "version": "9.3.5",
+      "version": "9.3.6",
       "devDependencies": {
         "@interfere/test-config": "workspace:*",
         "@interfere/typescript-config": "workspace:^",
@@ -115,7 +115,7 @@
     },
     "src/packages/public/next": {
       "name": "@interfere/next",
-      "version": "13.1.1",
+      "version": "13.1.2",
       "dependencies": {
         "@interfere/build": "workspace:^",
         "@interfere/constants": "workspace:^",
@@ -176,7 +176,7 @@
     },
     "src/packages/public/react": {
       "name": "@interfere/react",
-      "version": "13.1.1",
+      "version": "13.1.2",
       "dependencies": {
         "@fingerprintjs/fingerprintjs": "catalog:",
         "@interfere/constants": "workspace:^",
@@ -243,7 +243,7 @@
     },
     "src/packages/public/server-core": {
       "name": "@interfere/server-core",
-      "version": "0.2.1",
+      "version": "0.2.2",
       "dependencies": {
         "@interfere/constants": "workspace:^",
         "@interfere/helpers": "workspace:^",
@@ -288,7 +288,7 @@
     },
     "src/packages/public/test-utils": {
       "name": "@interfere/test-utils",
-      "version": "10.1.4",
+      "version": "10.1.5",
       "dependencies": {
         "@interfere/helpers": "workspace:^",
         "msw": "catalog:",
@@ -305,7 +305,7 @@
     },
     "src/packages/public/types": {
       "name": "@interfere/types",
-      "version": "11.2.0",
+      "version": "11.2.1",
       "dependencies": {
         "@interfere/helpers": "workspace:^",
         "@opentelemetry/api": "catalog:",
@@ -339,7 +339,7 @@
     },
     "src/packages/public/vite": {
       "name": "@interfere/vite",
-      "version": "13.1.1",
+      "version": "13.1.2",
       "dependencies": {
         "@interfere/build": "workspace:^",
         "@interfere/constants": "workspace:^",

@@ -1,5 +1,27 @@
 # @interfere/server-core
 
+## 0.2.2
+
+### Patch Changes
+
+- c7b2dbd: Bun applications now load the installed Undici transport when exporting server traces, logs and metrics.
+- 72fabef: Node telemetry exporters negotiate HTTP/2 with compatible collectors and support HTTP/1.1, and browser fetch and XHR tracing sanitizes request URLs before they reach span processors.
+
+- e8e3357: The React, Next.js, and Vite integrations now use OpenTelemetry 3 for tracing and log export, including in applications that already configure their own trace provider.
+- Updated dependencies [64e0dab]
+- Updated dependencies [5d39a3c]
+- Updated dependencies [64e0dab]
+- Updated dependencies [989e833]
+  - @interfere/helpers@9.3.6
+  - @interfere/types@11.2.1
+
+### Network
+
+- Headers:
+  - 72fabef: Node collector requests identify the Interfere producer version in the `User-Agent` header.
+- Retries:
+  - 72fabef: Node exporters use Undici to retry transient collector failures within the configured export deadline, honoring `Retry-After`.
+
 ## 0.2.1
 
 ### Patch Changes

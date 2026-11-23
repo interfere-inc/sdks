@@ -977,7 +977,7 @@ dependencies = [
 
 [[package]]
 name = "interfere-cli"
-version = "1.18.0"
+version = "1.19.0"
 dependencies = [
  "clap",
  "interfere-cli-runtime",
@@ -990,7 +990,7 @@ dependencies = [
 
 [[package]]
 name = "interfere-cli-runtime"
-version = "1.18.0"
+version = "1.19.0"
 dependencies = [
  "anyhow",
  "base64 0.22.1",

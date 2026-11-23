@@ -1,5 +1,21 @@
 # @interfere/types
 
+## 11.2.1
+
+### Patch Changes
+
+- 5d39a3c: React component frames from production builds keep their source URL, line, and column, so Interfere maps each component frame to your source code.
+
+- 64e0dab: `toException`, `resolveGithubReleaseSource`, `sourceMapBatchDigest` and `parseReactComponentStack` now return their real types instead of `any`, so with `exactOptionalPropertyTypes` enabled code that passes their results on may need to omit optional properties instead of assigning `undefined` to them (for example with `omitUndefined` from `@interfere/helpers`).
+- 989e833: `vite dev` with an `INTERFERE_API_KEY` that has the `release:write` scope and no `VITE_INTERFERE_PUBLIC_KEY` now mints a release token for the service's shared local-development release, so browser telemetry is sent in local development without a public key, and the dev server warns when it cannot mint a token.
+- Updated dependencies [64e0dab]
+  - @interfere/helpers@9.3.6
+
+### Network
+
+- Data sent and consent:
+  - 5d39a3c: each React component frame in a captured exception includes the URL, line, and column of the component code, in the frames for Chrome, Firefox, and Safari.
+
 ## 11.2.0
 
 ### Minor Changes

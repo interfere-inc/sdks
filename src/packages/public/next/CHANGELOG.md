@@ -1,5 +1,33 @@
 # @interfere/next
 
+## 13.1.2
+
+### Patch Changes
+
+- 72fabef: Node telemetry exporters negotiate HTTP/2 with compatible collectors and support HTTP/1.1, and browser fetch and XHR tracing sanitizes request URLs before they reach span processors.
+
+- 989e833: `next dev` with an `INTERFERE_API_KEY` that has the `release:write` scope and no `INTERFERE_PUBLIC_KEY` now mints a release token for the service's shared local-development release and bakes it into the dev bundle, so browser telemetry is sent in local development without a public key, and the dev server warns when it cannot mint a token.
+- e8e3357: The React, Next.js, and Vite integrations now use OpenTelemetry 3 for tracing and log export, including in applications that already configure their own trace provider.
+- Updated dependencies [c7b2dbd]
+- Updated dependencies [64e0dab]
+- Updated dependencies [72fabef]
+- Updated dependencies [e8e3357]
+- Updated dependencies [5d39a3c]
+- Updated dependencies [64e0dab]
+- Updated dependencies [989e833]
+  - @interfere/server-core@0.2.2
+  - @interfere/helpers@9.3.6
+  - @interfere/react@13.1.2
+  - @interfere/types@11.2.1
+  - @interfere/build@0.6.2
+
+### Network
+
+- Headers:
+  - 72fabef: Node collector requests identify the Interfere producer version in the `User-Agent` header.
+- Retries:
+  - 72fabef: Node exporters use Undici to retry transient collector failures within the configured export deadline, honoring `Retry-After`.
+
 ## 13.1.1
 
 ### Patch Changes

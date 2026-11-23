@@ -6,7 +6,7 @@
     "test:wire": "cargo test --locked --manifest-path generated/Cargo.toml --target-dir target --test wire_test"
   },
   "name": "@interfere/cli",
-  "version": "1.18.0",
+  "version": "1.19.0",
   "description": "Command-line access to the Interfere API for developers and coding agents.",
   "homepage": "https://interfere.com",
   "license": "MIT",
@@ -45,6 +45,6 @@
     "node": ">=20"
   },
   "interfere": {
-    "cliSchemaHash": "bc3be2aaadc4b416c032db61d63a0bb4a7803e67c8751aacb7131b0602a71408"
+    "cliSchemaHash": "8470392f0c22f94f90888d3400ada4d18aa97bd5ae4174565ab5224869a57e15"
   }
 }

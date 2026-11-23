@@ -1,5 +1,13 @@
 # @interfere/test-utils
 
+## 10.1.5
+
+### Patch Changes
+
+- 8f776d8: The server contract imports the installed Vitest instead of a bundled copy, so its hooks and assertions register with the running test.
+- Updated dependencies [64e0dab]
+  - @interfere/helpers@9.3.6
+
 ## 10.1.4
 
 ### Patch Changes

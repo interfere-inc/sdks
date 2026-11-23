@@ -1,5 +1,11 @@
 # @interfere/helpers
 
+## 9.3.6
+
+### Patch Changes
+
+- 64e0dab: `OmitUndefined` keeps properties typed `any` required instead of turning them optional.
+
 ## 9.3.5
 
 ### Patch Changes

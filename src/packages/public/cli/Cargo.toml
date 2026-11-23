@@ -1,6 +1,6 @@
 [package]
 name = "interfere-cli"
-version = "1.18.0"
+version = "1.19.0"
 edition = "2021"
 description = "Command-line access to the Interfere API for developers and coding agents."
 license = "MIT"
