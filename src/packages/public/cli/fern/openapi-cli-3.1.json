@@ -80012,6 +80012,7 @@
                     "anyOf": [
                       {
                         "enum": [
+                          "starter",
                           "pro",
                           "team"
                         ],
@@ -80022,6 +80023,11 @@
                       }
                     ],
                     "default": "pro"
+                  },
+                  "promotionCode": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
                   },
                   "successUrl": {
                     "type": "string",
@@ -80081,6 +80087,45 @@
                         "message": {
                           "type": "string",
                           "default": "Workspace already has an active subscription."
+                        },
+                        "data": {}
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message"
+                      ]
+                    },
+                    {
+                      "$ref": "#/components/schemas/RpcUnexpectedError"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request cannot be processed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "defined": {
+                          "const": true
+                        },
+                        "code": {
+                          "const": "BILLING_PROMOTION_CODE_INVALID"
+                        },
+                        "status": {
+                          "const": 422
+                        },
+                        "message": {
+                          "type": "string",
+                          "default": "This code is not valid."
                         },
                         "data": {}
                       },

@@ -5,6 +5,7 @@ use super::*;
 #[non_exhaustive]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum CreateBillingCheckoutRequestPlanZero {
+    Starter,
     Pro,
     Team,
     /// This variant is used for forward compatibility.
@@ -15,6 +16,7 @@ pub enum CreateBillingCheckoutRequestPlanZero {
 impl Serialize for CreateBillingCheckoutRequestPlanZero {
     fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         match self {
+            Self::Starter => serializer.serialize_str("starter"),
             Self::Pro => serializer.serialize_str("pro"),
             Self::Team => serializer.serialize_str("team"),
             Self::__Unknown(val) => serializer.serialize_str(val),
@@ -26,6 +28,7 @@ impl<'de> Deserialize<'de> for CreateBillingCheckoutRequestPlanZero {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         let value = String::deserialize(deserializer)?;
         match value.as_str() {
+            "starter" => Ok(Self::Starter),
             "pro" => Ok(Self::Pro),
             "team" => Ok(Self::Team),
             _ => Ok(Self::__Unknown(value)),
@@ -36,6 +39,7 @@ impl<'de> Deserialize<'de> for CreateBillingCheckoutRequestPlanZero {
 impl fmt::Display for CreateBillingCheckoutRequestPlanZero {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
+            Self::Starter => write!(f, "starter"),
             Self::Pro => write!(f, "pro"),
             Self::Team => write!(f, "team"),
             Self::__Unknown(val) => write!(f, "{}", val),

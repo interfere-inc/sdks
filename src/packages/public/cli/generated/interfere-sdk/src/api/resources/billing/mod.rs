@@ -50,6 +50,7 @@ impl BillingClient {
     ///                 success_url: "successUrl".to_string(),
     ///                 cancel_url: None,
     ///                 plan: None,
+    ///                 promotion_code: None,
     ///             },
     ///             None,
     ///         )

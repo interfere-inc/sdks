@@ -14,6 +14,9 @@ pub struct CreateBillingCheckoutRequest {
     pub intent_id: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub plan: Option<CreateBillingCheckoutRequestPlan>,
+    #[serde(rename = "promotionCode")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub promotion_code: Option<String>,
     #[serde(rename = "successUrl")]
     #[serde(default)]
     pub success_url: String,
@@ -32,6 +35,7 @@ pub struct CreateBillingCheckoutRequestBuilder {
     cancel_url: Option<String>,
     intent_id: Option<String>,
     plan: Option<CreateBillingCheckoutRequestPlan>,
+    promotion_code: Option<String>,
     success_url: Option<String>,
 }
 
@@ -56,6 +60,11 @@ impl CreateBillingCheckoutRequestBuilder {
         self
     }
 
+    pub fn promotion_code(mut self, value: impl Into<String>) -> Self {
+        self.promotion_code = Some(value.into());
+        self
+    }
+
     pub fn success_url(mut self, value: impl Into<String>) -> Self {
         self.success_url = Some(value.into());
         self
@@ -72,6 +81,7 @@ impl CreateBillingCheckoutRequestBuilder {
             cancel_url: self.cancel_url,
             intent_id: self.intent_id.ok_or_else(|| BuildError::missing_field("intent_id"))?,
             plan: self.plan,
+            promotion_code: self.promotion_code,
             success_url: self.success_url.ok_or_else(|| BuildError::missing_field("success_url"))?,
         })
     }
