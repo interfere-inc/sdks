@@ -86,9 +86,7 @@ export function createReplayHarness({
 
   setInjectedConfiguration(PUBLIC_KEY_GLOBAL, "interfere_pk_test");
 
-  replayUploads.requests.length = 0;
-
-  replayUploads.uploads.length = 0;
+  replayUploads.reset();
 
   const tracker = new SessionTracker({
     target: {

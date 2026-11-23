@@ -9,6 +9,8 @@ import { setupServer } from "msw/node";
 import { afterAll, afterEach, beforeAll, expect, test, vi } from "vitest";
 import { runReleasePipeline } from "./pipeline";
 
+const MILLIS_PER_SECOND = 1000;
+
 const server = setupServer();
 const origin = "https://receipt.test";
 const slug = releaseSlugSchema.parse("rel_bbbbbbbbbbbbbbbb");
@@ -80,7 +82,7 @@ test.each([
       ),
       http.post(`${origin}/v3/releases/${slug}/source-maps/sign`, () =>
         HttpResponse.json({
-          expiresAt: Math.floor(Date.now() / 1000) + 600,
+          expiresAt: Math.floor(Date.now() / MILLIS_PER_SECOND) + 600,
           uploads: [{ path: file.path }],
         }),
       ),

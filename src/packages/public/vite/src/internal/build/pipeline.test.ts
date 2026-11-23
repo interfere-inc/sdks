@@ -12,6 +12,8 @@ import { HttpResponse, http } from "msw";
 import { runReleasePipeline } from "./pipeline";
 import { afterAll, afterEach, beforeAll, expect, test, vi } from "vitest";
 
+const MILLIS_PER_SECOND = 1000;
+
 const server = setupServer();
 
 beforeAll(() => {
@@ -83,7 +85,7 @@ test("uploads the canonical release and cleans its artifacts", async () => {
 
           return HttpResponse.json(
             {
-              expiresAt: Math.floor(Date.now() / 1000) + 600,
+              expiresAt: Math.floor(Date.now() / MILLIS_PER_SECOND) + 600,
               uploads: [
                 {
                   path: "app.js.map",

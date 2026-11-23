@@ -6,16 +6,95 @@ import {
   rm,
   writeFile,
 } from "node:fs/promises";
+import { gunzipSync } from "node:zlib";
 import { execFile } from "node:child_process";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
-import { afterEach, beforeEach, expect, test, vi } from "vitest";
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  expect,
+  test,
+  vi,
+} from "vitest";
 import { z } from "zod";
 import { application } from "./packed-application";
 
 let directory: string;
 let scratch: string;
+
+const prebuilt = {
+  root: "",
+  tarball: "",
+};
+
+function gzipTarEntry(archive: Uint8Array, name: string) {
+  const bytes = gunzipSync(archive);
+  let offset = 0;
+
+  while (offset + 512 <= bytes.length) {
+    const header = bytes.subarray(offset, offset + 512);
+
+    const fileName = new TextDecoder()
+      .decode(header.subarray(0, 100))
+      .replace(/\0.*$/u, "");
+
+    if (fileName.length === 0) {
+      break;
+    }
+
+    const size = Number.parseInt(
+      new TextDecoder().decode(header.subarray(124, 136)).trim(),
+      8,
+    );
+
+    offset += 512;
+
+    const content = bytes.subarray(offset, offset + size);
+
+    if (fileName === name) {
+      return new TextDecoder().decode(content);
+    }
+
+    offset += Math.ceil(size / 512) * 512;
+  }
+
+  throw new Error(`missing tar entry ${name}`);
+}
+
+beforeAll(async () => {
+  prebuilt.root = await mkdtemp(join(tmpdir(), "prebuilt-pack-"));
+
+  await writeFile(
+    join(prebuilt.root, "package.json"),
+    JSON.stringify({
+      name: "@interfere/fixture",
+      version: "9.9.9",
+      files: ["index.cjs"],
+      exports: "./index.cjs",
+    }),
+  );
+
+  await writeFile(join(prebuilt.root, "index.cjs"), "module.exports = 99;");
+
+  prebuilt.tarball = join(prebuilt.root, "prebuilt.tgz");
+
+  await promisify(execFile)(
+    "bun",
+    [
+      "pm",
+      "pack",
+      "--ignore-scripts",
+      "--quiet",
+      "--filename",
+      prebuilt.tarball,
+    ],
+    { cwd: prebuilt.root },
+  );
+});
 
 beforeEach(async () => {
   directory = await mkdtemp(join(tmpdir(), "packed-application-contract-"));
@@ -59,6 +138,12 @@ afterEach(async () => {
   vi.unstubAllEnvs();
 
   await rm(directory, { recursive: true, force: true });
+});
+
+afterAll(async () => {
+  if (prebuilt.root.length > 0) {
+    await rm(prebuilt.root, { recursive: true, force: true });
+  }
 });
 
 test("runs an isolated packed consumer with explicit environment and cleans its files", async () => {
@@ -156,15 +241,16 @@ test("qualification tarballs resolve with workspace conditions without changing 
   try {
     const tarball = join(app.root, "@interfere-fixture.tgz");
 
-    const packed = await promisify(execFile)("tar", [
-      "-xOzf",
-      tarball,
-      "package/package.json",
-    ]);
-
     const manifest = z
       .object({ exports: z.json(), imports: z.json() })
-      .parse(JSON.parse(packed.stdout));
+      .parse(
+        JSON.parse(
+          gzipTarEntry(
+            new Uint8Array(await readFile(tarball)),
+            "package/package.json",
+          ),
+        ),
+      );
 
     expect(manifest.exports).toStrictEqual({ default: "./index.cjs" });
 
@@ -213,29 +299,7 @@ test("rejects invalid startup messages and cleans failed dependency installation
 });
 
 test("installs a listed package from a prebuilt tarball instead of packing it", async () => {
-  const prebuilt = join(directory, "prebuilt");
-
-  await mkdir(prebuilt);
-
-  await writeFile(
-    join(prebuilt, "package.json"),
-    JSON.stringify({
-      name: "@interfere/fixture",
-      version: "9.9.9",
-      files: ["index.cjs"],
-      exports: "./index.cjs",
-    }),
-  );
-
-  await writeFile(join(prebuilt, "index.cjs"), "module.exports = 99;");
-
-  const tarball = join(directory, "prebuilt.tgz");
-
-  await promisify(execFile)(
-    "bun",
-    ["pm", "pack", "--ignore-scripts", "--quiet", "--filename", tarball],
-    { cwd: prebuilt },
-  );
+  const { tarball } = prebuilt;
 
   const app = await application(directory, ["@interfere/fixture"], {
     tarballs: { "@interfere/fixture": tarball },

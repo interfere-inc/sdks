@@ -46,10 +46,7 @@ export interface JourneyOptions {
 }
 
 async function bundleForeignWriter(directory: string) {
-  const entry = new URL(
-    "../../react/test/foreign-writer.fixture.ts",
-    import.meta.url,
-  );
+  const entry = new URL("foreign-writer.fixture.ts", import.meta.url);
 
   await execute("bun", [
     "build",

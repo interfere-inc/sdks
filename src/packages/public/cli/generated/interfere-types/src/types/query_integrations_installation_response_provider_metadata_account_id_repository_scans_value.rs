@@ -11,7 +11,9 @@ pub struct QueryIntegrationsInstallationResponseProviderMetadataAccountIdReposit
     pub error_message: Option<String>,
     #[serde(rename = "scannedAt")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub scanned_at: Option<String>,
+    #[serde(default)]
+    #[serde(with = "crate::core::flexible_datetime::offset::option")]
+    pub scanned_at: Option<DateTime<FixedOffset>>,
     pub status: QueryIntegrationsInstallationResponseProviderMetadataAccountIdRepositoryScansValueStatus,
 }
 
@@ -26,7 +28,7 @@ impl QueryIntegrationsInstallationResponseProviderMetadataAccountIdRepositorySca
 pub struct QueryIntegrationsInstallationResponseProviderMetadataAccountIdRepositoryScansValueBuilder {
     apps: Option<Vec<QueryIntegrationsInstallationResponseProviderMetadataAccountIdRepositoryScansValueAppsItem>>,
     error_message: Option<String>,
-    scanned_at: Option<String>,
+    scanned_at: Option<DateTime<FixedOffset>>,
     status: Option<QueryIntegrationsInstallationResponseProviderMetadataAccountIdRepositoryScansValueStatus>,
 }
 
@@ -41,8 +43,8 @@ impl QueryIntegrationsInstallationResponseProviderMetadataAccountIdRepositorySca
         self
     }
 
-    pub fn scanned_at(mut self, value: impl Into<String>) -> Self {
-        self.scanned_at = Some(value.into());
+    pub fn scanned_at(mut self, value: DateTime<FixedOffset>) -> Self {
+        self.scanned_at = Some(value);
         self
     }
 

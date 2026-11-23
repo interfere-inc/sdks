@@ -2,6 +2,8 @@ import { nativeBrowserFixture } from "@interfere/test-config/native-browser";
 import { HttpResponse, http } from "msw";
 import type { Page } from "playwright";
 
+const MILLIS_PER_SECOND = 1000;
+
 export interface SeenRequest {
   path: string;
   method: string;
@@ -22,7 +24,7 @@ export const TRACE_ID = "4bf92f3577b34da6a3ce929d0e0e4736";
 export const SPAN_ID = "00f067aa0ba902b7";
 
 export function freshnessStamp() {
-  return `interfere=${Math.floor(Date.now() / 1000)}`;
+  return `interfere=${Math.floor(Date.now() / MILLIS_PER_SECOND)}`;
 }
 
 /** Serves the foreign-SDK fixture page and records every `/api/*` request's trace headers into `seen`. */

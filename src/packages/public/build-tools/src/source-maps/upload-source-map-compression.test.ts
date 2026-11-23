@@ -8,6 +8,8 @@ import { afterAll, afterEach, beforeAll, expect, test } from "vitest";
 import { uploadSourceMapChunks } from "./upload-source-map-chunks";
 import { sourceMapUploadFetch } from "./source-map-upload-fetch";
 
+const MILLIS_PER_SECOND = 1000;
+
 const origin = "https://uploads.test";
 const releaseSlug = "rel_aaaaaaaaaaaaaaaa";
 const base = `${origin}/v3/releases/${releaseSlug}/source-maps`;
@@ -101,7 +103,7 @@ test("uploads exact gzip bytes and retries", async () => {
   );
 
   const signed: Parameters<typeof uploadSourceMapChunks>[0]["signed"] = {
-    expiresAt: Math.floor(Date.now() / 1000) + 600,
+    expiresAt: Math.floor(Date.now() / MILLIS_PER_SECOND) + 600,
     uploads: files,
     batchUpload: {
       version: 1,
@@ -188,7 +190,7 @@ test("keeps plain API clients uncompressed without the gzip option", async () =>
       releaseSlug,
       files: [file],
       signed: {
-        expiresAt: Math.floor(Date.now() / 1000) + 600,
+        expiresAt: Math.floor(Date.now() / MILLIS_PER_SECOND) + 600,
         uploads: [file],
       },
     }),
@@ -212,7 +214,7 @@ test("negotiates compression when signing through the gzip-capable transport", a
       });
 
       return HttpResponse.json({
-        expiresAt: Math.floor(Date.now() / 1000) + 600,
+        expiresAt: Math.floor(Date.now() / MILLIS_PER_SECOND) + 600,
         uploads: [{ path: "a.map" }],
         batchUpload: {
           version: 1,

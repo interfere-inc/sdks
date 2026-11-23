@@ -7,9 +7,15 @@ import {
   resolveGithubReleaseSource,
   resolveReleaseCommitSha,
 } from "./github-source.ts";
-import { describe, expect, test, vi } from "vitest";
+import { beforeAll, describe, expect, test, vi } from "vitest";
 
 const noGit = () => null;
+
+const gitHead = { sha: "" };
+
+beforeAll(() => {
+  gitHead.sha = execSync("git rev-parse HEAD", { encoding: "utf8" }).trim();
+});
 
 describe(resolveReleaseCommitSha, () => {
   test.each(releaseSourceIdEnvKeys)("reads %s", (key) => {
@@ -18,16 +24,14 @@ describe(resolveReleaseCommitSha, () => {
 
   test("falls back to git when no env key is set", () => {
     const git = {
-      run(command: string) {
-        return execSync(command, { encoding: "utf8" }).trim();
+      run() {
+        return gitHead.sha;
       },
     };
 
     const runGit = vi.spyOn(git, "run");
 
-    expect(resolveReleaseCommitSha({}, runGit)).toBe(
-      execSync("git rev-parse HEAD", { encoding: "utf8" }).trim(),
-    );
+    expect(resolveReleaseCommitSha({}, runGit)).toBe(gitHead.sha);
 
     expect(runGit).toHaveBeenCalledWith("git rev-parse HEAD");
   });

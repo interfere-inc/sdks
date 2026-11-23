@@ -17,6 +17,17 @@ import { afterAll, beforeAll, expect, test } from "vitest";
 let temporary: string;
 let published: string;
 
+const portableConditions = [
+  "browser",
+  "edge-light",
+  "workerd",
+  "worker",
+] as const;
+
+const portableOutputs = new Map<string, string[]>();
+
+const nodeOutputs: string[] = [];
+
 beforeAll(async () => {
   temporary = await mkdtemp(join(tmpdir(), "javascript-artifact-"));
 
@@ -56,6 +67,43 @@ beforeAll(async () => {
   );
 
   await writeFile(join(temporary, "upload.map"), "source-map-content");
+
+  for (const condition of portableConditions) {
+    const outputs: string[] = [];
+
+    for (const format of ["import", "require"]) {
+      outputs.push(
+        execFileSync(
+          process.execPath,
+          [
+            `--conditions=${condition}`,
+            join(temporary, "runtime-probe.mts"),
+            format,
+            "portable",
+            join(temporary, "upload.map"),
+          ],
+          { timeout: 10_000, encoding: "utf8" },
+        ),
+      );
+    }
+
+    portableOutputs.set(condition, outputs);
+  }
+
+  for (const format of ["import", "require"]) {
+    nodeOutputs.push(
+      execFileSync(
+        process.execPath,
+        [
+          join(temporary, "runtime-probe.mts"),
+          format,
+          "node",
+          join(temporary, "upload.map"),
+        ],
+        { timeout: 10_000, encoding: "utf8" },
+      ),
+    );
+  }
 });
 
 afterAll(async () => {
@@ -64,24 +112,12 @@ afterAll(async () => {
   }
 });
 
-test.each(["browser", "edge-light", "workerd", "worker"])(
+test.each(portableConditions)(
   "%s selects a portable client that uploads Blobs and rejects file paths",
   (condition) => {
     expect.assertions(2);
 
-    for (const format of ["import", "require"]) {
-      const output = execFileSync(
-        process.execPath,
-        [
-          `--conditions=${condition}`,
-          join(temporary, "runtime-probe.mts"),
-          format,
-          "portable",
-          join(temporary, "upload.map"),
-        ],
-        { timeout: 10_000, encoding: "utf8" },
-      );
-
+    for (const output of portableOutputs.get(condition) ?? []) {
       expect(output).toBe("uploads verified");
     }
   },
@@ -90,18 +126,7 @@ test.each(["browser", "edge-light", "workerd", "worker"])(
 test("node uploads Blobs and file paths through ESM and CommonJS", () => {
   expect.assertions(2);
 
-  for (const format of ["import", "require"]) {
-    const output = execFileSync(
-      process.execPath,
-      [
-        join(temporary, "runtime-probe.mts"),
-        format,
-        "node",
-        join(temporary, "upload.map"),
-      ],
-      { timeout: 10_000, encoding: "utf8" },
-    );
-
+  for (const output of nodeOutputs) {
     expect(output).toBe("uploads verified");
   }
 });

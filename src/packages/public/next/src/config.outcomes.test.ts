@@ -13,7 +13,9 @@ import { withInterfere } from "./config.js";
 import { log } from "./internal/logger.js";
 import { afterEach, expect, test, vi } from "vitest";
 
-const grantExpiresAt = () => Math.floor(Date.now() / 1000) + 600;
+const MILLIS_PER_SECOND = 1000;
+
+const grantExpiresAt = () => Math.floor(Date.now() / MILLIS_PER_SECOND) + 600;
 
 afterEach(() => {
   vi.restoreAllMocks();

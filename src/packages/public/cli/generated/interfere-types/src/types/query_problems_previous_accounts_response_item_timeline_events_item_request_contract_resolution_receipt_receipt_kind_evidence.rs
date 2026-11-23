@@ -7,6 +7,7 @@ pub struct QueryProblemsPreviousAccountsResponseItemTimelineEventsItemRequestCon
     #[serde(rename = "requiredEvidence")]
     #[serde(default)]
     pub required_evidence: QueryProblemsPreviousAccountsResponseItemTimelineEventsItemRequestContractResolutionReceiptReceiptKindEvidenceRequiredEvidence,
+    /// Milliseconds since the Unix epoch in UTC.
     #[serde(rename = "observedAt")]
     #[serde(default)]
     pub observed_at: i64,

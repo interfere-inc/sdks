@@ -31,6 +31,8 @@ import { createInFlightExports } from "./transport/in-flight-exports.js";
 import { IngestMetricExporter } from "./exporter-metrics.js";
 import type { GatedResourceAttributes } from "./exporter-metrics.js";
 
+const MILLIS_PER_SECOND = 1000;
+
 export const INGEST_IGNORE_RE = /\/drain\/v1\/(?:traces|logs|metrics)(?:\?|$)/u;
 
 type ExportHooks = Omit<RetainedSend, "id"> & { id?: string };
@@ -169,7 +171,7 @@ function makeSender(input: ExporterCommon, signal: OtlpSignal) {
   const client = new InterfereClient({
     ...input.clientOptions,
     maxRetries: 0,
-    timeoutInSeconds: TELEMETRY_EXPORT_TIMEOUT_MS / 1000,
+    timeoutInSeconds: TELEMETRY_EXPORT_TIMEOUT_MS / MILLIS_PER_SECOND,
     fetch: Object.assign(
       async (
         url: Parameters<typeof fetch>[0],

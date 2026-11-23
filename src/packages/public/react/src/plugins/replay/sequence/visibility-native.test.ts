@@ -17,9 +17,7 @@ const createPage = nativeBrowserFixture(
 );
 
 beforeEach(() => {
-  replayUploads.requests.length = 0;
-
-  replayUploads.uploads.length = 0;
+  replayUploads.reset();
 });
 
 test("native hidden events deliver the recorded tail uncompressed with keepalive after the snapshot left while the page was alive", async () => {

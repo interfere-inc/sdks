@@ -30,13 +30,21 @@ type PhaseEvent =
       reason: TestRunEndReason;
     };
 
+function pad(value: number, width: number) {
+  return String(value).padStart(width, "0");
+}
+
+function isoTimestamp(instant: Date) {
+  return `${pad(instant.getUTCFullYear(), 4)}-${pad(instant.getUTCMonth() + 1, 2)}-${pad(instant.getUTCDate(), 2)}T${pad(instant.getUTCHours(), 2)}:${pad(instant.getUTCMinutes(), 2)}:${pad(instant.getUTCSeconds(), 2)}.${pad(instant.getUTCMilliseconds(), 3)}Z`;
+}
+
 // oxlint-disable-next-line import/no-default-export
 export default class ModuleStartReporter implements Reporter {
   private readonly execution = {
     runId: process.env["GITHUB_RUN_ID"] ?? null,
     runAttempt: process.env["GITHUB_RUN_ATTEMPT"] ?? null,
     suite: process.env["TEST_SUITE"] ?? null,
-    startedAt: new Date().toISOString(),
+    startedAt: isoTimestamp(new Date()),
   };
 
   private readonly write: (line: string) => void;

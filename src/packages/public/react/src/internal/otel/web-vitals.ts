@@ -1,11 +1,14 @@
 /* oxlint-disable typescript/no-unnecessary-condition */
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
+import { createLogger } from "../../util/log.js";
 
 import type { Histogram, Meter } from "@opentelemetry/api";
 import { onCLS, onFCP, onINP, onLCP, onTTFB } from "web-vitals";
 import type { Metric } from "web-vitals";
 
 import { identityAttributes } from "../../tracking/view.js";
+
+const log = createLogger("web-vitals");
 
 const ATTR_URL_PATH = "url.path" as const;
 
@@ -155,8 +158,8 @@ export function captureWebVitals(input: WebVitalsInput) {
       if (received.size === LOAD_VITALS.size) {
         flushed = true;
 
-        // oxlint-disable-next-line promise/prefer-await-to-then, eslint/no-empty-function
-        flush().catch(() => {});
+        // oxlint-disable-next-line promise/prefer-await-to-then
+        flush().catch(log.debug);
       }
     }
   }

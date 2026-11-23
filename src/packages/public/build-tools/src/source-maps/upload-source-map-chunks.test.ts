@@ -6,13 +6,15 @@ import { setupServer } from "msw/node";
 import { uploadSourceMapChunks } from "./upload-source-map-chunks";
 import { afterAll, afterEach, beforeAll, expect, test, vi } from "vitest";
 
+const MILLIS_PER_SECOND = 1000;
+
 const origin = "https://uploads.test";
 
 const slug = "rel_aaaaaaaaaaaaaaaa";
 
 const base = `${origin}/v3/releases/${slug}/source-maps`;
 
-const grantExpiresAt = () => Math.floor(Date.now() / 1000) + 600;
+const grantExpiresAt = () => Math.floor(Date.now() / MILLIS_PER_SECOND) + 600;
 
 const server = setupServer();
 

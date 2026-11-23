@@ -3,7 +3,7 @@ import { createPackedPackage } from "@interfere/test-utils/vitest/package-contra
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { readFile } from "node:fs/promises";
-import { describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 
 const execFileAsync = promisify(execFile);
 
@@ -29,6 +29,50 @@ async function readPackageJson() {
 }
 
 describe("@interfere/types package metadata", () => {
+  let esm: { stdout: string };
+  let cjs: { stdout: string };
+
+  beforeAll(async () => {
+    const packed = await createPackedPackage(
+      new URL("../package.json", import.meta.url),
+    );
+
+    const specifiers = [
+      "@interfere/types/data/session",
+      "@interfere/types/integrations",
+      "@interfere/types/integrations/platforms/vercel",
+      "@interfere/types/releases/slug",
+      "@interfere/types/sdk/errors",
+    ];
+
+    try {
+      esm = await execFileAsync(
+        process.execPath,
+        [
+          "--input-type=module",
+          "--eval",
+          specifiers
+            .map((specifier) => `await import(${JSON.stringify(specifier)});`)
+            .join("\n"),
+        ],
+        { cwd: packed.consumerDir },
+      );
+
+      cjs = await execFileAsync(
+        process.execPath,
+        [
+          "--eval",
+          specifiers
+            .map((specifier) => `require(${JSON.stringify(specifier)});`)
+            .join("\n"),
+        ],
+        { cwd: packed.consumerDir },
+      );
+    } finally {
+      await packed.cleanup();
+    }
+  });
+
   test("exposes dual ESM and CommonJS package exports", async () => {
     const pkg = await readPackageJson();
 
@@ -100,49 +144,9 @@ describe("@interfere/types package metadata", () => {
     }
   });
 
-  test("loads representative ESM and CommonJS subpaths through Node package resolution", async () => {
-    const packed = await createPackedPackage(
-      new URL("../package.json", import.meta.url),
-    );
-
-    const specifiers = [
-      "@interfere/types/data/session",
-      "@interfere/types/integrations",
-      "@interfere/types/integrations/platforms/vercel",
-      "@interfere/types/releases/slug",
-      "@interfere/types/sdk/errors",
-    ];
-
-    try {
-      await expect(
-        execFileAsync(
-          process.execPath,
-          [
-            "--input-type=module",
-            "--eval",
-            specifiers
-              .map((specifier) => `await import(${JSON.stringify(specifier)});`)
-              .join("\n"),
-          ],
-          { cwd: packed.consumerDir },
-        ),
-      ).resolves.toHaveProperty("stdout");
-
-      await expect(
-        execFileAsync(
-          process.execPath,
-          [
-            "--eval",
-            specifiers
-              .map((specifier) => `require(${JSON.stringify(specifier)});`)
-              .join("\n"),
-          ],
-          { cwd: packed.consumerDir },
-        ),
-      ).resolves.toHaveProperty("stdout");
-    } finally {
-      await packed.cleanup();
-    }
+  test("loads representative ESM and CommonJS subpaths through Node package resolution", () => {
+    expect(esm).toHaveProperty("stdout");
+    expect(cjs).toHaveProperty("stdout");
   });
 });
 

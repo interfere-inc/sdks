@@ -7,6 +7,8 @@ import type { ReleasePipelineInput } from "./pipeline";
 import { readPublicationStatus } from "./read-publication-status";
 import { RELEASE_REQUEST_BUDGET_MS } from "./request-budget";
 
+const MILLIS_PER_SECOND = 1000;
+
 export async function transferSourceMaps(
   input: Pick<
     ReleasePipelineInput,
@@ -78,7 +80,7 @@ export async function transferSourceMaps(
       },
       {
         abortSignal: AbortSignal.timeout(
-          Math.max(0, signed.expiresAt * 1000 - Date.now()),
+          Math.max(0, signed.expiresAt * MILLIS_PER_SECOND - Date.now()),
         ),
       },
     ),

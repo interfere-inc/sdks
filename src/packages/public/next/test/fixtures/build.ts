@@ -14,6 +14,8 @@ import { setupServer } from "msw/node";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
+const MILLIS_PER_SECOND = 1000;
+
 export const releaseNetwork = setupServer();
 
 export const releaseRequests: Request[] = [];
@@ -171,7 +173,7 @@ export function createReleaseFixture(
           ? fail()
           : Response.json({
               expiresAt:
-                Math.floor(Date.now() / 1000) +
+                Math.floor(Date.now() / MILLIS_PER_SECOND) +
                 (options.failure === "timeout" ? 2 : 600),
               uploads: [{ path: "_next/static/chunks/app.js.map" }],
             });

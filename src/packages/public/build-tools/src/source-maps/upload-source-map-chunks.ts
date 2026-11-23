@@ -4,6 +4,8 @@ import type { Interfere, InterfereClient } from "@interfere/javascript";
 import { sourceMapUploadJobs } from "./upload-source-map-batch.ts";
 import { uploadSourceMapRequest } from "./upload-source-map-request.ts";
 
+const MILLIS_PER_SECOND = 1000;
+
 const CHUNK_BYTES = 8 * 1024 * 1024;
 const LEGACY_CHUNK_BYTES = 512 * 1024;
 
@@ -45,7 +47,7 @@ export async function uploadSourceMapChunks(options: {
   const controller = new AbortController();
 
   try {
-    const sessionDeadlineMs = signed.expiresAt * 1000;
+    const sessionDeadlineMs = signed.expiresAt * MILLIS_PER_SECOND;
 
     const assertSessionOpen = () => {
       if (

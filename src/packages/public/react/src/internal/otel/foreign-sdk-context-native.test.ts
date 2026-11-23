@@ -10,6 +10,8 @@ import {
 import type { SeenRequest } from "../../../test/foreign-sdk.driver.js";
 import { beforeEach, expect, test } from "vitest";
 
+const MILLIS_PER_SECOND = 1000;
+
 const seen: SeenRequest[] = [];
 
 const createPage = foreignSdkPages(seen);
@@ -168,7 +170,7 @@ test("a fresh stamped unsampled document context is kept on the page view with f
 });
 
 const stampedAgo = (seconds: number) =>
-  `interfere=${Math.floor(Date.now() / 1000) - seconds}`;
+  `interfere=${Math.floor(Date.now() / MILLIS_PER_SECOND) - seconds}`;
 
 test.each([
   {

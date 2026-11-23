@@ -6,6 +6,8 @@ import { setupServer } from "msw/node";
 import { uploadSourceMapChunks } from "./upload-source-map-chunks";
 import { afterAll, afterEach, beforeAll, expect, test } from "vitest";
 
+const MILLIS_PER_SECOND = 1000;
+
 const origin = "https://uploads.test";
 const releaseSlug = "rel_aaaaaaaaaaaaaaaa";
 const base = `${origin}/v3/releases/${releaseSlug}/source-maps`;
@@ -56,7 +58,7 @@ test("retries the same typed JSON batch and counts decoded bytes once", async ()
       releaseSlug,
       files: [file],
       signed: {
-        expiresAt: Math.floor(Date.now() / 1000) + 600,
+        expiresAt: Math.floor(Date.now() / MILLIS_PER_SECOND) + 600,
         uploads: [file],
         batchUpload: capability,
       },

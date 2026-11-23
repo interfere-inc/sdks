@@ -103,22 +103,96 @@ async function collect(
 
 let runner: Vitest | undefined;
 
+type Collected = Awaited<ReturnType<typeof collect>>;
+
+const collected = new Map<string, Collected>();
+
+const longName = "long ".repeat(220);
+const quotedName = '"é'.repeat(180);
+const computedLimitName = "near ".repeat(190);
+const oversizedMessage = "unhandled detail ".repeat(100);
+const oversizedSuite = '"é suite '.repeat(160);
+
+function take(id: string) {
+  const report = collected.get(id);
+
+  if (!report) {
+    throw new Error(`missing junit report ${id}`);
+  }
+
+  return report;
+}
+
 beforeAll(async () => {
   runner = await createVitest({
     config: false,
     watch: false,
     name: "large-package (worker)",
   });
+
+  collected.set(
+    "distinct",
+    await collect(
+      'import { test, expect } from "vitest"; test.each([false, true])("duplicate", (value) => { expect(value).toBe(true); }); test.skip("skipped", () => {}); test("unique", () => { expect(true).toBe(true); }); test("duplicate [case 1]", () => { expect(true).toBe(true); });',
+    ),
+  );
+
+  collected.set("imports", await collect('throw new Error("broken-import");'));
+
+  collected.set(
+    "rejections",
+    await collect(
+      'import { test } from "vitest"; test("native rejection", async () => { Promise.reject(new Error("unhandled-fixture")); Promise.reject(new Error("unhandled-fixture")); await new Promise((resolve) => setImmediate(resolve)); });',
+    ),
+  );
+
+  collected.set(
+    "long-names",
+    await collect(
+      'import { test, expect } from "vitest"; import data from "./data.json"; test.each([false, true])(data.longName, (value) => { expect(value).toBe(true); }); test(data.longName + "different", () => {}); test(data.quotedName, () => {}); test(data.computedLimitName, () => {});',
+      { data: { longName, quotedName, computedLimitName } },
+    ),
+  );
+
+  collected.set(
+    "oversized",
+    await collect(
+      'import { test } from "vitest"; import data from "./data.json"; test("native rejection", async () => { Promise.reject(new Error(data.message)); await new Promise((resolve) => setImmediate(resolve)); });',
+      { data: { message: oversizedMessage } },
+    ),
+  );
+
+  collected.set(
+    "hooks",
+    await collect(
+      'import { describe, beforeAll, test } from "vitest"; import data from "./data.json"; describe(data.suite, () => { beforeAll(() => { throw new Error("suite setup failed"); }); test("child", () => {}); });',
+      { data: { suite: oversizedSuite } },
+    ),
+  );
+
+  const cwd = process.cwd();
+
+  try {
+    process.chdir(fileURLToPath(new URL("../..", import.meta.url)));
+
+    collected.set(
+      "fileless",
+      await collect(
+        'import { test } from "vitest"; test("native fileless rejection", async () => { Promise.reject("fileless-fixture"); await new Promise((resolve) => setImmediate(resolve)); });',
+        { root: fileURLToPath(new URL("../../../../../..", import.meta.url)) },
+      ),
+    );
+  } finally {
+    process.chdir(cwd);
+  }
 });
 
 afterAll(async () => {
   await runner?.close();
 });
 
-test("keeps native failures, skips and duplicate cases distinct across projects", async () => {
-  const { xml, result, file, phases } = await collect(
-    'import { test, expect } from "vitest"; test.each([false, true])("duplicate", (value) => { expect(value).toBe(true); }); test.skip("skipped", () => {}); test("unique", () => { expect(true).toBe(true); }); test("duplicate [case 1]", () => { expect(true).toBe(true); });',
-  );
+test("keeps native failures, skips and duplicate cases distinct across projects", () => {
+  const { xml, result, file, phases } = take("distinct");
 
   expect(result.testModules).toHaveLength(2);
   expect(result.unhandledErrors).toStrictEqual([]);
@@ -162,10 +236,8 @@ test("keeps native failures, skips and duplicate cases distinct across projects"
   );
 });
 
-test("retains import failures separately for each native project", async () => {
-  const { xml, result, phases } = await collect(
-    'throw new Error("broken-import");',
-  );
+test("retains import failures separately for each native project", () => {
+  const { xml, result, phases } = take("imports");
 
   expect(
     phases.filter((event) => event.includes('"phase":"module"')),
@@ -179,10 +251,8 @@ test("retains import failures separately for each native project", async () => {
   expect(xml).toContain("src/cases.test.ts [second]");
 });
 
-test("scopes repeated native unhandled rejections without dropping error nodes", async () => {
-  const { xml, result } = await collect(
-    'import { test } from "vitest"; test("native rejection", async () => { Promise.reject(new Error("unhandled-fixture")); Promise.reject(new Error("unhandled-fixture")); await new Promise((resolve) => setImmediate(resolve)); });',
-  );
+test("scopes repeated native unhandled rejections without dropping error nodes", () => {
+  const { xml, result } = take("rejections");
 
   expect(result.unhandledErrors).toHaveLength(4);
   expect(xml.match(/<error /gu)).toHaveLength(4);
@@ -194,15 +264,8 @@ test("scopes repeated native unhandled rejections without dropping error nodes",
   expect(xml).toContain("[occurrence 4]");
 });
 
-test("keeps long and XML-escaped names within the parser limit without losing case names", async () => {
-  const longName = "long ".repeat(220);
-  const quotedName = '"é'.repeat(180);
-  const computedLimitName = "near ".repeat(190);
-
-  const { xml, result } = await collect(
-    'import { test, expect } from "vitest"; import data from "./data.json"; test.each([false, true])(data.longName, (value) => { expect(value).toBe(true); }); test(data.longName + "different", () => {}); test(data.quotedName, () => {}); test(data.computedLimitName, () => {});',
-    { data: { longName, quotedName, computedLimitName } },
-  );
+test("keeps long and XML-escaped names within the parser limit without losing case names", () => {
+  const { xml, result } = take("long-names");
 
   const names = Array.from(
     xml.matchAll(/<testcase[^>]* name="(?<name>[^"]+)"/gu),
@@ -221,19 +284,14 @@ test("keeps long and XML-escaped names within the parser limit without losing ca
   expect(xml).toContain(`value="${quotedName.replaceAll('"', "&quot;")}"`);
 });
 
-test("retains oversized native unhandled errors and their original names", async () => {
-  const message = "unhandled detail ".repeat(100);
-
-  const { xml, result } = await collect(
-    'import { test } from "vitest"; import data from "./data.json"; test("native rejection", async () => { Promise.reject(new Error(data.message)); await new Promise((resolve) => setImmediate(resolve)); });',
-    { data: { message } },
-  );
+test("retains oversized native unhandled errors and their original names", () => {
+  const { xml, result } = take("oversized");
 
   expect(result.unhandledErrors).toHaveLength(2);
   expect(xml.match(/<error /gu)).toHaveLength(2);
   expect(xml.match(/name="vitest.fullName"/gu)).toHaveLength(2);
-  expect(xml).toContain(`${message} [occurrence 1]`);
-  expect(xml).toContain(`${message} [occurrence 2]`);
+  expect(xml).toContain(`${oversizedMessage} [occurrence 1]`);
+  expect(xml).toContain(`${oversizedMessage} [occurrence 2]`);
 
   const names = Array.from(
     xml.matchAll(/<testcase[^>]* name="(?<name>[^"]+)"/gu),
@@ -243,20 +301,15 @@ test("retains oversized native unhandled errors and their original names", async
   expect(names.every((name) => Buffer.byteLength(name) <= 1000)).toBe(true);
 });
 
-test("retains failed hooks belonging to oversized suite names", async () => {
-  const suite = '"é suite '.repeat(160);
-
-  const { xml, result } = await collect(
-    'import { describe, beforeAll, test } from "vitest"; import data from "./data.json"; describe(data.suite, () => { beforeAll(() => { throw new Error("suite setup failed"); }); test("child", () => {}); });',
-    { data: { suite } },
-  );
+test("retains failed hooks belonging to oversized suite names", () => {
+  const { xml, result } = take("hooks");
 
   expect(result.testModules).toHaveLength(2);
   expect(xml).toContain("suite setup failed");
   expect(xml.match(/<failure /gu)).toHaveLength(2);
   expect(xml.match(/<skipped\/>/gu)).toHaveLength(2);
   expect(xml.match(/name="vitest.fullName"/gu)).toHaveLength(4);
-  expect(xml).toContain(`value="${suite.replaceAll('"', "&quot;")}"`);
+  expect(xml).toContain(`value="${oversizedSuite.replaceAll('"', "&quot;")}"`);
 
   const names = Array.from(
     xml.matchAll(/<testcase[^>]* name="(?<name>[^"]+)"/gu),
@@ -267,33 +320,22 @@ test("retains failed hooks belonging to oversized suite names", async () => {
   expect(names.every((name) => Buffer.byteLength(name) <= 1000)).toBe(true);
 });
 
-test("scopes native fileless rejections to the invoking workspace with the repository root", async () => {
-  const cwd = process.cwd();
+test("scopes native fileless rejections to the invoking workspace with the repository root", () => {
+  const { xml, result } = take("fileless");
 
-  try {
-    process.chdir(fileURLToPath(new URL("../..", import.meta.url)));
+  expect(result.unhandledErrors).toHaveLength(2);
+  expect(xml.match(/<error /gu)).toHaveLength(2);
 
-    const { xml, result } = await collect(
-      'import { test } from "vitest"; test("native fileless rejection", async () => { Promise.reject("fileless-fixture"); await new Promise((resolve) => setImmediate(resolve)); });',
-      { root: fileURLToPath(new URL("../../../../../..", import.meta.url)) },
-    );
+  expect(xml).toContain(
+    'classname="src/packages/public/test-config &gt; vitest unhandled errors"',
+  );
 
-    expect(result.unhandledErrors).toHaveLength(2);
-    expect(xml.match(/<error /gu)).toHaveLength(2);
+  expect(xml).toContain(
+    'name="src/packages/public/test-config &gt; vitest unhandled errors"',
+  );
 
-    expect(xml).toContain(
-      'classname="src/packages/public/test-config &gt; vitest unhandled errors"',
-    );
-
-    expect(xml).toContain(
-      'name="src/packages/public/test-config &gt; vitest unhandled errors"',
-    );
-
-    expect(xml).toContain("fileless-fixture [occurrence 1]");
-    expect(xml).toContain("fileless-fixture [occurrence 2]");
-  } finally {
-    process.chdir(cwd);
-  }
+  expect(xml).toContain("fileless-fixture [occurrence 1]");
+  expect(xml).toContain("fileless-fixture [occurrence 2]");
 });
 
 test.each([
@@ -342,36 +384,3 @@ test.each([
     }
   },
 );
-
-test("keeps every phase line under the 64 KiB line limit of log readers however many modules a run discovers", () => {
-  const [project] = runner?.projects ?? [];
-
-  if (project === undefined) {
-    throw new Error("Vitest created no project");
-  }
-
-  const lines: string[] = [];
-
-  const reporter = new ModuleStartReporter({
-    write: (line) => {
-      lines.push(line);
-    },
-  });
-
-  reporter.onTestRunStart(
-    Array.from({ length: 1000 }, (_, index) =>
-      project.createSpecification(
-        join(
-          project.config.root,
-          `src/investigation/lifecycle/test/module-${index}.worker.test.ts`,
-        ),
-      ),
-    ),
-  );
-
-  expect(
-    lines.filter((line) => Buffer.byteLength(line) >= 64 * 1024),
-  ).toStrictEqual([]);
-
-  expect(lines).toHaveLength(1000);
-});

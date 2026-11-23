@@ -20,6 +20,8 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 import { worker } from "../test/msw.js";
 
+const MILLIS_PER_SECOND = 1000;
+
 const SESSION_ID = sessionIdSchema.parse(
   "01900000-0000-7000-8000-000000000001",
 );
@@ -153,7 +155,10 @@ describe("span() async semantics", () => {
     const [seconds, nanos] = finished("op").endTime;
 
     expect(named("op")).toHaveLength(1);
-    expect(seconds * 1000 + nanos / 1e6).toBeGreaterThanOrEqual(releasedAt - 1);
+
+    expect(seconds * MILLIS_PER_SECOND + nanos / 1e6).toBeGreaterThanOrEqual(
+      releasedAt - 1,
+    );
   });
 
   test("starts work after an await as a new root carrying the same session and view", async () => {

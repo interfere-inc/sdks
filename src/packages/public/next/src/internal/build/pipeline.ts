@@ -27,6 +27,8 @@ import { cleanupBuildSourceMaps } from "./source-maps/cleanup.js";
 import { reportUnmappedChunks } from "./source-maps/guard.js";
 import { EMPTY_TELEMETRY } from "./telemetry.js";
 
+const MILLIS_PER_SECOND = 1000;
+
 export async function runBuildPipeline(
   context: ProductionCompileContext,
   metadata: ResolvedBuildConfig & {
@@ -169,7 +171,7 @@ export async function runBuildPipeline(
           },
           {
             abortSignal: AbortSignal.timeout(
-              Math.max(0, signed.expiresAt * 1000 - Date.now()),
+              Math.max(0, signed.expiresAt * MILLIS_PER_SECOND - Date.now()),
             ),
           },
         ),

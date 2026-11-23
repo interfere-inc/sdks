@@ -52,10 +52,17 @@ async function record(request: Request) {
 
 export const replayUploadUrl = "https://replay.invalid/v3/replay/upload/:id";
 
+function reset() {
+  requests.length = 0;
+
+  uploads.length = 0;
+}
+
 export const replayUploads = {
   requests,
   uploads,
   record,
+  reset,
   uploadsReached: uploadSignal.reached,
   uploadMatching: uploadMatchSignal.reached,
   requestsReached: requestSignal.reached,

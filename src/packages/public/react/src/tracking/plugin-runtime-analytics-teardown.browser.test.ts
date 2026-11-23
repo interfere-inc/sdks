@@ -1,12 +1,12 @@
 import { browserStorage } from "@interfere/test-config/browser-storage";
-/* oxlint-disable interfere-structure/colocated-tests */
 import { EventType } from "@rrweb/types";
 import { record } from "rrweb";
 
-import { startRecordingPluginRuntime } from "../../../test/fixtures/plugin-runtime.test-utils.js";
-import { pluginTransport } from "../../../test/fixtures/plugin-runtime-transport.js";
-import { DeviceManager } from "../../tracking/device.js";
+import { startRecordingPluginRuntime } from "../../test/fixtures/plugin-runtime.test-utils.js";
+import { pluginTransport } from "../../test/fixtures/plugin-runtime-transport.js";
 import { expect, test, vi } from "vitest";
+
+import { DeviceManager } from "./device.js";
 
 test("analytics remote teardown leaves replay recording", async () => {
   const cause = "remote";

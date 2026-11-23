@@ -1,22 +1,26 @@
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { expect, test } from "vitest";
+import { beforeAll, expect, test } from "vitest";
 
 import { classifyBrowserAutomation } from "./bot.js";
 
 const execute = promisify(execFile);
 
-test("returns false in native Node without browser globals", async () => {
+let nativeStdout: string;
+
+beforeAll(async () => {
   const source = new URL("bot.ts", import.meta.url).href;
 
-  const { stdout } = await execute(process.execPath, [
+  ({ stdout: nativeStdout } = await execute(process.execPath, [
     "--no-experimental-global-navigator",
     "--input-type=module",
     "-e",
     `import { isBotUserAgent } from ${JSON.stringify(source)}; process.stdout.write(JSON.stringify(isBotUserAgent()));`,
-  ]);
+  ]));
+});
 
-  expect(stdout).toBe("false");
+test("returns false in native Node without browser globals", () => {
+  expect(nativeStdout).toBe("false");
 });
 
 test.each([

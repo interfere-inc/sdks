@@ -5,6 +5,8 @@ import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import { afterAll, afterEach, beforeAll, expect, test } from "vitest";
 
+const MILLIS_PER_SECOND = 1000;
+
 const server = setupServer();
 
 beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
@@ -77,7 +79,7 @@ test("cancels the other active batches and never starts queued requests after re
       releaseSlug,
       files,
       signed: {
-        expiresAt: Math.floor(Date.now() / 1000) + 600,
+        expiresAt: Math.floor(Date.now() / MILLIS_PER_SECOND) + 600,
         uploads: files,
         batchUpload,
       },
@@ -110,7 +112,7 @@ test("rejects an expired capable session before any request", async () => {
       releaseSlug,
       files: [file],
       signed: {
-        expiresAt: Math.floor(Date.now() / 1000) - 1,
+        expiresAt: Math.floor(Date.now() / MILLIS_PER_SECOND) - 1,
         uploads: [file],
         batchUpload,
       },

@@ -3,7 +3,7 @@ import { createPackedPackage } from "@interfere/test-utils/vitest/package-contra
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { readFile } from "node:fs/promises";
-import { describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 
 const execFileAsync = promisify(execFile);
 
@@ -49,6 +49,49 @@ function expectDualExport(entry: ConditionalExport | string | undefined) {
 }
 
 describe("@interfere/constants package metadata", () => {
+  let esm: { stdout: string };
+  let cjs: { stdout: string };
+
+  beforeAll(async () => {
+    const packed = await createPackedPackage(
+      new URL("../package.json", import.meta.url),
+    );
+
+    const specifiers = [
+      "@interfere/constants/api",
+      "@interfere/constants/http",
+      "@interfere/constants/route-prefix",
+      "@interfere/constants/service-names",
+    ];
+
+    try {
+      esm = await execFileAsync(
+        process.execPath,
+        [
+          "--input-type=module",
+          "--eval",
+          specifiers
+            .map((specifier) => `await import(${JSON.stringify(specifier)});`)
+            .join("\n"),
+        ],
+        { cwd: packed.consumerDir },
+      );
+
+      cjs = await execFileAsync(
+        process.execPath,
+        [
+          "--eval",
+          specifiers
+            .map((specifier) => `require(${JSON.stringify(specifier)});`)
+            .join("\n"),
+        ],
+        { cwd: packed.consumerDir },
+      );
+    } finally {
+      await packed.cleanup();
+    }
+  });
+
   test.each([undefined, "./dist/api.mjs"])(
     "rejects non-conditional export entry %j",
     (entry) => {
@@ -125,47 +168,8 @@ describe("@interfere/constants package metadata", () => {
     }
   });
 
-  test("loads ESM and CommonJS subpaths through Node package resolution", async () => {
-    const packed = await createPackedPackage(
-      new URL("../package.json", import.meta.url),
-    );
-
-    const specifiers = [
-      "@interfere/constants/api",
-      "@interfere/constants/http",
-      "@interfere/constants/route-prefix",
-      "@interfere/constants/service-names",
-    ];
-
-    try {
-      await expect(
-        execFileAsync(
-          process.execPath,
-          [
-            "--input-type=module",
-            "--eval",
-            specifiers
-              .map((specifier) => `await import(${JSON.stringify(specifier)});`)
-              .join("\n"),
-          ],
-          { cwd: packed.consumerDir },
-        ),
-      ).resolves.toHaveProperty("stdout");
-
-      await expect(
-        execFileAsync(
-          process.execPath,
-          [
-            "--eval",
-            specifiers
-              .map((specifier) => `require(${JSON.stringify(specifier)});`)
-              .join("\n"),
-          ],
-          { cwd: packed.consumerDir },
-        ),
-      ).resolves.toHaveProperty("stdout");
-    } finally {
-      await packed.cleanup();
-    }
+  test("loads ESM and CommonJS subpaths through Node package resolution", () => {
+    expect(esm).toHaveProperty("stdout");
+    expect(cjs).toHaveProperty("stdout");
   });
 });

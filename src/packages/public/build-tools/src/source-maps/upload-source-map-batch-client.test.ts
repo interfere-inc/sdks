@@ -8,6 +8,8 @@ import { setupServer } from "msw/node";
 import { uploadSourceMapChunks } from "./upload-source-map-chunks";
 import { afterAll, afterEach, beforeAll, expect, test, vi } from "vitest";
 
+const MILLIS_PER_SECOND = 1000;
+
 const origin = "https://uploads.test";
 const releaseSlug = "rel_aaaaaaaaaaaaaaaa";
 const base = `${origin}/v3/releases/${releaseSlug}/source-maps`;
@@ -125,7 +127,7 @@ test.each([
       concurrency,
       compression: "gzip",
       signed: {
-        expiresAt: Math.floor(Date.now() / 1000) + 600,
+        expiresAt: Math.floor(Date.now() / MILLIS_PER_SECOND) + 600,
         uploads: files,
         batchUpload: capability,
       },
@@ -156,7 +158,7 @@ test.each([0, -1, 1.5, Number.NaN, Infinity])(
         files: [file],
         concurrency: value,
         signed: {
-          expiresAt: Math.floor(Date.now() / 1000) + 600,
+          expiresAt: Math.floor(Date.now() / MILLIS_PER_SECOND) + 600,
           uploads: [file],
         },
       }),

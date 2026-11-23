@@ -10,6 +10,7 @@ pub struct QueryProblemsNavigableResponseItemPriorityFloorBasis {
     #[serde(rename = "affectedUsers")]
     #[serde(default)]
     pub affected_users: i64,
+    /// Milliseconds since the Unix epoch in UTC.
     #[serde(rename = "evaluatedAt")]
     #[serde(default)]
     pub evaluated_at: i64,

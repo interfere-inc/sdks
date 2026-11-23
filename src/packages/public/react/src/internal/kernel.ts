@@ -372,13 +372,13 @@ export class Kernel implements PluginContext {
     };
 
     this.unsubscribePageHidden = onPageHidden(() => {
-      // oxlint-disable-next-line promise/prefer-await-to-then, eslint/no-empty-function
-      this.flush().catch(() => {});
+      // oxlint-disable-next-line promise/prefer-await-to-then
+      this.flush().catch(log.debug);
     });
 
     this.unsubscribePageUnloading = onPageUnloading(() => {
-      // oxlint-disable-next-line promise/prefer-await-to-then, eslint/no-empty-function
-      this.flush().catch(() => {});
+      // oxlint-disable-next-line promise/prefer-await-to-then
+      this.flush().catch(log.debug);
     });
   }
 

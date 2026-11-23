@@ -2,6 +2,8 @@ import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import { vi } from "vitest";
 
+const MILLIS_PER_SECOND = 1000;
+
 export const RELEASE_API = "https://vite-debug-id.test";
 
 export const uploads = new Map<string, string>();
@@ -41,7 +43,7 @@ const server = setupServer(
       const body = (await request.json()) as { files: { path: string }[] };
 
       return HttpResponse.json({
-        expiresAt: Math.floor(Date.now() / 1000) + 600,
+        expiresAt: Math.floor(Date.now() / MILLIS_PER_SECOND) + 600,
         uploads: body.files.map((file) => ({ path: file.path })),
       });
     },

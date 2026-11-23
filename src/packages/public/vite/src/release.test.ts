@@ -17,6 +17,8 @@ import {
 import { interfere } from "./plugin";
 import { releaseBuildOutput } from "./release";
 
+const MILLIS_PER_SECOND = 1000;
+
 const RELEASE_API = "https://vite-release-output.test";
 
 const requests: {
@@ -85,7 +87,7 @@ const server = setupServer(
       });
 
       return HttpResponse.json({
-        expiresAt: Math.floor(Date.now() / 1000) + 600,
+        expiresAt: Math.floor(Date.now() / MILLIS_PER_SECOND) + 600,
         uploads: body.files.map((file) => ({ path: file.path })),
       });
     },

@@ -1,6 +1,9 @@
 import type { Span } from "@opentelemetry/api";
+import { createLogger } from "../../util/log.js";
 import { hrTimeToMilliseconds } from "@opentelemetry/core";
 import type { ReadableSpan, SpanProcessor } from "@opentelemetry/sdk-trace";
+
+const log = createLogger("export-filter");
 
 const LONG_TASK_SCOPE = "@opentelemetry/instrumentation-long-task";
 
@@ -43,8 +46,8 @@ export function createExportFilterProcessor(
     queueMicrotask(() => {
       flushScheduled = false;
 
-      // oxlint-disable-next-line promise/prefer-await-to-then, eslint/no-empty-function -- Export failures are reported by the exporter; the flush itself must never surface as an unhandled rejection.
-      next.forceFlush().catch(() => {});
+      // oxlint-disable-next-line promise/prefer-await-to-then -- Export failures are reported by the exporter; the flush itself must never surface as an unhandled rejection.
+      next.forceFlush().catch(log.debug);
     });
   };
 

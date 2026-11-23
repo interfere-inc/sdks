@@ -44,6 +44,8 @@ import { renderDebugId } from "./internal/build/render-debug-id";
 import { resolveCommitSha } from "./internal/release-slug";
 import { PRODUCER_VERSION } from "./version";
 
+const MILLIS_PER_SECOND = 1000;
+
 export type { InterfereViteOptions } from "./internal/plugin-options";
 
 const SERVER_RUNTIME_PLUGIN_HINTS = [
@@ -229,7 +231,7 @@ function buildPluginState(
     apiHost: browser.apiHost,
     apiKey,
     apiUrl,
-    buildStartedAt: Math.floor(Date.now() / 1000) * 1000,
+    buildStartedAt: Math.floor(Date.now() / MILLIS_PER_SECOND) * 1000,
     commitSha: browser.commitSha,
     releaseEnabled,
     retainSourceMaps,
@@ -484,7 +486,9 @@ export function interfere(options: InterfereViteOptions = {}) {
       if (state?.watch && state.releaseStarted) {
         state.releaseStarted = false;
         state.uploadComplete = false;
-        state.buildStartedAt = Math.floor(Date.now() / 1000) * 1000;
+
+        state.buildStartedAt =
+          Math.floor(Date.now() / MILLIS_PER_SECOND) * 1000;
       }
 
       if (state && !announced) {

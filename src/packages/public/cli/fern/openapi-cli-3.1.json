@@ -840,7 +840,8 @@
             "type": [
               "string",
               "null"
-            ]
+            ],
+            "minLength": 1
           },
           "spanCount": {
             "type": "integer",
@@ -911,7 +912,8 @@
             "type": [
               "string",
               "null"
-            ]
+            ],
+            "minLength": 1
           },
           "deviceId": {
             "type": [
@@ -1028,10 +1030,12 @@
             "type": [
               "string",
               "null"
-            ]
+            ],
+            "minLength": 1
           },
           "spanId": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^[0-9a-f]{16}$"
           },
           "startTimeUnixNano": {
             "$ref": "#/components/schemas/UInt64String"
@@ -1127,7 +1131,8 @@
             "type": [
               "string",
               "null"
-            ]
+            ],
+            "pattern": "^[0-9a-f]{16}$"
           },
           "timestamp": {
             "type": "string"
@@ -1231,10 +1236,12 @@
             "type": [
               "string",
               "null"
-            ]
+            ],
+            "minLength": 1
           },
           "spanId": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^[0-9a-f]{16}$"
           },
           "startTimeUnixNano": {
             "$ref": "#/components/schemas/UInt64String"
@@ -4547,7 +4554,8 @@
                       {
                         "type": "integer",
                         "minimum": 0,
-                        "maximum": 9007199254740991
+                        "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC."
                       },
                       {
                         "type": "null"
@@ -4616,7 +4624,8 @@
                         "scannedAt": {
                           "anyOf": [
                             {
-                              "type": "string"
+                              "type": "string",
+                              "format": "date-time"
                             },
                             {
                               "type": "null"
@@ -4796,7 +4805,8 @@
                       {
                         "type": "integer",
                         "minimum": 0,
-                        "maximum": 9007199254740991
+                        "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC."
                       },
                       {
                         "type": "null"
@@ -4865,7 +4875,8 @@
                         "scannedAt": {
                           "anyOf": [
                             {
-                              "type": "string"
+                              "type": "string",
+                              "format": "date-time"
                             },
                             {
                               "type": "null"
@@ -5045,7 +5056,8 @@
                       {
                         "type": "integer",
                         "minimum": 0,
-                        "maximum": 9007199254740991
+                        "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC."
                       },
                       {
                         "type": "null"
@@ -5114,7 +5126,8 @@
                         "scannedAt": {
                           "anyOf": [
                             {
-                              "type": "string"
+                              "type": "string",
+                              "format": "date-time"
                             },
                             {
                               "type": "null"
@@ -5218,7 +5231,10 @@
                     }
                   },
                   "consentCheckedAt": {
-                    "type": "number"
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991,
+                    "description": "Milliseconds since the Unix epoch in UTC."
                   }
                 },
                 "required": [
@@ -5303,7 +5319,10 @@
                     }
                   },
                   "consentCheckedAt": {
-                    "type": "number"
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991,
+                    "description": "Milliseconds since the Unix epoch in UTC."
                   }
                 },
                 "required": [
@@ -5647,12 +5666,14 @@
                     "type": "integer",
                     "minimum": 0,
                     "maximum": 9007199254740991,
+                    "description": "Milliseconds since the Unix epoch in UTC.",
                     "default": 0
                   },
                   "permissionsChangedAt": {
                     "type": "integer",
                     "minimum": 0,
                     "maximum": 9007199254740991,
+                    "description": "Milliseconds since the Unix epoch in UTC.",
                     "default": 0
                   },
                   "scopes": {
@@ -5888,7 +5909,8 @@
                   "repositoryAccessReadyAt": {
                     "type": "integer",
                     "minimum": 0,
-                    "maximum": 9007199254740991
+                    "maximum": 9007199254740991,
+                    "description": "Milliseconds since the Unix epoch in UTC."
                   },
                   "requiredEvidence": {
                     "type": "object",
@@ -6020,7 +6042,8 @@
                       "checkedAt": {
                         "type": "integer",
                         "minimum": 0,
-                        "maximum": 9007199254740991
+                        "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC."
                       },
                       "failure": {
                         "type": "string",
@@ -6150,7 +6173,8 @@
                           "observedAt": {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           "recordId": {
                             "type": "string",
@@ -6652,7 +6676,10 @@
                     "type": "string"
                   },
                   "respondedAt": {
-                    "type": "number"
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991,
+                    "description": "Milliseconds since the Unix epoch in UTC."
                   },
                   "selectedOptionId": {
                     "type": "string"
@@ -10481,7 +10508,8 @@
                                       "observedAt": {
                                         "type": "integer",
                                         "minimum": 0,
-                                        "maximum": 9007199254740991
+                                        "maximum": 9007199254740991,
+                                        "description": "Milliseconds since the Unix epoch in UTC."
                                       },
                                       "recordId": {
                                         "type": "string",
@@ -10512,7 +10540,8 @@
                                   "observedAt": {
                                     "type": "integer",
                                     "minimum": 0,
-                                    "maximum": 9007199254740991
+                                    "maximum": 9007199254740991,
+                                    "description": "Milliseconds since the Unix epoch in UTC."
                                   },
                                   "evidence": {
                                     "type": "object",
@@ -10638,7 +10667,8 @@
                                       "observedAt": {
                                         "type": "integer",
                                         "minimum": 0,
-                                        "maximum": 9007199254740991
+                                        "maximum": 9007199254740991,
+                                        "description": "Milliseconds since the Unix epoch in UTC."
                                       },
                                       "recordId": {
                                         "type": "string",
@@ -10869,7 +10899,10 @@
         "type": "object",
         "properties": {
           "expiresAt": {
-            "type": "number"
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "Seconds since the Unix epoch in UTC."
           },
           "userToken": {
             "type": "string"
@@ -17946,7 +17979,8 @@
                           {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           {
                             "type": "null"
@@ -18015,7 +18049,8 @@
                             "scannedAt": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "format": "date-time"
                                 },
                                 {
                                   "type": "null"
@@ -18195,7 +18230,8 @@
                           {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           {
                             "type": "null"
@@ -18264,7 +18300,8 @@
                             "scannedAt": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "format": "date-time"
                                 },
                                 {
                                   "type": "null"
@@ -18444,7 +18481,8 @@
                           {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           {
                             "type": "null"
@@ -18513,7 +18551,8 @@
                             "scannedAt": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "format": "date-time"
                                 },
                                 {
                                   "type": "null"
@@ -18617,7 +18656,10 @@
                         }
                       },
                       "consentCheckedAt": {
-                        "type": "number"
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC."
                       }
                     },
                     "required": [
@@ -18702,7 +18744,10 @@
                         }
                       },
                       "consentCheckedAt": {
-                        "type": "number"
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC."
                       }
                     },
                     "required": [
@@ -19046,12 +19091,14 @@
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC.",
                         "default": 0
                       },
                       "permissionsChangedAt": {
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC.",
                         "default": 0
                       },
                       "scopes": {
@@ -19475,7 +19522,8 @@
                           {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           {
                             "type": "null"
@@ -19544,7 +19592,8 @@
                             "scannedAt": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "format": "date-time"
                                 },
                                 {
                                   "type": "null"
@@ -19724,7 +19773,8 @@
                           {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           {
                             "type": "null"
@@ -19793,7 +19843,8 @@
                             "scannedAt": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "format": "date-time"
                                 },
                                 {
                                   "type": "null"
@@ -19973,7 +20024,8 @@
                           {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           {
                             "type": "null"
@@ -20042,7 +20094,8 @@
                             "scannedAt": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "format": "date-time"
                                 },
                                 {
                                   "type": "null"
@@ -20146,7 +20199,10 @@
                         }
                       },
                       "consentCheckedAt": {
-                        "type": "number"
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC."
                       }
                     },
                     "required": [
@@ -20231,7 +20287,10 @@
                         }
                       },
                       "consentCheckedAt": {
-                        "type": "number"
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC."
                       }
                     },
                     "required": [
@@ -20575,12 +20634,14 @@
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC.",
                         "default": 0
                       },
                       "permissionsChangedAt": {
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC.",
                         "default": 0
                       },
                       "scopes": {
@@ -21010,7 +21071,8 @@
                         {
                           "type": "integer",
                           "minimum": 0,
-                          "maximum": 9007199254740991
+                          "maximum": 9007199254740991,
+                          "description": "Milliseconds since the Unix epoch in UTC."
                         },
                         {
                           "type": "null"
@@ -21079,7 +21141,8 @@
                           "scannedAt": {
                             "anyOf": [
                               {
-                                "type": "string"
+                                "type": "string",
+                                "format": "date-time"
                               },
                               {
                                 "type": "null"
@@ -21259,7 +21322,8 @@
                         {
                           "type": "integer",
                           "minimum": 0,
-                          "maximum": 9007199254740991
+                          "maximum": 9007199254740991,
+                          "description": "Milliseconds since the Unix epoch in UTC."
                         },
                         {
                           "type": "null"
@@ -21328,7 +21392,8 @@
                           "scannedAt": {
                             "anyOf": [
                               {
-                                "type": "string"
+                                "type": "string",
+                                "format": "date-time"
                               },
                               {
                                 "type": "null"
@@ -21508,7 +21573,8 @@
                         {
                           "type": "integer",
                           "minimum": 0,
-                          "maximum": 9007199254740991
+                          "maximum": 9007199254740991,
+                          "description": "Milliseconds since the Unix epoch in UTC."
                         },
                         {
                           "type": "null"
@@ -21577,7 +21643,8 @@
                           "scannedAt": {
                             "anyOf": [
                               {
-                                "type": "string"
+                                "type": "string",
+                                "format": "date-time"
                               },
                               {
                                 "type": "null"
@@ -21681,7 +21748,10 @@
                       }
                     },
                     "consentCheckedAt": {
-                      "type": "number"
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991,
+                      "description": "Milliseconds since the Unix epoch in UTC."
                     }
                   },
                   "required": [
@@ -21766,7 +21836,10 @@
                       }
                     },
                     "consentCheckedAt": {
-                      "type": "number"
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991,
+                      "description": "Milliseconds since the Unix epoch in UTC."
                     }
                   },
                   "required": [
@@ -22110,12 +22183,14 @@
                       "type": "integer",
                       "minimum": 0,
                       "maximum": 9007199254740991,
+                      "description": "Milliseconds since the Unix epoch in UTC.",
                       "default": 0
                     },
                     "permissionsChangedAt": {
                       "type": "integer",
                       "minimum": 0,
                       "maximum": 9007199254740991,
+                      "description": "Milliseconds since the Unix epoch in UTC.",
                       "default": 0
                     },
                     "scopes": {
@@ -22750,7 +22825,8 @@
                           {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           {
                             "type": "null"
@@ -22819,7 +22895,8 @@
                             "scannedAt": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "format": "date-time"
                                 },
                                 {
                                   "type": "null"
@@ -22999,7 +23076,8 @@
                           {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           {
                             "type": "null"
@@ -23068,7 +23146,8 @@
                             "scannedAt": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "format": "date-time"
                                 },
                                 {
                                   "type": "null"
@@ -23248,7 +23327,8 @@
                           {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           {
                             "type": "null"
@@ -23317,7 +23397,8 @@
                             "scannedAt": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "format": "date-time"
                                 },
                                 {
                                   "type": "null"
@@ -23421,7 +23502,10 @@
                         }
                       },
                       "consentCheckedAt": {
-                        "type": "number"
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC."
                       }
                     },
                     "required": [
@@ -23506,7 +23590,10 @@
                         }
                       },
                       "consentCheckedAt": {
-                        "type": "number"
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC."
                       }
                     },
                     "required": [
@@ -23850,12 +23937,14 @@
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC.",
                         "default": 0
                       },
                       "permissionsChangedAt": {
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC.",
                         "default": 0
                       },
                       "scopes": {
@@ -24279,7 +24368,8 @@
                           {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           {
                             "type": "null"
@@ -24348,7 +24438,8 @@
                             "scannedAt": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "format": "date-time"
                                 },
                                 {
                                   "type": "null"
@@ -24528,7 +24619,8 @@
                           {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           {
                             "type": "null"
@@ -24597,7 +24689,8 @@
                             "scannedAt": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "format": "date-time"
                                 },
                                 {
                                   "type": "null"
@@ -24777,7 +24870,8 @@
                           {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           {
                             "type": "null"
@@ -24846,7 +24940,8 @@
                             "scannedAt": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "format": "date-time"
                                 },
                                 {
                                   "type": "null"
@@ -24950,7 +25045,10 @@
                         }
                       },
                       "consentCheckedAt": {
-                        "type": "number"
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC."
                       }
                     },
                     "required": [
@@ -25035,7 +25133,10 @@
                         }
                       },
                       "consentCheckedAt": {
-                        "type": "number"
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC."
                       }
                     },
                     "required": [
@@ -25379,12 +25480,14 @@
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC.",
                         "default": 0
                       },
                       "permissionsChangedAt": {
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC.",
                         "default": 0
                       },
                       "scopes": {
@@ -25808,7 +25911,8 @@
                           {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           {
                             "type": "null"
@@ -25877,7 +25981,8 @@
                             "scannedAt": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "format": "date-time"
                                 },
                                 {
                                   "type": "null"
@@ -26057,7 +26162,8 @@
                           {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           {
                             "type": "null"
@@ -26126,7 +26232,8 @@
                             "scannedAt": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "format": "date-time"
                                 },
                                 {
                                   "type": "null"
@@ -26306,7 +26413,8 @@
                           {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           {
                             "type": "null"
@@ -26375,7 +26483,8 @@
                             "scannedAt": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "format": "date-time"
                                 },
                                 {
                                   "type": "null"
@@ -26479,7 +26588,10 @@
                         }
                       },
                       "consentCheckedAt": {
-                        "type": "number"
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC."
                       }
                     },
                     "required": [
@@ -26564,7 +26676,10 @@
                         }
                       },
                       "consentCheckedAt": {
-                        "type": "number"
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC."
                       }
                     },
                     "required": [
@@ -26908,12 +27023,14 @@
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC.",
                         "default": 0
                       },
                       "permissionsChangedAt": {
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC.",
                         "default": 0
                       },
                       "scopes": {
@@ -27343,7 +27460,8 @@
                           {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           {
                             "type": "null"
@@ -27412,7 +27530,8 @@
                             "scannedAt": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "format": "date-time"
                                 },
                                 {
                                   "type": "null"
@@ -27592,7 +27711,8 @@
                           {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           {
                             "type": "null"
@@ -27661,7 +27781,8 @@
                             "scannedAt": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "format": "date-time"
                                 },
                                 {
                                   "type": "null"
@@ -27841,7 +27962,8 @@
                           {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           {
                             "type": "null"
@@ -27910,7 +28032,8 @@
                             "scannedAt": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "format": "date-time"
                                 },
                                 {
                                   "type": "null"
@@ -28014,7 +28137,10 @@
                         }
                       },
                       "consentCheckedAt": {
-                        "type": "number"
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC."
                       }
                     },
                     "required": [
@@ -28099,7 +28225,10 @@
                         }
                       },
                       "consentCheckedAt": {
-                        "type": "number"
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC."
                       }
                     },
                     "required": [
@@ -28443,12 +28572,14 @@
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC.",
                         "default": 0
                       },
                       "permissionsChangedAt": {
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC.",
                         "default": 0
                       },
                       "scopes": {
@@ -28872,7 +29003,8 @@
                         {
                           "type": "integer",
                           "minimum": 0,
-                          "maximum": 9007199254740991
+                          "maximum": 9007199254740991,
+                          "description": "Milliseconds since the Unix epoch in UTC."
                         },
                         {
                           "type": "null"
@@ -28941,7 +29073,8 @@
                           "scannedAt": {
                             "anyOf": [
                               {
-                                "type": "string"
+                                "type": "string",
+                                "format": "date-time"
                               },
                               {
                                 "type": "null"
@@ -29121,7 +29254,8 @@
                         {
                           "type": "integer",
                           "minimum": 0,
-                          "maximum": 9007199254740991
+                          "maximum": 9007199254740991,
+                          "description": "Milliseconds since the Unix epoch in UTC."
                         },
                         {
                           "type": "null"
@@ -29190,7 +29324,8 @@
                           "scannedAt": {
                             "anyOf": [
                               {
-                                "type": "string"
+                                "type": "string",
+                                "format": "date-time"
                               },
                               {
                                 "type": "null"
@@ -29370,7 +29505,8 @@
                         {
                           "type": "integer",
                           "minimum": 0,
-                          "maximum": 9007199254740991
+                          "maximum": 9007199254740991,
+                          "description": "Milliseconds since the Unix epoch in UTC."
                         },
                         {
                           "type": "null"
@@ -29439,7 +29575,8 @@
                           "scannedAt": {
                             "anyOf": [
                               {
-                                "type": "string"
+                                "type": "string",
+                                "format": "date-time"
                               },
                               {
                                 "type": "null"
@@ -29543,7 +29680,10 @@
                       }
                     },
                     "consentCheckedAt": {
-                      "type": "number"
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991,
+                      "description": "Milliseconds since the Unix epoch in UTC."
                     }
                   },
                   "required": [
@@ -29628,7 +29768,10 @@
                       }
                     },
                     "consentCheckedAt": {
-                      "type": "number"
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991,
+                      "description": "Milliseconds since the Unix epoch in UTC."
                     }
                   },
                   "required": [
@@ -29972,12 +30115,14 @@
                       "type": "integer",
                       "minimum": 0,
                       "maximum": 9007199254740991,
+                      "description": "Milliseconds since the Unix epoch in UTC.",
                       "default": 0
                     },
                     "permissionsChangedAt": {
                       "type": "integer",
                       "minimum": 0,
                       "maximum": 9007199254740991,
+                      "description": "Milliseconds since the Unix epoch in UTC.",
                       "default": 0
                     },
                     "scopes": {
@@ -30618,7 +30763,8 @@
                           {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           {
                             "type": "null"
@@ -30687,7 +30833,8 @@
                             "scannedAt": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "format": "date-time"
                                 },
                                 {
                                   "type": "null"
@@ -30867,7 +31014,8 @@
                           {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           {
                             "type": "null"
@@ -30936,7 +31084,8 @@
                             "scannedAt": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "format": "date-time"
                                 },
                                 {
                                   "type": "null"
@@ -31116,7 +31265,8 @@
                           {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           {
                             "type": "null"
@@ -31185,7 +31335,8 @@
                             "scannedAt": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "format": "date-time"
                                 },
                                 {
                                   "type": "null"
@@ -31289,7 +31440,10 @@
                         }
                       },
                       "consentCheckedAt": {
-                        "type": "number"
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC."
                       }
                     },
                     "required": [
@@ -31374,7 +31528,10 @@
                         }
                       },
                       "consentCheckedAt": {
-                        "type": "number"
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC."
                       }
                     },
                     "required": [
@@ -31718,12 +31875,14 @@
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC.",
                         "default": 0
                       },
                       "permissionsChangedAt": {
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC.",
                         "default": 0
                       },
                       "scopes": {
@@ -32147,7 +32306,8 @@
                           {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           {
                             "type": "null"
@@ -32216,7 +32376,8 @@
                             "scannedAt": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "format": "date-time"
                                 },
                                 {
                                   "type": "null"
@@ -32396,7 +32557,8 @@
                           {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           {
                             "type": "null"
@@ -32465,7 +32627,8 @@
                             "scannedAt": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "format": "date-time"
                                 },
                                 {
                                   "type": "null"
@@ -32645,7 +32808,8 @@
                           {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           {
                             "type": "null"
@@ -32714,7 +32878,8 @@
                             "scannedAt": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "format": "date-time"
                                 },
                                 {
                                   "type": "null"
@@ -32818,7 +32983,10 @@
                         }
                       },
                       "consentCheckedAt": {
-                        "type": "number"
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC."
                       }
                     },
                     "required": [
@@ -32903,7 +33071,10 @@
                         }
                       },
                       "consentCheckedAt": {
-                        "type": "number"
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC."
                       }
                     },
                     "required": [
@@ -33247,12 +33418,14 @@
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC.",
                         "default": 0
                       },
                       "permissionsChangedAt": {
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC.",
                         "default": 0
                       },
                       "scopes": {
@@ -36186,7 +36359,8 @@
                       "evaluatedAt": {
                         "type": "integer",
                         "minimum": 0,
-                        "maximum": 9007199254740991
+                        "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC."
                       },
                       "raised": {
                         "type": "boolean"
@@ -36847,7 +37021,8 @@
                     "evaluatedAt": {
                       "type": "integer",
                       "minimum": 0,
-                      "maximum": 9007199254740991
+                      "maximum": 9007199254740991,
+                      "description": "Milliseconds since the Unix epoch in UTC."
                     },
                     "raised": {
                       "type": "boolean"
@@ -37162,7 +37337,8 @@
                           "repositoryAccessReadyAt": {
                             "type": "integer",
                             "minimum": 0,
-                            "maximum": 9007199254740991
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           "requiredEvidence": {
                             "type": "object",
@@ -37294,7 +37470,8 @@
                               "checkedAt": {
                                 "type": "integer",
                                 "minimum": 0,
-                                "maximum": 9007199254740991
+                                "maximum": 9007199254740991,
+                                "description": "Milliseconds since the Unix epoch in UTC."
                               },
                               "failure": {
                                 "type": "string",
@@ -37424,7 +37601,8 @@
                                   "observedAt": {
                                     "type": "integer",
                                     "minimum": 0,
-                                    "maximum": 9007199254740991
+                                    "maximum": 9007199254740991,
+                                    "description": "Milliseconds since the Unix epoch in UTC."
                                   },
                                   "recordId": {
                                     "type": "string",
@@ -37873,7 +38051,10 @@
                             "type": "string"
                           },
                           "respondedAt": {
-                            "type": "number"
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991,
+                            "description": "Milliseconds since the Unix epoch in UTC."
                           },
                           "selectedOptionId": {
                             "type": "string"
@@ -39815,7 +39996,8 @@
                                               "observedAt": {
                                                 "type": "integer",
                                                 "minimum": 0,
-                                                "maximum": 9007199254740991
+                                                "maximum": 9007199254740991,
+                                                "description": "Milliseconds since the Unix epoch in UTC."
                                               },
                                               "recordId": {
                                                 "type": "string",
@@ -39846,7 +40028,8 @@
                                           "observedAt": {
                                             "type": "integer",
                                             "minimum": 0,
-                                            "maximum": 9007199254740991
+                                            "maximum": 9007199254740991,
+                                            "description": "Milliseconds since the Unix epoch in UTC."
                                           },
                                           "evidence": {
                                             "type": "object",
@@ -39865,7 +40048,8 @@
                                               "observedAt": {
                                                 "type": "integer",
                                                 "minimum": 0,
-                                                "maximum": 9007199254740991
+                                                "maximum": 9007199254740991,
+                                                "description": "Milliseconds since the Unix epoch in UTC."
                                               },
                                               "recordId": {
                                                 "type": "string",
@@ -41556,7 +41740,8 @@
                       "evaluatedAt": {
                         "type": "integer",
                         "minimum": 0,
-                        "maximum": 9007199254740991
+                        "maximum": 9007199254740991,
+                        "description": "Milliseconds since the Unix epoch in UTC."
                       },
                       "raised": {
                         "type": "boolean"
@@ -42451,7 +42636,8 @@
                             "repositoryAccessReadyAt": {
                               "type": "integer",
                               "minimum": 0,
-                              "maximum": 9007199254740991
+                              "maximum": 9007199254740991,
+                              "description": "Milliseconds since the Unix epoch in UTC."
                             },
                             "requiredEvidence": {
                               "type": "object",
@@ -42583,7 +42769,8 @@
                                 "checkedAt": {
                                   "type": "integer",
                                   "minimum": 0,
-                                  "maximum": 9007199254740991
+                                  "maximum": 9007199254740991,
+                                  "description": "Milliseconds since the Unix epoch in UTC."
                                 },
                                 "failure": {
                                   "type": "string",
@@ -42713,7 +42900,8 @@
                                     "observedAt": {
                                       "type": "integer",
                                       "minimum": 0,
-                                      "maximum": 9007199254740991
+                                      "maximum": 9007199254740991,
+                                      "description": "Milliseconds since the Unix epoch in UTC."
                                     },
                                     "recordId": {
                                       "type": "string",
@@ -43173,7 +43361,10 @@
                               "type": "string"
                             },
                             "respondedAt": {
-                              "type": "number"
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991,
+                              "description": "Milliseconds since the Unix epoch in UTC."
                             },
                             "selectedOptionId": {
                               "type": "string"
@@ -45569,7 +45760,8 @@
                                                 "observedAt": {
                                                   "type": "integer",
                                                   "minimum": 0,
-                                                  "maximum": 9007199254740991
+                                                  "maximum": 9007199254740991,
+                                                  "description": "Milliseconds since the Unix epoch in UTC."
                                                 },
                                                 "recordId": {
                                                   "type": "string",
@@ -45600,7 +45792,8 @@
                                             "observedAt": {
                                               "type": "integer",
                                               "minimum": 0,
-                                              "maximum": 9007199254740991
+                                              "maximum": 9007199254740991,
+                                              "description": "Milliseconds since the Unix epoch in UTC."
                                             },
                                             "evidence": {
                                               "type": "object",
@@ -45663,7 +45856,8 @@
                                                 "observedAt": {
                                                   "type": "integer",
                                                   "minimum": 0,
-                                                  "maximum": 9007199254740991
+                                                  "maximum": 9007199254740991,
+                                                  "description": "Milliseconds since the Unix epoch in UTC."
                                                 },
                                                 "recordId": {
                                                   "type": "string",
@@ -47395,7 +47589,8 @@
                     "evaluatedAt": {
                       "type": "integer",
                       "minimum": 0,
-                      "maximum": 9007199254740991
+                      "maximum": 9007199254740991,
+                      "description": "Milliseconds since the Unix epoch in UTC."
                     },
                     "raised": {
                       "type": "boolean"
@@ -48268,7 +48463,8 @@
                     "evaluatedAt": {
                       "type": "integer",
                       "minimum": 0,
-                      "maximum": 9007199254740991
+                      "maximum": 9007199254740991,
+                      "description": "Milliseconds since the Unix epoch in UTC."
                     },
                     "raised": {
                       "type": "boolean"
@@ -49134,7 +49330,8 @@
                     "evaluatedAt": {
                       "type": "integer",
                       "minimum": 0,
-                      "maximum": 9007199254740991
+                      "maximum": 9007199254740991,
+                      "description": "Milliseconds since the Unix epoch in UTC."
                     },
                     "raised": {
                       "type": "boolean"
@@ -59124,7 +59321,8 @@
             "minLength": 1
           },
           "sessionRecordId": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^[^:/]+[:/].+$"
           },
           "surfaceId": {
             "anyOf": [
@@ -60034,7 +60232,8 @@
                 "sessionId": {
                   "anyOf": [
                     {
-                      "type": "string"
+                      "type": "string",
+                      "minLength": 1
                     },
                     {
                       "type": "null"
@@ -61487,7 +61686,8 @@
                   "minLength": 1
                 },
                 "sessionRecordId": {
-                  "type": "string"
+                  "type": "string",
+                  "pattern": "^[^:/]+[:/].+$"
                 },
                 "surfaceId": {
                   "anyOf": [
@@ -61566,7 +61766,8 @@
                 "lastSeenAt": {
                   "type": "integer",
                   "minimum": 0,
-                  "maximum": 9007199254740991
+                  "maximum": 9007199254740991,
+                  "description": "Milliseconds since the Unix epoch in UTC."
                 }
               },
               "required": [
@@ -79133,7 +79334,8 @@
                   "expectedUpdatedAt": {
                     "type": "integer",
                     "minimum": 0,
-                    "maximum": 9007199254740991
+                    "maximum": 9007199254740991,
+                    "description": "Milliseconds since the Unix epoch in UTC."
                   },
                   "retireAfterSeconds": {
                     "anyOf": [
@@ -81875,7 +82077,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^[^:/]+[:/].+$"
             }
           },
           {
@@ -82082,7 +82285,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^[^:/]+[:/].+$"
             }
           },
           {
@@ -86214,7 +86418,8 @@
                   "expectedUpdatedAt": {
                     "type": "integer",
                     "minimum": 0,
-                    "maximum": 9007199254740991
+                    "maximum": 9007199254740991,
+                    "description": "Milliseconds since the Unix epoch in UTC."
                   },
                   "retireAfterSeconds": {
                     "anyOf": [

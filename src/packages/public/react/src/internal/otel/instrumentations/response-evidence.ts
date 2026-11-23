@@ -1,9 +1,12 @@
 import type { Attributes, Span } from "@opentelemetry/api";
+import { createLogger } from "../../../util/log.js";
 import {
   responseDiscriminators,
   skippedResponseEvidence,
 } from "./response-discriminators.js";
 import type { ResponseEvidence } from "./response-discriminators.js";
+
+const log = createLogger("response-evidence");
 
 const MAX_BYTES = 64 * 1024;
 
@@ -83,7 +86,7 @@ async function readResponse(response: Response) {
     clearTimeout(timer);
 
     // oxlint-disable-next-line promise/prefer-await-to-then -- Tee cancellation can wait for the app to consume its branch; never delay telemetry settlement on it.
-    void reader.cancel().catch(() => undefined);
+    void reader.cancel().catch(log.debug);
   }
 }
 

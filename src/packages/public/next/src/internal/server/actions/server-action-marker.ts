@@ -1,8 +1,7 @@
 const MARKER = "__interfere_server_action__";
 
 export interface ServerActionMarker {
-  // oxlint-disable-next-line anti-slop/no-shape-in-symbol-names -- This protocol field contains argument structure without customer values.
-  readonly argsShape?: string;
+  readonly argumentSummary?: string;
   readonly name: string;
 }
 
@@ -49,18 +48,17 @@ export function readServerAction(
     return;
   }
 
-  if (!("argsShape" in marker) || marker.argsShape === undefined) {
+  if (!("argumentSummary" in marker) || marker.argumentSummary === undefined) {
     return { name: marker.name } satisfies ServerActionMarker | undefined;
   }
 
   // oxlint-disable-next-line anti-slop/no-runtime-typeof
-  if (typeof marker.argsShape !== "string") {
+  if (typeof marker.argumentSummary !== "string") {
     return;
   }
 
   return {
     name: marker.name,
-    // oxlint-disable-next-line anti-slop/no-shape-in-symbol-names
-    argsShape: marker.argsShape,
+    argumentSummary: marker.argumentSummary,
   } satisfies ServerActionMarker;
 }

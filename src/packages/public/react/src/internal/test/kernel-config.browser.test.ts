@@ -26,6 +26,8 @@ import { createKernel } from "../kernel.js";
 import type { Kernel } from "../kernel.js";
 import { afterEach, expect, onTestFinished, test, vi } from "vitest";
 
+const MILLIS_PER_SECOND = 1000;
+
 let ownedKernel: Kernel | undefined;
 
 const ownedMeta: HTMLMetaElement[] = [];
@@ -240,7 +242,10 @@ test.each([
     setMeta("traceparent", `00-${SSR_TRACE_ID}-b7ad6b7169203331-${flags}`);
 
     if (stamped) {
-      setMeta("tracestate", `interfere=${Math.floor(Date.now() / 1000)}`);
+      setMeta(
+        "tracestate",
+        `interfere=${Math.floor(Date.now() / MILLIS_PER_SECOND)}`,
+      );
     }
 
     worker.use(

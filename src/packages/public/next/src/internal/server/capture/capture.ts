@@ -157,9 +157,9 @@ function addRequestContextAttrs(
   if (context?.serverAction) {
     attrs["interfere.server_action.name"] = context.serverAction.name;
 
-    if (context.serverAction.argsShape) {
+    if (context.serverAction.argumentSummary) {
       attrs["interfere.server_action.args_shape"] =
-        context.serverAction.argsShape;
+        context.serverAction.argumentSummary;
     }
   }
 

@@ -17,6 +17,8 @@ import {
 import { FreshnessStampingPropagator } from "./freshness-propagator.js";
 import { describe, expect, test } from "vitest";
 
+const MILLIS_PER_SECOND = 1000;
+
 const TRACE_ID = "0af7651916cd43dd8448eb211c80319c";
 
 const SPAN_ID = "b7ad6b7169203331";
@@ -49,11 +51,11 @@ describe(FreshnessStampingPropagator, () => {
   test("stamps tracestate with unix seconds at inject time", () => {
     const propagator = new FreshnessStampingPropagator();
     const carrier: Record<string, string> = {};
-    const before = Math.floor(Date.now() / 1000);
+    const before = Math.floor(Date.now() / MILLIS_PER_SECOND);
 
     propagator.inject(contextWithSpan(), carrier, defaultTextMapSetter);
 
-    const after = Math.floor(Date.now() / 1000);
+    const after = Math.floor(Date.now() / MILLIS_PER_SECOND);
 
     expect(carrier["traceparent"]).toBeUndefined();
 

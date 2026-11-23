@@ -30,6 +30,8 @@ import { reserveKeepaliveBody } from "../page-lifecycle/page-lifecycle.js";
 import { PRODUCER_VERSION } from "../version.js";
 import type { TelemetrySink } from "./sink.js";
 
+const MILLIS_PER_SECOND = 1000;
+
 const log = createLogger("capture");
 
 const EXCEPTION_SCOPE_NAME = "@interfere/react/exception";
@@ -166,7 +168,7 @@ export function createCaptureOnlySink(input: CaptureOnlySinkInput) {
     handled: boolean,
     origin: CaptureOrigin,
   ) => {
-    const at = `${Math.round(origin.at * 1e3)}000`;
+    const at = `${Math.round(origin.at * MILLIS_PER_SECOND)}000`;
     const host = trace.getSpanContext(origin.context);
     const event = { name: "exception", attributes: { ...raw } };
 

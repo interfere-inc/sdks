@@ -5,6 +5,8 @@ import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import { afterAll, afterEach, beforeAll, expect, test } from "vitest";
 
+const MILLIS_PER_SECOND = 1000;
+
 const server = setupServer();
 const requests: Request[] = [];
 
@@ -55,7 +57,7 @@ test.each([
         `https://uploads.test/v3/releases/${releaseSlug}/source-maps/sign`,
         () =>
           HttpResponse.json({
-            expiresAt: Math.floor(Date.now() / 1000) + 600,
+            expiresAt: Math.floor(Date.now() / MILLIS_PER_SECOND) + 600,
             uploads: [{ path: "a.map" }],
             batchUpload,
           }),
@@ -94,7 +96,7 @@ test("native SDK preserves absent capability and sends the legacy binary request
       `https://uploads.test/v3/releases/${releaseSlug}/source-maps/sign`,
       () =>
         HttpResponse.json({
-          expiresAt: Math.floor(Date.now() / 1000) + 600,
+          expiresAt: Math.floor(Date.now() / MILLIS_PER_SECOND) + 600,
           uploads: [{ path: "a.map" }],
         }),
     ),

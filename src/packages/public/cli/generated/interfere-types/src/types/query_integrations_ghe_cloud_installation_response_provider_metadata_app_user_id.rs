@@ -20,9 +20,11 @@ pub struct QueryIntegrationsGheCloudInstallationResponseProviderMetadataAppUserI
     #[serde(rename = "appUserId")]
     #[serde(default)]
     pub app_user_id: String,
+    /// Milliseconds since the Unix epoch in UTC.
     #[serde(rename = "installedAt")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub installed_at: Option<i64>,
+    /// Milliseconds since the Unix epoch in UTC.
     #[serde(rename = "permissionsChangedAt")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub permissions_changed_at: Option<i64>,

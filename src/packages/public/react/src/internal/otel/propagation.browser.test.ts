@@ -4,6 +4,8 @@ import { W3CTraceContextPropagator } from "@opentelemetry/core";
 import { readPropagationFromDocument } from "./propagation.js";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
+const MILLIS_PER_SECOND = 1000;
+
 const TRACE_ID = "0af7651916cd43dd8448eb211c80319c";
 
 const SPAN_ID = "b7ad6b7169203331";
@@ -17,7 +19,7 @@ const ownedMeta: HTMLMetaElement[] = [];
 let previousMeta: { element: Element; next: ChildNode | null }[];
 
 function nowSeconds() {
-  return Math.floor(Date.now() / 1000);
+  return Math.floor(Date.now() / MILLIS_PER_SECOND);
 }
 
 function freshStamp(extra = "") {

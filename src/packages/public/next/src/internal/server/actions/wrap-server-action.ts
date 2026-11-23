@@ -46,8 +46,7 @@ export async function withInterfereServerAction<T>(
   options?: ServerActionOptions,
 ) {
   const signature = contain(SITE, () =>
-    // oxlint-disable-next-line anti-slop/no-shape-in-symbol-names -- The existing args_shape serializer records structure only, never values.
-    options?.args ? describeArgsShape(options.args) : null,
+    options?.args ? describeArgumentKinds(options.args) : null,
   );
 
   const span = contain(SITE, () =>
@@ -87,8 +86,7 @@ export async function withInterfereServerAction<T>(
         error,
         omitUndefined({
           name,
-          // oxlint-disable-next-line anti-slop/no-shape-in-symbol-names -- The error marker and its consumer share this established structural-signature field.
-          argsShape: signature || undefined,
+          argumentSummary: signature || undefined,
         }),
       );
     });
@@ -99,8 +97,7 @@ export async function withInterfereServerAction<T>(
   }
 }
 
-// oxlint-disable-next-line anti-slop/no-shape-in-symbol-names -- This serializer deliberately describes argument structure while discarding customer values.
-function describeArgsShape(args: readonly unknown[]) {
+function describeArgumentKinds(args: readonly unknown[]) {
   return args
     .map((arg) => {
       if (arg === null) {

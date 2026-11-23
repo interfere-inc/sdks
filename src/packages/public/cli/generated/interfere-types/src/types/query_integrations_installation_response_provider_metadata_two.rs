@@ -33,6 +33,7 @@ pub struct QueryIntegrationsInstallationResponseProviderMetadataTwo {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub groups: Option<QueryIntegrationsInstallationResponseProviderMetadataTwoGroups>,
     pub provider: QueryIntegrationsInstallationResponseProviderMetadataTwoProvider,
+    /// Milliseconds since the Unix epoch in UTC.
     #[serde(rename = "repositoryDiscoveryRequestedAt")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub repository_discovery_requested_at: Option<i64>,

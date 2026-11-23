@@ -4,8 +4,7 @@ import { describe, expect, test } from "vitest";
 describe("server action marker", () => {
   test("attaches a readable marker without exposing it during enumeration", () => {
     const error = new Error("action failed");
-    // oxlint-disable-next-line anti-slop/no-shape-in-symbol-names -- The marker protocol names the privacy-safe argument structure argsShape.
-    const info = { name: "checkout", argsShape: "[object]" };
+    const info = { name: "checkout", argumentSummary: "[object]" };
 
     markServerAction(error, info);
 
@@ -37,16 +36,14 @@ describe("server action marker", () => {
     "marker",
     {},
     { name: 42 },
-    // oxlint-disable-next-line anti-slop/no-shape-in-symbol-names -- This malformed value tests the existing argsShape protocol field.
-    { name: "ok", argsShape: 42 },
+    { name: "ok", argumentSummary: 42 },
   ])("rejects malformed marker %s", (marker) => {
     expect(
       readServerAction({ __interfere_server_action__: marker }),
     ).toBeUndefined();
   });
 
-  // oxlint-disable-next-line anti-slop/no-shape-in-symbol-names -- The existing argsShape protocol distinguishes an undefined field from a string description.
-  test.each([{}, { argsShape: undefined }])(
+  test.each([{}, { argumentSummary: undefined }])(
     "omits an absent or undefined argument description %s",
     (optional) => {
       expect(

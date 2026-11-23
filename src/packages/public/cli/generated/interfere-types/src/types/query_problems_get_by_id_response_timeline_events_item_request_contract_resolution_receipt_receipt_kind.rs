@@ -5,6 +5,7 @@ use super::*;
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct QueryProblemsGetByIdResponseTimelineEventsItemRequestContractResolutionReceiptReceiptKind {
     pub kind: QueryProblemsGetByIdResponseTimelineEventsItemRequestContractResolutionReceiptReceiptKindKind,
+    /// Milliseconds since the Unix epoch in UTC.
     #[serde(rename = "observedAt")]
     #[serde(default)]
     pub observed_at: i64,

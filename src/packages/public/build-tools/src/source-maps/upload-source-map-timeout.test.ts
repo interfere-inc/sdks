@@ -5,6 +5,8 @@ import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import { afterAll, afterEach, beforeAll, expect, test } from "vitest";
 
+const MILLIS_PER_SECOND = 1000;
+
 const server = setupServer();
 
 beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
@@ -72,7 +74,7 @@ test.each([undefined, capability])(
         releaseSlug: "rel_aaaaaaaaaaaaaaaa",
         files: [file],
         signed: {
-          expiresAt: Math.floor(Date.now() / 1000) + 600,
+          expiresAt: Math.floor(Date.now() / MILLIS_PER_SECOND) + 600,
           uploads: [file],
           batchUpload,
         },
@@ -121,7 +123,7 @@ test("stops after the second timeout despite SDK retry settings", async () => {
       releaseSlug: "rel_aaaaaaaaaaaaaaaa",
       files: [file],
       signed: {
-        expiresAt: Math.floor(Date.now() / 1000) + 600,
+        expiresAt: Math.floor(Date.now() / MILLIS_PER_SECOND) + 600,
         uploads: [file],
         batchUpload: capability,
       },
