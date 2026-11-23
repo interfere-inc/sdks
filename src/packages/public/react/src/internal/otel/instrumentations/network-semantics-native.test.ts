@@ -183,6 +183,25 @@ test("backend hostnames do not authorize an HTTP origin or its port", async () =
   expect(seen).toMatchObject([{ origin, method: "GET", trace: null }]);
 });
 
+test("an invalid fetch receiver keeps its native rejection without sending a request", async () => {
+  const { page, origin } = await pair();
+
+  const result = await page.evaluate(async (target) => {
+    const receiver = {};
+
+    try {
+      await fetch.call(receiver, new URL("/open", target));
+
+      return "resolved";
+    } catch (error) {
+      return error instanceof Error ? error.name : "unknown";
+    }
+  }, origin);
+
+  expect(result).toBe("TypeError");
+  expect(seen).toStrictEqual([]);
+});
+
 test("request input overrides preserve the customer's method, headers and body", async () => {
   const { page, origin } = await pair();
 

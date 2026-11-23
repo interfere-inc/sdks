@@ -21,7 +21,7 @@ function stallMainThread() {
   } while (performance.now() < deadline);
 }
 
-test("one upstream wrapper per request API, inert after dispose, and requests still reach the network", async () => {
+test("request wrappers restore original functions on dispose, and requests still reach the network", async () => {
   expect.hasAssertions();
 
   const nativeFetch = globalThis.fetch;
@@ -31,6 +31,18 @@ test("one upstream wrapper per request API, inert after dispose, and requests st
   const nativeSend = XMLHttpRequest.prototype.send;
   // oxlint-disable-next-line typescript/unbound-method -- The prototype methods are compared by identity.
   const nativeSetRequestHeader = XMLHttpRequest.prototype.setRequestHeader;
+
+  const extension = Symbol("preconnect");
+  const preconnect = (url: URL) => url.origin;
+
+  Object.defineProperty(nativeFetch, extension, {
+    configurable: true,
+    value: preconnect,
+  });
+
+  onTestFinished(() => {
+    Reflect.deleteProperty(nativeFetch, extension);
+  });
 
   const started: string[] = [];
 
@@ -65,6 +77,10 @@ test("one upstream wrapper per request API, inert after dispose, and requests st
     traceHeaders: w3cTraceHeaders(),
     tracerProvider: provider,
   });
+
+  expect(
+    Object.getOwnPropertyDescriptor(globalThis.fetch, extension),
+  ).toStrictEqual(Object.getOwnPropertyDescriptor(nativeFetch, extension));
 
   const wrapped = [
     globalThis.fetch,
@@ -103,7 +119,7 @@ test("one upstream wrapper per request API, inert after dispose, and requests st
     XMLHttpRequest.prototype.open,
     // oxlint-disable-next-line typescript/unbound-method -- The prototype methods are compared by identity.
     XMLHttpRequest.prototype.send,
-  ]).toStrictEqual(wrapped);
+  ]).toStrictEqual([nativeFetch, nativeOpen, nativeSend]);
 
   const response = await fetch(url);
 

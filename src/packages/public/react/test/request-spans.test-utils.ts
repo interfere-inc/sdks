@@ -3,8 +3,8 @@ import { expect } from "vitest";
 
 const REQUEST_SCOPES = new Set([
   "@interfere/react/request",
-  "@opentelemetry/instrumentation-fetch",
-  "@opentelemetry/instrumentation-xml-http-request",
+  "@opentelemetry/browser-instrumentation/fetch",
+  "@opentelemetry/browser-instrumentation/xhr",
 ]);
 
 // WARNING: registerBundledInstrumentations always registers LongTaskInstrumentation on the private provider, so a 50 ms main-thread stall in the vitest page lands a longtask span in the same exporter; a loaded CI runner stalls constantly, and a request suite that counts or indexes every finished span reads the wrong span.

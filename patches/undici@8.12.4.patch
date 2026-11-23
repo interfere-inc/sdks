@@ -1,0 +1,20 @@
+diff --git a/lib/dispatcher/client-h1.js b/lib/dispatcher/client-h1.js
+index a26b9c0..c91a874 100644
+--- a/lib/dispatcher/client-h1.js
++++ b/lib/dispatcher/client-h1.js
+@@ -1174,13 +1174,9 @@ function setTypeOfService (socket, request) {
+     return
+   }
+ 
+-  const typeOfService = request.typeOfService
++  const typeOfService = request.typeOfService ?? 0
+ 
+-  if (typeOfService === undefined) {
+-    return
+-  }
+-
+-  const currentTypeOfService = socket[kTypeOfService]
++  const currentTypeOfService = socket[kTypeOfService] ?? 0
+ 
+   if (currentTypeOfService === typeOfService) {
+     return

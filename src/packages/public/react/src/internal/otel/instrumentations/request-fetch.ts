@@ -1,6 +1,6 @@
 import { SpanStatusCode } from "@opentelemetry/api";
-import type { Span } from "@opentelemetry/api";
-import { FetchInstrumentation } from "@opentelemetry/instrumentation-fetch";
+import type { TracerProvider } from "@opentelemetry/api";
+import { FetchInstrumentation } from "@opentelemetry/browser-instrumentation/experimental/fetch";
 import { isPlainRecord, isString } from "@interfere/types/sdk/guards/json";
 
 import { rememberFailedRequest } from "../request-observer/failed-requests.js";
@@ -13,7 +13,6 @@ import type {
   RequestState,
 } from "./request-core.js";
 import { captureRequestEvidence } from "./request-callsite.js";
-import { spanStringAttribute } from "../request-observer/span-attributes.js";
 import {
   ATTR_HTTP_REQUEST_PREFETCH,
   applyFetchSpanAttrs,
@@ -21,18 +20,11 @@ import {
 } from "./request-outcome.js";
 import { fetchResponseEvidence } from "./response-evidence.js";
 import type { ResponseEvidence } from "./response-discriminators.js";
-import {
-  composeFetchPatch,
-  skipFetchHeaderInjection,
-} from "./upstream-request-members.js";
+import { composeRequestMethod, requestPropagator } from "./upstream-request.js";
 
 const ATTR_ERROR_TYPE = "error.type" as const;
 
 const ATTR_HTTP_REQUEST_BODY_SIZE = "http.request.body.size" as const;
-
-function spanUrl(span: Span) {
-  return spanStringAttribute(span, "url.full");
-}
 
 function requestInitMethod(request: FetchSpanRequest) {
   return isPlainRecord(request) && isString(request["method"])
@@ -66,10 +58,12 @@ function bodySize(body: BodyInit | null | undefined) {
 export function createFetchInstrumentation(
   core: RequestCore,
   input: RequestInstrumentationsInput,
+  tracerProvider: TracerProvider,
 ) {
   const { applicationErrors, evidenceTracer, failureRanges } = input;
   const evidence = new WeakMap<Response, Promise<ResponseEvidence>>();
 
+  let requestUrl: string | null;
   let sending: RequestState | undefined;
 
   const takeSending = () => {
@@ -80,17 +74,13 @@ export function createFetchInstrumentation(
     return state;
   };
 
-  // oxlint-disable-next-line typescript/no-deprecated -- The browser SDK restores native request functions on disposal. browser-api 0.2 keeps its patches installed after disable().
   const instrumentation = new FetchInstrumentation({
-    enabled: false,
-    ignoreNetworkEvents: true,
+    sanitizeUrl: input.redactUrl,
     ignoreUrls: input.ignoreUrls,
     measureRequestSize: false,
     propagateTraceHeaderCorsUrls: [],
     requestHook: (span, request) => {
-      const url = absoluteUrl(
-        request instanceof Request ? request.url : (spanUrl(span) ?? ""),
-      );
+      const url = requestUrl;
 
       if (!url) {
         return;
@@ -161,58 +151,82 @@ export function createFetchInstrumentation(
     },
   });
 
-  skipFetchHeaderInjection(instrumentation);
+  const original = globalThis.fetch;
 
-  composeFetchPatch(instrumentation, (patched) =>
-    Object.assign(async function interfereFetch(
-      this: typeof globalThis,
-      ...args: Parameters<typeof globalThis.fetch>
-    ) {
-      if (!core.active) {
-        return patched.apply(this, args);
-      }
+  instrumentation.enable({ tracerProvider, propagator: requestPropagator });
 
-      // WARNING: The request call site must be constructed in this frame, the one the application called; the recorded stack drops exactly one frame.
-      core.callsite = failureRanges
-        ? new Error("HTTP request call site")
-        : undefined;
+  const restore = composeRequestMethod(
+    globalThis,
+    "fetch",
+    original,
+    (patched) =>
+      new Proxy(original, {
+        async apply(
+          target,
+          receiver: typeof globalThis | null | undefined,
+          args: Parameters<typeof globalThis.fetch>,
+        ) {
+          if (
+            !core.active ||
+            (receiver !== undefined &&
+              receiver !== null &&
+              receiver !== globalThis)
+          ) {
+            return target.apply(receiver, args);
+          }
 
-      sending = undefined;
+          // WARNING: The request call site must be constructed in this frame, the one the application called; the recorded stack drops exactly one frame.
+          core.callsite = failureRanges
+            ? new Error("HTTP request call site")
+            : undefined;
 
-      let pending: Promise<Response>;
+          const [resource, init] = args;
 
-      try {
-        pending = patched.apply(this, args);
-      } finally {
-        core.callsite = undefined;
-      }
+          requestUrl = absoluteUrl(
+            resource instanceof Request ? resource.url : resource,
+          );
 
-      const state = takeSending();
+          sending = undefined;
 
-      const [resource, init] = args;
+          let pending: Promise<Response>;
 
-      const response = await pending;
+          try {
+            pending = patched.call(receiver, resource, init && { ...init });
+          } finally {
+            core.callsite = undefined;
 
-      if (state?.injected) {
-        core.diagnostics.success(state.url);
-      }
+            requestUrl = null;
+          }
 
-      const url = absoluteUrl(response.url) ?? "";
+          const state = takeSending();
 
-      if (
-        failureRanges !== null &&
-        (response.status === 200
-          ? applicationErrors
-          : statusMatches(response.status, failureRanges)) &&
-        core.isTracked(url) &&
-        !isPrefetchRequest(init ?? resource)
-      ) {
-        evidence.set(response, fetchResponseEvidence(response));
-      }
+          const response = await pending;
 
-      return response;
-    }, patched),
+          if (state?.injected) {
+            core.diagnostics.success(state.url);
+          }
+
+          const url = absoluteUrl(response.url) ?? "";
+
+          if (
+            failureRanges !== null &&
+            (response.status === 200
+              ? applicationErrors
+              : statusMatches(response.status, failureRanges)) &&
+            core.isTracked(url) &&
+            !isPrefetchRequest(init ?? resource)
+          ) {
+            evidence.set(response, fetchResponseEvidence(response));
+          }
+
+          return response;
+        },
+      }),
   );
 
-  return instrumentation;
+  return () => {
+    instrumentation.disable();
+
+    restore();
+  };
 }

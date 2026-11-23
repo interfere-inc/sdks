@@ -11,7 +11,12 @@ const config: UserConfig = {
   checks: { moduleLevelDirective: false },
   clean: isWatch ? false : ["dist/**/*"],
   deps: {
-    alwaysBundle: ["rrweb", "@rrweb/types"],
+    alwaysBundle: [
+      "rrweb",
+      "@rrweb/types",
+      "@opentelemetry/browser-instrumentation/experimental/fetch",
+      "@opentelemetry/browser-instrumentation/experimental/xhr",
+    ],
     dts: { alwaysBundle: ["@rrweb/types"] },
     neverBundle: (id) => id.startsWith("#"),
   },

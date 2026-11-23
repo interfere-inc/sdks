@@ -89,7 +89,10 @@ function applyXhr(
     tracked?: boolean;
   } = {},
 ) {
-  const span = provider.getTracer("test").startSpan("xhr");
+  const span = provider.getTracer("test").startSpan("xhr", {
+    attributes: response.status === 0 ? { "error.type": "Error" } : {},
+  });
+
   const xhr = new XMLHttpRequest();
 
   Object.defineProperties(xhr, {

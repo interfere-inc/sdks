@@ -12,14 +12,7 @@ import { RELEASE_SLUG_GLOBAL } from "@interfere/types/sdk/injected-globals";
 import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
 import { W3CTraceContextPropagator } from "@opentelemetry/core";
 
-import {
-  DiagLogLevel,
-  context,
-  diag,
-  logs,
-  propagation,
-  trace,
-} from "@opentelemetry/api";
+import { context, logs, propagation, trace } from "@opentelemetry/api";
 // oxlint-disable-next-line import/no-namespace -- This API consumes the complete module namespace.
 import * as instrumentation from "@opentelemetry/instrumentation";
 import {
@@ -38,6 +31,7 @@ import { mswServer } from "@interfere/test-config/msw-server";
 import type { ServerInstrumentationOptions } from "./instrumentation.js";
 import { fetchAndCacheRemoteConfig } from "./internal/server/remote-config.js";
 import type { IncomingHttpHeaders } from "node:http";
+import { channel } from "node:diagnostics_channel";
 import { once } from "node:events";
 import {
   afterAll,
@@ -891,42 +885,24 @@ afterAll(() => {
 
 test("direct Node traces and logs survive Retry-After 30 beyond the old deadline", async () => {
   const attempts = { traces: 0, logs: 0 };
-  const scheduled = Promise.withResolvers<undefined>();
-  let retries = 0;
-  const ignore = () => undefined;
+  const unavailable = Promise.withResolvers<undefined>();
+  const headers = channel("undici:request:headers");
+  let responses = 0;
 
-  diag.setLogger(
-    {
-      error: ignore,
-      warn: ignore,
-      debug: ignore,
-      info(message) {
-        if (message.startsWith("Export retry time")) {
-          scheduled.reject(new Error(message));
-        }
-      },
-      verbose(message) {
-        if (message === "Scheduling export retry in 30000ms") {
-          retries += 1;
+  function observeHeaders() {
+    responses += 1;
 
-          if (retries === 2) {
-            scheduled.resolve(undefined);
-          }
-        }
-      },
-    },
-    DiagLogLevel.VERBOSE,
-  );
+    if (responses === 2) {
+      unavailable.resolve(undefined);
+    }
+  }
 
-  vi.useFakeTimers({
-    shouldAdvanceTime: true,
-    toFake: ["setTimeout", "clearTimeout", "Date"],
-  });
+  vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout", "Date"] });
 
   onTestFinished(() => {
-    vi.useRealTimers();
+    headers.unsubscribe(observeHeaders);
 
-    diag.disable();
+    vi.useRealTimers();
   });
 
   await listenCollector(
@@ -956,11 +932,19 @@ test("direct Node traces and logs survive Retry-After 30 beyond the old deadline
 
   logs.getLogger("retry").emit({ body: "survives-overload" });
 
+  headers.subscribe(observeHeaders);
+
   const flushed = mod.flush();
 
-  await scheduled.promise;
+  await unavailable.promise;
 
-  await vi.advanceTimersByTimeAsync(30_000);
+  await vi.advanceTimersByTimeAsync(29_999);
+
+  await setImmediate();
+
+  expect(attempts).toStrictEqual({ traces: 1, logs: 1 });
+
+  await vi.advanceTimersByTimeAsync(1);
 
   await flushed;
 

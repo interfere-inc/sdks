@@ -1,0 +1,27 @@
+diff --git a/lib/dispatcher/client-h1.js b/lib/dispatcher/client-h1.js
+index dd01b7af83a330462662615e37126c3cc685d3df..7e16023c831cdd2301897e7d31d6425517406557 100644
+--- a/lib/dispatcher/client-h1.js
++++ b/lib/dispatcher/client-h1.js
+@@ -61,6 +61,7 @@ const removeAllListeners = util.removeAllListeners
+ const kIdleSocketValidation = Symbol('kIdleSocketValidation')
+ const kIdleSocketValidationTimeout = Symbol('kIdleSocketValidationTimeout')
+ const kSocketUsed = Symbol('kSocketUsed')
++const kTypeOfService = Symbol('kTypeOfService')
+ 
+ let extractBody
+ 
+@@ -1248,8 +1249,12 @@ function writeH1 (client, request) {
+     socket[kBlocking] = true
+   }
+ 
+-  if (socket.setTypeOfService) {
+-    socket.setTypeOfService(request.typeOfService)
++  if (typeof socket.setTypeOfService === 'function' &&
++      (socket[kTypeOfService] ?? 0) !== request.typeOfService) {
++    try {
++      socket.setTypeOfService(request.typeOfService)
++      socket[kTypeOfService] = request.typeOfService
++    } catch {}
+   }
+ 
+   let header = `${method} ${path} HTTP/1.1\r\n`

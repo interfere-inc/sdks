@@ -3,6 +3,11 @@
 import { drainUrl } from "@interfere/constants/api";
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
 import { installGlobalHandlers } from "@interfere/server-core/global-handlers";
+import {
+  JsonMetricsSerializer,
+  MetricsExporterMetricsHelper,
+} from "@opentelemetry/otlp-transformer";
+import { collectorDelegate } from "@interfere/server-core/otlp-http";
 import { startNodeRuntime } from "@interfere/server-core/node";
 import {
   serverCredential,
@@ -19,7 +24,7 @@ import {
 } from "@opentelemetry/core";
 import {
   AggregationTemporalityPreference,
-  OTLPMetricExporter,
+  OTLPMetricExporterBase,
 } from "@opentelemetry/exporter-metrics-otlp-http";
 import { registerInstrumentations } from "@opentelemetry/instrumentation";
 import { UndiciInstrumentation } from "@opentelemetry/instrumentation-undici";
@@ -128,14 +133,23 @@ export async function register(opts: ServerInstrumentationOptions = {}) {
           resource,
           readers: [
             new PeriodicExportingMetricReader({
-              exporter: new OTLPMetricExporter({
-                url: drainUrl(env.apiUrl, "metrics"),
-                headers: {
-                  ...serverCredentialHeaders(credential),
-                  "x-interfere-producer-version": PRODUCER_VERSION,
+              exporter: new OTLPMetricExporterBase(
+                collectorDelegate(
+                  "metrics",
+                  {
+                    url: drainUrl(env.apiUrl, "metrics"),
+                    headers: {
+                      ...serverCredentialHeaders(credential),
+                      "x-interfere-producer-version": PRODUCER_VERSION,
+                    },
+                  },
+                  JsonMetricsSerializer,
+                  MetricsExporterMetricsHelper,
+                ),
+                {
+                  temporalityPreference: AggregationTemporalityPreference.DELTA,
                 },
-                temporalityPreference: AggregationTemporalityPreference.DELTA,
-              }),
+              ),
               exportIntervalMillis: 30_000,
             }),
           ],

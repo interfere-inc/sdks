@@ -15,6 +15,28 @@
   ],
   "type": "module",
   "sideEffects": false,
+  "imports": {
+    "#otlp-http": {
+      "workerd": {
+        "monorepo": "./src/otlp/web.ts",
+        "types": "./dist/otlp/web.d.mts",
+        "default": "./dist/otlp/web.mjs"
+      },
+      "edge-light": {
+        "monorepo": "./src/otlp/web.ts",
+        "types": "./dist/otlp/web.d.mts",
+        "default": "./dist/otlp/web.mjs"
+      },
+      "node": {
+        "monorepo": "./src/otlp/node.ts",
+        "types": "./dist/otlp/node.d.mts",
+        "default": "./dist/otlp/node.mjs"
+      },
+      "monorepo": "./src/otlp/web.ts",
+      "types": "./dist/otlp/web.d.mts",
+      "default": "./dist/otlp/web.mjs"
+    }
+  },
   "exports": {
     "./runtime": {
       "monorepo": "./src/runtime.ts",
@@ -60,6 +82,11 @@
       "monorepo": "./src/credential.ts",
       "types": "./dist/credential.d.mts",
       "default": "./dist/credential.mjs"
+    },
+    "./otlp-http": {
+      "monorepo": "./src/otlp-http.ts",
+      "types": "./dist/otlp-http.d.mts",
+      "default": "./dist/otlp-http.mjs"
     }
   },
   "publishConfig": {
@@ -79,12 +106,12 @@
     "@opentelemetry/api": "catalog:",
     "@opentelemetry/context-async-hooks": "catalog:",
     "@opentelemetry/core": "catalog:",
-    "@opentelemetry/exporter-logs-otlp-http": "catalog:",
-    "@opentelemetry/exporter-trace-otlp-http": "catalog:",
     "@opentelemetry/otlp-exporter-base": "catalog:",
+    "@opentelemetry/otlp-transformer": "catalog:",
     "@opentelemetry/resources": "catalog:",
     "@opentelemetry/sdk-logs": "catalog:",
-    "@opentelemetry/sdk-trace": "catalog:"
+    "@opentelemetry/sdk-trace": "catalog:",
+    "undici": "catalog:"
   },
   "devDependencies": {
     "@interfere/test-config": "workspace:*",

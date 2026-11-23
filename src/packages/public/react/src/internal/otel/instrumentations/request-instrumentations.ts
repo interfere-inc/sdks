@@ -1,3 +1,4 @@
+import type { TracerProvider } from "@opentelemetry/api";
 import { createRequestCore } from "./request-core.js";
 import type { RequestInstrumentationsInput } from "./request-core.js";
 import { createFetchInstrumentation } from "./request-fetch.js";
@@ -5,30 +6,26 @@ import { createXhrInstrumentation } from "./request-xhr.js";
 
 export type { RequestInstrumentationsInput } from "./request-core.js";
 
-/**
- * Builds the upstream fetch and XMLHttpRequest instrumentations with
- * Interfere's request behaviour attached through their hooks: the header
- * policy, failed-request evidence, propagation diagnostics and trace
- * correlation. The upstream wrappers are the only patches on `fetch` and
- * `XMLHttpRequest`; where upstream has no hook (the fetch response before
- * the application reads it, XHR header injection), Interfere composes into
- * the upstream wrapper instead of adding another.
- */
+/** Installs request instrumentation on the private provider and restores owned wrappers on disposal. */
 export function createRequestInstrumentations(
   input: RequestInstrumentationsInput,
+  tracerProvider: TracerProvider,
 ) {
   const core = createRequestCore(input);
+
+  const disposeFetch = createFetchInstrumentation(core, input, tracerProvider);
+  const disposeXhr = createXhrInstrumentation(core, input, tracerProvider);
 
   return {
     dispose: () => {
       core.dispose();
+
+      disposeFetch();
+
+      disposeXhr();
     },
     endOpenRequests: () => {
       core.endOpenRequests();
     },
-    instrumentations: [
-      createFetchInstrumentation(core, input),
-      createXhrInstrumentation(core, input),
-    ],
   };
 }

@@ -184,10 +184,10 @@ export function registerBundledInstrumentations(input: InstrumentationsInput) {
       defersTraceContext: input.defersTraceContext,
       evidenceTracer: tracerProvider.getTracer("@interfere/react/request"),
     }),
+    tracerProvider,
   );
 
   const coreInstrumentations = [
-    ...requests.instrumentations,
     new LongTaskInstrumentation({
       enabled: false,
       observerCallback: (span, info: ObserverCallbackInformation) => {

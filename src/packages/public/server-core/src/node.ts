@@ -22,9 +22,17 @@ import type {
 } from "@opentelemetry/api";
 import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
 import { getNumberFromEnv } from "@opentelemetry/core";
-import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
-import { OTLPLogExporter } from "@opentelemetry/exporter-logs-otlp-http";
-import { CompressionAlgorithm } from "@opentelemetry/otlp-exporter-base";
+import {
+  JsonLogsSerializer,
+  JsonTraceSerializer,
+  LogsExporterMetricsHelper,
+  TraceExporterMetricsHelper,
+} from "@opentelemetry/otlp-transformer";
+import { collectorDelegate } from "#otlp-http";
+import {
+  CompressionAlgorithm,
+  OTLPExporterBase,
+} from "@opentelemetry/otlp-exporter-base";
 import { resourceFromAttributes } from "@opentelemetry/resources";
 import {
   BatchLogRecordProcessor,
@@ -146,12 +154,19 @@ export async function startNodeRuntime(input: NodeRuntimeInput) {
       : [
           new BatchSpanProcessor(
             omitUndefined({
-              exporter: new OTLPTraceExporter({
-                headers,
-                compression,
-                timeoutMillis: attemptTimeout,
-                url: drainUrl(input.apiUrl, "traces"),
-              }),
+              exporter: new OTLPExporterBase(
+                collectorDelegate(
+                  "traces",
+                  {
+                    headers,
+                    compression,
+                    timeoutMillis: attemptTimeout,
+                    url: drainUrl(input.apiUrl, "traces"),
+                  },
+                  JsonTraceSerializer,
+                  TraceExporterMetricsHelper,
+                ),
+              ),
               exportTimeoutMillis: batchTimeout,
               maxExportBatchSize: getNumberFromEnv(
                 "OTEL_BSP_MAX_EXPORT_BATCH_SIZE",
@@ -270,12 +285,19 @@ export async function startNodeRuntime(input: NodeRuntimeInput) {
           processors: [
             new BatchLogRecordProcessor({
               exportTimeoutMillis: batchTimeout,
-              exporter: new OTLPLogExporter({
-                headers,
-                compression,
-                timeoutMillis: attemptTimeout,
-                url: drainUrl(input.apiUrl, "logs"),
-              }),
+              exporter: new OTLPExporterBase(
+                collectorDelegate(
+                  "logs",
+                  {
+                    headers,
+                    compression,
+                    timeoutMillis: attemptTimeout,
+                    url: drainUrl(input.apiUrl, "logs"),
+                  },
+                  JsonLogsSerializer,
+                  LogsExporterMetricsHelper,
+                ),
+              ),
             }),
             ...(options._internalAdditionalLogRecordProcessors ?? []),
           ],

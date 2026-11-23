@@ -173,11 +173,16 @@ function xhrCancellation(span: Span) {
     return null;
   }
 
-  if (span.events.some((event) => event.name === "timeout")) {
+  const error = span.attributes["error.type"];
+
+  if (error === "TimeoutError") {
     return "timeout" satisfies RequestCancellation;
   }
 
-  if (span.events.some((event) => event.name === "abort")) {
+  if (
+    error === undefined &&
+    span.attributes["http.response.status_code"] === undefined
+  ) {
     return "abort" satisfies RequestCancellation;
   }
 
@@ -261,12 +266,8 @@ export async function settleXhrFailure(
   pageExit: PageExitWatch,
   url: string,
   admit: () => boolean,
-  terminal?: string,
 ) {
-  const cancellation =
-    terminal === "abort" || terminal === "timeout"
-      ? terminal
-      : xhrCancellation(span);
+  const cancellation = xhrCancellation(span);
 
   if (cancellation) {
     span.setAttribute(ATTR_HTTP_CANCELLED, cancellation);

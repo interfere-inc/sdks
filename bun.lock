@@ -187,9 +187,7 @@
         "@opentelemetry/core": "catalog:",
         "@opentelemetry/instrumentation": "catalog:",
         "@opentelemetry/instrumentation-document-load": "catalog:",
-        "@opentelemetry/instrumentation-fetch": "catalog:",
         "@opentelemetry/instrumentation-long-task": "catalog:",
-        "@opentelemetry/instrumentation-xml-http-request": "catalog:",
         "@opentelemetry/opentelemetry-browser-detector": "catalog:",
         "@opentelemetry/otlp-transformer": "catalog:",
         "@opentelemetry/resources": "catalog:",
@@ -209,6 +207,7 @@
         "@datadog/browser-rum": "catalog:",
         "@interfere/test-config": "workspace:*",
         "@interfere/typescript-config": "workspace:^",
+        "@opentelemetry/browser-instrumentation": "catalog:",
         "@rolldown/plugin-babel": "catalog:",
         "@rrweb/types": "catalog:",
         "@sentry/browser": "catalog:",
@@ -252,12 +251,12 @@
         "@opentelemetry/api": "catalog:",
         "@opentelemetry/context-async-hooks": "catalog:",
         "@opentelemetry/core": "catalog:",
-        "@opentelemetry/exporter-logs-otlp-http": "catalog:",
-        "@opentelemetry/exporter-trace-otlp-http": "catalog:",
         "@opentelemetry/otlp-exporter-base": "catalog:",
+        "@opentelemetry/otlp-transformer": "catalog:",
         "@opentelemetry/resources": "catalog:",
         "@opentelemetry/sdk-logs": "catalog:",
         "@opentelemetry/sdk-trace": "catalog:",
+        "undici": "catalog:",
       },
       "devDependencies": {
         "@interfere/test-config": "workspace:*",
@@ -355,6 +354,7 @@
         "@opentelemetry/exporter-metrics-otlp-http": "catalog:",
         "@opentelemetry/instrumentation": "catalog:",
         "@opentelemetry/instrumentation-undici": "catalog:",
+        "@opentelemetry/otlp-transformer": "catalog:",
         "@opentelemetry/resources": "catalog:",
         "@opentelemetry/sdk-logs": "catalog:",
         "@opentelemetry/sdk-metrics": "catalog:",
@@ -403,6 +403,8 @@
     "msw@3.0.7": "patches/msw@3.0.7.patch",
     "@vitest/browser@5.1.1": "patches/@vitest%2Fbrowser@5.1.1.patch",
     "@changesets/cli@3.0.3": "patches/@changesets%2Fcli@3.0.3.patch",
+    "undici@8.12.4": "patches/undici@8.12.4.patch",
+    "undici@7.30.1": "patches/undici@7.30.1.patch",
     "vitest@5.1.1": "patches/vitest@5.1.1.patch",
     "rrweb@2.2.2": "patches/rrweb@2.2.2.patch",
     "@mswjs/interceptors@0.45.12": "patches/@mswjs%2Finterceptors@0.45.12.patch",
@@ -419,17 +421,14 @@
     "@mswjs/interceptors": "0.45.12",
     "@opentelemetry/api": "1.10.0",
     "@opentelemetry/baggage-span-processor": "0.6.1",
+    "@opentelemetry/browser-instrumentation": "0.12.1",
     "@opentelemetry/context-async-hooks": "3.1.1",
     "@opentelemetry/core": "3.1.1",
-    "@opentelemetry/exporter-logs-otlp-http": "0.301.2",
     "@opentelemetry/exporter-metrics-otlp-http": "0.301.2",
-    "@opentelemetry/exporter-trace-otlp-http": "0.301.2",
     "@opentelemetry/instrumentation": "0.301.2",
     "@opentelemetry/instrumentation-document-load": "0.70.1",
-    "@opentelemetry/instrumentation-fetch": "0.301.2",
     "@opentelemetry/instrumentation-long-task": "0.69.0",
     "@opentelemetry/instrumentation-undici": "0.35.1",
-    "@opentelemetry/instrumentation-xml-http-request": "0.301.2",
     "@opentelemetry/opentelemetry-browser-detector": "0.301.2",
     "@opentelemetry/otlp-exporter-base": "0.301.2",
     "@opentelemetry/otlp-transformer": "0.301.2",
@@ -472,6 +471,7 @@
     "tsdown": "0.23.7",
     "turbo": "2.11.13",
     "typescript": "7.1.0-beta",
+    "undici": "8.12.4",
     "uuid": "14.0.3",
     "vite": "8.3.8",
     "vitest": "5.1.1",
@@ -842,27 +842,23 @@
 
     "@opentelemetry/baggage-span-processor": ["@opentelemetry/baggage-span-processor@0.6.1", "", { "dependencies": { "@opentelemetry/sdk-trace": "^3.0.0" }, "peerDependencies": { "@opentelemetry/api": "^1.10.0" } }, "sha512-5qNF9aCw+Q5+hvdBYowDc3iG2vWB/rb934rmatRUB2leA0i9byVnyP8VWUkFoScCg4ePjdwzrLtRWRJDgRmOFA=="],
 
+    "@opentelemetry/browser-api": ["@opentelemetry/browser-api@0.2.1", "", { "peerDependencies": { "@opentelemetry/api": ">=1.10.0 <1.11.0" } }, "sha512-tsbI75Wk2DupoQ3JVDoW3e8CZV03ldbqTg5xPFOnH5LmC/yoQyhSy5gYLEibEombLoKmnRX3H4uiqbQ7lnOPJw=="],
+
+    "@opentelemetry/browser-instrumentation": ["@opentelemetry/browser-instrumentation@0.12.1", "", { "dependencies": { "@opentelemetry/browser-api": "^0.2.1", "@opentelemetry/semantic-conventions": "^1.45.0", "web-vitals": "^6.2.3" }, "peerDependencies": { "@opentelemetry/api": ">=1.10.0 <1.11.0" } }, "sha512-WCxAc4IXcy8fSzauxWQQfHrvPxq4QqGEcXgPTTzk77ll+8nEi1pLLCnLSA+QiFgkEs/TXPJkm8gAZC+y5UGuJQ=="],
+
     "@opentelemetry/context-async-hooks": ["@opentelemetry/context-async-hooks@3.1.1", "", { "peerDependencies": { "@opentelemetry/api": ">=1.0.0 <1.11.0" } }, "sha512-xOosgbes1+6bHPhVnYCd3EihFN8MpafEQwzmxeZ2zKXwWwV4F4780Pb097E326RZjCHTvUkwOYnXOALTfRfHVg=="],
 
     "@opentelemetry/core": ["@opentelemetry/core@3.1.1", "", { "dependencies": { "@opentelemetry/semantic-conventions": "^1.29.0" }, "peerDependencies": { "@opentelemetry/api": ">=1.10.0 <1.11.0" } }, "sha512-6wc9r0zrTsAVOd/5UrZBsrHhXWNfwisolgWxd8o3Eu1HKIz8cAxQjOdGrrJB406ceFiGV+ckTcLdXzB+y/QVTA=="],
 
-    "@opentelemetry/exporter-logs-otlp-http": ["@opentelemetry/exporter-logs-otlp-http@0.301.2", "", { "dependencies": { "@opentelemetry/otlp-exporter-base": "0.301.2", "@opentelemetry/otlp-transformer": "0.301.2", "@opentelemetry/sdk-logs": "3.1.1" }, "peerDependencies": { "@opentelemetry/api": "^1.10.0" } }, "sha512-l3K1Fp2qaxAS8wKPyjVm7/QfnvJXZZfPuGXa+AYzNeoOk6qxcZwWZhLe9SYemWxDrtPTl3Mj82diLgVzbz54Hw=="],
-
     "@opentelemetry/exporter-metrics-otlp-http": ["@opentelemetry/exporter-metrics-otlp-http@0.301.2", "", { "dependencies": { "@opentelemetry/core": "3.1.1", "@opentelemetry/otlp-exporter-base": "0.301.2", "@opentelemetry/otlp-transformer": "0.301.2", "@opentelemetry/sdk-metrics": "3.1.1" }, "peerDependencies": { "@opentelemetry/api": "^1.10.0" } }, "sha512-DfnOIyttIFfw+P699WIUyinro4nZUvyYUulIvi/jYmOqNiMmj7FDTbSb0pKQqBvQmN2eXekLhMB11fMqc1RSNw=="],
-
-    "@opentelemetry/exporter-trace-otlp-http": ["@opentelemetry/exporter-trace-otlp-http@0.301.2", "", { "dependencies": { "@opentelemetry/otlp-exporter-base": "0.301.2", "@opentelemetry/otlp-transformer": "0.301.2", "@opentelemetry/sdk-trace": "3.1.1" }, "peerDependencies": { "@opentelemetry/api": "^1.10.0" } }, "sha512-mGyy0Jv/jgEnVdLME6SyxzPJgZml2vIZAJTF1/SKoM8baqDFsQSeFQ15vjo3qDxTOnbf04t2Y62oofsUy0ETDw=="],
 
     "@opentelemetry/instrumentation": ["@opentelemetry/instrumentation@0.301.2", "", { "dependencies": { "import-in-the-middle": "^3.0.0", "require-in-the-middle": "^8.0.0" }, "peerDependencies": { "@opentelemetry/api": ">=1.10.0 <1.11.0" } }, "sha512-14ZUepvK+YiMfhy3Hugh4UuY5THEfVOcsY0+L+DertoVmdh4MTR5H0JvD1IT2jGLKPZiIg+apDCM2CTuGh6UzQ=="],
 
     "@opentelemetry/instrumentation-document-load": ["@opentelemetry/instrumentation-document-load@0.70.1", "", { "dependencies": { "@opentelemetry/core": "^3.0.0", "@opentelemetry/instrumentation": "^0.301.0", "@opentelemetry/semantic-conventions": "^1.23.0", "@opentelemetry/web-common": "^0.301.0" }, "peerDependencies": { "@opentelemetry/api": "^1.10.0" } }, "sha512-lJpnSfHRu0DaNy4/9bSL3Iuw5c1MyS2G2rbdiMdSaJGlb6GI2491E+1OL6PF/BCn9xCdBKgBqJ4FcWvObl5vXQ=="],
 
-    "@opentelemetry/instrumentation-fetch": ["@opentelemetry/instrumentation-fetch@0.301.2", "", { "dependencies": { "@opentelemetry/core": "3.1.1", "@opentelemetry/instrumentation": "0.301.2", "@opentelemetry/semantic-conventions": "^1.29.0", "@opentelemetry/web-common": "0.301.2" }, "peerDependencies": { "@opentelemetry/api": "^1.10.0" } }, "sha512-UperJ2C8lSGnEos6IoY0g5muYmhGLvDHmkkxMlqtDsiLC+W47eGgb+j5UhUOB25vFspjUiNw6m7hqKXoqjD/Vg=="],
-
     "@opentelemetry/instrumentation-long-task": ["@opentelemetry/instrumentation-long-task@0.69.0", "", { "dependencies": { "@opentelemetry/core": "^3.0.0", "@opentelemetry/instrumentation": "^0.301.0" }, "peerDependencies": { "@opentelemetry/api": "^1.10.0" } }, "sha512-AJz6IfmQnJwkKupOBvF1IiGg+ssHrui9KUCBer6fa5Spq4Pf/Rpmxq0U8s2HtBsIUc+dMHy+/kd+K7tLX2RLvQ=="],
 
     "@opentelemetry/instrumentation-undici": ["@opentelemetry/instrumentation-undici@0.35.1", "", { "dependencies": { "@opentelemetry/core": "^3.0.0", "@opentelemetry/instrumentation": "^0.301.0", "@opentelemetry/semantic-conventions": "^1.24.0" }, "peerDependencies": { "@opentelemetry/api": "^1.10.0" } }, "sha512-arkBMJmJhHHGgQ15Aun5R+E64lezw3G6yESXqDqqmr7ADieVFUr45NFLTaMeDnDZPdFDXqFspRTwsSaaJzvvkw=="],
-
-    "@opentelemetry/instrumentation-xml-http-request": ["@opentelemetry/instrumentation-xml-http-request@0.301.2", "", { "dependencies": { "@opentelemetry/core": "3.1.1", "@opentelemetry/instrumentation": "0.301.2", "@opentelemetry/semantic-conventions": "^1.29.0", "@opentelemetry/web-common": "0.301.2" }, "peerDependencies": { "@opentelemetry/api": "^1.10.0" } }, "sha512-6ZmhxT3rpON+ZmYfJWTE8DjlEtIv2/ocRw4pxbuGHQxuh8g/9Zqz8iyCcLhHSaSWmqIrtyNBKQlcKAxG1fiClw=="],
 
     "@opentelemetry/opentelemetry-browser-detector": ["@opentelemetry/opentelemetry-browser-detector@0.301.2", "", { "dependencies": { "@opentelemetry/resources": "3.1.1", "@opentelemetry/semantic-conventions": "^1.29.0" }, "peerDependencies": { "@opentelemetry/api": "^1.10.0" } }, "sha512-f3wCLe/dvih4PAirTfRjcWX11wCn2dQhRQBewHxr4lpbmJZH2aUk/579+3DXbwbjEgjv5Un7LsuZ+raNurLxPQ=="],
 
@@ -1690,7 +1686,7 @@
 
     "unconfig-core": ["unconfig-core@7.5.0", "", { "dependencies": { "@quansync/fs": "^1.0.0", "quansync": "^1.0.0" } }, "sha512-Su3FauozOGP44ZmKdHy2oE6LPjk51M/TRRjHv2HNCWiDvfvCoxC2lno6jevMA91MYAdCdwP05QnWdWpSbncX/w=="],
 
-    "undici": ["undici@7.30.1", "", {}, "sha512-03KrMbjIFDWQR5RNPrSw3bd1r12JpyFQl9/yxjUbJtqkjmllqC5lFjZh6ujeuJCKr8EOQvRW872Oy/az+nLYxg=="],
+    "undici": ["undici@8.12.4", "", {}, "sha512-8Mx+uNKKER2bA4AdtedkqRbwUCIJFr2nJckXRe5yrDqzePqwLP7VNcctN8/XdmDSbF7mS+jJKIszlL+vbam1VA=="],
 
     "undici-types": ["undici-types@8.9.0", "", {}, "sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg=="],
 
@@ -1831,6 +1827,8 @@
     "import-in-the-middle/cjs-module-lexer": ["cjs-module-lexer@2.2.1", "", {}, "sha512-Ca8swihM+/4yKecYHY52kgJd300hi2lADU/a1RxNTRe+RJ9jvqQlESpbz9DnG9mowez8qwXHB8qYdIUw9e+F5Q=="],
 
     "import-in-the-middle/es-module-lexer": ["es-module-lexer@3.0.4", "", {}, "sha512-BldNY5mwkVu+cQ5Ymn3e6hB9Sx8XHx4ZevWbiUyZbfKxJxYO27Hf0wfzkxIaD5CAJMaGl3YspKELj0ff/7nCMA=="],
+
+    "miniflare/undici": ["undici@7.30.1", "", {}, "sha512-03KrMbjIFDWQR5RNPrSw3bd1r12JpyFQl9/yxjUbJtqkjmllqC5lFjZh6ujeuJCKr8EOQvRW872Oy/az+nLYxg=="],
 
     "miniflare/ws": ["ws@8.21.0", "", { "peerDependencies": { "bufferutil": "^4.0.1", "utf-8-validate": ">=5.0.2" }, "optionalPeers": ["bufferutil", "utf-8-validate"] }, "sha512-Vsp28b7DRcimFQvrqu2Wek3z1iYxDCWqHYB8Qsnk/S4RfaCQzPGPyBNuVjJV3cd6UiKtUtp6sNM77gWvzcCH+g=="],
 

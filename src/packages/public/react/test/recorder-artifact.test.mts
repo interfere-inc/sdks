@@ -385,11 +385,12 @@ void test("the published SDK neither depends on nor imports zone.js", async () =
   }
 });
 
-void test("the published SDK bundles rrweb instead of depending on it", async () => {
-  const rrwebPackage = /^(?:rrweb(?:-snapshot)?|rrdom|@rrweb\/.+)$/u;
+void test("the published SDK bundles its recorder and isolates its browser request instrumentation", async () => {
+  const privatePackage =
+    /^(?:rrweb(?:-snapshot)?|rrdom|@rrweb\/.+|@opentelemetry\/browser-(?:api|instrumentation))$/u;
 
-  const rrwebImport =
-    /(?:\bfrom|\bimport)\s*\(?\s*["'`](?:rrweb(?:-snapshot)?|rrdom|@rrweb\/[^"'`]+)["'`]/u;
+  const privateImport =
+    /(?:\bfrom|\bimport)\s*\(?\s*["'`](?:rrweb(?:-snapshot)?|rrdom|@rrweb\/[^"'`]+|@opentelemetry\/browser-(?:api|instrumentation)(?:\/[^"'`]+)?)["'`]/u;
 
   const dependencyMap = z.record(z.string(), z.string()).optional();
 
@@ -403,7 +404,7 @@ void test("the published SDK bundles rrweb instead of depending on it", async ()
 
   for (const [field, dependencies] of Object.entries(manifest)) {
     for (const name of Object.keys(dependencies ?? {})) {
-      assert.doesNotMatch(name, rrwebPackage, `${field}: ${name}`);
+      assert.doesNotMatch(name, privatePackage, `${field}: ${name}`);
     }
   }
 
@@ -421,6 +422,6 @@ void test("the published SDK bundles rrweb instead of depending on it", async ()
   );
 
   for (const { name, source } of sources) {
-    assert.doesNotMatch(source, rrwebImport, name);
+    assert.doesNotMatch(source, privateImport, name);
   }
 });
