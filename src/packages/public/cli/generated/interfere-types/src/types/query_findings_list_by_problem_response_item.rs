@@ -34,6 +34,9 @@ pub struct QueryFindingsListByProblemResponseItem {
     #[serde(rename = "retryCount")]
     #[serde(default)]
     pub retry_count: i64,
+    #[serde(rename = "serviceId")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub service_id: Option<String>,
     pub status: QueryFindingsListByProblemResponseItemStatus,
     #[serde(rename = "surfaceId")]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -80,6 +83,7 @@ pub struct QueryFindingsListByProblemResponseItemBuilder {
     problem_id: Option<String>,
     release_id: Option<String>,
     retry_count: Option<i64>,
+    service_id: Option<String>,
     status: Option<QueryFindingsListByProblemResponseItemStatus>,
     surface_id: Option<String>,
     top_in_app_file: Option<String>,
@@ -138,6 +142,11 @@ impl QueryFindingsListByProblemResponseItemBuilder {
 
     pub fn retry_count(mut self, value: i64) -> Self {
         self.retry_count = Some(value);
+        self
+    }
+
+    pub fn service_id(mut self, value: impl Into<String>) -> Self {
+        self.service_id = Some(value.into());
         self
     }
 
@@ -203,6 +212,7 @@ impl QueryFindingsListByProblemResponseItemBuilder {
             problem_id: self.problem_id,
             release_id: self.release_id,
             retry_count: self.retry_count.ok_or_else(|| BuildError::missing_field("retry_count"))?,
+            service_id: self.service_id,
             status: self.status.ok_or_else(|| BuildError::missing_field("status"))?,
             surface_id: self.surface_id,
             top_in_app_file: self.top_in_app_file,

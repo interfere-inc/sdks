@@ -17179,6 +17179,24 @@
               "minimum": -9007199254740991,
               "maximum": 9007199254740991
             },
+            "serviceId": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "status": {
               "enum": [
                 "NEW",
@@ -17634,6 +17652,7 @@
             "problemId",
             "releaseId",
             "retryCount",
+            "serviceId",
             "status",
             "surfaceId",
             "topInAppFile",
@@ -60288,6 +60307,28 @@
                           "connectionRevision",
                           "operation",
                           "contentDigest"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "contentDigest": {
+                            "type": "string",
+                            "pattern": "^[a-f0-9]{64}$"
+                          },
+                          "kind": {
+                            "const": "public-contract"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "contentDigest",
+                          "kind"
                         ],
                         "additionalProperties": false
                       },

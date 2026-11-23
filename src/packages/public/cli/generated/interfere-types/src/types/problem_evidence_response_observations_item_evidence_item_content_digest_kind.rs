@@ -3,11 +3,11 @@ pub use crate::prelude::*;
 use super::*;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
-pub enum ProblemEvidenceResponseObservationsItemEvidenceItemSinceKind {
+pub enum ProblemEvidenceResponseObservationsItemEvidenceItemContentDigestKind {
     #[serde(rename = "service-versions")]
     ServiceVersions,
 }
-impl fmt::Display for ProblemEvidenceResponseObservationsItemEvidenceItemSinceKind {
+impl fmt::Display for ProblemEvidenceResponseObservationsItemEvidenceItemContentDigestKind {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let s = match self {
             Self::ServiceVersions => "service-versions",
