@@ -111,7 +111,7 @@ export function serializeNonError(value: unknown) {
     return remaining >= 0 ? clipped : TRUNCATED_SENTINEL;
   };
 
-  // oxlint-disable-next-line anti-slop/no-unknown-parameters, interfere-types/no-explicit-return-types -- Each recursively visited exception property may contain any JavaScript value.
+  // oxlint-disable-next-line anti-slop/no-unknown-parameters, landmines/no-explicit-return-types -- Each recursively visited exception property may contain any JavaScript value.
   const walk = (current: unknown, depth: number): SerializedException => {
     if (current === null) {
       remaining -= 5;

@@ -61,7 +61,7 @@ test.each(["before", "after"] as const)(
     const [fetchBefore, openBefore, sendBefore] = methods();
 
     onTestFinished(() => {
-      // oxlint-disable-next-line interfere-testing/no-test-doubles -- The foreign instrumentation leaves its wrappers installed when disabled.
+      // oxlint-disable-next-line landmines/no-test-doubles -- The foreign instrumentation leaves its wrappers installed when disabled.
       globalThis.fetch = fetchBefore;
 
       XMLHttpRequest.prototype.open = openBefore;

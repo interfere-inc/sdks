@@ -1,4 +1,4 @@
-/* oxlint-disable interfere-testing/no-test-doubles -- Real passthrough wrappers model a foreign SDK that owns trace headers; Interfere's behaviour is never replaced. */
+/* oxlint-disable landmines/no-test-doubles -- Real passthrough wrappers model a foreign SDK that owns trace headers; Interfere's behaviour is never replaced. */
 import { bytesToHex } from "@interfere/helpers/hex";
 
 type ForeignStyle = "b3" | "b3multi" | "vendor" | "w3c";

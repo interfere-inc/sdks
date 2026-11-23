@@ -14,7 +14,7 @@ import { TracerProvider } from "@opentelemetry/sdk-trace";
 import { fetchAndCacheRemoteConfig } from "./internal/server/remote-config.js";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-// oxlint-disable-next-line anti-slop/no-module-mocking, interfere-testing/no-test-doubles -- The startup contract requires observing and holding the remote-config task independently of HTTP.
+// oxlint-disable-next-line anti-slop/no-module-mocking, landmines/no-test-doubles -- The startup contract requires observing and holding the remote-config task independently of HTTP.
 vi.mock(
   import("./internal/server/remote-config.js"),
   async (importOriginal) => ({
@@ -72,7 +72,7 @@ beforeEach(() => {
 
   vi.clearAllMocks();
 
-  // oxlint-disable-next-line interfere-testing/no-test-doubles -- Reset the remote-config startup contract fixture between cases.
+  // oxlint-disable-next-line landmines/no-test-doubles -- Reset the remote-config startup contract fixture between cases.
   vi.mocked(fetchAndCacheRemoteConfig).mockReset().mockResolvedValue(undefined);
 
   providerSpies.register = vi.spyOn(trace, "setGlobalTracerProvider");
@@ -155,12 +155,12 @@ describe("register / flush", () => {
       const failure = new Error("remote config unavailable");
 
       if (failureMode === "throw") {
-        // oxlint-disable-next-line interfere-testing/no-test-doubles -- Exercise synchronous failure containment at the startup boundary.
+        // oxlint-disable-next-line landmines/no-test-doubles -- Exercise synchronous failure containment at the startup boundary.
         vi.mocked(fetchAndCacheRemoteConfig).mockImplementation(() => {
           throw failure;
         });
       } else {
-        // oxlint-disable-next-line interfere-testing/no-test-doubles -- Exercise asynchronous failure containment at the startup boundary.
+        // oxlint-disable-next-line landmines/no-test-doubles -- Exercise asynchronous failure containment at the startup boundary.
         vi.mocked(fetchAndCacheRemoteConfig).mockRejectedValue(failure);
       }
 

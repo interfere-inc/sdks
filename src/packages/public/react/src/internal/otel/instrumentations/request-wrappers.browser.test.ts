@@ -57,7 +57,7 @@ test("request wrappers restore original functions on dispose, and requests still
   });
 
   onTestFinished(async () => {
-    // oxlint-disable-next-line interfere-testing/no-test-doubles -- Restores the native fetch by identity after the inert wrapper.
+    // oxlint-disable-next-line landmines/no-test-doubles -- Restores the native fetch by identity after the inert wrapper.
     globalThis.fetch = nativeFetch;
 
     XMLHttpRequest.prototype.open = nativeOpen;

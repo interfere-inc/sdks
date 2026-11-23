@@ -1,4 +1,4 @@
-/* oxlint-disable interfere-testing/no-test-doubles -- Real passthrough wrappers model a foreign SDK's own patches; Interfere's behaviour is never replaced. */
+/* oxlint-disable landmines/no-test-doubles -- Real passthrough wrappers model a foreign SDK's own patches; Interfere's behaviour is never replaced. */
 import type { SessionId } from "@interfere/types/data/session";
 import type { Attributes } from "@opentelemetry/api";
 import {

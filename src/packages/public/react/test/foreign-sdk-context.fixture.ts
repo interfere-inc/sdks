@@ -146,7 +146,7 @@ function installForeignFetch(headers: Record<string, string> | undefined) {
 
   foreign.fetch = wrapped;
 
-  // oxlint-disable-next-line interfere-testing/no-test-doubles -- The foreign stand-in always calls the real fetch through; it observes and adds headers like a vendor fill() wrapper.
+  // oxlint-disable-next-line landmines/no-test-doubles -- The foreign stand-in always calls the real fetch through; it observes and adds headers like a vendor fill() wrapper.
   globalThis.fetch = wrapped;
 
   return true;
@@ -167,7 +167,7 @@ function installForeignHistory() {
 
   foreign.pushState = wrapped;
 
-  // oxlint-disable-next-line interfere-testing/no-test-doubles -- The foreign stand-in always calls the real pushState through; it only observes.
+  // oxlint-disable-next-line landmines/no-test-doubles -- The foreign stand-in always calls the real pushState through; it only observes.
   globalThis.history.pushState = wrapped;
 
   return true;

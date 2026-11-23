@@ -58,10 +58,10 @@ describe("session storage fallback", () => {
       throw new DOMException("Storage access denied", "SecurityError");
     };
 
-    // oxlint-disable-next-line interfere-testing/no-test-doubles -- Browsers cannot revoke this iframe's storage permission in place; reproduce the platform exception after construction.
+    // oxlint-disable-next-line landmines/no-test-doubles -- Browsers cannot revoke this iframe's storage permission in place; reproduce the platform exception after construction.
     vi.spyOn(Storage.prototype, "getItem").mockImplementation(denied);
 
-    // oxlint-disable-next-line interfere-testing/no-test-doubles -- Exercise the platform write exception after a successful storage probe.
+    // oxlint-disable-next-line landmines/no-test-doubles -- Exercise the platform write exception after a successful storage probe.
     vi.spyOn(Storage.prototype, "setItem").mockImplementation(denied);
 
     vi.advanceTimersByTime(60_000);

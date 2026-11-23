@@ -252,7 +252,7 @@ test("preserves foreign headers on unlisted origins without diagnosing them", as
   expect(console.warn).not.toHaveBeenCalled();
 });
 
-/* oxlint-disable interfere-testing/no-test-doubles -- Real passthrough wrappers model a later SDK; native request behavior is never replaced. */
+/* oxlint-disable landmines/no-test-doubles -- Real passthrough wrappers model a later SDK; native request behavior is never replaced. */
 /* oxlint-disable typescript/unbound-method -- Identity assertions compare references without invoking them unbound. */
 test("later foreign fetch and XHR wrappers survive disposal while Interfere becomes inert", async () => {
   const originalFetch = globalThis.fetch;

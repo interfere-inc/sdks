@@ -324,7 +324,7 @@ describe("C-L1b a recording that pauses says why", () => {
 
     const visibility = vi.spyOn(document, "visibilityState", "get");
 
-    // oxlint-disable-next-line interfere-testing/no-test-doubles -- A single-tab test browser cannot background its own document; the SDK still reacts to a real visibilitychange event.
+    // oxlint-disable-next-line landmines/no-test-doubles -- A single-tab test browser cannot background its own document; the SDK still reacts to a real visibilitychange event.
     visibility.mockReturnValue("hidden");
 
     document.dispatchEvent(new Event("visibilitychange", { bubbles: true }));
@@ -341,7 +341,7 @@ describe("C-L1b a recording that pauses says why", () => {
       },
     });
 
-    // oxlint-disable-next-line interfere-testing/no-test-doubles -- Restores the visible state the single-tab browser reports.
+    // oxlint-disable-next-line landmines/no-test-doubles -- Restores the visible state the single-tab browser reports.
     visibility.mockReturnValue("visible");
 
     document.dispatchEvent(new Event("visibilitychange", { bubbles: true }));

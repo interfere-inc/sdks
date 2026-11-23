@@ -141,7 +141,7 @@ function cloneUnknown(value: unknown) {
 }
 
 /** Merges values recursively, concatenating arrays and skipping undefined overrides. */
-// oxlint-disable-next-line interfere-types/no-explicit-return-types
+// oxlint-disable-next-line landmines/no-explicit-return-types
 export function mergeValues<A, B>(base: A, override: B): DeepMerge<A, B> {
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion
   return mergeUnknown(base, override) as DeepMerge<A, B>;

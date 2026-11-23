@@ -17,7 +17,7 @@ afterEach(() => {
 function withoutSignalAny() {
   const descriptor = Object.getOwnPropertyDescriptor(AbortSignal, "any");
 
-  // oxlint-disable-next-line interfere-testing/no-test-doubles -- Exercise the same missing platform API as the isolated Edge VM while using real AbortControllers.
+  // oxlint-disable-next-line landmines/no-test-doubles -- Exercise the same missing platform API as the isolated Edge VM while using real AbortControllers.
   Object.defineProperty(AbortSignal, "any", {
     configurable: true,
     value: undefined,
@@ -25,7 +25,7 @@ function withoutSignalAny() {
 
   return () => {
     if (descriptor) {
-      // oxlint-disable-next-line interfere-testing/no-test-doubles -- Restore the host capability removed by this scoped fixture.
+      // oxlint-disable-next-line landmines/no-test-doubles -- Restore the host capability removed by this scoped fixture.
       Object.defineProperty(AbortSignal, "any", descriptor);
     }
   };

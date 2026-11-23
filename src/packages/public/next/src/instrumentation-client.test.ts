@@ -1,4 +1,4 @@
-/* oxlint-disable interfere-testing/no-cold-import-in-test -- Each test evaluates the side-effect entry under its own globals; beforeAll warms the ./instrument-client.js graph the entry loads. */
+/* oxlint-disable landmines/no-cold-import-in-test -- Each test evaluates the side-effect entry under its own globals; beforeAll warms the ./instrument-client.js graph the entry loads. */
 import { BUILD_MARKER_GLOBAL } from "@interfere/types/sdk/injected-globals";
 
 import { setTimeout as sleep } from "node:timers/promises";

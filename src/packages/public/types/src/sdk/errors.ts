@@ -296,7 +296,7 @@ export interface NonErrorException {
 }
 
 /** Preserves recoverable Errors and serializes other thrown values as structured exceptions. */
-// oxlint-disable-next-line anti-slop/no-unknown-parameters, interfere-types/no-explicit-return-types -- Public exception capture normalizes every JavaScript thrown value, and declaration emit infers `any` for the union of recovered, nested, DOM and serialized exceptions.
+// oxlint-disable-next-line anti-slop/no-unknown-parameters, landmines/no-explicit-return-types -- Public exception capture normalizes every JavaScript thrown value, and declaration emit infers `any` for the union of recovered, nested, DOM and serialized exceptions.
 export function toException(value: unknown): Error | NonErrorException {
   try {
     const recovered = recoverError(value);

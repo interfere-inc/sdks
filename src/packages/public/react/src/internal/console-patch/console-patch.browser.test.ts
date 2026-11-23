@@ -108,7 +108,7 @@ test("leaves a wrapper installed later in place and stops forwarding beneath it"
     ours.apply(console, args);
   };
 
-  // oxlint-disable-next-line interfere-testing/no-test-doubles -- A real passthrough wrapper models a later SDK; the native method is still called.
+  // oxlint-disable-next-line landmines/no-test-doubles -- A real passthrough wrapper models a later SDK; the native method is still called.
   console.warn = foreign;
 
   console.warn("shared");

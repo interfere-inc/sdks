@@ -62,7 +62,7 @@ test.each([
   ({ make }) => {
     const hostError = console.error;
 
-    // oxlint-disable-next-line interfere-testing/no-test-doubles -- Vitest's browser console formatter throws on revoked proxies before SDK code runs; a host console that does not format arguments isolates the SDK subscriber.
+    // oxlint-disable-next-line landmines/no-test-doubles -- Vitest's browser console formatter throws on revoked proxies before SDK code runs; a host console that does not format arguments isolates the SDK subscriber.
     console.error = () => undefined;
 
     onTestFinished(() => {

@@ -26,7 +26,7 @@ async function forget(response: Promise<Response>) {
 }
 
 // WARNING: the service worker relays a request to this page a few milliseconds after fetch() is called, so a request a test fires and forgets (session sync, identify) reaches the handler lookup after resetHandlers() and is reported unhandled; every fetch the page started is awaited before the reset.
-// oxlint-disable-next-line interfere-testing/no-test-doubles -- Observation only: every call is delegated to the real fetch and only its returned promise is recorded so the reset can wait for it.
+// oxlint-disable-next-line landmines/no-test-doubles -- Observation only: every call is delegated to the real fetch and only its returned promise is recorded so the reset can wait for it.
 globalThis.fetch = async (input, init) => {
   const response = readyFetch(input, init);
 

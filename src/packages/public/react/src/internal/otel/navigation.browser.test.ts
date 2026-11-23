@@ -1,5 +1,5 @@
 /* oxlint-disable unicorn/no-useless-promise-resolve-reject -- LogRecordProcessor requires promise-returning flush and shutdown. */
-/* oxlint-disable interfere-testing/no-test-doubles -- A real passthrough wrapper models a later SDK; browser history behavior is never replaced. */
+/* oxlint-disable landmines/no-test-doubles -- A real passthrough wrapper models a later SDK; browser history behavior is never replaced. */
 /* oxlint-disable typescript/unbound-method -- Identity assertions compare wrapper references without invoking them unbound. */
 import { INTERFERE_BROWSER_EVENTS_LOGGER_NAME } from "@interfere/types/data/browser-event-loggers";
 import { PAGE_VIEW_EVENT_NAME } from "@interfere/types/data/correlation-events";

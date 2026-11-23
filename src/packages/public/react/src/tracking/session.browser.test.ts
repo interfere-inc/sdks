@@ -35,7 +35,7 @@ describe(SessionManager, () => {
   });
 
   test("generates a window id without the secure-context randomUUID API", () => {
-    // oxlint-disable-next-line interfere-testing/no-test-doubles -- Secure-context API availability must be removed while retaining real getRandomValues.
+    // oxlint-disable-next-line landmines/no-test-doubles -- Secure-context API availability must be removed while retaining real getRandomValues.
     vi.stubGlobal("crypto", {
       getRandomValues: crypto.getRandomValues.bind(crypto),
     });

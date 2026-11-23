@@ -14,7 +14,7 @@ const writeHook = vi.hoisted(() => ({
   onFirstWrite: undefined as (() => void) | undefined,
 }));
 
-// oxlint-disable-next-line anti-slop/no-module-mocking, interfere-testing/no-test-doubles -- Every write still reaches the real writeFile unchanged; the wrapper only measures the heap once every map has been prepared and before the first write.
+// oxlint-disable-next-line anti-slop/no-module-mocking, landmines/no-test-doubles -- Every write still reaches the real writeFile unchanged; the wrapper only measures the heap once every map has been prepared and before the first write.
 vi.mock(import("node:fs/promises"), async (importOriginal) => {
   const actual = await importOriginal();
 

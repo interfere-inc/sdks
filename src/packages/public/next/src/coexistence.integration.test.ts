@@ -127,7 +127,7 @@ test("a missing replay chunk leaves other lazy plugins and application interacti
     if (body.includes("replay halted")) {
       blocked.resolve(route.request().url());
 
-      // oxlint-disable-next-line interfere-testing/no-test-doubles -- Return a real HTTP404 for the requested built chunk to exercise module loading failure.
+      // oxlint-disable-next-line landmines/no-test-doubles -- Return a real HTTP404 for the requested built chunk to exercise module loading failure.
       await route.fulfill({
         status: 404,
         contentType: "text/javascript",
