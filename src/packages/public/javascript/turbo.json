@@ -3,20 +3,15 @@
   "extends": ["//"],
   "tags": ["public", "compiled"],
   "tasks": {
-    "typecheck": {
-      "dependsOn": ["$TURBO_EXTENDS$", "build:types"]
-    },
     "test": {
       "dependsOn": ["$TURBO_EXTENDS$", "build"]
     },
     "build": {
-      "dependsOn": ["$TURBO_EXTENDS$", "build:js", "build:types"]
-    },
-    "build:types": {
+      "inputs": ["$TURBO_EXTENDS$", "runtime/**"],
       "outputs": ["$TURBO_EXTENDS$", "dist/**/*.d.cts"]
     },
-    "build:js": {
-      "inputs": ["$TURBO_EXTENDS$", "runtime/**"]
+    "typecheck": {
+      "dependsOn": ["$TURBO_EXTENDS$", "build"]
     }
   }
 }

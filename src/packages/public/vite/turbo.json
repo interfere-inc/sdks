@@ -9,25 +9,16 @@
     },
     "build": {
       "env": ["!VITE_*"],
-      "dependsOn": ["$TURBO_EXTENDS$", "build:js", "build:types"]
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "$TURBO_ROOT$/src/packages/public/tsdown.config.ts"
+      ]
     },
     "typegen": {
       "env": ["!VITE_*"]
     },
-    "build:js": {
-      "inputs": [
-        "$TURBO_EXTENDS$",
-        "$TURBO_ROOT$/src/packages/public/tsdown.config.ts"
-      ]
-    },
-    "build:types": {
-      "inputs": [
-        "$TURBO_EXTENDS$",
-        "$TURBO_ROOT$/src/packages/public/tsdown.config.ts"
-      ]
-    },
     "typecheck": {
-      "dependsOn": ["$TURBO_EXTENDS$", "build:types"]
+      "dependsOn": ["$TURBO_EXTENDS$", "build"]
     }
   }
 }

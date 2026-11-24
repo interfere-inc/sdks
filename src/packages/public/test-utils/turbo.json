@@ -2,9 +2,5 @@
   "$schema": "https://turbo.build/schema.json",
   "tags": ["public", "compiled"],
   "extends": ["//"],
-  "tasks": {
-    "build": {
-      "dependsOn": ["$TURBO_EXTENDS$", "build:js", "build:types"]
-    }
-  }
+  "tasks": {}
 }

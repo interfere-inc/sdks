@@ -82,12 +82,11 @@
   },
   "scripts": {
     "build": "tsdown",
-    "build:js": "tsdown --no-clean --no-dts",
-    "build:types": "TSDOWN_DECLARATIONS=1 tsdown",
     "dev": "tsdown --no-clean --no-dts --watch",
-    "lint:oxlint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/react",
+    "lint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/react",
     "test": "node ../test-config/src/cli.ts run --config ../../../../vitest.config.ts",
-    "test:artifact": "bun run build && node --test --test-timeout=30000 test/recorder-artifact.test.mts test/react-key-deopt-artifact.test.mts",
+    "test:artifact": "node --test --test-timeout=30000 test/recorder-artifact.test.mts test/react-key-deopt-artifact.test.mts",
+    "test:runtime": "vitest run --config vitest.sdk-browser.config.ts",
     "typecheck": "bun check"
   },
   "dependencies": {

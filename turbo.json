@@ -9,50 +9,23 @@
   "tasks": {
     "build": {
       "dependsOn": ["typegen", "^build"],
+      "env": ["!VITE_*"],
+      "inputs": [
+        "src/**",
+        "!**/*.test.*",
+        "!**/test/**",
+        "package.json",
+        "tsconfig*.json",
+        "tsdown.config.*",
+        "$TURBO_ROOT$/src/packages/public/typescript-config/*.json"
+      ],
       "outputs": ["dist/**"]
     },
-    "build:js": {
-      "dependsOn": ["^build:js"],
-      "env": ["!VITE_*"],
-      "inputs": [
-        "src/**",
-        "!**/*.test.*",
-        "!**/test/**",
-        "package.json",
-        "tsconfig*.json",
-        "tsdown.config.*",
-        "$TURBO_ROOT$/src/packages/public/typescript-config/*.json"
-      ],
-      "outputs": [
-        "dist/**",
-        "!dist/**/*.d.mts",
-        "!dist/**/*.d.cts",
-        "!dist/**/*.d.ts",
-        "!dist/**/*.d.mts.map",
-        "!dist/**/*.d.cts.map",
-        "!dist/**/*.d.ts.map",
-        "!dist/**/*.json"
-      ]
-    },
-    "build:types": {
-      "dependsOn": ["^build:types"],
-      "env": ["!VITE_*"],
-      "inputs": [
-        "src/**",
-        "!**/*.test.*",
-        "!**/test/**",
-        "package.json",
-        "tsconfig*.json",
-        "tsdown.config.*",
-        "$TURBO_ROOT$/src/packages/public/typescript-config/*.json"
-      ],
-      "outputs": ["dist/**/*.d.mts", "dist/**/*.d.mts.map", "dist/**/*.json"]
-    },
     "typecheck": {
-      "dependsOn": ["typegen", "^typegen", "^typecheck", "^build:types"]
+      "dependsOn": ["typegen", "^typegen", "^typecheck", "^build"]
     },
     "typegen": {
-      "dependsOn": ["^typegen", "^build:js"]
+      "dependsOn": ["^typegen", "^build"]
     },
     "test": {
       "dependsOn": ["typegen", "^build"],

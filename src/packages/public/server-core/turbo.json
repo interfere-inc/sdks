@@ -3,20 +3,11 @@
   "extends": ["//"],
   "tags": ["public", "compiled"],
   "tasks": {
-    "build:js": {
-      "inputs": [
-        "$TURBO_EXTENDS$",
-        "$TURBO_ROOT$/src/packages/public/tsdown.config.ts"
-      ]
-    },
-    "build:types": {
-      "inputs": [
-        "$TURBO_EXTENDS$",
-        "$TURBO_ROOT$/src/packages/public/tsdown.config.ts"
-      ]
-    },
     "build": {
-      "dependsOn": ["$TURBO_EXTENDS$", "build:js", "build:types"]
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "$TURBO_ROOT$/src/packages/public/tsdown.config.ts"
+      ]
     }
   }
 }

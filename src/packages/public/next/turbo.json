@@ -11,23 +11,19 @@
       "dependsOn": ["$TURBO_EXTENDS$", "build"],
       "tags": ["$TURBO_EXTENDS$", "test-other-browsers"]
     },
-    "build:js": {
-      "inputs": [
-        "$TURBO_EXTENDS$",
-        "$TURBO_ROOT$/src/packages/public/tsdown.config.ts"
-      ]
-    },
-    "build:types": {
-      "inputs": [
-        "$TURBO_EXTENDS$",
-        "$TURBO_ROOT$/src/packages/public/tsdown.config.ts"
-      ]
-    },
     "build": {
-      "dependsOn": ["$TURBO_EXTENDS$", "build:js", "build:types"]
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "$TURBO_ROOT$/src/packages/public/tsdown.config.ts"
+      ]
     },
     "typecheck": {
-      "dependsOn": ["$TURBO_EXTENDS$", "build:types"]
+      "dependsOn": ["$TURBO_EXTENDS$", "build"]
+    },
+    "test:runtime": {
+      "dependsOn": ["typegen", "^build"],
+      "cache": false,
+      "passThroughEnv": ["*"]
     }
   }
 }

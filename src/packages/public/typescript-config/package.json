@@ -30,7 +30,7 @@
     "access": "public"
   },
   "scripts": {
-    "lint:oxlint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/typescript-config"
+    "lint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/typescript-config"
   },
   "devDependencies": {
     "next": "catalog:"

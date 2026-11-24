@@ -67,6 +67,17 @@
         "CARGO_HOME",
         "RUSTUP_HOME"
       ]
+    },
+    "generate": {
+      "dependsOn": [
+        "@interfere/gateway#typegen"
+      ],
+      "cache": false,
+      "passThroughEnv": [
+        "CARGO_*",
+        "CARGO_HOME",
+        "RUSTUP_HOME"
+      ]
     }
   },
   "$schema": "https://turbo.build/schema.json",

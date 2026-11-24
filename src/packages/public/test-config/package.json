@@ -25,7 +25,7 @@
     "./reporting": "./src/reporting/reporting.ts"
   },
   "scripts": {
-    "lint:oxlint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/test-config",
+    "lint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/test-config",
     "test": "node src/cli.ts run --config ../../../../vitest.config.ts",
     "typecheck": "bun check"
   },

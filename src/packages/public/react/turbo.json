@@ -7,8 +7,17 @@
       "dependsOn": ["$TURBO_EXTENDS$", "build"],
       "tags": ["$TURBO_EXTENDS$", "test-react"]
     },
-    "build": {
-      "dependsOn": ["$TURBO_EXTENDS$", "build:js", "build:types"]
+    "typecheck": {
+      "dependsOn": ["$TURBO_EXTENDS$", "build"]
+    },
+    "test:artifact": {
+      "dependsOn": ["build"],
+      "cache": false
+    },
+    "test:runtime": {
+      "dependsOn": ["typegen", "^build"],
+      "cache": false,
+      "passThroughEnv": ["*"]
     }
   }
 }

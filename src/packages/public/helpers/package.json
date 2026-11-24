@@ -86,10 +86,9 @@
     "access": "public"
   },
   "scripts": {
-    "build:js": "tsdown --no-clean --no-dts --sourcemap",
-    "build:types": "tsdown --no-clean --dts.dtsOnly",
+    "build": "tsdown --sourcemap",
     "dev": "tsdown --no-clean --no-dts --sourcemap --watch",
-    "lint:oxlint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/helpers",
+    "lint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/helpers",
     "test": "node ../test-config/src/cli.ts run --config ../../../../vitest.config.ts",
     "typecheck": "bun check"
   },
