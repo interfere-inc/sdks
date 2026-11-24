@@ -1,0 +1,90 @@
+diff --git a/dist/src/index.js b/dist/src/index.js
+index 8af5efd..b2d5c59 100644
+--- a/dist/src/index.js
++++ b/dist/src/index.js
+@@ -56854,8 +56854,11 @@ Make sure you're using http(s):// URLs for WebSocket requests via fetch.`
+   const response = await undici.fetch(request4, {
+     dispatcher: requestInit?.dispatcher
+   });
+-  return new Response2(response.body, response);
++  const wrapped = new Response2(response.body, response);
++  fetchResponses.set(wrapped, response);
++  return wrapped;
+ }
++var fetchResponses = new WeakMap();
+ function isIterable(headers) {
+   return Symbol.iterator in Object(headers);
+ }
+@@ -89029,7 +89032,7 @@ function isNativeTarget(value) {
+ function isClientError(status2) {
+   return 400 <= status2 && status2 < 500;
+ }
+-var import_node_assert17, import_node_crypto6, import_web4, import_node_util5, kAddress, kName, kIsFunction, kStreamLength, TARGET_GLOBAL, TARGET_ENV, reducers, revivers, PROXY_SECRET, PROXY_SECRET_HEX, ProxyClient, ProxyClientBridge, ProxyStubHandler;
++var import_node_assert17, import_node_crypto6, import_web4, import_node_util5, kAddress, kName, kForceAsync, kIsFunction, kStreamLength, TARGET_GLOBAL, TARGET_ENV, reducers, revivers, PROXY_SECRET, PROXY_SECRET_HEX, ProxyClient, ProxyClientBridge, ProxyStubHandler;
+ var init_client = __esm({
+   "src/plugins/core/proxy/client.ts"() {
+     "use strict";
+@@ -89045,6 +89048,7 @@ var init_client = __esm({
+     init_types3();
+     kAddress = /* @__PURE__ */ Symbol("kAddress");
+     kName = /* @__PURE__ */ Symbol("kName");
++    kForceAsync = Symbol("kForceAsync");
+     kIsFunction = /* @__PURE__ */ Symbol("kIsFunction");
+     kStreamLength = /* @__PURE__ */ Symbol.for("miniflare.kStreamLength");
+     TARGET_GLOBAL = {
+@@ -89235,6 +89239,7 @@ var init_client = __esm({
+       target;
+       #version;
+       #stringifiedTarget;
++      #forceAsync = false;
+       #knownValues = /* @__PURE__ */ new Map();
+       #knownDescriptors = /* @__PURE__ */ new Map();
+       #knownOwnKeys;
+@@ -89346,7 +89351,7 @@ var init_client = __esm({
+           }
+           return res.body;
+         }
+-        (0, import_node_assert17.default)(typeHeader === "Promise");
++        if (res.status !== 500) (0, import_node_assert17.default)(typeHeader === "Promise");
+         let stringifiedResult;
+         let unbufferedStream;
+         const stringifiedSizeHeader = res.headers.get(
+@@ -89398,6 +89403,13 @@ var init_client = __esm({
+         }
+         return result;
+       }
++      set(_target, key, value) {
++        if (key === kForceAsync) {
++          this.#forceAsync = value === true;
++          return true;
++        }
++        return Reflect.set(_target, key, value);
++      }
+       get(_target, key, _receiver) {
+         this.#assertSafe();
+         if (key === kAddress) {
+@@ -89525,7 +89537,7 @@ var init_client = __esm({
+         if (knownAsync || // Durable Object stub RPC calls should always be async to avoid blocking
+         // the Node.js event loop with `Atomics.wait()`. This allows Promise.race()
+         // and timeouts to work correctly when racing against DO method calls.
+-        isDurableObjectStub(targetName) || // We assume every call with `ReadableStream`/`Blob` arguments is async.
++        isDurableObjectStub(targetName) || this.#forceAsync || // We assume every call with `ReadableStream`/`Blob` arguments is async.
+         // Note that you can't consume `ReadableStream`/`Blob` synchronously: if
+         // you tried a similar trick to `SynchronousFetcher`, blocking the main
+         // thread with `Atomics.wait()` would prevent chunks being read. This
+@@ -161303,6 +161315,7 @@ See https://developers.cloudflare.com/cloudflare-one/access-controls/service-cre
+             proxy !== void 0,
+             `Expected ${proxyBindingName} to be bound`
+           );
++          if (proxy[kName] === "Fetcher") proxy[kForceAsync] = true;
+           if (binding.proxyOverrideHandler) {
+             proxy = new Proxy(proxy, binding.proxyOverrideHandler);
+           }
+@@ -161327,6 +161340,7 @@ See https://developers.cloudflare.com/cloudflare-one/access-controls/service-cre
+         workerName
+       )}`
+     );
++    fetcher[kForceAsync] = true;
+     return fetcher;
+   }
+   async #getProxy(pluginName, bindingName, workerName) {

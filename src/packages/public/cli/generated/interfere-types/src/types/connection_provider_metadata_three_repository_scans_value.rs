@@ -6,6 +6,8 @@ use super::*;
 pub struct ConnectionProviderMetadataThreeRepositoryScansValue {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub apps: Option<Vec<ConnectionProviderMetadataThreeRepositoryScansValueAppsItem>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub directories: Option<Vec<String>>,
     #[serde(rename = "errorMessage")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub error_message: Option<String>,
@@ -25,6 +27,7 @@ impl ConnectionProviderMetadataThreeRepositoryScansValue {
 #[non_exhaustive]
 pub struct ConnectionProviderMetadataThreeRepositoryScansValueBuilder {
     apps: Option<Vec<ConnectionProviderMetadataThreeRepositoryScansValueAppsItem>>,
+    directories: Option<Vec<String>>,
     error_message: Option<String>,
     scanned_at: Option<String>,
     status: Option<ConnectionProviderMetadataThreeRepositoryScansValueStatus>,
@@ -33,6 +36,11 @@ pub struct ConnectionProviderMetadataThreeRepositoryScansValueBuilder {
 impl ConnectionProviderMetadataThreeRepositoryScansValueBuilder {
     pub fn apps(mut self, value: Vec<ConnectionProviderMetadataThreeRepositoryScansValueAppsItem>) -> Self {
         self.apps = Some(value);
+        self
+    }
+
+    pub fn directories(mut self, value: Vec<String>) -> Self {
+        self.directories = Some(value);
         self
     }
 
@@ -57,6 +65,7 @@ impl ConnectionProviderMetadataThreeRepositoryScansValueBuilder {
     pub fn build(self) -> Result<ConnectionProviderMetadataThreeRepositoryScansValue, BuildError> {
         Ok(ConnectionProviderMetadataThreeRepositoryScansValue {
             apps: self.apps,
+            directories: self.directories,
             error_message: self.error_message,
             scanned_at: self.scanned_at,
             status: self.status.ok_or_else(|| BuildError::missing_field("status"))?,

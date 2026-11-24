@@ -4610,6 +4610,12 @@
                             }
                           ]
                         },
+                        "directories": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
                         "errorMessage": {
                           "anyOf": [
                             {
@@ -4859,6 +4865,12 @@
                             }
                           ]
                         },
+                        "directories": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
                         "errorMessage": {
                           "anyOf": [
                             {
@@ -5107,6 +5119,12 @@
                               "type": "null"
                             }
                           ]
+                        },
+                        "directories": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
                         },
                         "errorMessage": {
                           "anyOf": [
@@ -18028,6 +18046,12 @@
                                 }
                               ]
                             },
+                            "directories": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
                             "errorMessage": {
                               "anyOf": [
                                 {
@@ -18277,6 +18301,12 @@
                                 }
                               ]
                             },
+                            "directories": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
                             "errorMessage": {
                               "anyOf": [
                                 {
@@ -18525,6 +18555,12 @@
                                   "type": "null"
                                 }
                               ]
+                            },
+                            "directories": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
                             },
                             "errorMessage": {
                               "anyOf": [
@@ -19557,6 +19593,12 @@
                                 }
                               ]
                             },
+                            "directories": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
                             "errorMessage": {
                               "anyOf": [
                                 {
@@ -19806,6 +19848,12 @@
                                 }
                               ]
                             },
+                            "directories": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
                             "errorMessage": {
                               "anyOf": [
                                 {
@@ -20054,6 +20102,12 @@
                                   "type": "null"
                                 }
                               ]
+                            },
+                            "directories": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
                             },
                             "errorMessage": {
                               "anyOf": [
@@ -21092,6 +21146,12 @@
                               }
                             ]
                           },
+                          "directories": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
                           "errorMessage": {
                             "anyOf": [
                               {
@@ -21341,6 +21401,12 @@
                               }
                             ]
                           },
+                          "directories": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
                           "errorMessage": {
                             "anyOf": [
                               {
@@ -21589,6 +21655,12 @@
                                 "type": "null"
                               }
                             ]
+                          },
+                          "directories": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
                           },
                           "errorMessage": {
                             "anyOf": [
@@ -22832,6 +22904,12 @@
                                 }
                               ]
                             },
+                            "directories": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
                             "errorMessage": {
                               "anyOf": [
                                 {
@@ -23081,6 +23159,12 @@
                                 }
                               ]
                             },
+                            "directories": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
                             "errorMessage": {
                               "anyOf": [
                                 {
@@ -23329,6 +23413,12 @@
                                   "type": "null"
                                 }
                               ]
+                            },
+                            "directories": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
                             },
                             "errorMessage": {
                               "anyOf": [
@@ -24361,6 +24451,12 @@
                                 }
                               ]
                             },
+                            "directories": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
                             "errorMessage": {
                               "anyOf": [
                                 {
@@ -24610,6 +24706,12 @@
                                 }
                               ]
                             },
+                            "directories": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
                             "errorMessage": {
                               "anyOf": [
                                 {
@@ -24858,6 +24960,12 @@
                                   "type": "null"
                                 }
                               ]
+                            },
+                            "directories": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
                             },
                             "errorMessage": {
                               "anyOf": [
@@ -25890,6 +25998,12 @@
                                 }
                               ]
                             },
+                            "directories": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
                             "errorMessage": {
                               "anyOf": [
                                 {
@@ -26139,6 +26253,12 @@
                                 }
                               ]
                             },
+                            "directories": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
                             "errorMessage": {
                               "anyOf": [
                                 {
@@ -26387,6 +26507,12 @@
                                   "type": "null"
                                 }
                               ]
+                            },
+                            "directories": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
                             },
                             "errorMessage": {
                               "anyOf": [
@@ -27425,6 +27551,12 @@
                                 }
                               ]
                             },
+                            "directories": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
                             "errorMessage": {
                               "anyOf": [
                                 {
@@ -27674,6 +27806,12 @@
                                 }
                               ]
                             },
+                            "directories": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
                             "errorMessage": {
                               "anyOf": [
                                 {
@@ -27922,6 +28060,12 @@
                                   "type": "null"
                                 }
                               ]
+                            },
+                            "directories": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
                             },
                             "errorMessage": {
                               "anyOf": [
@@ -28954,6 +29098,12 @@
                               }
                             ]
                           },
+                          "directories": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
                           "errorMessage": {
                             "anyOf": [
                               {
@@ -29203,6 +29353,12 @@
                               }
                             ]
                           },
+                          "directories": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
                           "errorMessage": {
                             "anyOf": [
                               {
@@ -29451,6 +29607,12 @@
                                 "type": "null"
                               }
                             ]
+                          },
+                          "directories": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
                           },
                           "errorMessage": {
                             "anyOf": [
@@ -30700,6 +30862,12 @@
                                 }
                               ]
                             },
+                            "directories": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
                             "errorMessage": {
                               "anyOf": [
                                 {
@@ -30949,6 +31117,12 @@
                                 }
                               ]
                             },
+                            "directories": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
                             "errorMessage": {
                               "anyOf": [
                                 {
@@ -31197,6 +31371,12 @@
                                   "type": "null"
                                 }
                               ]
+                            },
+                            "directories": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
                             },
                             "errorMessage": {
                               "anyOf": [
@@ -32229,6 +32409,12 @@
                                 }
                               ]
                             },
+                            "directories": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
                             "errorMessage": {
                               "anyOf": [
                                 {
@@ -32478,6 +32664,12 @@
                                 }
                               ]
                             },
+                            "directories": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
                             "errorMessage": {
                               "anyOf": [
                                 {
@@ -32726,6 +32918,12 @@
                                   "type": "null"
                                 }
                               ]
+                            },
+                            "directories": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
                             },
                             "errorMessage": {
                               "anyOf": [

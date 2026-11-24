@@ -58,6 +58,7 @@ export interface PluginState {
   releaseStarted: boolean;
   uploadComplete: boolean;
   clientOutDirs: readonly string[];
+  environmentOutDirs: readonly string[];
   watch: boolean;
 }
 
@@ -131,13 +132,27 @@ function logCleanupFailures(
   }
 }
 
-async function discoverUploadableSourceMaps(state: UploadReadyPluginState) {
-  let discovered: DiscoveryResult;
+function nestedOutDirs(state: PluginState, outDir: string) {
+  return state.environmentOutDirs.filter((other) => {
+    const rel = path.relative(outDir, other);
 
-  try {
-    discovered = await discoverByPairing({
+    return rel !== "" && !rel.startsWith("..") && !path.isAbsolute(rel);
+  });
+}
+
+function discoveryRoots(state: PluginState) {
+  if (state.environmentOutDirs.length > 0) {
+    return state.environmentOutDirs.map((outDir) => ({
+      distDir: outDir,
+      excludeDirs: nestedOutDirs(state, outDir),
+      publicPathRewrites: [],
+    }));
+  }
+
+  return [
+    {
       distDir: state.uploadOutDir,
-      projectDir: state.projectDir,
+      excludeDirs: [],
       publicPathRewrites: [
         ...state.clientOutDirs.flatMap((outDir) => {
           const from = path
@@ -150,8 +165,59 @@ async function discoverUploadableSourceMaps(state: UploadReadyPluginState) {
         }),
         { from: "public", to: "" },
       ],
-      subtrees: ["."],
-    });
+    },
+  ];
+}
+
+async function pairAllSourceMapsForCleanup(state: PluginState) {
+  const pairs = await Promise.all(
+    discoveryRoots(state).map(async (root) =>
+      pairSourceMapsForCleanup(root.distDir, root.excludeDirs),
+    ),
+  );
+
+  return pairs.flat();
+}
+
+async function discoverEveryRoot(state: UploadReadyPluginState) {
+  const settled = await Promise.allSettled(
+    discoveryRoots(state).map(async (root) =>
+      discoverByPairing({
+        ...root,
+        projectDir: state.projectDir,
+        subtrees: ["."],
+      }),
+    ),
+  );
+
+  const failure = settled.find((result) => result.status === "rejected");
+
+  if (failure) {
+    throw failure.reason;
+  }
+
+  const results = settled.flatMap((result) =>
+    result.status === "fulfilled" ? [result.value] : [],
+  );
+
+  return {
+    files: results.flatMap((result) => result.files),
+    missingSourceMapCount: results.reduce(
+      (sum, result) => sum + result.missingSourceMapCount,
+      0,
+    ),
+    sourceFileCount: results.reduce(
+      (sum, result) => sum + result.sourceFileCount,
+      0,
+    ),
+  } satisfies DiscoveryResult;
+}
+
+async function discoverUploadableSourceMaps(state: UploadReadyPluginState) {
+  let discovered: DiscoveryResult;
+
+  try {
+    discovered = await discoverEveryRoot(state);
   } catch (error) {
     logDiagnostic(state.logger, diagnoseRelease(DIAGNOSTIC_CONTEXT, error));
 
@@ -255,9 +321,7 @@ export async function releaseBuild(state: UploadReadyPluginState) {
   if (!discovered) {
     logCleanupFailures(
       logger,
-      await cleanupSourceMaps(
-        await pairSourceMapsForCleanup(state.uploadOutDir),
-      ),
+      await cleanupSourceMaps(await pairAllSourceMapsForCleanup(state)),
     );
 
     return;

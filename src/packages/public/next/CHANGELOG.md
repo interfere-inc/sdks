@@ -1,5 +1,11 @@
 # @interfere/next
 
+## 13.1.4
+
+### Patch Changes
+
+- @interfere/react@13.1.4
+
 ## 13.1.3
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @interfere/vite
 
+## 13.1.4
+
+### Patch Changes
+
+- 41c32cf: `vite build` with `@cloudflare/vite-plugin` now uploads each Worker's source maps alongside the client's, under the paths the Worker reports in its stack traces, and deletes them from the build output.
+- @interfere/react@13.1.4
+
 ## 13.1.3
 
 ### Patch Changes

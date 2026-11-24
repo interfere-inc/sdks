@@ -6,6 +6,8 @@ use super::*;
 pub struct QueryIntegrationsGithubInstallationResponseProviderMetadataTwoRepositoryScansValue {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub apps: Option<Vec<QueryIntegrationsGithubInstallationResponseProviderMetadataTwoRepositoryScansValueAppsItem>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub directories: Option<Vec<String>>,
     #[serde(rename = "errorMessage")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub error_message: Option<String>,
@@ -25,6 +27,7 @@ impl QueryIntegrationsGithubInstallationResponseProviderMetadataTwoRepositorySca
 #[non_exhaustive]
 pub struct QueryIntegrationsGithubInstallationResponseProviderMetadataTwoRepositoryScansValueBuilder {
     apps: Option<Vec<QueryIntegrationsGithubInstallationResponseProviderMetadataTwoRepositoryScansValueAppsItem>>,
+    directories: Option<Vec<String>>,
     error_message: Option<String>,
     scanned_at: Option<String>,
     status: Option<QueryIntegrationsGithubInstallationResponseProviderMetadataTwoRepositoryScansValueStatus>,
@@ -33,6 +36,11 @@ pub struct QueryIntegrationsGithubInstallationResponseProviderMetadataTwoReposit
 impl QueryIntegrationsGithubInstallationResponseProviderMetadataTwoRepositoryScansValueBuilder {
     pub fn apps(mut self, value: Vec<QueryIntegrationsGithubInstallationResponseProviderMetadataTwoRepositoryScansValueAppsItem>) -> Self {
         self.apps = Some(value);
+        self
+    }
+
+    pub fn directories(mut self, value: Vec<String>) -> Self {
+        self.directories = Some(value);
         self
     }
 
@@ -57,6 +65,7 @@ impl QueryIntegrationsGithubInstallationResponseProviderMetadataTwoRepositorySca
     pub fn build(self) -> Result<QueryIntegrationsGithubInstallationResponseProviderMetadataTwoRepositoryScansValue, BuildError> {
         Ok(QueryIntegrationsGithubInstallationResponseProviderMetadataTwoRepositoryScansValue {
             apps: self.apps,
+            directories: self.directories,
             error_message: self.error_message,
             scanned_at: self.scanned_at,
             status: self.status.ok_or_else(|| BuildError::missing_field("status"))?,

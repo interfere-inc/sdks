@@ -172,6 +172,19 @@ export default {
 } satisfies ExportedHandler;
 ```
 
+Build the Worker with `@cloudflare/vite-plugin` and keep `interfere()` in the same `plugins` array. With `INTERFERE_API_KEY` set in the build environment, `vite build` uploads the source maps of the client and of every Worker it builds, under the paths the Worker reports in its stack traces, then deletes them from `dist/`, so neither your site nor `wrangler deploy` ships them. You don't need a separate upload step. The plugin turns on `build.sourcemap` for each Worker environment and warns when it overrides your setting, for example `"hidden"`. If you set your own `builder.buildApp`, build the Worker environments in it so their maps exist when the plugin uploads.
+
+```ts
+// vite.config.ts
+import { cloudflare } from "@cloudflare/vite-plugin";
+import { interfere } from "@interfere/vite/plugin";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  plugins: [cloudflare(), interfere()],
+});
+```
+
 A built Worker reports the `production` environment, or the Wrangler environment it was built for when the build runs with `CLOUDFLARE_ENV` set, so a `CLOUDFLARE_ENV=preview` build reports `preview`. Set `INTERFERE_ENVIRONMENT` as a Worker variable only for a non-production deploy built without `CLOUDFLARE_ENV`, such as `"preview"` or `"staging"`. To send server telemetry to an Interfere API other than production, also set `INTERFERE_API_URL`; the server does not read `VITE_INTERFERE_API_URL`.
 
 Keep the request and function middleware in `src/start.ts` as above. Each server span continues the browser's `traceparent`, so a page's browser and server spans share one trace. Cloudflare's own Workers traces cannot do this, because they start a new trace for every request. When a request span ends, its spans are exported within that request's `waitUntil`. You don't need to call `flush()` yourself.

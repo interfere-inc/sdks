@@ -46,6 +46,7 @@ interface PublicPathRewrite {
 
 export interface DiscoverByPairingOptions {
   distDir: string;
+  excludeDirs?: readonly string[];
   projectDir: string;
   publicPathRewrites: readonly PublicPathRewrite[];
   subtrees: readonly string[];
@@ -86,6 +87,7 @@ async function walkDistTrees(
   absDistDir: string,
   suffixes: readonly string[],
   subtrees: readonly string[],
+  excludeDirs: readonly string[] = [],
 ) {
   const results = await Promise.all(
     subtrees.map(async (subtree) => {
@@ -98,8 +100,13 @@ async function walkDistTrees(
       const out: string[] = [];
 
       for (const entry of entries) {
-        if (suffixes.some((suffix) => entry.endsWith(suffix))) {
-          out.push(join(root, entry));
+        const absolute = join(root, entry);
+
+        if (
+          suffixes.some((suffix) => entry.endsWith(suffix)) &&
+          !excludeDirs.some((dir) => isInsideDir(dir, absolute))
+        ) {
+          out.push(absolute);
         }
       }
 
@@ -149,6 +156,7 @@ export async function discoverByPairing(opts: DiscoverByPairingOptions) {
     absDistDir,
     SCRIPT_SUFFIXES,
     opts.subtrees,
+    opts.excludeDirs,
   );
 
   let unpairedChunkCount = 0;
@@ -353,12 +361,15 @@ export async function discoverByPairing(opts: DiscoverByPairingOptions) {
  * names, without parsing or rewriting either file, so a build can remove
  * maps that discovery could not parse.
  */
-export async function pairSourceMapsForCleanup(distDir: string) {
+export async function pairSourceMapsForCleanup(
+  distDir: string,
+  excludeDirs: readonly string[] = [],
+) {
   const absDistDir = resolve(distDir);
 
   const [realDistDir, jsPaths] = await Promise.all([
     realpath(absDistDir).catch(() => absDistDir),
-    walkDistTrees(absDistDir, SCRIPT_SUFFIXES, ["."]),
+    walkDistTrees(absDistDir, SCRIPT_SUFFIXES, ["."], excludeDirs),
   ]);
 
   const pairs = await mapWithConcurrency(

@@ -1,0 +1,92 @@
+diff --git a/dist/src/index.js b/dist/src/index.js
+index e1b9573..3fcc687 100644
+--- a/dist/src/index.js
++++ b/dist/src/index.js
+@@ -88467,8 +88467,11 @@ Make sure you're using http(s):// URLs for WebSocket requests via fetch.`
+   const response = await undici.fetch(request4, {
+     dispatcher: requestInit?.dispatcher
+   });
+-  return new Response2(response.body, response);
++  const wrapped = new Response2(response.body, response);
++  fetchResponses.set(wrapped, response);
++  return wrapped;
+ }
++var fetchResponses = new WeakMap();
+ function isIterable(headers) {
+   return Symbol.iterator in Object(headers);
+ }
+@@ -118742,6 +118745,7 @@ var NODE_PLATFORM_IMPL = {
+ // src/plugins/core/proxy/client.ts
+ var kAddress = /* @__PURE__ */ Symbol("kAddress");
+ var kName = /* @__PURE__ */ Symbol("kName");
++var kForceAsync = /* @__PURE__ */ Symbol("kForceAsync");
+ var kIsFunction = /* @__PURE__ */ Symbol("kIsFunction");
+ var kStreamLength = /* @__PURE__ */ Symbol.for("miniflare.kStreamLength");
+ function isNativeTarget(value) {
+@@ -118938,6 +118942,7 @@ var ProxyStubHandler = class extends Function {
+   target;
+   #version;
+   #stringifiedTarget;
++  #forceAsync = false;
+   #knownValues = /* @__PURE__ */ new Map();
+   #knownDescriptors = /* @__PURE__ */ new Map();
+   #knownOwnKeys;
+@@ -119049,7 +119054,12 @@ var ProxyStubHandler = class extends Function {
+       }
+       return res.body;
+     }
+-    (0, import_node_assert17.default)(typeHeader === "Promise");
++    // A rejected call is a 500 with the serialised error and no result type,
++    // exactly what the synchronous parser accepts; only successful async results
++    // carry the "Promise" type.
++    if (res.status !== 500) {
++      (0, import_node_assert17.default)(typeHeader === "Promise");
++    }
+     let stringifiedResult;
+     let unbufferedStream;
+     const stringifiedSizeHeader = res.headers.get(
+@@ -119101,6 +119111,13 @@ var ProxyStubHandler = class extends Function {
+     }
+     return result;
+   }
++  set(_target, key, value) {
++    if (key === kForceAsync) {
++      this.#forceAsync = value === true;
++      return true;
++    }
++    return Reflect.set(_target, key, value);
++  }
+   get(_target, key, _receiver) {
+     this.#assertSafe();
+     if (key === kAddress) {
+@@ -119228,7 +119245,11 @@ var ProxyStubHandler = class extends Function {
+     if (knownAsync || // Durable Object stub RPC calls should always be async to avoid blocking
+     // the Node.js event loop with `Atomics.wait()`. This allows Promise.race()
+     // and timeouts to work correctly when racing against DO method calls.
+-    isDurableObjectStub(targetName) || // We assume every call with `ReadableStream`/`Blob` arguments is async.
++    isDurableObjectStub(targetName) || // Service binding stubs (Miniflare#getWorker(), Fetcher bindings from
++    // Miniflare#getBindings()) run user Worker RPC methods and must be async too: a synchronous `Atomics.wait()` blocks the Node.js event
++    // loop, so any Worker outbound served from Node (outboundService, the Neon
++    // HTTP proxy) can never answer until the RPC call itself times out.
++    this.#forceAsync || // We assume every call with `ReadableStream`/`Blob` arguments is async.
+     // Note that you can't consume `ReadableStream`/`Blob` synchronously: if
+     // you tried a similar trick to `SynchronousFetcher`, blocking the main
+     // thread with `Atomics.wait()` would prevent chunks being read. This
+@@ -136740,6 +136761,9 @@ See https://developers.cloudflare.com/cloudflare-one/access-controls/service-cre
+             proxy !== void 0,
+             `Expected ${proxyBindingName} to be bound`
+           );
++          if (proxy[kName] === "Fetcher") {
++            proxy[kForceAsync] = true;
++          }
+           if (binding.proxyOverrideHandler) {
+             proxy = new Proxy(proxy, binding.proxyOverrideHandler);
+           }
+@@ -136764,6 +136788,7 @@ See https://developers.cloudflare.com/cloudflare-one/access-controls/service-cre
+         workerName
+       )}`
+     );
++    fetcher[kForceAsync] = true;
+     return fetcher;
+   }
+   async #getProxy(pluginName, bindingName, workerName) {

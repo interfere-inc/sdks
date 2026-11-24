@@ -1,0 +1,12 @@
+diff --git a/dist/index.mjs b/dist/index.mjs
+index 71db4e3..4bb192d 100644
+--- a/dist/index.mjs
++++ b/dist/index.mjs
+@@ -95061,6 +95061,7 @@ const previewPlugin = createPlugin("preview", (ctx) => {
+ 		};
+ 		const { miniflareOptions, containerOptionsByWorker } = await getPreviewMiniflareOptions(ctx, vitePreviewServer);
+ 		await ctx.startOrUpdateMiniflare(miniflareOptions);
++		await ctx.miniflare.ready;
+ 		if (vitePreviewServer.httpServer) vitePreviewServer.httpServer.on("listening", () => {
+ 			const addr = vitePreviewServer.httpServer?.address();
+ 			if (typeof addr === "object" && addr !== null) {

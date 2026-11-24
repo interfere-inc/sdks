@@ -23,7 +23,14 @@ import { resolveDeployEnvironment } from "@interfere/types/sdk/deploy-environmen
 
 import path from "node:path";
 import { loadEnv } from "vite";
-import type { Logger, Plugin, ResolvedConfig, UserConfig } from "vite";
+import type {
+  BuildEnvironment,
+  Logger,
+  Plugin,
+  PluginOption,
+  ResolvedConfig,
+  UserConfig,
+} from "vite";
 
 import { runGitCommand } from "./internal/build/git";
 import {
@@ -47,6 +54,8 @@ import { PRODUCER_VERSION } from "./version";
 const MILLIS_PER_SECOND = 1000;
 
 export type { InterfereViteOptions } from "./internal/plugin-options";
+
+const CLOUDFLARE_PLUGIN = "vite-plugin-cloudflare";
 
 const SERVER_RUNTIME_PLUGIN_HINTS = [
   "tanstack-start",
@@ -78,6 +87,30 @@ interface BrowserConfig {
   publicKey: string | undefined;
   releaseSlug: ReleaseSlug | null;
   serviceName: string | undefined;
+}
+
+function hasCloudflarePlugin(plugins: readonly PluginOption[] = []) {
+  const pending: PluginOption[] = [...plugins];
+
+  while (pending.length > 0) {
+    const plugin = pending.pop();
+
+    if (Array.isArray(plugin)) {
+      pending.push(...plugin);
+    } else if (
+      plugin instanceof Object &&
+      "name" in plugin &&
+      plugin.name === CLOUDFLARE_PLUGIN
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function environmentOutDir(environment: BuildEnvironment) {
+  return path.resolve(environment.config.root, environment.config.build.outDir);
 }
 
 function hasServerRuntimePlugin(pluginNames: string[]) {
@@ -253,6 +286,7 @@ function buildPluginState(
     releaseStarted: false,
     uploadComplete: false,
     clientOutDirs: [],
+    environmentOutDirs: [],
     watch: isProductionBuild && Boolean(config.build.watch),
   } satisfies PluginState;
 }
@@ -332,13 +366,13 @@ function resolveEnvDir(userConfig: UserConfig) {
     : path.resolve(root, userConfig.envDir);
 }
 
-function forceSourcemapForUpload(
+function willUploadSourceMaps(
   userConfig: UserConfig,
   options: InterfereViteOptions,
   command: "build" | "serve",
   env: Record<string, string | undefined>,
 ) {
-  const willUpload =
+  return (
     command === "build" &&
     (userConfig.build?.lib === undefined ||
       userConfig.build.lib === false ||
@@ -346,12 +380,11 @@ function forceSourcemapForUpload(
       options.sourceMaps?.retain === true) &&
     (options.sourceMaps?.retain === true ||
       (options.sourceMaps?.upload !== false &&
-        Boolean(pickEnvValue(env, "INTERFERE_API_KEY"))));
+        Boolean(pickEnvValue(env, "INTERFERE_API_KEY"))))
+  );
+}
 
-  if (!willUpload) {
-    return;
-  }
-
+function forceSourcemapForUpload(userConfig: UserConfig) {
   const previous = userConfig.build?.sourcemap;
 
   userConfig.build = { ...userConfig.build, sourcemap: true };
@@ -379,13 +412,14 @@ function carryOverUploadProgress(
 function warnForcedSourcemap(
   logger: Logger,
   overridden: SourcemapSetting | undefined,
+  option = "build.sourcemap",
 ) {
   if (overridden === undefined) {
     return;
   }
 
   logger.warn(
-    `[interfere] Forced build.sourcemap to true (was ${JSON.stringify(overridden)}). Source maps are required to symbolicate errors; they are uploaded then deleted from the build output, so they are never served. Pass interfere({ sourceMaps: { upload: false } }) to opt out.`,
+    `[interfere] Forced ${option} to true (was ${JSON.stringify(overridden)}). Source maps are required to symbolicate errors; they are uploaded then deleted from the build output, so they are never served. Pass interfere({ sourceMaps: { upload: false } }) to opt out.`,
   );
 }
 
@@ -432,6 +466,8 @@ export function interfere(options: InterfereViteOptions = {}) {
 
   let state: PluginState | null = null;
   let overriddenSourcemap: SourcemapSetting | undefined;
+  let forcesWorkerSourcemaps = false;
+  const overriddenWorkerSourcemaps = new Map<string, SourcemapSetting>();
   let announced = false;
   let uploadAfterAppBuild = false;
 
@@ -466,12 +502,19 @@ export function interfere(options: InterfereViteOptions = {}) {
 
         state.clientOutDirs = environments
           .filter((environment) => environment.config.consumer === "client")
-          .map((environment) =>
-            path.resolve(
-              environment.config.root,
-              environment.config.build.outDir,
-            ),
-          );
+          .map((environment) => environmentOutDir(environment));
+
+        state.environmentOutDirs = builder.config.plugins.some(
+          (plugin) => plugin.name === CLOUDFLARE_PLUGIN,
+        )
+          ? [
+              ...new Set(
+                environments
+                  .filter((environment) => environment.isBuilt)
+                  .map((environment) => environmentOutDir(environment)),
+              ),
+            ]
+          : [];
 
         if (isReleaseReady(state)) {
           state.releaseStarted = true;
@@ -495,6 +538,14 @@ export function interfere(options: InterfereViteOptions = {}) {
         announceSetup(state);
 
         warnForcedSourcemap(state.logger, overriddenSourcemap);
+
+        for (const [name, overridden] of overriddenWorkerSourcemaps) {
+          warnForcedSourcemap(
+            state.logger,
+            overridden,
+            `environments.${name}.build.sourcemap`,
+          );
+        }
 
         warnBuildPreflight(state.logger, remoteConfigFallback);
 
@@ -613,12 +664,19 @@ export function interfere(options: InterfereViteOptions = {}) {
             })
           : null;
 
-      overriddenSourcemap = forceSourcemapForUpload(
+      const forcesSourcemaps = willUploadSourceMaps(
         userConfig,
         options,
         command,
         env,
       );
+
+      overriddenSourcemap = forcesSourcemaps
+        ? forceSourcemapForUpload(userConfig)
+        : undefined;
+
+      forcesWorkerSourcemaps =
+        forcesSourcemaps && hasCloudflarePlugin(userConfig.plugins);
 
       const credential = buildConfigCredential(
         browser.publicKey,
@@ -641,6 +699,25 @@ export function interfere(options: InterfereViteOptions = {}) {
       });
 
       return { define, ssr: { noExternal: ["@interfere/vite"] } };
+    },
+    configEnvironment(name, environment) {
+      const consumer =
+        environment.consumer ?? (name === "client" ? "client" : "server");
+
+      const previous = environment.build?.sourcemap;
+
+      if (
+        !forcesWorkerSourcemaps ||
+        consumer !== "server" ||
+        previous === undefined ||
+        previous === true
+      ) {
+        return null;
+      }
+
+      overriddenWorkerSourcemaps.set(name, previous);
+
+      return { build: { sourcemap: true } };
     },
     async configResolved(config) {
       const browser = resolveBrowserConfig(
