@@ -87,7 +87,7 @@
     "test": "node ../test-config/src/cli.ts run --config ../../../../vitest.config.ts",
     "test:artifact": "node --test --test-timeout=30000 test/recorder-artifact.test.mts test/react-key-deopt-artifact.test.mts",
     "test:runtime": "vitest run --config vitest.sdk-browser.config.ts",
-    "typecheck": "bun check"
+    "typecheck": "tsrs --noEmit"
   },
   "dependencies": {
     "@fingerprintjs/fingerprintjs": "catalog:",

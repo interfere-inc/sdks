@@ -83,7 +83,7 @@
     "dev": "tsdown --no-clean --no-dts --watch",
     "lint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --threads=2 src/packages/public/server-core",
     "test": "node ../test-config/src/cli.ts run --config ../../../../vitest.config.ts",
-    "typecheck": "bun check"
+    "typecheck": "tsrs --noEmit"
   },
   "dependencies": {
     "@interfere/constants": "workspace:^",

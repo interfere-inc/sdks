@@ -8,7 +8,7 @@ export default {
   deps: {
     neverBundle: (id) => id.startsWith("#"),
   },
-  dts: { sourcemap: false },
+  dts: { generator: "tsrs", sourcemap: false },
   entry: ["src/**/*.{ts,tsx}", "!**/*.{test,spec}.{ts,tsx}"],
   failOnWarn: "ci-only",
   checks: { legacyCjs: false },
@@ -17,6 +17,6 @@ export default {
   minify: { codegen: true, compress: true, mangle: false },
   sourcemap: false,
   suppressWarnings:
-    "TypeScript Go is experimental. Some options will be unavailable.",
+    "tsrs support is highly experimental and may change or break without notice. Some options will be unavailable.",
   unbundle: true,
 } satisfies UserConfig;

@@ -10,14 +10,14 @@ const baseConfig = {
   deps: {
     neverBundle: (id) => id.startsWith("#") || id.startsWith("cloudflare:"),
   },
-  dts: { sourcemap: false },
+  dts: { generator: "tsrs", sourcemap: false },
   entry: ["src/**/*.{ts,tsx}", "!**/*.{test,spec}.{ts,tsx}"],
   failOnWarn: "ci-only",
   logLevel: "warn",
   minify: { codegen: true, compress: true, mangle: false },
   sourcemap: false,
   suppressWarnings:
-    "TypeScript Go is experimental. Some options will be unavailable.",
+    "tsrs support is highly experimental and may change or break without notice. Some options will be unavailable.",
   unbundle: true,
 } satisfies UserConfig;
 

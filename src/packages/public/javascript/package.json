@@ -62,7 +62,7 @@
     "generate": "bun scripts/typegen.ts && fern generate --local --force",
     "lint": "cd ../../../.. && GOMAXPROCS=2 oxlint --max-warnings=0 --report-unused-disable-directives-severity=error --no-error-on-unmatched-pattern --threads=2 src/packages/public/javascript",
     "test": "node ../test-config/src/cli.ts run --config ../../../../vitest.config.ts",
-    "typecheck": "bun check"
+    "typecheck": "tsrs --noEmit"
   },
   "devDependencies": {
     "@interfere/test-config": "workspace:*",

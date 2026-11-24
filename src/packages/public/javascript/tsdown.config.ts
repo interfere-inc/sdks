@@ -4,7 +4,7 @@ import type { UserConfig } from "tsdown";
 const shared = {
   entry: ["src/index.ts"],
   format: ["esm", "cjs"],
-  dts: { sourcemap: false },
+  dts: { generator: "tsrs", sourcemap: false },
   minify: { codegen: true, compress: true, mangle: false },
   sourcemap: false,
   fixedExtension: true,
@@ -12,7 +12,7 @@ const shared = {
   checks: { legacyCjs: false },
   logLevel: "warn",
   suppressWarnings:
-    "TypeScript Go is experimental. Some options will be unavailable.",
+    "tsrs support is highly experimental and may change or break without notice. Some options will be unavailable.",
 } satisfies UserConfig;
 
 export default [

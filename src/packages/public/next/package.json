@@ -91,7 +91,7 @@
     "test": "node ../test-config/src/cli.ts run --config ../../../../vitest.config.ts",
     "test:e2e": "playwright test",
     "test:runtime": "vitest run --project=edge",
-    "typecheck": "bun check"
+    "typecheck": "tsrs --noEmit"
   },
   "dependencies": {
     "@interfere/build": "workspace:^",

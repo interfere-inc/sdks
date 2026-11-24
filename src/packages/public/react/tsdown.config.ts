@@ -20,7 +20,7 @@ const config: UserConfig = {
     dts: { alwaysBundle: ["@rrweb/types"] },
     neverBundle: (id) => id.startsWith("#"),
   },
-  dts: { sourcemap: false },
+  dts: { generator: "tsrs", sourcemap: false },
   entry: ["src/**/*.{ts,tsx}", "!**/*.{test,spec,fixture,test-utils}.{ts,tsx}"],
   failOnWarn: "ci-only",
   // WARNING: tsdown passes glob entries in filesystem-race order, and rolldown derives chunk import order and hashes from entry order.
@@ -44,7 +44,7 @@ const config: UserConfig = {
   sourcemap: false,
   target: ["safari16.4", "chrome111"],
   suppressWarnings:
-    "TypeScript Go is experimental. Some options will be unavailable.",
+    "tsrs support is highly experimental and may change or break without notice. Some options will be unavailable.",
   unbundle: false,
 };
 
