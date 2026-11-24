@@ -17,8 +17,6 @@ import { dirname, join } from "node:path";
 import { promisify } from "node:util";
 import { z } from "zod";
 
-import { stripTarballConditions } from "./pack-manifest";
-
 const exec = promisify(execFile);
 
 const metadata = z.object({
@@ -103,8 +101,6 @@ export async function application(
         ["pm", "pack", "--ignore-scripts", "--quiet", "--filename", tarball],
         { cwd: source },
       );
-
-      await stripTarballConditions(tarball);
     } else {
       await cp(prebuilt, tarball);
     }

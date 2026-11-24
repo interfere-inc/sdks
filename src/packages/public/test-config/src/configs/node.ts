@@ -10,7 +10,7 @@ export const node = (overrides: ViteUserConfig = {}) =>
       defineProject({
         test: {
           env: {
-            WRANGLER_BUILD_CONDITIONS: "monorepo,workerd,worker,browser",
+            WRANGLER_BUILD_CONDITIONS: "workerd,worker,browser",
           },
           fsModuleCache: true,
           exclude: [

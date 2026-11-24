@@ -59,9 +59,6 @@ jobs:
           for platform in $(jq -r '.[].platform' src/packages/public/cli/platforms.json); do
             tar -xzf "$RUNNER_TEMP/cli-artifacts/cli-$platform.tar.gz" -C src/packages/public/cli
           done
-      - name: Strip workspace-only package conditions
-        if: steps.mode.outputs.mode == 'publish'
-        run: bun scripts/strip-package-conditions.ts .
       - id: pack
         if: steps.mode.outputs.mode == 'publish'
         uses: changesets/action/pack@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2

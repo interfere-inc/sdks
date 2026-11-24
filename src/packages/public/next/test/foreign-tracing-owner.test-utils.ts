@@ -53,7 +53,6 @@ async function bundleForeignWriter(directory: string) {
     fileURLToPath(entry),
     "--target=browser",
     "--format=iife",
-    "--conditions=monorepo",
     "--outdir",
     directory,
   ]);

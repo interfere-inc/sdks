@@ -30,7 +30,6 @@ function bundle(mode: FixtureMode) {
       "build",
       resolve(import.meta.dirname, "react-key-deopt.fixture.ts"),
       "--target=browser",
-      "--conditions=monorepo",
       "--format=esm",
       "--minify-syntax",
       `--outdir=${outdir}`,

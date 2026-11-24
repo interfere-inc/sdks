@@ -35,7 +35,6 @@ function expectDualExport(entry: ConditionalExport | string | undefined) {
     throw new TypeError("expected conditional export object");
   }
 
-  expect(entry).not.toHaveProperty("monorepo");
   expect(entry.import?.types).toMatch(DTS_EXT);
   expect(entry.import?.default).toMatch(MJS_EXT);
 

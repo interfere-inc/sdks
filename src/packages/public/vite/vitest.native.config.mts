@@ -30,9 +30,9 @@ export default defineConfig({
         ),
       ),
     },
-    conditions: ["workerd", "monorepo"],
+    conditions: ["workerd"],
   },
-  ssr: { resolve: { conditions: ["workerd", "monorepo"] } },
+  ssr: { resolve: { conditions: ["workerd"] } },
   test: {
     fsModuleCache: false,
     name: "@interfere/vite/native",

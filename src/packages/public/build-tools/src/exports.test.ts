@@ -14,7 +14,6 @@ beforeAll(async () => {
       const result = await runNode(
         process.execPath,
         [
-          "--conditions=monorepo",
           "--input-type=module",
           "--eval",
           `await import("@interfere/build/${entry}")`,

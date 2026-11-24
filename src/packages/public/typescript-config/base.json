@@ -1,7 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "customConditions": ["monorepo"],
     "allowImportingTsExtensions": true,
     "noEmit": true,
     "allowUnusedLabels": false,

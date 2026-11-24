@@ -101,7 +101,6 @@ beforeAll(async () => {
       ),
     ),
     "--target=node",
-    "--conditions=monorepo",
     "--format=cjs",
     `--outfile=${fixturePath}`,
   ]);

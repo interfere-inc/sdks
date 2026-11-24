@@ -69,7 +69,6 @@ beforeAll(async () => {
         "--format=iife",
         "--conditions=edge-light",
         "--conditions=browser",
-        "--conditions=monorepo",
         "--define",
         `process.env=${JSON.stringify(environment)}`,
       ],

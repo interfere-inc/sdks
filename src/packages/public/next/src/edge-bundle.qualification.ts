@@ -15,7 +15,7 @@ beforeAll(async () => {
       fileURLToPath(new URL("../test/edge-entry.ts", import.meta.url)),
       "--target=browser",
       "--format=iife",
-      "--conditions=edge-light,browser,monorepo",
+      "--conditions=edge-light,browser",
       "--define",
       `process.env=${JSON.stringify({
         INTERFERE_API_KEY: "interfere_pk_test",

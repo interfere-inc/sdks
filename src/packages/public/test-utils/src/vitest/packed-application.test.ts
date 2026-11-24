@@ -6,7 +6,6 @@ import {
   rm,
   writeFile,
 } from "node:fs/promises";
-import { gunzipSync } from "node:zlib";
 import { execFile } from "node:child_process";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -20,7 +19,6 @@ import {
   test,
   vi,
 } from "vitest";
-import { z } from "zod";
 import { application } from "./packed-application";
 
 let directory: string;
@@ -30,40 +28,6 @@ const prebuilt = {
   root: "",
   tarball: "",
 };
-
-function gzipTarEntry(archive: Uint8Array, name: string) {
-  const bytes = gunzipSync(archive);
-  let offset = 0;
-
-  while (offset + 512 <= bytes.length) {
-    const header = bytes.subarray(offset, offset + 512);
-
-    const fileName = new TextDecoder()
-      .decode(header.subarray(0, 100))
-      .replace(/\0.*$/u, "");
-
-    if (fileName.length === 0) {
-      break;
-    }
-
-    const size = Number.parseInt(
-      new TextDecoder().decode(header.subarray(124, 136)).trim(),
-      8,
-    );
-
-    offset += 512;
-
-    const content = bytes.subarray(offset, offset + size);
-
-    if (fileName === name) {
-      return new TextDecoder().decode(content);
-    }
-
-    offset += Math.ceil(size / 512) * 512;
-  }
-
-  throw new Error(`missing tar entry ${name}`);
-}
 
 beforeAll(async () => {
   prebuilt.root = await mkdtemp(join(tmpdir(), "prebuilt-pack-"));
@@ -213,63 +177,6 @@ test("starts a real HTTP child and terminates it after use", async () => {
     }
 
     await expect(fetch(running.url)).rejects.toThrow("fetch failed");
-  } finally {
-    await app.close();
-  }
-});
-
-test("qualification tarballs resolve with workspace conditions without changing the workspace", async () => {
-  const file = join(directory, "package.json");
-
-  const original = z
-    .record(z.string(), z.json())
-    .parse(JSON.parse(await readFile(file, "utf8")));
-
-  original["exports"] = {
-    monorepo: "./src/missing.ts",
-    default: "./index.cjs",
-  };
-
-  original["imports"] = {
-    "#entry": { monorepo: "./src/missing.ts", default: "./index.cjs" },
-  };
-
-  await writeFile(file, JSON.stringify(original));
-
-  const app = await application(directory, ["@interfere/fixture"]);
-
-  try {
-    const tarball = join(app.root, "@interfere-fixture.tgz");
-
-    const manifest = z
-      .object({ exports: z.json(), imports: z.json() })
-      .parse(
-        JSON.parse(
-          gzipTarEntry(
-            new Uint8Array(await readFile(tarball)),
-            "package/package.json",
-          ),
-        ),
-      );
-
-    expect(manifest.exports).toStrictEqual({ default: "./index.cjs" });
-
-    expect(manifest.imports).toStrictEqual({
-      "#entry": { default: "./index.cjs" },
-    });
-
-    await writeFile(
-      join(app.root, "consumer.cjs"),
-      'console.log(require("@interfere/fixture"));',
-    );
-
-    expect(
-      (
-        await app.run("consumer.cjs", { NODE_OPTIONS: "--conditions=monorepo" })
-      ).stdout.trim(),
-    ).toBe("42");
-
-    expect(JSON.parse(await readFile(file, "utf8"))).toStrictEqual(original);
   } finally {
     await app.close();
   }

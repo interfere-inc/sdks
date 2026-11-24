@@ -156,7 +156,6 @@ function expectDualPackageMap(
   expect(map).toStrictEqual(expect.any(Object));
 
   for (const [subpath, entry] of Object.entries(map ?? {})) {
-    expect(entry, subpath).not.toHaveProperty("monorepo");
     expect(entry?.import?.types, subpath).toMatch(DTS_EXT);
     expect(entry?.import?.default, subpath).toMatch(MJS_EXT);
 

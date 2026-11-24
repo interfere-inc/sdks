@@ -30,7 +30,6 @@ export function nativeBrowserFixture(
       "build",
       fileURLToPath(entrypoint),
       "--target=browser",
-      "--conditions=monorepo",
       "--outdir",
       directory,
     ]);

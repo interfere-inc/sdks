@@ -35,7 +35,6 @@ beforeAll(async () => {
     fileURLToPath(new URL("replay-carryover.fixture.ts", import.meta.url)),
     fileURLToPath(new URL("unload-export.fixture.ts", import.meta.url)),
     "--target=browser",
-    "--conditions=monorepo",
     "--outdir",
     directory,
   ]);
