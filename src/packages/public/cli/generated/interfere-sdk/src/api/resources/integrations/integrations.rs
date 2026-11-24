@@ -1545,7 +1545,7 @@ impl IntegrationsClient {
     ///         .link_cli_destination(
     ///             &"workspaceSlug".to_string(),
     ///             &LinkCliDestinationRequest {
-    ///                 ..Default::default()
+    ///                 service_id: "serviceId".to_string(),
     ///             },
     ///             None,
     ///         )

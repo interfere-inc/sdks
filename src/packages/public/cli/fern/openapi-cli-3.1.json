@@ -82465,7 +82465,7 @@
           }
         ],
         "requestBody": {
-          "required": false,
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -82474,13 +82474,11 @@
                   "serviceId": {
                     "type": "string",
                     "format": "uuid"
-                  },
-                  "surfaceSlug": {
-                    "type": "string",
-                    "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-                    "description": "Legacy App selector. Links the App and its service, if it has one. Use serviceId to link a service."
                   }
-                }
+                },
+                "required": [
+                  "serviceId"
+                ]
               }
             }
           }
@@ -82526,31 +82524,6 @@
                         "message": {
                           "type": "string",
                           "default": "Service not found."
-                        },
-                        "data": {}
-                      },
-                      "required": [
-                        "defined",
-                        "code",
-                        "status",
-                        "message"
-                      ]
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "defined": {
-                          "const": true
-                        },
-                        "code": {
-                          "const": "SURFACE_NOT_FOUND"
-                        },
-                        "status": {
-                          "const": 404
-                        },
-                        "message": {
-                          "type": "string",
-                          "default": "Surface not found."
                         },
                         "data": {}
                       },

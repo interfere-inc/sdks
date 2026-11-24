@@ -598,7 +598,7 @@ Links a service to the workspace's CLI integration.
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
 | `--workspace-slug` | `string` | Yes |  |
-| `--json` | `JSON` | No | Request body as JSON (or use individual body-field flags) |
+| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
 
 #### `interfere integrations link-surface-to-destination`
 
