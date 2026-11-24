@@ -7,13 +7,12 @@ import type {
   OriginPolicy,
   TraceHeaderName,
 } from "./header-policy.js";
+import { DENIED_KEY, readDenied } from "./denied-origins.js";
 
 const ATTR_PROPAGATION_SUSPECT_CORS =
   "interfere.propagation.suspect_cors" as const;
 
 const PROVEN_KEY = "interfere:propagation_proven";
-
-const DENIED_KEY = "interfere:propagation_denied";
 
 const HEADER_NAMES: readonly TraceHeaderName[] = [
   "traceparent",
@@ -62,22 +61,6 @@ function readProven() {
     return memo;
   } catch {
     return new Map<string, HeaderSet>();
-  }
-}
-
-function readDenied() {
-  try {
-    const parsed: unknown = JSON.parse(
-      sessionStorage.getItem(DENIED_KEY) ?? "[]",
-    );
-
-    return new Set(
-      Array.isArray(parsed)
-        ? parsed.filter((entry): entry is string => typeof entry === "string")
-        : [],
-    );
-  } catch {
-    return new Set<string>();
   }
 }
 

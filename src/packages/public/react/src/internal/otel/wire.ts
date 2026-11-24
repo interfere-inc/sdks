@@ -19,9 +19,7 @@ import { isPageLeaving } from "../page-lifecycle/unloading.js";
 
 import type { resolveTargets } from "../config/config.js";
 import type { Kernel, TracingOptions } from "../kernel.js";
-import { INGEST_IGNORE_RE } from "./ingest-ignore.js";
-
-const REPLAY_UPLOAD_RE = /\/v3\/replay\/upload\//u;
+import { sdkRequestUrls } from "./ingest-ignore.js";
 
 export interface ResolvedTracingOptions extends TracingOptions {
   backendHosts?: string[];
@@ -90,13 +88,7 @@ export function wireOtel(
     omitUndefined({
       tracerProvider: handle.tracerProvider,
       loggerProvider: handle.loggerProvider,
-      ignoreUrls: [
-        INGEST_IGNORE_RE,
-        `${targets.config.baseUrl}/v3/config`,
-        `${targets.ingest.baseUrl}/v3/session`,
-        REPLAY_UPLOAD_RE,
-        ...(tracing.ignoreUrls ?? []),
-      ],
+      ignoreUrls: [...sdkRequestUrls(targets), ...(tracing.ignoreUrls ?? [])],
       backendHosts: tracing.backendHosts,
       defersTraceContext:
         tracing.propagation === undefined

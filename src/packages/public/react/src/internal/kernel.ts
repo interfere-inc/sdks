@@ -10,7 +10,10 @@ import {
   prepareKernel,
   startRemotePlugins,
 } from "./kernel/startup.js";
-import { resolveTracingOptions } from "./kernel/tracing.js";
+import {
+  installStartupBaggage,
+  resolveTracingOptions,
+} from "./kernel/tracing.js";
 
 export type {
   CaptureFailedRequestsOption,
@@ -64,10 +67,14 @@ export async function createKernel(input: CreateKernelInput = {}) {
 
   const disposeStartupNavigation = installViewNavigation(kernel.views);
 
+  let startupBaggage: ReturnType<typeof installStartupBaggage>;
+
   try {
     input.onCreated?.(kernel);
 
     runtime.start();
+
+    startupBaggage = installStartupBaggage(kernel, tracker, opts);
 
     const {
       plugins: remotePlugins,
@@ -98,6 +105,8 @@ export async function createKernel(input: CreateKernelInput = {}) {
 
       disposeStartupNavigation();
 
+      startupBaggage?.dispose();
+
       wireOtel({ ...tracingInput, tracing: resolvedTracing });
     }
 
@@ -108,6 +117,8 @@ export async function createKernel(input: CreateKernelInput = {}) {
     return kernel;
   } catch (error) {
     disposeStartupNavigation();
+
+    startupBaggage?.dispose();
 
     await kernel.dispose();
 

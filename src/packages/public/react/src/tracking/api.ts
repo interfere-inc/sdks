@@ -28,7 +28,7 @@ export class SessionTracker {
   private readonly client: InterfereClient;
   private readonly device: DeviceManager;
 
-  private readonly slot = new SessionSlot((id) => {
+  readonly slot = new SessionSlot((id) => {
     void this.onRotate(id);
   });
   private readonly activity = new ActivityMonitor();

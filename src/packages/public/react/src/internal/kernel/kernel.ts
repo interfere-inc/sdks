@@ -108,6 +108,8 @@ export class Kernel implements PluginContext {
   private otel: OtelProviderHandle | null = null;
   private otelDispose: (() => void) | null = null;
   private sink: TelemetrySink | null = null;
+  private readonly heldStartRecords: ReturnType<typeof sessionStartRecord>[] =
+    [];
   private otelControls: OtelControls | null = null;
   private deviceInfoCaptureEnabled = false;
   private pageEventsCaptureEnabled = false;
@@ -132,7 +134,13 @@ export class Kernel implements PluginContext {
     this.urlRedaction = resolveUrlRedaction(privacy.urls);
 
     tracker.onSessionUpgrade((previousId, sessionId) => {
-      this.sink?.emitLog(sessionStartRecord(previousId, sessionId));
+      const record = sessionStartRecord(previousId, sessionId);
+
+      if (this.sink) {
+        this.sink.emitLog(record);
+      } else {
+        this.heldStartRecords.push(record);
+      }
     });
 
     this.consent = createKernelConsent({
@@ -377,7 +385,16 @@ export class Kernel implements PluginContext {
     this.otel = handle;
     this.otelDispose = dispose;
     this.otelControls = controls ?? null;
-    this.sink = createOtelSink(handle);
+
+    this.adoptSink(createOtelSink(handle));
+  }
+
+  private adoptSink(sink: TelemetrySink) {
+    this.sink = sink;
+
+    for (const record of this.heldStartRecords.splice(0)) {
+      sink.emitLog(record);
+    }
   }
 
   /** Captures exceptions without tracing: `tracing: false` posts hand-encoded exception spans without a tracer provider, while views and actions rotate as they do with tracing on. */
@@ -393,7 +410,8 @@ export class Kernel implements PluginContext {
   ) {
     const { correlation, sink } = createCaptureOnlyCorrelation(this, input);
 
-    this.sink = sink;
+    this.adoptSink(sink);
+
     this.otelDispose = correlation.dispose;
     this.otelControls = { recordCurrentView: correlation.recordCurrentView };
   }
