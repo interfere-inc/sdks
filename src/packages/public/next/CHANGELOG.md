@@ -1,5 +1,16 @@
 # @interfere/next
 
+## 13.1.3
+
+### Patch Changes
+
+- 7358d82: `@opentelemetry/api` is now a peer dependency (`^1.9.0`) instead of an exact dependency, so applications on any 1.x release of the API share one copy with the SDK instead of installing a second one.
+- Updated dependencies [7358d82]
+  - @interfere/react@13.1.3
+  - @interfere/server-core@0.2.3
+  - @interfere/types@11.2.2
+  - @interfere/build@0.6.3
+
 ## 13.1.2
 
 ### Patch Changes

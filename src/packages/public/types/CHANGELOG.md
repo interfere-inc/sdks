@@ -1,5 +1,11 @@
 # @interfere/types
 
+## 11.2.2
+
+### Patch Changes
+
+- 7358d82: `@opentelemetry/api` is now a peer dependency (`^1.9.0`) instead of an exact dependency, so applications on any 1.x release of the API share one copy with the SDK instead of installing a second one.
+
 ## 11.2.1
 
 ### Patch Changes
