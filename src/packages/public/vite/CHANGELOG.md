@@ -1,5 +1,16 @@
 # @interfere/vite
 
+## 13.1.5
+
+### Patch Changes
+
+- 0c9298c: The SDKs now carry their own copy of the OpenTelemetry SDK and depend only on `@opentelemetry/api` (`>=1.9.0 <2`), so an app on OpenTelemetry 2.x with `@opentelemetry/api` 1.9 installs them without peer dependency conflicts or a second API copy.
+- Updated dependencies [0c9298c]
+  - @interfere/react@13.1.5
+  - @interfere/server-core@0.2.4
+  - @interfere/types@11.2.3
+  - @interfere/build@0.6.4
+
 ## 13.1.4
 
 ### Patch Changes

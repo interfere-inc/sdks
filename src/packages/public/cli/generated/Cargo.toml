@@ -1,6 +1,6 @@
 [package]
 name = "interfere-cli-runtime"
-version = "1.20.0"
+version = "1.21.0"
 edition = "2021"
 description = "Command-line interface for Interfere."
 license = "MIT"

@@ -1,5 +1,12 @@
 # @interfere/build
 
+## 0.6.4
+
+### Patch Changes
+
+- Updated dependencies [0c9298c]
+  - @interfere/types@11.2.3
+
 ## 0.6.3
 
 ### Patch Changes

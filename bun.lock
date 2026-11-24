@@ -14,7 +14,7 @@
     },
     "src/packages/public/build-tools": {
       "name": "@interfere/build",
-      "version": "0.6.3",
+      "version": "0.6.4",
       "dependencies": {
         "@interfere/javascript": "workspace:^",
         "@interfere/types": "workspace:^",
@@ -33,7 +33,7 @@
     },
     "src/packages/public/cli": {
       "name": "@interfere/cli",
-      "version": "1.20.0",
+      "version": "1.21.0",
       "bin": {
         "interfere": "dist/interfere.mjs",
       },
@@ -53,23 +53,23 @@
     },
     "src/packages/public/cli/platforms/darwin-arm64": {
       "name": "@interfere/cli-darwin-arm64",
-      "version": "1.20.0",
+      "version": "1.21.0",
     },
     "src/packages/public/cli/platforms/darwin-x64": {
       "name": "@interfere/cli-darwin-x64",
-      "version": "1.20.0",
+      "version": "1.21.0",
     },
     "src/packages/public/cli/platforms/linux-arm64": {
       "name": "@interfere/cli-linux-arm64",
-      "version": "1.20.0",
+      "version": "1.21.0",
     },
     "src/packages/public/cli/platforms/linux-x64": {
       "name": "@interfere/cli-linux-x64",
-      "version": "1.20.0",
+      "version": "1.21.0",
     },
     "src/packages/public/cli/platforms/win32-x64": {
       "name": "@interfere/cli-win32-x64",
-      "version": "1.20.0",
+      "version": "1.21.0",
     },
     "src/packages/public/constants": {
       "name": "@interfere/constants",
@@ -116,7 +116,7 @@
     },
     "src/packages/public/next": {
       "name": "@interfere/next",
-      "version": "13.1.4",
+      "version": "13.1.5",
       "dependencies": {
         "@interfere/build": "workspace:^",
         "@interfere/constants": "workspace:^",
@@ -172,7 +172,7 @@
     },
     "src/packages/public/react": {
       "name": "@interfere/react",
-      "version": "13.1.4",
+      "version": "13.1.5",
       "dependencies": {
         "@fingerprintjs/fingerprintjs": "catalog:",
         "@interfere/constants": "workspace:^",
@@ -243,7 +243,7 @@
     },
     "src/packages/public/server-core": {
       "name": "@interfere/server-core",
-      "version": "0.2.3",
+      "version": "0.2.4",
       "dependencies": {
         "@interfere/constants": "workspace:^",
         "@interfere/helpers": "workspace:^",
@@ -314,7 +314,7 @@
     },
     "src/packages/public/types": {
       "name": "@interfere/types",
-      "version": "11.2.2",
+      "version": "11.2.3",
       "dependencies": {
         "@interfere/helpers": "workspace:^",
         "zod": "catalog:",
@@ -351,7 +351,7 @@
     },
     "src/packages/public/vite": {
       "name": "@interfere/vite",
-      "version": "13.1.4",
+      "version": "13.1.5",
       "dependencies": {
         "@interfere/build": "workspace:^",
         "@interfere/constants": "workspace:^",

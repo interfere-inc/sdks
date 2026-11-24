@@ -1,6 +1,6 @@
 {
   "name": "@interfere/build",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "Release preparation for Interfere build integrations.",
   "keywords": [
     "build",
