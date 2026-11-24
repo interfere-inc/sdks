@@ -5,9 +5,9 @@ import {
   propagation,
   trace,
 } from "@opentelemetry/api";
-import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
-import { W3CTraceContextPropagator } from "@opentelemetry/core";
-import { TracerProvider } from "@opentelemetry/sdk-trace";
+import { AsyncLocalStorageContextManager } from "@interfere/server-core/otel/context-async-hooks";
+import { W3CTraceContextPropagator } from "@interfere/server-core/otel/core/propagation";
+import { TracerProvider } from "@interfere/server-core/otel/sdk/trace/provider";
 import { HttpResponse, http, passthrough } from "msw";
 import { once } from "node:events";
 import { createServer } from "node:http";

@@ -11,17 +11,17 @@ import {
   trace,
 } from "@opentelemetry/api";
 import type { ProxyTracerProvider } from "@opentelemetry/api";
-import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
+import { AsyncLocalStorageContextManager } from "@interfere/server-core/otel/context-async-hooks";
 import {
   CompositePropagator,
   W3CBaggagePropagator,
   W3CTraceContextPropagator,
-} from "@opentelemetry/core";
+} from "@interfere/server-core/otel/core/propagation";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-  TracerProvider,
-} from "@opentelemetry/sdk-trace";
+} from "@interfere/server-core/otel/sdk/trace/processing";
+import { TracerProvider } from "@interfere/server-core/otel/sdk/trace/provider";
 import { once } from "node:events";
 import { HttpResponse, http } from "msw";
 import {

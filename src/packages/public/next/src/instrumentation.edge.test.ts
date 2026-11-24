@@ -7,12 +7,12 @@ import { SERVER_TRACING_GLOBAL } from "@interfere/types/sdk/server-tracing";
 import { EXCEPTION_DELIVERY_ATTRIBUTE } from "@interfere/types/sdk/exception-delivery";
 import type { ProxyTracerProvider } from "@opentelemetry/api";
 import { context, trace } from "@opentelemetry/api";
-import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
+import { AsyncLocalStorageContextManager } from "@interfere/server-core/otel/context-async-hooks";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-  TracerProvider,
-} from "@opentelemetry/sdk-trace";
+} from "@interfere/server-core/otel/sdk/trace/processing";
+import { TracerProvider } from "@interfere/server-core/otel/sdk/trace/provider";
 import type { MockInstance } from "vitest";
 import { afterEach, beforeAll, beforeEach, expect, test, vi } from "vitest";
 

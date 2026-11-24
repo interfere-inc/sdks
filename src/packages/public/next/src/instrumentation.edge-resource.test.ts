@@ -9,7 +9,7 @@ import { RELEASE_SLUG_GLOBAL } from "@interfere/types/sdk/injected-globals";
 import { SERVER_TRACING_GLOBAL } from "@interfere/types/sdk/server-tracing";
 import { SERVICE_NAME_GLOBAL } from "@interfere/types/sdk/service-name";
 import { trace } from "@opentelemetry/api";
-import { TracerProvider } from "@opentelemetry/sdk-trace";
+import { TracerProvider } from "@interfere/server-core/otel/sdk/trace/provider";
 import type { MockInstance } from "vitest";
 import { PRODUCER_VERSION } from "./internal/version.js";
 import { afterEach, beforeAll, beforeEach, expect, test, vi } from "vitest";

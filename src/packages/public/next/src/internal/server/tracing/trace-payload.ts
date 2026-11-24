@@ -1,7 +1,7 @@
 import type { InterfereClient } from "@interfere/javascript";
 import { toError } from "@interfere/types/sdk/errors";
-import { ExportResultCode } from "@opentelemetry/core";
-import type { ExportResult } from "@opentelemetry/core";
+import { ExportResultCode } from "@interfere/server-core/otel/core/export";
+import type { ExportResult } from "@interfere/server-core/otel/core/export";
 import { z } from "zod";
 
 export function exportTracePayload(

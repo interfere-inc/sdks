@@ -1,12 +1,27 @@
 import { receiver } from "@interfere/test-utils/vitest/telemetry-receiver";
 import { attribute, exportedSpans } from "@interfere/test-utils/vitest/otlp";
 import { context, logs, metrics, propagation, trace } from "@opentelemetry/api";
-import { UndiciInstrumentation } from "@opentelemetry/instrumentation-undici";
-import { LoggerProvider } from "@opentelemetry/sdk-logs";
-import { MeterProvider } from "@opentelemetry/sdk-metrics";
-import { TracerProvider } from "@opentelemetry/sdk-trace";
+import { UndiciInstrumentation } from "@interfere/server-core/otel/instrumentation-undici";
+import type { LoggerProvider } from "@interfere/server-core/otel/sdk/logs";
+import { MeterProvider } from "@interfere/server-core/otel/sdk/metrics";
+import type { TracerProvider } from "@interfere/server-core/otel/sdk/trace/provider";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import type { MockInstance } from "vitest";
+import { z } from "zod";
+
+const lifecycle = z.object({
+  forceFlush: z.function(),
+  shutdown: z.function(),
+});
+
+// WARNING: @interfere/server-core bundles its own OpenTelemetry SDK, so the providers it registers are not instances of the SDK classes imported here.
+const sdkTracerProvider = z.custom<TracerProvider>(
+  (value) => lifecycle.safeParse(value).success,
+);
+
+const sdkLoggerProvider = z.custom<LoggerProvider>(
+  (value) => lifecycle.safeParse(value).success,
+);
 
 await import("./register");
 
@@ -63,12 +78,10 @@ afterEach(async () => {
 
   await Promise.all([
     ...providers.mock.calls.map(async ([provider]) =>
-      provider instanceof TracerProvider ? provider.shutdown() : undefined,
+      sdkTracerProvider.safeParse(provider).data?.shutdown(),
     ),
     ...loggers.mock.calls.map(async ([provider]) => {
-      if (provider instanceof LoggerProvider) {
-        await provider.shutdown();
-      }
+      await sdkLoggerProvider.safeParse(provider).data?.shutdown();
     }),
     ...meters.mock.calls.map(async ([provider]) => {
       if (provider instanceof MeterProvider) {
@@ -193,7 +206,7 @@ test.each([
 
     await Promise.all(
       tracers.mock.calls.map(async ([provider]) =>
-        provider instanceof TracerProvider ? provider.forceFlush() : undefined,
+        sdkTracerProvider.safeParse(provider).data?.forceFlush(),
       ),
     );
 

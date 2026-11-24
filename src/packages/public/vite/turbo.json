@@ -11,7 +11,9 @@
       "env": ["!VITE_*"],
       "inputs": [
         "$TURBO_EXTENDS$",
-        "$TURBO_ROOT$/src/packages/public/tsdown.config.ts"
+        "$TURBO_ROOT$/src/packages/public/tsdown.config.ts",
+        "$TURBO_ROOT$/src/packages/public/otel-vendor.ts",
+        "$TURBO_ROOT$/src/packages/public/otel-api-compat.ts"
       ]
     },
     "typegen": {

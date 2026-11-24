@@ -125,14 +125,6 @@
         "@interfere/react": "workspace:^",
         "@interfere/server-core": "workspace:^",
         "@interfere/types": "workspace:^",
-        "@opentelemetry/context-async-hooks": "catalog:",
-        "@opentelemetry/core": "catalog:",
-        "@opentelemetry/instrumentation": "catalog:",
-        "@opentelemetry/otlp-transformer": "catalog:",
-        "@opentelemetry/resources": "catalog:",
-        "@opentelemetry/sdk-logs": "catalog:",
-        "@opentelemetry/sdk-metrics": "catalog:",
-        "@opentelemetry/sdk-trace": "catalog:",
         "@vercel/otel": "catalog:",
         "chalk": "catalog:",
         "zod": "catalog:",
@@ -143,6 +135,8 @@
         "@interfere/test-utils": "workspace:^",
         "@interfere/typescript-config": "workspace:^",
         "@opentelemetry/api": "catalog:",
+        "@opentelemetry/instrumentation": "catalog:",
+        "@opentelemetry/sdk-trace": "catalog:",
         "@playwright/test": "catalog:",
         "@sentry/nextjs": "catalog:",
         "@types/node": "catalog:",
@@ -165,7 +159,7 @@
         "webpack": "catalog:",
       },
       "peerDependencies": {
-        "@opentelemetry/api": "^1.9.0",
+        "@opentelemetry/api": ">=1.9.0 <2",
         "next": "^15.3.0 || ^16.0.0",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
@@ -185,19 +179,10 @@
         "@interfere/helpers": "workspace:^",
         "@interfere/javascript": "workspace:^",
         "@interfere/types": "workspace:^",
-        "@opentelemetry/core": "catalog:",
-        "@opentelemetry/instrumentation": "catalog:",
-        "@opentelemetry/instrumentation-document-load": "catalog:",
-        "@opentelemetry/instrumentation-long-task": "catalog:",
-        "@opentelemetry/opentelemetry-browser-detector": "catalog:",
-        "@opentelemetry/otlp-transformer": "catalog:",
-        "@opentelemetry/resources": "catalog:",
-        "@opentelemetry/sdk-logs": "catalog:",
-        "@opentelemetry/sdk-metrics": "catalog:",
-        "@opentelemetry/sdk-trace": "catalog:",
-        "@opentelemetry/web-common": "catalog:",
         "fflate": "catalog:",
+        "import-in-the-middle": "catalog:",
         "isbot": "catalog:",
+        "require-in-the-middle": "catalog:",
         "uuid": "catalog:",
         "web-vitals": "catalog:",
         "workbox-background-sync": "catalog:",
@@ -210,6 +195,17 @@
         "@interfere/typescript-config": "workspace:^",
         "@opentelemetry/api": "catalog:",
         "@opentelemetry/browser-instrumentation": "catalog:",
+        "@opentelemetry/core": "catalog:",
+        "@opentelemetry/instrumentation": "catalog:",
+        "@opentelemetry/instrumentation-document-load": "catalog:",
+        "@opentelemetry/instrumentation-long-task": "catalog:",
+        "@opentelemetry/opentelemetry-browser-detector": "catalog:",
+        "@opentelemetry/otlp-transformer": "catalog:",
+        "@opentelemetry/resources": "catalog:",
+        "@opentelemetry/sdk-logs": "catalog:",
+        "@opentelemetry/sdk-metrics": "catalog:",
+        "@opentelemetry/sdk-trace": "catalog:",
+        "@opentelemetry/web-common": "catalog:",
         "@rolldown/plugin-babel": "catalog:",
         "@rrweb/types": "catalog:",
         "@sentry/browser": "catalog:",
@@ -236,7 +232,7 @@
         "vitest-browser-react": "catalog:",
       },
       "peerDependencies": {
-        "@opentelemetry/api": "^1.9.0",
+        "@opentelemetry/api": ">=1.9.0 <2",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
       },
@@ -252,13 +248,8 @@
         "@interfere/constants": "workspace:^",
         "@interfere/helpers": "workspace:^",
         "@interfere/types": "workspace:^",
-        "@opentelemetry/context-async-hooks": "catalog:",
-        "@opentelemetry/core": "catalog:",
-        "@opentelemetry/otlp-exporter-base": "catalog:",
-        "@opentelemetry/otlp-transformer": "catalog:",
-        "@opentelemetry/resources": "catalog:",
-        "@opentelemetry/sdk-logs": "catalog:",
-        "@opentelemetry/sdk-trace": "catalog:",
+        "import-in-the-middle": "catalog:",
+        "require-in-the-middle": "catalog:",
         "undici": "catalog:",
       },
       "devDependencies": {
@@ -266,13 +257,24 @@
         "@interfere/test-utils": "workspace:^",
         "@interfere/typescript-config": "workspace:^",
         "@opentelemetry/api": "catalog:",
+        "@opentelemetry/context-async-hooks": "catalog:",
+        "@opentelemetry/core": "catalog:",
+        "@opentelemetry/exporter-metrics-otlp-http": "catalog:",
+        "@opentelemetry/instrumentation": "catalog:",
+        "@opentelemetry/instrumentation-undici": "catalog:",
+        "@opentelemetry/otlp-exporter-base": "catalog:",
+        "@opentelemetry/otlp-transformer": "catalog:",
+        "@opentelemetry/resources": "catalog:",
+        "@opentelemetry/sdk-logs": "catalog:",
+        "@opentelemetry/sdk-metrics": "catalog:",
+        "@opentelemetry/sdk-trace": "catalog:",
         "@types/node": "catalog:",
         "tsdown": "catalog:",
         "typescript": "catalog:",
         "vitest": "catalog:",
       },
       "peerDependencies": {
-        "@opentelemetry/api": "^1.9.0",
+        "@opentelemetry/api": ">=1.9.0 <2",
       },
     },
     "src/packages/public/test-config": {
@@ -315,7 +317,6 @@
       "version": "11.2.2",
       "dependencies": {
         "@interfere/helpers": "workspace:^",
-        "@opentelemetry/baggage-span-processor": "catalog:",
         "zod": "catalog:",
       },
       "devDependencies": {
@@ -323,6 +324,7 @@
         "@interfere/test-utils": "workspace:^",
         "@interfere/typescript-config": "workspace:^",
         "@opentelemetry/api": "catalog:",
+        "@opentelemetry/baggage-span-processor": "catalog:",
         "@opentelemetry/sdk-trace": "catalog:",
         "@types/node": "catalog:",
         "@vitest/coverage-v8": "catalog:",
@@ -331,7 +333,7 @@
         "vitest": "catalog:",
       },
       "peerDependencies": {
-        "@opentelemetry/api": "^1.9.0",
+        "@opentelemetry/api": ">=1.9.0 <2",
       },
     },
     "src/packages/public/typescript-config": {
@@ -358,16 +360,6 @@
         "@interfere/react": "workspace:^",
         "@interfere/server-core": "workspace:^",
         "@interfere/types": "workspace:^",
-        "@opentelemetry/context-async-hooks": "catalog:",
-        "@opentelemetry/core": "catalog:",
-        "@opentelemetry/exporter-metrics-otlp-http": "catalog:",
-        "@opentelemetry/instrumentation": "catalog:",
-        "@opentelemetry/instrumentation-undici": "catalog:",
-        "@opentelemetry/otlp-transformer": "catalog:",
-        "@opentelemetry/resources": "catalog:",
-        "@opentelemetry/sdk-logs": "catalog:",
-        "@opentelemetry/sdk-metrics": "catalog:",
-        "@opentelemetry/sdk-trace": "catalog:",
         "zod": "catalog:",
       },
       "devDependencies": {
@@ -396,7 +388,7 @@
         "vitest-browser-react": "catalog:",
       },
       "peerDependencies": {
-        "@opentelemetry/api": "^1.9.0",
+        "@opentelemetry/api": ">=1.9.0 <2",
         "@tanstack/react-start": "^1.168.0",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
@@ -476,6 +468,7 @@
     "dd-trace": "6.25.0",
     "fern-api": "https://github.com/skve/fern/releases/download/pr-17949-ffdd423/fern-api-5.143.1-pr.17949.ffdd423.tgz",
     "fflate": "0.8.3",
+    "import-in-the-middle": "3.5.3",
     "isbot": "5.2.3",
     "miniflare": "5.20261117.0-beta",
     "minimatch": "11.0.9",
@@ -485,6 +478,7 @@
     "posthog-js": "1.451.0",
     "react": "19.3.1",
     "react-dom": "19.3.1",
+    "require-in-the-middle": "8.0.1",
     "rrweb": "2.2.2",
     "tsdown": "0.23.7",
     "tsrs": "7.1.0-beta.tsrs3",
@@ -1369,7 +1363,7 @@
 
     "chrome-trace-event": ["chrome-trace-event@1.0.4", "", {}, "sha512-rNjApaLzuwaOTjCiT8lSDdGN1APCiqkChLMJxJPWLunPAt5fy8xgU9/jNOchV84wfIxrA0lRQB7oCT8jrn/wrQ=="],
 
-    "cjs-module-lexer": ["cjs-module-lexer@1.2.3", "", {}, "sha512-0TNiGstbQmCFwt4akjjBg5pLRTSyj/PkWQ1ZoO2zntmg9yLqSRxwEa4iCfQLGjqhiqBfOJa7W/E8wfGrTDmlZQ=="],
+    "cjs-module-lexer": ["cjs-module-lexer@2.2.1", "", {}, "sha512-Ca8swihM+/4yKecYHY52kgJd300hi2lADU/a1RxNTRe+RJ9jvqQlESpbz9DnG9mowez8qwXHB8qYdIUw9e+F5Q=="],
 
     "cli-width": ["cli-width@4.1.0", "", {}, "sha512-ouuZd4/dm2Sw5Gmqy6bGyNNNe1qt9RpmxveLSO7KcgsTnU7RXfsw+/bukWGo1abgBiMAic068rclZsO4IWmmxQ=="],
 
@@ -1811,6 +1805,8 @@
 
     "@cloudflare/vite-plugin/ws": ["ws@8.22.0", "", { "peerDependencies": { "bufferutil": "^4.0.1", "utf-8-validate": ">=5.0.2" }, "optionalPeers": ["bufferutil", "utf-8-validate"] }, "sha512-Ydggc987+RO0AnWtZ/7Wq9FtNvcrL1b/RO0ud9mWjUPgDrsAAwQSF51sm2hm1XofbU/4jkpGEsLFsZZxU+1DOg=="],
 
+    "@cloudflare/vitest-plugin/cjs-module-lexer": ["cjs-module-lexer@1.2.3", "", {}, "sha512-0TNiGstbQmCFwt4akjjBg5pLRTSyj/PkWQ1ZoO2zntmg9yLqSRxwEa4iCfQLGjqhiqBfOJa7W/E8wfGrTDmlZQ=="],
+
     "@cloudflare/vitest-plugin/wrangler": ["wrangler@4.164.0", "", { "dependencies": { "@cloudflare/kv-asset-handler": "0.5.0", "@cloudflare/unenv-preset": "2.16.2", "@cspotcode/source-map-support": "0.8.1", "blake3-wasm": "2.1.5", "esbuild": "0.28.2", "miniflare": "5.20261117.0-beta", "path-to-regexp": "6.3.0", "unenv": "2.0.0-rc.24", "workerd": "1.20261117.1" }, "optionalDependencies": { "fsevents": "2.3.3" }, "peerDependencies": { "@cloudflare/workers-types": "^5.20261117.1" }, "optionalPeers": ["@cloudflare/workers-types"], "bin": { "wrangler": "bin/wrangler.js", "wrangler2": "bin/wrangler.js", "cf-wrangler": "bin/cf-wrangler.js" } }, "sha512-WwM+DL4F+zvz1id0CAPa06CAmTb6nOq1adR+Dy5AdwDsDXH5xDjSmDUUBQQN8KgSEuPCOLvzkrdMDUODIDml1A=="],
 
     "@cloudflare/vitest-plugin/zod": ["zod@4.6.6", "", {}, "sha512-4UmzQUF5fxvfcYHlbjBmejU+w+hbDnWFx4aS8kBx7nPBHcO2SqPbpAG8snbdg+Xse4pRefR98hgjFgIMCI/UhA=="],
@@ -1868,8 +1864,6 @@
     "babel-dead-code-elimination/@babel/traverse": ["@babel/traverse@7.29.8", "", { "dependencies": { "@babel/code-frame": "^7.29.7", "@babel/generator": "^7.29.8", "@babel/helper-globals": "^7.29.7", "@babel/parser": "^7.29.8", "@babel/template": "^7.29.7", "@babel/types": "^7.29.8", "debug": "^4.3.1" } }, "sha512-I5z7H3bf/41ktsNVLtpN0wAa336HkqIHQ5BuPLEhTkt1jVSyZpeNKIzTgEWmlxjdg81R0IgUCcaE+Ok3NvrfZg=="],
 
     "cliui/string-width": ["string-width@7.2.0", "", { "dependencies": { "emoji-regex": "^10.3.0", "get-east-asian-width": "^1.0.0", "strip-ansi": "^7.1.0" } }, "sha512-tsaTIkKW9b4N+AEj+SVA+WhJzV7/zMhcSu78mLKWSk7cXMOSHsBKFWUs0fWwq8QyK3MgJBQRX6Gbi4kYbdvGkQ=="],
-
-    "import-in-the-middle/cjs-module-lexer": ["cjs-module-lexer@2.2.1", "", {}, "sha512-Ca8swihM+/4yKecYHY52kgJd300hi2lADU/a1RxNTRe+RJ9jvqQlESpbz9DnG9mowez8qwXHB8qYdIUw9e+F5Q=="],
 
     "import-in-the-middle/es-module-lexer": ["es-module-lexer@3.0.4", "", {}, "sha512-BldNY5mwkVu+cQ5Ymn3e6hB9Sx8XHx4ZevWbiUyZbfKxJxYO27Hf0wfzkxIaD5CAJMaGl3YspKELj0ff/7nCMA=="],
 
@@ -2026,7 +2020,5 @@
     "@cloudflare/vite-plugin/miniflare/workerd/@cloudflare/workerd-linux-arm64": ["@cloudflare/workerd-linux-arm64@1.20261110.1", "", { "os": "linux", "cpu": "arm64" }, "sha512-0l+JyYWOhEzTs7yOkIdf1ZzcXd9WalPZ1kD0bBAobFvDhO/1jBnQkS4rzzyUkGV7g8pb3dkfrBP9c2ZiRLOfdw=="],
 
     "@cloudflare/vite-plugin/miniflare/workerd/@cloudflare/workerd-windows-64": ["@cloudflare/workerd-windows-64@1.20261110.1", "", { "os": "win32", "cpu": "x64" }, "sha512-zP8IGyWvohyJhbNjHOnTA9anRQtGN7X01T/dG+R9IA4vu2egRODsD02aoYzv0a0qImjt7tTpOOA+uVotDJPcSA=="],
-
-    "@vercel/otel/@opentelemetry/instrumentation/import-in-the-middle/cjs-module-lexer": ["cjs-module-lexer@2.2.1", "", {}, "sha512-Ca8swihM+/4yKecYHY52kgJd300hi2lADU/a1RxNTRe+RJ9jvqQlESpbz9DnG9mowez8qwXHB8qYdIUw9e+F5Q=="],
   }
 }

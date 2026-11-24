@@ -1,11 +1,11 @@
 /* oxlint-disable typescript/require-await */
 import { SpanStatusCode, context, trace } from "@opentelemetry/api";
-import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
+import { AsyncLocalStorageContextManager } from "@interfere/server-core/otel/context-async-hooks";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-  TracerProvider,
-} from "@opentelemetry/sdk-trace";
+} from "@interfere/server-core/otel/sdk/trace/processing";
+import { TracerProvider } from "@interfere/server-core/otel/sdk/trace/provider";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 
 import { interfereFunctionMiddleware } from "../../../tanstack-start";

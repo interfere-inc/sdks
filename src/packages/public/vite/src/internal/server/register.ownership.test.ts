@@ -4,19 +4,19 @@ import { exceptions, exportedSpans } from "@interfere/test-utils/vitest/otlp";
 import { EXCEPTION_DELIVERY_ATTRIBUTE } from "@interfere/types/sdk/exception-delivery";
 
 import { context, logs, metrics, propagation, trace } from "@opentelemetry/api";
-import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
-import { W3CTraceContextPropagator } from "@opentelemetry/core";
-import { UndiciInstrumentation } from "@opentelemetry/instrumentation-undici";
+import { AsyncLocalStorageContextManager } from "@interfere/server-core/otel/context-async-hooks";
+import { W3CTraceContextPropagator } from "@interfere/server-core/otel/core/propagation";
+import { UndiciInstrumentation } from "@interfere/server-core/otel/instrumentation-undici";
 import {
   InMemoryLogRecordExporter,
   LoggerProvider,
   SimpleLogRecordProcessor,
-} from "@opentelemetry/sdk-logs";
+} from "@interfere/server-core/otel/sdk/logs";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-  TracerProvider,
-} from "@opentelemetry/sdk-trace";
+} from "@interfere/server-core/otel/sdk/trace/processing";
+import { TracerProvider } from "@interfere/server-core/otel/sdk/trace/provider";
 import { setImmediate } from "node:timers/promises";
 import {
   afterAll,

@@ -90,16 +90,6 @@
     "@interfere/react": "workspace:^",
     "@interfere/server-core": "workspace:^",
     "@interfere/types": "workspace:^",
-    "@opentelemetry/context-async-hooks": "catalog:",
-    "@opentelemetry/core": "catalog:",
-    "@opentelemetry/exporter-metrics-otlp-http": "catalog:",
-    "@opentelemetry/instrumentation": "catalog:",
-    "@opentelemetry/instrumentation-undici": "catalog:",
-    "@opentelemetry/otlp-transformer": "catalog:",
-    "@opentelemetry/resources": "catalog:",
-    "@opentelemetry/sdk-logs": "catalog:",
-    "@opentelemetry/sdk-metrics": "catalog:",
-    "@opentelemetry/sdk-trace": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -128,7 +118,7 @@
     "vitest-browser-react": "catalog:"
   },
   "peerDependencies": {
-    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/api": ">=1.9.0 <2",
     "@tanstack/react-start": "^1.168.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

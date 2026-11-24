@@ -1,7 +1,7 @@
 import { HttpResponse, http } from "msw";
 import { registeredTracerProvider } from "@interfere/server-core/ownership";
 import { trace } from "@opentelemetry/api";
-import { TracerProvider } from "@opentelemetry/sdk-trace";
+import { TracerProvider } from "@interfere/server-core/otel/sdk/trace/provider";
 import { afterEach, beforeAll, beforeEach, expect, test, vi } from "vitest";
 import { delivered, network, requests } from "../test/edge/network.fixture";
 

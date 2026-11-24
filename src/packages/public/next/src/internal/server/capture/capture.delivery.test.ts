@@ -2,14 +2,14 @@ import { omitUndefined } from "@interfere/helpers/omit-undefined";
 import { EXCEPTION_DELIVERY_ATTRIBUTE } from "@interfere/types/sdk/exception-delivery";
 import { resolveUrlRedaction } from "@interfere/types/sdk/url-redaction";
 import { SpanStatusCode, context, trace } from "@opentelemetry/api";
-import type { Sampler } from "@opentelemetry/sdk-trace";
-import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
+import type { Sampler } from "@interfere/server-core/otel/sdk/trace/sampling";
+import { AsyncLocalStorageContextManager } from "@interfere/server-core/otel/context-async-hooks";
 import {
-  AlwaysOffSampler,
   InMemorySpanExporter,
   SimpleSpanProcessor,
-  TracerProvider,
-} from "@opentelemetry/sdk-trace";
+} from "@interfere/server-core/otel/sdk/trace/processing";
+import { TracerProvider } from "@interfere/server-core/otel/sdk/trace/provider";
+import { AlwaysOffSampler } from "@interfere/server-core/otel/sdk/trace/sampling";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 
 type Capture = typeof import("./capture.js");

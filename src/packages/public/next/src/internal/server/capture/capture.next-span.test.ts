@@ -1,10 +1,10 @@
 import { context, trace } from "@opentelemetry/api";
-import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
+import { AsyncLocalStorageContextManager } from "@interfere/server-core/otel/context-async-hooks";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-  TracerProvider,
-} from "@opentelemetry/sdk-trace";
+} from "@interfere/server-core/otel/sdk/trace/processing";
+import { TracerProvider } from "@interfere/server-core/otel/sdk/trace/provider";
 
 import { captureError, onRequestError } from "./capture.js";
 import { nextSpanExceptionProcessor } from "./next-span-exceptions.js";

@@ -2,23 +2,24 @@ import type { UserConfig } from "tsdown";
 import babel from "@rolldown/plugin-babel";
 import reactCompiler from "babel-plugin-react-compiler";
 import { z } from "zod";
+// @boundaries-ignore the SDK packages share one OpenTelemetry vendoring plugin, which the SDK mirror exports beside them
+import {
+  otelNeverBundle,
+  otelVendored,
+  vendorOpenTelemetry,
+} from "../otel-vendor.ts";
 
 const entryMap = z.record(z.string(), z.string());
 
 const isWatch = process.argv.includes("--watch") || process.argv.includes("-w");
 
-const config: UserConfig = {
+const config: UserConfig = vendorOpenTelemetry({
   checks: { moduleLevelDirective: false },
   clean: isWatch ? false : ["dist/**/*"],
   deps: {
-    alwaysBundle: [
-      "rrweb",
-      "@rrweb/types",
-      "@opentelemetry/browser-instrumentation/experimental/fetch",
-      "@opentelemetry/browser-instrumentation/experimental/xhr",
-    ],
+    alwaysBundle: ["rrweb", "@rrweb/types", otelVendored],
     dts: { alwaysBundle: ["@rrweb/types"] },
-    neverBundle: (id) => id.startsWith("#"),
+    neverBundle: otelNeverBundle,
   },
   dts: { generator: "tsrs", sourcemap: false },
   entry: ["src/**/*.{ts,tsx}", "!**/*.{test,spec,fixture,test-utils}.{ts,tsx}"],
@@ -46,6 +47,6 @@ const config: UserConfig = {
   suppressWarnings:
     "tsrs support is highly experimental and may change or break without notice. Some options will be unavailable.",
   unbundle: false,
-};
+});
 
 export default config;

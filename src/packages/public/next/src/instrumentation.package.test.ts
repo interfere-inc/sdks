@@ -108,7 +108,7 @@ void onRequestError;
         source,
         `
 import { correlationSpanProcessor, register } from "@interfere/next/instrumentation";
-import type { SpanProcessor } from "@opentelemetry/sdk-trace";
+import type { SpanProcessor } from "@interfere/server-core/otel/sdk/trace/processing";
 const processor: SpanProcessor = correlationSpanProcessor();
 void processor;
 const pending: Promise<void> = register({ tracing: "application" });

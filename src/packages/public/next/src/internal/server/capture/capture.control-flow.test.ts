@@ -1,10 +1,10 @@
 import { context, trace } from "@opentelemetry/api";
-import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
+import { AsyncLocalStorageContextManager } from "@interfere/server-core/otel/context-async-hooks";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-  TracerProvider,
-} from "@opentelemetry/sdk-trace";
+} from "@interfere/server-core/otel/sdk/trace/processing";
+import { TracerProvider } from "@interfere/server-core/otel/sdk/trace/provider";
 import { DynamicServerError } from "next/dist/client/components/hooks-server-context.js";
 import { StaticGenBailoutError } from "next/dist/client/components/static-generation-bailout.js";
 import { BailoutToCSRError } from "next/dist/shared/lib/lazy-dynamic/bailout-to-csr.js";

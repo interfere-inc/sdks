@@ -3,8 +3,8 @@ import { trace } from "@opentelemetry/api";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-  TracerProvider,
-} from "@opentelemetry/sdk-trace";
+} from "@interfere/server-core/otel/sdk/trace/processing";
+import { TracerProvider } from "@interfere/server-core/otel/sdk/trace/provider";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 
 import { captureError, onRequestError } from "./capture.js";

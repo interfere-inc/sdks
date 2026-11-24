@@ -316,18 +316,20 @@ Your app's own origin always receives trace headers, as do the backend hosts lis
 `tracing.spanProcessors` takes standard OpenTelemetry processors. They run after Interfere adds session and device details and before export. This one removes an attribute:
 
 ```ts
-import type { SpanProcessor } from "@opentelemetry/sdk-trace";
-
-const dropTenant: SpanProcessor = {
-  onStart() {},
-  onEnd(span) {
-    delete span.attributes["app.tenant_name"];
+void init({
+  tracing: {
+    spanProcessors: [
+      {
+        onStart() {},
+        onEnd(span) {
+          delete span.attributes["app.tenant_name"];
+        },
+        async forceFlush() {},
+        async shutdown() {},
+      },
+    ],
   },
-  async forceFlush() {},
-  async shutdown() {},
-};
-
-void init({ tracing: { spanProcessors: [dropTenant] } });
+});
 ```
 
 Edit `span.attributes` synchronously in `onEnd`; `setAttribute` can't change an ended span. Interfere flushes and shuts down your processors, so give each `init()` new instances.

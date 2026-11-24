@@ -97,7 +97,9 @@
       "@sentry/nextjs": "11.14.0",
       "dd-trace": "6.25.0",
       "@opentelemetry/sdk-trace": "3.1.1",
-      "@opentelemetry/web-common": "0.301.2"
+      "@opentelemetry/web-common": "0.301.2",
+      "import-in-the-middle": "3.5.3",
+      "require-in-the-middle": "8.0.1"
     }
   },
   "engines": {

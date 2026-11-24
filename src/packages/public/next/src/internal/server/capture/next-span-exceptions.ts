@@ -1,5 +1,6 @@
 import type { Context, Exception, TimeInput } from "@opentelemetry/api";
-import type { Span, SpanProcessor } from "@opentelemetry/sdk-trace";
+import type { SpanProcessor } from "@interfere/server-core/otel/sdk/trace/processing";
+import type { Span } from "@interfere/server-core/otel/sdk/trace/provider";
 
 import { contain } from "@interfere/server-core/contain";
 import { controlFlowOutcome } from "./control-flow.js";

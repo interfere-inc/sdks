@@ -1,5 +1,5 @@
 import { startNodeRuntime } from "@interfere/server-core/node";
-import { W3CTraceContextPropagator } from "@opentelemetry/core";
+import { W3CTraceContextPropagator } from "@interfere/server-core/otel/core/propagation";
 import { setupNetwork } from "@msw/cloudflare";
 import { exports } from "cloudflare:workers";
 import { HttpResponse, delay, http } from "msw";

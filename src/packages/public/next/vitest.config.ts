@@ -17,7 +17,15 @@ export default defineConfig({
     projects: [
       // WARNING: The edge group runs first because browser project transforms block Vite's main thread and stall cold edge module fetches for seconds on 4 vCPU runners.
       node({
-        test: { name: "node", exclude: edgeTests, sequence: { groupOrder: 1 } },
+        test: {
+          name: "node",
+          exclude: edgeTests,
+          sequence: { groupOrder: 1 },
+          // WARNING: vi.resetModules() reloads inlined workspace code, so the OpenTelemetry SDK bundled into server-core must load natively to keep one class identity.
+          server: {
+            deps: { external: [/\/server-core\/dist\/(?:otel|vendor)\//u] },
+          },
+        },
       }),
       mergeConfig(base, {
         resolve: { conditions: ["edge-light"] },

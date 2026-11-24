@@ -1,7 +1,7 @@
 import { startNodeRuntime } from "@interfere/server-core/node";
 import { attribute, exportedSpans } from "@interfere/test-utils/vitest/otlp";
 import { receiver } from "@interfere/test-utils/vitest/telemetry-receiver";
-import { W3CTraceContextPropagator } from "@opentelemetry/core";
+import { W3CTraceContextPropagator } from "@interfere/server-core/otel/core/propagation";
 import { expect, onTestFinished, test, vi } from "vitest";
 
 import { withRequestSpan } from "./trace.js";

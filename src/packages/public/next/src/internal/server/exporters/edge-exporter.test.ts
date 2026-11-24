@@ -1,5 +1,5 @@
 import { trace } from "@opentelemetry/api";
-import { ExportResultCode } from "@opentelemetry/core";
+import { ExportResultCode } from "@interfere/server-core/otel/core/export";
 import { workAsyncStorage } from "next/dist/server/app-render/work-async-storage.external";
 import { workUnitAsyncStorage } from "next/dist/server/app-render/work-unit-async-storage.external";
 import { patchFetch } from "next/dist/server/lib/patch-fetch";
@@ -10,8 +10,8 @@ import { network } from "../../../../test/edge/network.fixture";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-  TracerProvider,
-} from "@opentelemetry/sdk-trace";
+} from "@interfere/server-core/otel/sdk/trace/processing";
+import { TracerProvider } from "@interfere/server-core/otel/sdk/trace/provider";
 import type { MockInstance } from "vitest";
 
 import { FetchTraceExporter } from "./edge-exporter.js";
@@ -159,11 +159,11 @@ describe(FetchTraceExporter, () => {
         workspaceTelemetryKeyHeader: { apiKey: "test-key" },
       });
 
-      const result = new Promise<import("@opentelemetry/core").ExportResult>(
-        (resolve) => {
-          exporter.export([makeSpan()], resolve);
-        },
-      );
+      const result = new Promise<
+        import("@interfere/server-core/otel/core/export").ExportResult
+      >((resolve) => {
+        exporter.export([makeSpan()], resolve);
+      });
 
       await expect(result).resolves.toStrictEqual({
         code: ExportResultCode.SUCCESS,
@@ -224,11 +224,11 @@ describe(FetchTraceExporter, () => {
       headers: {},
     });
 
-    const result = new Promise<import("@opentelemetry/core").ExportResult>(
-      (resolve) => {
-        exporter.export([makeSpan()], resolve);
-      },
-    );
+    const result = new Promise<
+      import("@interfere/server-core/otel/core/export").ExportResult
+    >((resolve) => {
+      exporter.export([makeSpan()], resolve);
+    });
 
     await expect(result).resolves.toStrictEqual({
       code: ExportResultCode.FAILED,

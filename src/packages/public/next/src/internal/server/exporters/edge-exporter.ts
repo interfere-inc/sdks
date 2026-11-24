@@ -4,10 +4,11 @@ import {
 } from "@interfere/helpers/retry-telemetry";
 import { InterfereClient } from "@interfere/javascript";
 /* oxlint-disable unicorn/no-useless-promise-resolve-reject */
-import { ExportResultCode } from "@opentelemetry/core";
-import type { ExportResult } from "@opentelemetry/core";
-import { JsonTraceSerializer } from "@opentelemetry/otlp-transformer";
-import type { ReadableSpan, SpanExporter } from "@opentelemetry/sdk-trace";
+import { ExportResultCode } from "@interfere/server-core/otel/core/export";
+import type { ExportResult } from "@interfere/server-core/otel/core/export";
+import { JsonTraceSerializer } from "@interfere/server-core/otel/otlp-transformer";
+import type { SpanExporter } from "@interfere/server-core/otel/sdk/trace/processing";
+import type { ReadableSpan } from "@interfere/server-core/otel/sdk/trace/provider";
 import { exportTracePayload } from "../tracing/trace-payload";
 
 const MILLIS_PER_SECOND = 1000;

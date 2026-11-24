@@ -1,5 +1,5 @@
 import { randomBytes } from "node:crypto";
-import type { IdGenerator } from "@opentelemetry/sdk-trace";
+import type { IdGenerator } from "@interfere/server-core/otel/sdk/trace/provider";
 
 const TRACE_ID_HEX_LEN = 32;
 

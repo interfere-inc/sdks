@@ -6,8 +6,9 @@ import { registeredTracerProvider } from "@interfere/server-core/ownership";
 import { readLogSourcingMode } from "@interfere/types/sdk/log-sourcing";
 import { readBakedBackendHosts } from "@interfere/types/sdk/remote-config/backend-hosts";
 import { readServerTracing } from "@interfere/types/sdk/server-tracing";
-import { CompositePropagator, getStringFromEnv } from "@opentelemetry/core";
-import { defaultServiceName } from "@opentelemetry/resources";
+import { getStringFromEnv } from "@interfere/server-core/otel/core/environment";
+import { CompositePropagator } from "@interfere/server-core/otel/core/propagation";
+import { defaultServiceName } from "@interfere/server-core/otel/resources";
 import type { Configuration } from "@vercel/otel";
 
 import { readInterfereEnv } from "./internal/env.js";

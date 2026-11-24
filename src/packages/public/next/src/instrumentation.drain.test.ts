@@ -6,7 +6,7 @@ import { once } from "node:events";
 import { HttpResponse, delay, http } from "msw";
 import type { ProxyTracerProvider } from "@opentelemetry/api";
 import { context, logs, propagation, trace } from "@opentelemetry/api";
-import { TracerProvider } from "@opentelemetry/sdk-trace";
+import { TracerProvider } from "@interfere/server-core/otel/sdk/trace/provider";
 import { PLATFORM_GLOBAL } from "@interfere/types/integrations/platforms/hosting";
 import { LOG_SOURCING_GLOBAL } from "@interfere/types/sdk/log-sourcing";
 import { BACKEND_HOSTS_GLOBAL } from "@interfere/types/sdk/remote-config/backend-hosts";

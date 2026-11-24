@@ -6,7 +6,7 @@ import { installGlobalHandlers } from "@interfere/server-core/global-handlers";
 import {
   JsonMetricsSerializer,
   MetricsExporterMetricsHelper,
-} from "@opentelemetry/otlp-transformer";
+} from "@interfere/server-core/otel/otlp-transformer";
 import { collectorDelegate } from "@interfere/server-core/otlp-http";
 import { startNodeRuntime } from "@interfere/server-core/node";
 import {
@@ -16,22 +16,22 @@ import {
 import { resolveLogSourcingMode } from "@interfere/types/sdk/log-sourcing";
 import { resolveServerTracing } from "@interfere/types/sdk/server-tracing";
 import { metrics } from "@opentelemetry/api";
+import { getStringFromEnv } from "@interfere/server-core/otel/core/environment";
 import {
   CompositePropagator,
   W3CBaggagePropagator,
   W3CTraceContextPropagator,
-  getStringFromEnv,
-} from "@opentelemetry/core";
+} from "@interfere/server-core/otel/core/propagation";
 import {
   AggregationTemporalityPreference,
   OTLPMetricExporterBase,
-} from "@opentelemetry/exporter-metrics-otlp-http";
-import { registerInstrumentations } from "@opentelemetry/instrumentation";
-import { defaultServiceName } from "@opentelemetry/resources";
+} from "@interfere/server-core/otel/exporter-metrics-otlp-http";
+import { registerInstrumentations } from "@interfere/server-core/otel/instrumentation";
+import { defaultServiceName } from "@interfere/server-core/otel/resources";
 import {
   MeterProvider,
   PeriodicExportingMetricReader,
-} from "@opentelemetry/sdk-metrics";
+} from "@interfere/server-core/otel/sdk/metrics";
 
 import { outboundInstrumentations } from "#outbound-instrumentation";
 

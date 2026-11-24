@@ -1,4 +1,4 @@
-import { UndiciInstrumentation } from "@opentelemetry/instrumentation-undici";
+import { UndiciInstrumentation } from "@interfere/server-core/otel/instrumentation-undici";
 
 import type { RequestPropagation } from "./request/propagation";
 

@@ -21,7 +21,14 @@ export default defineConfig({
             ),
           },
         },
-        test: { name: "node", exclude: ["**/*.native.test.ts"] },
+        test: {
+          name: "node",
+          exclude: ["**/*.native.test.ts"],
+          // WARNING: vi.resetModules() reloads inlined workspace code, so the OpenTelemetry SDK bundled into server-core must load natively to keep one class identity.
+          server: {
+            deps: { external: [/\/server-core\/dist\/(?:otel|vendor)\//u] },
+          },
+        },
       }),
       browser({
         optimizeDeps: {

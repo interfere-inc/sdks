@@ -9,7 +9,8 @@ import type {
   TextMapPropagator,
   TextMapSetter,
 } from "@opentelemetry/api";
-import { TraceState, isTracingSuppressed } from "@opentelemetry/core";
+import { TraceState } from "@interfere/server-core/otel/core/propagation";
+import { isTracingSuppressed } from "@interfere/server-core/otel/core/suppression";
 
 import { isStaticGenerationRender } from "../static-generation.js";
 

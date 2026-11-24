@@ -10,7 +10,7 @@ import {
   CompositePropagator,
   TraceState,
   W3CTraceContextPropagator,
-} from "@opentelemetry/core";
+} from "@interfere/server-core/otel/core/propagation";
 
 import { FreshnessStampingPropagator } from "./freshness-propagator.js";
 import { describe, expect, test } from "vitest";

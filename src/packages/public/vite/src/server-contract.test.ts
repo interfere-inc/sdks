@@ -1,12 +1,12 @@
 import { serverContract } from "@interfere/test-utils/vitest/server-contract";
 import { context, propagation, trace } from "@opentelemetry/api";
-import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
-import { W3CTraceContextPropagator } from "@opentelemetry/core";
+import { AsyncLocalStorageContextManager } from "@interfere/server-core/otel/context-async-hooks";
+import { W3CTraceContextPropagator } from "@interfere/server-core/otel/core/propagation";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-  TracerProvider,
-} from "@opentelemetry/sdk-trace";
+} from "@interfere/server-core/otel/sdk/trace/processing";
+import { TracerProvider } from "@interfere/server-core/otel/sdk/trace/provider";
 import { describe, vi } from "vitest";
 
 describe("shared server contract", () => {

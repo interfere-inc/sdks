@@ -1,5 +1,5 @@
-import { RandomIdGenerator } from "@opentelemetry/sdk-trace";
-import type { IdGenerator } from "@opentelemetry/sdk-trace";
+import { RandomIdGenerator } from "@interfere/server-core/otel/sdk/trace/provider";
+import type { IdGenerator } from "@interfere/server-core/otel/sdk/trace/provider";
 import { CounterIdGenerator } from "./counter-id-generator";
 
 /**

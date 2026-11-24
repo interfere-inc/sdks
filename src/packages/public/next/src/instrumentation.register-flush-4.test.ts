@@ -14,8 +14,8 @@ import {
   InMemoryLogRecordExporter,
   LoggerProvider,
   SimpleLogRecordProcessor,
-} from "@opentelemetry/sdk-logs";
-import { TracerProvider } from "@opentelemetry/sdk-trace";
+} from "@interfere/server-core/otel/sdk/logs";
+import { TracerProvider } from "@interfere/server-core/otel/sdk/trace/provider";
 import { setImmediate } from "node:timers/promises";
 import { mswServer } from "@interfere/test-config/msw-server";
 import { fetchAndCacheRemoteConfig } from "./internal/server/remote-config.js";

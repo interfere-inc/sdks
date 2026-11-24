@@ -14,7 +14,7 @@ import {
   TraceState,
   W3CBaggagePropagator,
   W3CTraceContextPropagator,
-} from "@opentelemetry/core";
+} from "@interfere/server-core/otel/core/propagation";
 import { workUnitAsyncStorage } from "next/dist/server/app-render/work-unit-async-storage.external.js";
 import { workAsyncStorage } from "next/dist/server/app-render/work-async-storage.external.js";
 import { createWorkStore } from "next/dist/server/async-storage/work-store.js";

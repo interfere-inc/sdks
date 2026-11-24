@@ -3,10 +3,10 @@ import { attribute, exportedSpans } from "@interfere/test-utils/vitest/otlp";
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
 
 import { context, logs, metrics, propagation, trace } from "@opentelemetry/api";
-import { UndiciInstrumentation } from "@opentelemetry/instrumentation-undici";
-import { LoggerProvider } from "@opentelemetry/sdk-logs";
-import { MeterProvider } from "@opentelemetry/sdk-metrics";
-import { TracerProvider } from "@opentelemetry/sdk-trace";
+import { UndiciInstrumentation } from "@interfere/server-core/otel/instrumentation-undici";
+import type { LoggerProvider } from "@interfere/server-core/otel/sdk/logs";
+import { MeterProvider } from "@interfere/server-core/otel/sdk/metrics";
+import type { TracerProvider } from "@interfere/server-core/otel/sdk/trace/provider";
 import {
   afterAll,
   afterEach,
@@ -18,6 +18,21 @@ import {
   vi,
 } from "vitest";
 import type { MockInstance } from "vitest";
+import { z } from "zod";
+
+const lifecycle = z.object({
+  forceFlush: z.function(),
+  shutdown: z.function(),
+});
+
+// WARNING: @interfere/server-core bundles its own OpenTelemetry SDK, so the providers it registers are not instances of the SDK classes imported here.
+const sdkTracerProvider = z.custom<TracerProvider>(
+  (value) => lifecycle.safeParse(value).success,
+);
+
+const sdkLoggerProvider = z.custom<LoggerProvider>(
+  (value) => lifecycle.safeParse(value).success,
+);
 
 let collector: Awaited<ReturnType<typeof receiver>>;
 
@@ -77,10 +92,10 @@ afterEach(async () => {
 
   await Promise.all([
     ...registerProvider.mock.calls.map(async ([provider]) =>
-      provider instanceof TracerProvider ? provider.shutdown() : undefined,
+      sdkTracerProvider.safeParse(provider).data?.shutdown(),
     ),
     ...registerLogger.mock.calls.map(async ([provider]) =>
-      provider instanceof LoggerProvider ? provider.shutdown() : undefined,
+      sdkLoggerProvider.safeParse(provider).data?.shutdown(),
     ),
     ...registerMeter.mock.calls.map(async ([provider]) =>
       provider instanceof MeterProvider ? provider.shutdown() : undefined,
@@ -122,14 +137,18 @@ test.each<{
       omitUndefined({ consoleBridge: false, ignoreUrls, tracing }),
     );
 
-    const tracerProvider = registerProvider.mock.calls[0]?.[0];
-    const loggerProvider = registerLogger.mock.calls[0]?.[0];
+    const tracerProvider = sdkTracerProvider.parse(
+      registerProvider.mock.calls[0]?.[0],
+    );
+
+    const loggerProvider = sdkLoggerProvider.parse(
+      registerLogger.mock.calls[0]?.[0],
+    );
+
     const meterProvider = registerMeter.mock.calls[0]?.[0];
     const [instrumentation] = registerInstrumentation.mock.contexts;
 
     if (
-      !(tracerProvider instanceof TracerProvider) ||
-      !(loggerProvider instanceof LoggerProvider) ||
       !(meterProvider instanceof MeterProvider) ||
       !(instrumentation instanceof UndiciInstrumentation)
     ) {
@@ -217,11 +236,7 @@ test("honors baked drain modes without exporting traces or logs", async () => {
 
   await register({ consoleBridge: false });
 
-  const provider = registerProvider.mock.calls[0]?.[0];
-
-  if (!(provider instanceof TracerProvider)) {
-    throw new TypeError("Expected a native tracer provider");
-  }
+  const provider = sdkTracerProvider.parse(registerProvider.mock.calls[0]?.[0]);
 
   provider.getTracer("registration-test").startSpan("operation").end();
 
@@ -251,11 +266,9 @@ test.each([
 
     await register({ consoleBridge: false });
 
-    const provider = registerProvider.mock.calls[0]?.[0];
-
-    if (!(provider instanceof TracerProvider)) {
-      throw new TypeError("Expected a native tracer provider");
-    }
+    const provider = sdkTracerProvider.parse(
+      registerProvider.mock.calls[0]?.[0],
+    );
 
     provider.getTracer("registration-test").startSpan("operation").end();
 
@@ -321,9 +334,9 @@ test.each([
 
     trace.getTracer("test").startSpan("identity").end();
 
-    const provider = registerProvider.mock.calls[0]?.[0];
-
-    assert(provider instanceof TracerProvider);
+    const provider = sdkTracerProvider.parse(
+      registerProvider.mock.calls[0]?.[0],
+    );
 
     await provider.forceFlush();
 

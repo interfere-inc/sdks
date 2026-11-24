@@ -18,6 +18,13 @@
       "dependsOn": ["typegen", "^build"],
       "cache": false,
       "passThroughEnv": ["*"]
+    },
+    "build": {
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "$TURBO_ROOT$/src/packages/public/otel-vendor.ts",
+        "$TURBO_ROOT$/src/packages/public/otel-api-compat.ts"
+      ]
     }
   }
 }

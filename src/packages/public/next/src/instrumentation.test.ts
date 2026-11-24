@@ -11,12 +11,12 @@ import { RELEASE_SLUG_GLOBAL } from "@interfere/types/sdk/injected-globals";
 import { context, logs, propagation, trace } from "@opentelemetry/api";
 // oxlint-disable-next-line import/no-namespace -- This API consumes the complete module namespace.
 import * as instrumentation from "@opentelemetry/instrumentation";
-import { LoggerProvider } from "@opentelemetry/sdk-logs";
+import { LoggerProvider } from "@interfere/server-core/otel/sdk/logs";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-  TracerProvider,
-} from "@opentelemetry/sdk-trace";
+} from "@interfere/server-core/otel/sdk/trace/processing";
+import { TracerProvider } from "@interfere/server-core/otel/sdk/trace/provider";
 import { mswServer } from "@interfere/test-config/msw-server";
 import type { ServerInstrumentationOptions } from "./instrumentation.js";
 import { fetchAndCacheRemoteConfig } from "./internal/server/remote-config.js";

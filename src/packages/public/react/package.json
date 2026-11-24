@@ -27,6 +27,32 @@
   ],
   "type": "module",
   "sideEffects": false,
+  "imports": {
+    "#otel/core/platform": {
+      "node": "./dist/vendor/@opentelemetry/core/platform/node.mjs",
+      "default": "./dist/vendor/@opentelemetry/core/platform/browser.mjs"
+    },
+    "#otel/instrumentation/platform": {
+      "node": "./dist/vendor/@opentelemetry/instrumentation/platform/node.mjs",
+      "default": "./dist/vendor/@opentelemetry/instrumentation/platform/browser.mjs"
+    },
+    "#otel/otlp-transformer/platform": {
+      "node": "./dist/vendor/@opentelemetry/otlp-transformer/platform/node.mjs",
+      "default": "./dist/vendor/@opentelemetry/otlp-transformer/platform/browser.mjs"
+    },
+    "#otel/resources/platform": {
+      "node": "./dist/vendor/@opentelemetry/resources/platform/node.mjs",
+      "default": "./dist/vendor/@opentelemetry/resources/platform/browser.mjs"
+    },
+    "#otel/sdk-logs/platform": {
+      "node": "./dist/vendor/@opentelemetry/sdk-logs/platform/node.mjs",
+      "default": "./dist/vendor/@opentelemetry/sdk-logs/platform/browser.mjs"
+    },
+    "#otel/sdk-trace/platform": {
+      "node": "./dist/vendor/@opentelemetry/sdk-trace/platform/node.mjs",
+      "default": "./dist/vendor/@opentelemetry/sdk-trace/platform/browser.mjs"
+    }
+  },
   "exports": {
     "./provider": {
       "types": "./dist/provider.d.mts",
@@ -95,19 +121,10 @@
     "@interfere/helpers": "workspace:^",
     "@interfere/javascript": "workspace:^",
     "@interfere/types": "workspace:^",
-    "@opentelemetry/core": "catalog:",
-    "@opentelemetry/instrumentation": "catalog:",
-    "@opentelemetry/instrumentation-document-load": "catalog:",
-    "@opentelemetry/instrumentation-long-task": "catalog:",
-    "@opentelemetry/opentelemetry-browser-detector": "catalog:",
-    "@opentelemetry/otlp-transformer": "catalog:",
-    "@opentelemetry/resources": "catalog:",
-    "@opentelemetry/sdk-logs": "catalog:",
-    "@opentelemetry/sdk-metrics": "catalog:",
-    "@opentelemetry/sdk-trace": "catalog:",
-    "@opentelemetry/web-common": "catalog:",
     "fflate": "catalog:",
+    "import-in-the-middle": "catalog:",
     "isbot": "catalog:",
+    "require-in-the-middle": "catalog:",
     "uuid": "catalog:",
     "web-vitals": "catalog:",
     "workbox-background-sync": "catalog:",
@@ -120,6 +137,17 @@
     "@interfere/typescript-config": "workspace:^",
     "@opentelemetry/api": "catalog:",
     "@opentelemetry/browser-instrumentation": "catalog:",
+    "@opentelemetry/core": "catalog:",
+    "@opentelemetry/instrumentation": "catalog:",
+    "@opentelemetry/instrumentation-document-load": "catalog:",
+    "@opentelemetry/instrumentation-long-task": "catalog:",
+    "@opentelemetry/opentelemetry-browser-detector": "catalog:",
+    "@opentelemetry/otlp-transformer": "catalog:",
+    "@opentelemetry/resources": "catalog:",
+    "@opentelemetry/sdk-logs": "catalog:",
+    "@opentelemetry/sdk-metrics": "catalog:",
+    "@opentelemetry/sdk-trace": "catalog:",
+    "@opentelemetry/web-common": "catalog:",
     "@rolldown/plugin-babel": "catalog:",
     "@rrweb/types": "catalog:",
     "@sentry/browser": "catalog:",
@@ -146,7 +174,7 @@
     "vitest-browser-react": "catalog:"
   },
   "peerDependencies": {
-    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/api": ">=1.9.0 <2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

@@ -7,8 +7,8 @@ import {
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-  TracerProvider,
-} from "@opentelemetry/sdk-trace";
+} from "@interfere/server-core/otel/sdk/trace/processing";
+import { TracerProvider } from "@interfere/server-core/otel/sdk/trace/provider";
 import { expect, onTestFinished, test } from "vitest";
 
 import { CacheSafeTraceContextPropagator } from "./cache-safe-trace-context.js";

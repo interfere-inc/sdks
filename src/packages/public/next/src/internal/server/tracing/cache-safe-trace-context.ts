@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import type { Context, TextMapSetter } from "@opentelemetry/api";
-import { W3CTraceContextPropagator } from "@opentelemetry/core";
+import { W3CTraceContextPropagator } from "@interfere/server-core/otel/core/propagation";
 
 import { isStaticGenerationRender } from "../static-generation.js";
 

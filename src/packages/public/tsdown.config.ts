@@ -1,14 +1,21 @@
 /// <reference types="node" />
 import type { UserConfig } from "tsdown";
+import {
+  otelNeverBundle,
+  otelVendored,
+  vendorOpenTelemetry,
+} from "./otel-vendor.ts";
 
 const isWatch = process.argv.includes("--watch") || process.argv.includes("-w");
 
 // WARNING: Identifier mangling collides with consumer Turbopack/webpack renaming and can crash SDK initialization.
-const baseConfig = {
+const baseConfig: UserConfig = vendorOpenTelemetry({
   checks: { moduleLevelDirective: false },
   clean: !isWatch,
   deps: {
-    neverBundle: (id) => id.startsWith("#") || id.startsWith("cloudflare:"),
+    alwaysBundle: [otelVendored],
+    neverBundle: (id, importer) =>
+      otelNeverBundle(id, importer) || id.startsWith("cloudflare:"),
   },
   dts: { generator: "tsrs", sourcemap: false },
   entry: ["src/**/*.{ts,tsx}", "!**/*.{test,spec}.{ts,tsx}"],
@@ -19,6 +26,6 @@ const baseConfig = {
   suppressWarnings:
     "tsrs support is highly experimental and may change or break without notice. Some options will be unavailable.",
   unbundle: true,
-} satisfies UserConfig;
+});
 
 export default baseConfig;

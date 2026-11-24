@@ -1,7 +1,7 @@
 import { HttpResponse, http } from "msw";
 import { delivered, network } from "../test/edge/network.fixture";
 import { trace } from "@opentelemetry/api";
-import { TracerProvider } from "@opentelemetry/sdk-trace";
+import { TracerProvider } from "@interfere/server-core/otel/sdk/trace/provider";
 import type { MockInstance } from "vitest";
 import { afterEach, beforeAll, beforeEach, expect, test, vi } from "vitest";
 

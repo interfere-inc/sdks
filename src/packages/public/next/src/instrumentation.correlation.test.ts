@@ -2,8 +2,8 @@ import { ROOT_CONTEXT, propagation, trace } from "@opentelemetry/api";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
-  TracerProvider,
-} from "@opentelemetry/sdk-trace";
+} from "@interfere/server-core/otel/sdk/trace/processing";
+import { TracerProvider } from "@interfere/server-core/otel/sdk/trace/provider";
 import { expect, test } from "vitest";
 
 import { correlationSpanProcessor } from "./instrumentation.js";

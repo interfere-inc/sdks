@@ -1,6 +1,6 @@
 import { getGlobal } from "@interfere/react/util/global";
 import { FORCE_ENABLE_GLOBAL } from "@interfere/types/sdk/injected-globals";
-import { getStringFromEnv } from "@opentelemetry/core";
+import { getStringFromEnv } from "@interfere/server-core/otel/core/environment";
 /* oxlint-disable unicorn/no-useless-promise-resolve-reject */
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
 import { LOCAL_DEV_RELEASE_SLUG } from "@interfere/types/releases/slug";
@@ -13,12 +13,10 @@ import { trace } from "@opentelemetry/api";
 import {
   defaultServiceName,
   resourceFromAttributes,
-} from "@opentelemetry/resources";
-import {
-  AlwaysOnSampler,
-  SimpleSpanProcessor,
-  TracerProvider,
-} from "@opentelemetry/sdk-trace";
+} from "@interfere/server-core/otel/resources";
+import { SimpleSpanProcessor } from "@interfere/server-core/otel/sdk/trace/processing";
+import { TracerProvider } from "@interfere/server-core/otel/sdk/trace/provider";
+import { AlwaysOnSampler } from "@interfere/server-core/otel/sdk/trace/sampling";
 
 import { resolveReleaseSlug } from "./internal/release-slug.js";
 import { readInterfereEnv } from "./internal/env.js";

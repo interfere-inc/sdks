@@ -4,7 +4,12 @@
   "extends": ["//"],
   "tasks": {
     "build": {
-      "inputs": ["$TURBO_EXTENDS$", "tsdown.config.ts"],
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "tsdown.config.ts",
+        "$TURBO_ROOT$/src/packages/public/otel-vendor.ts",
+        "$TURBO_ROOT$/src/packages/public/otel-api-compat.ts"
+      ],
       "outputs": ["$TURBO_EXTENDS$", "dist/**/*.d.cts"]
     },
     "test": {
