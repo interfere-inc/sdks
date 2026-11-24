@@ -133,6 +133,24 @@ export function foreignTracingOwnerHarness() {
     browser = await chromium.launch({ headless: true });
 
     cleanups.push(async () => browser.close());
+
+    // WARNING: The first navigation pays the server's and browser's cold start; warming here keeps it out of each test's 4 s session wait.
+    const warm = await browser.newContext();
+
+    await warm.addInitScript(() => {
+      Object.assign(globalThis, { __INTERFERE_FORCE_ENABLE__: true });
+    });
+
+    const page = await warm.newPage();
+
+    await page.goto(`${host.url}/journey`);
+
+    await page
+      .getByLabel("Session")
+      .filter({ hasText: /^[\da-f-]{36}$/u })
+      .waitFor();
+
+    await warm.close();
   }, 300_000);
 
   afterAll(async () => {
