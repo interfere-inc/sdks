@@ -10,6 +10,7 @@
         "tsrs": "catalog:",
         "turbo": "catalog:",
         "vitest": "catalog:",
+        "zod": "catalog:",
       },
     },
     "src/packages/public/build-tools": {

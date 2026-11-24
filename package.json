@@ -17,7 +17,8 @@
     "playwright": "catalog:",
     "tsrs": "catalog:",
     "turbo": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "zod": "catalog:"
   },
   "workspaces": {
     "packages": [
