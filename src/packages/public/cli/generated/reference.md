@@ -402,7 +402,7 @@ Records feedback on a problem in the workspace.
 |------|------|----------|-------------|
 | `--workspace-slug` | `string` | Yes |  |
 | `--problem-id` | `string (uuid)` | Yes |  |
-| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
+| `--json` | `JSON` | No | Request body as JSON (or use individual body-field flags) |
 
 #### `interfere feedback submit-workspace-feedback`
 

@@ -10,13 +10,16 @@ pub struct SubmitProblemFeedbackRequest {
     pub actionability: Option<SubmitProblemFeedbackRequestActionability>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub comment: Option<String>,
+    /// Retry key for one submission. Omit it to keep a single feedback per user and problem, which a later submission replaces.
     #[serde(rename = "submissionId")]
-    #[serde(default)]
-    pub submission_id: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub submission_id: Option<String>,
+    /// Ignored. The server records the submission time.
     #[serde(rename = "submittedAt")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(default)]
-    #[serde(with = "crate::core::flexible_datetime::offset")]
-    pub submitted_at: DateTime<FixedOffset>,
+    #[serde(with = "crate::core::flexible_datetime::offset::option")]
+    pub submitted_at: Option<DateTime<FixedOffset>>,
 }
 
 impl SubmitProblemFeedbackRequest {
@@ -62,16 +65,13 @@ impl SubmitProblemFeedbackRequestBuilder {
     }
 
     /// Consumes the builder and constructs a [`SubmitProblemFeedbackRequest`].
-    /// This method will fail if any of the following fields are not set:
-    /// - [`submission_id`](SubmitProblemFeedbackRequestBuilder::submission_id)
-    /// - [`submitted_at`](SubmitProblemFeedbackRequestBuilder::submitted_at)
     pub fn build(self) -> Result<SubmitProblemFeedbackRequest, BuildError> {
         Ok(SubmitProblemFeedbackRequest {
             accuracy: self.accuracy,
             actionability: self.actionability,
             comment: self.comment,
-            submission_id: self.submission_id.ok_or_else(|| BuildError::missing_field("submission_id"))?,
-            submitted_at: self.submitted_at.ok_or_else(|| BuildError::missing_field("submitted_at"))?,
+            submission_id: self.submission_id,
+            submitted_at: self.submitted_at,
         })
     }
 }

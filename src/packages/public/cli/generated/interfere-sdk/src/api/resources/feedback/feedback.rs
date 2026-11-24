@@ -42,11 +42,7 @@ impl FeedbackClient {
     ///             &"workspaceSlug".to_string(),
     ///             &"problemId".to_string(),
     ///             &SubmitProblemFeedbackRequest {
-    ///                 submission_id: "submissionId".to_string(),
-    ///                 submitted_at: DateTime::parse_from_rfc3339("2024-01-15T09:30:00Z").unwrap(),
-    ///                 accuracy: None,
-    ///                 actionability: None,
-    ///                 comment: None,
+    ///                 ..Default::default()
     ///             },
     ///             None,
     ///         )

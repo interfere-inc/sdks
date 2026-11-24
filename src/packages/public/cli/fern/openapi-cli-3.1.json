@@ -85002,7 +85002,7 @@
           }
         ],
         "requestBody": {
-          "required": true,
+          "required": false,
           "content": {
             "application/json": {
               "schema": {
@@ -85030,17 +85030,15 @@
                   },
                   "submissionId": {
                     "type": "string",
-                    "format": "uuid"
+                    "format": "uuid",
+                    "description": "Retry key for one submission. Omit it to keep a single feedback per user and problem, which a later submission replaces."
                   },
                   "submittedAt": {
                     "type": "string",
-                    "format": "date-time"
+                    "format": "date-time",
+                    "description": "Ignored. The server records the submission time."
                   }
                 },
-                "required": [
-                  "submissionId",
-                  "submittedAt"
-                ],
                 "additionalProperties": false
               }
             }

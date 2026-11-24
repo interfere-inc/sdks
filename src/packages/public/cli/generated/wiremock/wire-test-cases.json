@@ -3273,10 +3273,7 @@
         "workspace": "workspaceSlug",
         "problemId": "problemId"
       },
-      "body": {
-        "submissionId": "submissionId",
-        "submittedAt": "2024-01-15T09:30:00Z"
-      },
+      "body": {},
       "queryMatchers": [],
       "headerMatchers": [],
       "requiresAuth": true,
@@ -7880,10 +7877,7 @@
         "workspace": "workspaceSlug",
         "problemId": "problemId"
       },
-      "body": {
-        "submissionId": "submissionId",
-        "submittedAt": "2024-01-15T09:30:00Z"
-      },
+      "body": {},
       "queryMatchers": [],
       "headerMatchers": [],
       "requiresAuth": true,
