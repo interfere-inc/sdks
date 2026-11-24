@@ -39,6 +39,14 @@ function childEnvironment(overrides: Record<string, string | undefined>) {
   ]) as NodeJS.ProcessEnv;
 }
 
+const endsWithParent = `data:text/javascript,${encodeURIComponent(
+  'process.once("disconnect", () => process.kill(process.pid, "SIGTERM"));\nprocess.channel?.unref();',
+)}`;
+
+export function childArguments(script: string) {
+  return ["--import", endsWithParent, script];
+}
+
 export type PackageSelection = string | { as: string; from: string };
 
 export interface ApplicationOptions {
@@ -204,7 +212,7 @@ export async function application(
         env: Record<string, string | undefined>,
         cwd = root,
       ) {
-        const child = spawn(process.execPath, [script], {
+        const child = spawn(process.execPath, childArguments(script), {
           cwd,
           env: childEnvironment(env),
           stdio: ["ignore", "pipe", "pipe", "ipc"],
