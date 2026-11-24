@@ -15,6 +15,7 @@
   "devDependencies": {
     "@changesets/cli": "catalog:",
     "playwright": "catalog:",
+    "tsdown": "catalog:",
     "tsrs": "catalog:",
     "turbo": "catalog:",
     "vitest": "catalog:",
