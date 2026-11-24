@@ -62,6 +62,9 @@ pub struct QueryFindingsListByProblemResponseItemSurface {
     #[serde(rename = "sdkConfig")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sdk_config: Option<QueryFindingsListByProblemResponseItemSurfaceSdkConfig>,
+    #[serde(rename = "serviceId")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub service_id: Option<String>,
     #[serde(default)]
     pub slug: String,
     #[serde(rename = "sourceDatasourceId")]
@@ -112,6 +115,7 @@ pub struct QueryFindingsListByProblemResponseItemSurfaceBuilder {
     primary_environment_id: Option<String>,
     primary_environment_name: Option<String>,
     sdk_config: Option<QueryFindingsListByProblemResponseItemSurfaceSdkConfig>,
+    service_id: Option<String>,
     slug: Option<String>,
     source_datasource_id: Option<String>,
     source_connection_id: Option<String>,
@@ -213,6 +217,11 @@ impl QueryFindingsListByProblemResponseItemSurfaceBuilder {
         self
     }
 
+    pub fn service_id(mut self, value: impl Into<String>) -> Self {
+        self.service_id = Some(value.into());
+        self
+    }
+
     pub fn slug(mut self, value: impl Into<String>) -> Self {
         self.slug = Some(value.into());
         self
@@ -286,6 +295,7 @@ impl QueryFindingsListByProblemResponseItemSurfaceBuilder {
             primary_environment_id: self.primary_environment_id,
             primary_environment_name: self.primary_environment_name,
             sdk_config: self.sdk_config,
+            service_id: self.service_id,
             slug: self.slug.ok_or_else(|| BuildError::missing_field("slug"))?,
             source_datasource_id: self.source_datasource_id,
             source_connection_id: self.source_connection_id,

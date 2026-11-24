@@ -13666,6 +13666,24 @@
                         }
                       ]
                     },
+                    "serviceId": {
+                      "anyOf": [
+                        {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "uuid"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "slug": {
                       "type": "string"
                     },
@@ -13801,6 +13819,7 @@
                     "primaryEnvironmentId",
                     "primaryEnvironmentName",
                     "sdkConfig",
+                    "serviceId",
                     "slug",
                     "sourceDatasourceId",
                     "sourceConnectionId",
@@ -17507,6 +17526,24 @@
                         }
                       ]
                     },
+                    "serviceId": {
+                      "anyOf": [
+                        {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "uuid"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "slug": {
                       "type": "string"
                     },
@@ -17642,6 +17679,7 @@
                     "primaryEnvironmentId",
                     "primaryEnvironmentName",
                     "sdkConfig",
+                    "serviceId",
                     "slug",
                     "sourceDatasourceId",
                     "sourceConnectionId",
@@ -42182,6 +42220,24 @@
                           }
                         ]
                       },
+                      "serviceId": {
+                        "anyOf": [
+                          {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "uuid"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
                       "slug": {
                         "type": "string"
                       },
@@ -42317,6 +42373,7 @@
                       "primaryEnvironmentId",
                       "primaryEnvironmentName",
                       "sdkConfig",
+                      "serviceId",
                       "slug",
                       "sourceDatasourceId",
                       "sourceConnectionId",
@@ -55217,6 +55274,24 @@
                   }
                 ]
               },
+              "serviceId": {
+                "anyOf": [
+                  {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
               "slug": {
                 "type": "string"
               },
@@ -55352,6 +55427,7 @@
               "primaryEnvironmentId",
               "primaryEnvironmentName",
               "sdkConfig",
+              "serviceId",
               "slug",
               "sourceDatasourceId",
               "sourceConnectionId",
@@ -55580,6 +55656,24 @@
               }
             ]
           },
+          "serviceId": {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "slug": {
             "type": "string"
           },
@@ -55715,6 +55809,7 @@
           "primaryEnvironmentId",
           "primaryEnvironmentName",
           "sdkConfig",
+          "serviceId",
           "slug",
           "sourceDatasourceId",
           "sourceConnectionId",
@@ -55940,6 +56035,24 @@
                 }
               ]
             },
+            "serviceId": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "slug": {
               "type": "string"
             },
@@ -56075,6 +56188,7 @@
             "primaryEnvironmentId",
             "primaryEnvironmentName",
             "sdkConfig",
+            "serviceId",
             "slug",
             "sourceDatasourceId",
             "sourceConnectionId",
