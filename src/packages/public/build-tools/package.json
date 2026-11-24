@@ -49,12 +49,12 @@
     },
     "./release-request": {
       "import": {
-        "types": "./dist/release-request.d.mts",
-        "default": "./dist/release-request.mjs"
+        "types": "./dist/release/request.d.mts",
+        "default": "./dist/release/request.mjs"
       },
       "require": {
-        "types": "./dist/release-request.d.cts",
-        "default": "./dist/release-request.cjs"
+        "types": "./dist/release/request.d.cts",
+        "default": "./dist/release/request.cjs"
       }
     },
     "./package.json": "./package.json",
@@ -70,12 +70,12 @@
     },
     "./upload-source-map-chunks": {
       "import": {
-        "types": "./dist/source-maps/upload-source-map-chunks.d.mts",
-        "default": "./dist/source-maps/upload-source-map-chunks.mjs"
+        "types": "./dist/source-maps/upload/chunks.d.mts",
+        "default": "./dist/source-maps/upload/chunks.mjs"
       },
       "require": {
-        "types": "./dist/source-maps/upload-source-map-chunks.d.cts",
-        "default": "./dist/source-maps/upload-source-map-chunks.cjs"
+        "types": "./dist/source-maps/upload/chunks.d.cts",
+        "default": "./dist/source-maps/upload/chunks.cjs"
       }
     },
     "./source-map-upload-fetch": {
@@ -90,12 +90,12 @@
     },
     "./release-slug": {
       "import": {
-        "types": "./dist/release-slug.d.mts",
-        "default": "./dist/release-slug.mjs"
+        "types": "./dist/release/slug.d.mts",
+        "default": "./dist/release/slug.mjs"
       },
       "require": {
-        "types": "./dist/release-slug.d.cts",
-        "default": "./dist/release-slug.cjs"
+        "types": "./dist/release/slug.d.cts",
+        "default": "./dist/release/slug.cjs"
       }
     }
   },

@@ -20,8 +20,8 @@ import {
 } from "../page-lifecycle/page-lifecycle.js";
 import { isPageLeaving } from "../page-lifecycle/unloading.js";
 import { currentSpanGate, noteLogsDecided } from "./transport/leave-gate.js";
-import { withExportCarryover } from "./export-carryover.js";
-import type { RetainedSend } from "./export-carryover.js";
+import { withExportCarryover } from "./export/carryover.js";
+import type { RetainedSend } from "./export/carryover.js";
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
 import { sendInKeepaliveChunks } from "./keepalive-chunks.js";
 import { compressExportBody } from "./transport/compress-export.js";
@@ -32,8 +32,6 @@ import { IngestMetricExporter } from "./exporter-metrics.js";
 import type { GatedResourceAttributes } from "./exporter-metrics.js";
 
 const MILLIS_PER_SECOND = 1000;
-
-export const INGEST_IGNORE_RE = /\/drain\/v1\/(?:traces|logs|metrics)(?:\?|$)/u;
 
 type ExportHooks = Omit<RetainedSend, "id"> & { id?: string };
 

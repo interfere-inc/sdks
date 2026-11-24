@@ -6,8 +6,8 @@ import {
   driver,
   foreignSdkPages,
   freshnessStamp,
-} from "../../../test/foreign-sdk.driver.js";
-import type { SeenRequest } from "../../../test/foreign-sdk.driver.js";
+} from "../../../test/foreign/sdk.driver.js";
+import type { SeenRequest } from "../../../test/foreign/sdk.driver.js";
 import { beforeEach, expect, test } from "vitest";
 
 const MILLIS_PER_SECOND = 1000;

@@ -10,19 +10,13 @@
  * the SDK's public surface.
  */
 
-export {
-  type BundledInstrumentations,
-  type CaptureFailedRequestsOption,
-  type CaptureFailedRequestsOptions,
-  type HttpStatusCodeRange,
-  registerBundledInstrumentations,
-} from "./instrumentations/instrumentations.js";
+export { registerBundledInstrumentations } from "./instrumentations/instrumentations.js";
 
-export { installViewTracker, type ViewTracker } from "./navigation.js";
+export { installViewTracker } from "./navigation.js";
 
 export { readPropagationFromDocument } from "./propagation.js";
 
-export { buildOtelProvider, type OtelProviderHandle } from "./provider.js";
+export { buildOtelProvider } from "./provider.js";
 
 export { captureWebVitals } from "./web-vitals.js";
 

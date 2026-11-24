@@ -15,7 +15,7 @@ import { worker } from "../../../../test/msw.js";
 import { requestSpans } from "../../../../test/request-spans.test-utils.js";
 import { w3cTraceHeaders } from "../../../../test/trace-headers.test-utils.js";
 import { registerBundledInstrumentations } from "./instrumentations.js";
-import { applyXhrSpanAttrs } from "./request-outcome.js";
+import { applyXhrSpanAttrs } from "./request/outcome.js";
 
 const URL_ECHO = `${location.origin}/upstream-contract`;
 

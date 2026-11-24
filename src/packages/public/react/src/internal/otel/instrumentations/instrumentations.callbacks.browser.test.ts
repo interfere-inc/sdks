@@ -9,7 +9,7 @@ import {
 } from "@opentelemetry/sdk-trace";
 import type { MockInstance } from "vitest";
 
-import { createExportFilterProcessor } from "../export-filter.js";
+import { createExportFilterProcessor } from "../export/filter.js";
 import { registerBundledInstrumentations } from "./instrumentations.js";
 import type { BundledInstrumentations } from "./instrumentations.js";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";

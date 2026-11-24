@@ -8,8 +8,8 @@ import {
   openRuntime,
   owner,
   probe,
-} from "../../../../test/foreign-sdk.test-utils.js";
-import type { Runtime } from "../../../../test/foreign-sdk.test-utils.js";
+} from "../../../../test/foreign/sdk.test-utils.js";
+import type { Runtime } from "../../../../test/foreign/sdk.test-utils.js";
 
 const ORDERS = [
   [

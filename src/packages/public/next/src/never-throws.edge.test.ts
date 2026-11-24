@@ -1,5 +1,5 @@
 import { HttpResponse, http } from "msw";
-import { delivered, network } from "../test/edge-network.fixture";
+import { delivered, network } from "../test/edge/network.fixture";
 import { trace } from "@opentelemetry/api";
 import { TracerProvider } from "@opentelemetry/sdk-trace";
 import type { MockInstance } from "vitest";

@@ -31,11 +31,11 @@
   "imports": {
     "#request-flush": {
       "workerd": {
-        "types": "./dist/internal/server/request-flush.workerd.d.mts",
-        "default": "./dist/internal/server/request-flush.workerd.mjs"
+        "types": "./dist/internal/server/request/flush.workerd.d.mts",
+        "default": "./dist/internal/server/request/flush.workerd.mjs"
       },
-      "types": "./dist/internal/server/request-flush.d.mts",
-      "default": "./dist/internal/server/request-flush.mjs"
+      "types": "./dist/internal/server/request/flush.d.mts",
+      "default": "./dist/internal/server/request/flush.mjs"
     },
     "#outbound-instrumentation": {
       "workerd": {

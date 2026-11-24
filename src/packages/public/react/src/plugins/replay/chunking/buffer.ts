@@ -1,7 +1,8 @@
 import { EventType } from "@rrweb/types";
 import type { eventWithTime } from "@rrweb/types";
 
-import { classifyReplayEvent, utf8ByteLength } from "./chunking.js";
+import { utf8ByteLength } from "./chunking.js";
+import { classifyReplayEvent } from "./classify.js";
 import type { BufferedReplayEvent } from "./chunking.js";
 import { createLogger } from "../../../util/log.js";
 

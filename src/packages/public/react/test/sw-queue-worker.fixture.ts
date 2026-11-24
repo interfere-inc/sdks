@@ -1,5 +1,5 @@
 /// <reference lib="webworker" />
-import { installIngestQueue } from "../src/internal/sw-queue.js";
+import { installIngestQueue } from "../src/internal/sw/queue.js";
 
 declare const self: ServiceWorkerGlobalScope;
 

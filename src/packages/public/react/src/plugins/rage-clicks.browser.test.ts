@@ -4,7 +4,7 @@ import {
   SimpleSpanProcessor,
 } from "@opentelemetry/sdk-trace";
 
-import { createPluginContext } from "../../test/fixtures/plugin-context.js";
+import { createPluginContext } from "../../test/fixtures/plugin/context.js";
 import rageClicksPlugin from "./rage-clicks.js";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 

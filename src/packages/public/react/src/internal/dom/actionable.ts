@@ -1,4 +1,5 @@
-import { fieldLabel, privacyLevel, publicText } from "./privacy.js";
+import { privacyLevel } from "./privacy.js";
+import { fieldLabel, publicText } from "./text.js";
 import type { PrivacyLevel, PrivacyPolicy } from "./privacy.js";
 
 const ACTIONABLE_TAGS = new Set([

@@ -1,5 +1,6 @@
 import { SessionManager } from "../../tracking/session.js";
-import { ActivityMonitor, EXPIRE_AFTER_MS, IDLE_AFTER_MS } from "./activity.js";
+import { ActivityMonitor } from "./activity.js";
+import { EXPIRE_AFTER_MS, IDLE_AFTER_MS } from "./timing.js";
 import { resetPageLifecycleForTests } from "../page-lifecycle/page-lifecycle.js";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 

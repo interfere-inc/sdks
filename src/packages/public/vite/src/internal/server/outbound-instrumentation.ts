@@ -1,6 +1,6 @@
 import { UndiciInstrumentation } from "@opentelemetry/instrumentation-undici";
 
-import type { RequestPropagation } from "./request-propagation";
+import type { RequestPropagation } from "./request/propagation";
 
 /** Node's global fetch runs on undici, so Node traces outbound requests through its diagnostics channels. */
 export function outboundInstrumentations(

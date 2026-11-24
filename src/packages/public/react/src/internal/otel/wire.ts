@@ -19,7 +19,7 @@ import { isPageLeaving } from "../page-lifecycle/unloading.js";
 
 import type { resolveTargets } from "../config/config.js";
 import type { Kernel, TracingOptions } from "../kernel.js";
-import { INGEST_IGNORE_RE } from "./exporter.js";
+import { INGEST_IGNORE_RE } from "./ingest-ignore.js";
 
 const REPLAY_UPLOAD_RE = /\/v3\/replay\/upload\//u;
 

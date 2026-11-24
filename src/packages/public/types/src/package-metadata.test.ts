@@ -13,7 +13,7 @@ interface PackageExport {
 }
 
 interface PackageJson {
-  exports?: Record<string, PackageExport | undefined>;
+  exports?: Record<string, PackageExport | null | undefined>;
   files?: string[];
   imports?: unknown;
 }
@@ -151,11 +151,23 @@ describe("@interfere/types package metadata", () => {
 });
 
 function expectDualPackageMap(
-  map: Record<string, PackageExport | undefined> | undefined,
+  map: Record<string, PackageExport | null | undefined> | undefined,
 ) {
   expect(map).toStrictEqual(expect.any(Object));
 
-  for (const [subpath, entry] of Object.entries(map ?? {})) {
+  const entries = Object.entries(map ?? {});
+
+  const blocked = entries.filter(([, entry]) => entry === null);
+
+  expect(blocked.map(([subpath]) => subpath)).toStrictEqual(
+    blocked
+      .map(([subpath]) => subpath)
+      .filter((subpath) => subpath.endsWith("*")),
+  );
+
+  for (const [subpath, entry] of entries.filter(
+    ([, value]) => value !== null,
+  )) {
     expect(entry?.import?.types, subpath).toMatch(DTS_EXT);
     expect(entry?.import?.default, subpath).toMatch(MJS_EXT);
 

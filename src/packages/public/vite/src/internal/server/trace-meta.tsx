@@ -1,4 +1,4 @@
-import { traceMeta } from "./request-trace";
+import { traceMeta } from "./request/trace";
 
 /**
  * Server Component that emits the W3C trace-context meta tags

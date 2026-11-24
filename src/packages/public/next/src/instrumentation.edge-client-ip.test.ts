@@ -3,7 +3,7 @@ import { registeredTracerProvider } from "@interfere/server-core/ownership";
 import { trace } from "@opentelemetry/api";
 import { TracerProvider } from "@opentelemetry/sdk-trace";
 import { afterEach, beforeAll, beforeEach, expect, test, vi } from "vitest";
-import { delivered, network, requests } from "../test/edge-network.fixture";
+import { delivered, network, requests } from "../test/edge/network.fixture";
 
 beforeAll(async () => {
   await import("./instrumentation.edge.js");

@@ -6,7 +6,7 @@ import { patchFetch } from "next/dist/server/lib/patch-fetch";
 import { InterfereClient } from "@interfere/javascript";
 import { exportTracePayload } from "../tracing/trace-payload";
 import { HttpResponse, http } from "msw";
-import { network } from "../../../../test/edge-network.fixture";
+import { network } from "../../../../test/edge/network.fixture";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,

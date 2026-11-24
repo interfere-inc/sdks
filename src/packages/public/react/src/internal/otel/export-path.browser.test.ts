@@ -1,5 +1,5 @@
 import { createLogExporter, createMetricExporter } from "./exporter.js";
-import { clearExportCarryover } from "./export-carryover.js";
+import { clearExportCarryover } from "./export/carryover.js";
 import { isPageHidden } from "../page-lifecycle/page-lifecycle.js";
 import {
   afterEach,

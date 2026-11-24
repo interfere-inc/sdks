@@ -6,7 +6,7 @@ import {
 } from "@opentelemetry/sdk-trace";
 import { gunzipSync } from "fflate";
 import { HttpResponse, http } from "msw";
-import { createPluginContext } from "../../../../test/fixtures/plugin-context.js";
+import { createPluginContext } from "../../../../test/fixtures/plugin/context.js";
 import type { ReplayChunkPayload } from "../chunking/chunking.js";
 import { deliverChunk } from "./delivery.js";
 import type { DeliverInput } from "./delivery.js";

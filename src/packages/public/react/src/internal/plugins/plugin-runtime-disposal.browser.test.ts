@@ -13,7 +13,7 @@ import {
 import { record } from "rrweb";
 
 import { DISABLE_ALL_PLUGINS } from "../../../test/fixtures/disable-all-plugins.js";
-import { pluginTransport } from "../../../test/fixtures/plugin-runtime-transport.js";
+import { pluginTransport } from "../../../test/fixtures/plugin/runtime-transport.js";
 import { addBaselineHandlers } from "../../../test/msw.js";
 import { SessionTracker } from "../../tracking/api.js";
 import { Kernel } from "../kernel.js";

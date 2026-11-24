@@ -3,12 +3,12 @@ import { createMiddleware } from "@tanstack/react-start";
 import {
   captureServerFunctionError,
   withRequestSpan,
-} from "./internal/server/request-trace";
+} from "./internal/server/request/trace";
 
 export {
   type TraceMetaDescriptor,
   traceMeta,
-} from "./internal/server/request-trace";
+} from "./internal/server/request/trace";
 
 /** Opens a SERVER span per request; register it in `createStart({ requestMiddleware })`. */
 export const interfereRequestMiddleware = createMiddleware().server(

@@ -11,7 +11,7 @@ export default defineConfig({
         resolve: {
           alias: {
             "#request-flush": fileURLToPath(
-              new URL("src/internal/server/request-flush.ts", import.meta.url),
+              new URL("src/internal/server/request/flush.ts", import.meta.url),
             ),
             "#outbound-instrumentation": fileURLToPath(
               new URL(

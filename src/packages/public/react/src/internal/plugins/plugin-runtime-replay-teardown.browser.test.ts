@@ -2,8 +2,8 @@ import { EventType } from "@rrweb/types";
 import { record } from "rrweb";
 
 import { DISABLE_ALL_PLUGINS } from "../../../test/fixtures/disable-all-plugins.js";
-import { startRecordingPluginRuntime } from "../../../test/fixtures/plugin-runtime.test-utils.js";
-import { pluginTransport } from "../../../test/fixtures/plugin-runtime-transport.js";
+import { startRecordingPluginRuntime } from "../../../test/fixtures/plugin/runtime.test-utils.js";
+import { pluginTransport } from "../../../test/fixtures/plugin/runtime-transport.js";
 import type { ReadableSpan } from "@opentelemetry/sdk-trace";
 import { expect, test, vi } from "vitest";
 

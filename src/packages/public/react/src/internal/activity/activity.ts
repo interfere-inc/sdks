@@ -1,19 +1,15 @@
 import { createLogger } from "../../util/log.js";
 import { onPageHidden, onPageShown } from "../page-lifecycle/page-lifecycle.js";
+import {
+  CHECK_INTERVAL_MS,
+  EXPIRE_AFTER_MS,
+  IDLE_AFTER_MS,
+  MAX_AGE_MS,
+} from "./timing.js";
 
 const log = createLogger("activity");
 
-/** Input-idle time after which the session pauses (replay stops recording); the session id is kept. */
-export const IDLE_AFTER_MS = 5 * 60 * 1000;
-
-/** Input gap after which the next input rotates to a new session id. */
-export const EXPIRE_AFTER_MS = 15 * 60 * 1000;
-
 const PAUSED_EXCEPTION_INTERVAL_MS = 5 * 60 * 1000;
-
-export const MAX_AGE_MS = 24 * 60 * 60 * 1000;
-
-export const CHECK_INTERVAL_MS = 30 * 1000;
 
 const KEEPALIVE_THROTTLE_MS = 1000;
 

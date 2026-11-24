@@ -7,7 +7,7 @@ import {
 } from "@opentelemetry/sdk-trace";
 
 import { registerBundledInstrumentations } from "./instrumentations.js";
-import { applyFetchSpanAttrs } from "./request-outcome.js";
+import { applyFetchSpanAttrs } from "./request/outcome.js";
 import type { HttpStatusCodeRange } from "./instrumentations.js";
 import { afterEach, describe, expect, test } from "vitest";
 

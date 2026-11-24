@@ -54,24 +54,24 @@
     },
     "./package.json": "./package.json",
     "./retry-after": {
-      "types": "./dist/retry-after.d.mts",
-      "default": "./dist/retry-after.mjs"
+      "types": "./dist/retry/after.d.mts",
+      "default": "./dist/retry/after.mjs"
     },
     "./retry": {
       "types": "./dist/retry.d.mts",
       "default": "./dist/retry.mjs"
     },
     "./retry-request": {
-      "types": "./dist/retry-request.d.mts",
-      "default": "./dist/retry-request.mjs"
+      "types": "./dist/retry/request.d.mts",
+      "default": "./dist/retry/request.mjs"
     },
     "./set-required": {
       "types": "./dist/set-required.d.mts",
       "default": "./dist/set-required.mjs"
     },
     "./retry-telemetry": {
-      "types": "./dist/retry-telemetry.d.mts",
-      "default": "./dist/retry-telemetry.mjs"
+      "types": "./dist/retry/telemetry.d.mts",
+      "default": "./dist/retry/telemetry.mjs"
     },
     "./chunk": {
       "types": "./dist/chunk.d.mts",

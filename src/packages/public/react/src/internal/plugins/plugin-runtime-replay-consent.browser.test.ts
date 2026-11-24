@@ -1,8 +1,8 @@
 import { EventType } from "@rrweb/types";
 import { record } from "rrweb";
 
-import { startRecordingPluginRuntime } from "../../../test/fixtures/plugin-runtime.test-utils.js";
-import { pluginTransport } from "../../../test/fixtures/plugin-runtime-transport.js";
+import { startRecordingPluginRuntime } from "../../../test/fixtures/plugin/runtime.test-utils.js";
+import { pluginTransport } from "../../../test/fixtures/plugin/runtime-transport.js";
 import { expect, test, vi } from "vitest";
 
 test.each([

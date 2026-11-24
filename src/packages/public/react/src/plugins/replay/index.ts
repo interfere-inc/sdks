@@ -4,7 +4,7 @@ import { omitUndefined } from "@interfere/helpers/omit-undefined";
 import { EventType } from "@rrweb/types";
 
 import { createReplayCarryover } from "./upload/carryover.js";
-import { clearExportCarryover } from "../../internal/otel/export-carryover.js";
+import { clearExportCarryover } from "../../internal/otel/export/carryover.js";
 import { resolveTargets } from "../../internal/config/config.js";
 import type { SessionPauseReason } from "../../internal/activity/activity.js";
 import { onPageUnloading } from "../../internal/page-lifecycle/page-lifecycle.js";

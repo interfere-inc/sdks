@@ -8,7 +8,7 @@ import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import { worker } from "../../../../test/msw.js";
 import { requestSpans } from "../../../../test/request-spans.test-utils.js";
 import { registerBundledInstrumentations } from "./instrumentations.js";
-import { applyFetchSpanAttrs } from "./request-outcome.js";
+import { applyFetchSpanAttrs } from "./request/outcome.js";
 import type { BundledInstrumentations } from "./instrumentations.js";
 import type { CaptureFailedRequestsOption } from "./failure-policy.js";
 import { response } from "./failed-response.fixture.js";

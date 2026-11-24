@@ -5,7 +5,7 @@ import {
 } from "@opentelemetry/sdk-trace";
 import { Kernel } from "../src/internal/kernel.js";
 import { SessionTracker } from "../src/tracking/api.js";
-import { clearExportCarryover } from "../src/internal/otel/export-carryover.js";
+import { clearExportCarryover } from "../src/internal/otel/export/carryover.js";
 import { createReplayCarryover } from "../src/plugins/replay/upload/carryover.js";
 import { deliverChunk } from "../src/plugins/replay/upload/delivery.js";
 

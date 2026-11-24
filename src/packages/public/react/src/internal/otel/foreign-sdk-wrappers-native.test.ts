@@ -2,8 +2,8 @@ import {
   TRACEPARENT,
   driver,
   foreignSdkPages,
-} from "../../../test/foreign-sdk.driver.js";
-import type { SeenRequest } from "../../../test/foreign-sdk.driver.js";
+} from "../../../test/foreign/sdk.driver.js";
+import type { SeenRequest } from "../../../test/foreign/sdk.driver.js";
 import { beforeEach, expect, test } from "vitest";
 
 const seen: SeenRequest[] = [];

@@ -9,7 +9,7 @@ import {
   applyFetchSpanAttrs,
   applyXhrSpanAttrs,
   createFailureGate,
-} from "./request-outcome.js";
+} from "./request/outcome.js";
 import { resolveFailureRanges } from "./failure-policy.js";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 

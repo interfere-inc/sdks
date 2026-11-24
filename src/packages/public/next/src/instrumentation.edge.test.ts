@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { HttpResponse, http } from "msw";
-import { delivered, network, requests } from "../test/edge-network.fixture";
+import { delivered, network, requests } from "../test/edge/network.fixture";
 import { setInjectedConfiguration } from "@interfere/test-config/injected-configuration";
 /* oxlint-disable typescript/no-unsafe-assignment */
 import { SERVER_TRACING_GLOBAL } from "@interfere/types/sdk/server-tracing";

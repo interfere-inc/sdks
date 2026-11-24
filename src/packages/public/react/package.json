@@ -61,8 +61,8 @@
       "default": "./dist/internal/wrapper-singleton.mjs"
     },
     "./sw-runtime": {
-      "types": "./dist/internal/sw-queue.d.mts",
-      "default": "./dist/internal/sw-queue.mjs"
+      "types": "./dist/internal/sw/queue.d.mts",
+      "default": "./dist/internal/sw/queue.mjs"
     },
     "./util/global": {
       "types": "./dist/util/global.d.mts",
@@ -141,6 +141,7 @@
     "rrweb": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
+    "vite": "catalog:",
     "vitest": "catalog:",
     "vitest-browser-react": "catalog:"
   },

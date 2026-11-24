@@ -5,7 +5,8 @@ import { expect, test, vi } from "vitest";
 import { worker } from "../../../../test/msw.js";
 import { requestSpans } from "../../../../test/request-spans.test-utils.js";
 import { SessionManager } from "../../../tracking/session.js";
-import { ActivityMonitor, EXPIRE_AFTER_MS } from "../../activity/activity.js";
+import { ActivityMonitor } from "../../activity/activity.js";
+import { EXPIRE_AFTER_MS } from "../../activity/timing.js";
 import {
   ALLOWED,
   FOREIGN,

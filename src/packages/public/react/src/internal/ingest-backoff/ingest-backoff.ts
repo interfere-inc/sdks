@@ -1,11 +1,11 @@
 import {
   INGEST_QUEUE_QUERY,
   isIngestQueueAnswer,
-} from "../sw-queue-protocol.js";
+} from "../sw/queue-protocol.js";
 import type {
   IngestQueueController,
   IngestQueueQuery,
-} from "../sw-queue-protocol.js";
+} from "../sw/queue-protocol.js";
 
 const FIRST_BACKOFF_MS = 5000;
 

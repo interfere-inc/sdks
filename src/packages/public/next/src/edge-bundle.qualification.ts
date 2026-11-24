@@ -12,7 +12,7 @@ beforeAll(async () => {
     "bun",
     [
       "build",
-      fileURLToPath(new URL("../test/edge-entry.ts", import.meta.url)),
+      fileURLToPath(new URL("../test/edge/entry.ts", import.meta.url)),
       "--target=browser",
       "--format=iife",
       "--conditions=edge-light,browser",
@@ -28,7 +28,7 @@ beforeAll(async () => {
   );
 
   const runner = execute("node", [
-    fileURLToPath(new URL("../test/edge-vm.ts", import.meta.url)),
+    fileURLToPath(new URL("../test/edge/vm.ts", import.meta.url)),
   ]);
 
   runner.child.stdin?.end(bundle.stdout);

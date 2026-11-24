@@ -54,7 +54,7 @@ import {
   createMetricExporter,
   createTraceExporter,
 } from "./exporter.js";
-import { createExportFilterProcessor } from "./export-filter.js";
+import { createExportFilterProcessor } from "./export/filter.js";
 import { isPageHidden } from "../page-lifecycle/page-lifecycle.js";
 import { isPageLeaving } from "../page-lifecycle/unloading.js";
 import { holdSpansForLogs } from "./transport/leave-gate.js";

@@ -1,9 +1,9 @@
 import {
   DEFAULT_PRIVACY_POLICY,
-  fieldLabel,
   privacyLevel,
   resolvePrivacyPolicy,
 } from "./privacy.js";
+import { fieldLabel } from "./text.js";
 import { setLogLevel } from "../../util/log.js";
 import { expect, onTestFinished, test, vi } from "vitest";
 

@@ -1,5 +1,6 @@
 import { SessionManager } from "../../tracking/session.js";
-import { ActivityMonitor, IDLE_AFTER_MS } from "../activity/activity.js";
+import { ActivityMonitor } from "../activity/activity.js";
+import { IDLE_AFTER_MS } from "../activity/timing.js";
 import {
   onPageHidden,
   onPageShown,

@@ -10,7 +10,7 @@ import type { MockInstance } from "vitest";
 
 await import("./register");
 
-await import("./request-trace");
+await import("./request/trace");
 
 let providers: MockInstance<typeof trace.setGlobalTracerProvider>;
 let loggers: MockInstance<typeof logs.setGlobalLoggerProvider>;
@@ -121,7 +121,7 @@ test.each([
 
     const { register } = await import("./register");
 
-    const { traceMeta } = await import("./request-trace");
+    const { traceMeta } = await import("./request/trace");
 
     await register({
       tracing: "managed",

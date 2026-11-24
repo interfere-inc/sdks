@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { HttpResponse, http } from "msw";
-import { delivered, network, requests } from "../test/edge-network.fixture";
+import { delivered, network, requests } from "../test/edge/network.fixture";
 import { setInjectedConfiguration } from "@interfere/test-config/injected-configuration";
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
 import { releaseSourceIdEnvKeys } from "@interfere/types/integrations";

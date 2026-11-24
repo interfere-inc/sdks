@@ -63,7 +63,7 @@ beforeAll(async () => {
       [
         "build",
         fileURLToPath(
-          new URL("../test/edge-delivery.entry.ts", import.meta.url),
+          new URL("../test/edge/delivery.entry.ts", import.meta.url),
         ),
         "--target=browser",
         "--format=iife",
@@ -77,7 +77,7 @@ beforeAll(async () => {
 
     const child = spawn(
       process.execPath,
-      [fileURLToPath(new URL("../test/edge-delivery-vm.ts", import.meta.url))],
+      [fileURLToPath(new URL("../test/edge/delivery-vm.ts", import.meta.url))],
       {
         stdio: ["pipe", "pipe", "pipe"],
         timeout: 5000,

@@ -5,7 +5,7 @@ import { toError } from "@interfere/types/sdk/errors";
 import { isPlainRecord, isString } from "@interfere/types/sdk/guards/json";
 
 import type { resolveTargets } from "../../../internal/config/config.js";
-import { withExportCarryover } from "../../../internal/otel/export-carryover.js";
+import { withExportCarryover } from "../../../internal/otel/export/carryover.js";
 import { uploadReplayChunk } from "./upload.js";
 import { reserveKeepaliveBody } from "../../../internal/page-lifecycle/page-lifecycle.js";
 

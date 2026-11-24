@@ -1,8 +1,8 @@
-import { answerIngestQueueQuery } from "../sw-queue-protocol.js";
+import { answerIngestQueueQuery } from "../sw/queue-protocol.js";
 import type {
   IngestQueueController,
   IngestQueueQuery,
-} from "../sw-queue-protocol.js";
+} from "../sw/queue-protocol.js";
 import { IngestBackoffError, fetchIngest } from "./ingest-backoff.js";
 import { HttpResponse, http } from "msw";
 

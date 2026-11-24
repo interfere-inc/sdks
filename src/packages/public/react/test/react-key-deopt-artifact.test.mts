@@ -108,7 +108,7 @@ async function countKeyedNameDeopts(mode: FixtureMode) {
         (await page.locator("body").getAttribute("data-kernel")) === "true";
     }
 
-    await page.waitForTimeout(6000);
+    await page.waitForSelector("body[data-streamed]");
   } finally {
     await browser.close();
   }

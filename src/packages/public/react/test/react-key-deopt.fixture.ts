@@ -8,11 +8,21 @@ const WORDS =
     " ",
   );
 
+const STREAM_TICKS = 180;
+
 function Stream() {
   const [words, setWords] = useState<string[]>([]);
 
   useEffect(() => {
+    let ticks = 0;
+
     const id = setInterval(() => {
+      ticks += 1;
+
+      if (ticks === STREAM_TICKS) {
+        document.body.dataset["streamed"] = "true";
+      }
+
       setWords((previous) => [
         ...previous.slice(-200),
         WORDS[previous.length % WORDS.length] ?? "",

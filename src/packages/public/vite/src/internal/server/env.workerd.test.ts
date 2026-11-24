@@ -31,7 +31,7 @@ async function bundleWithProcessReads() {
 
   await writeFile(
     entry,
-    ["env", "capture", "request-trace"]
+    ["env", "capture", "request/trace"]
       .map(
         (name) =>
           `export * from ${JSON.stringify(path.join(import.meta.dirname, `${name}.ts`))};`,

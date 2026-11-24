@@ -6,7 +6,7 @@ import {
   openRuntime,
   owner,
   probe,
-} from "../../../../test/foreign-sdk.test-utils.js";
+} from "../../../../test/foreign/sdk.test-utils.js";
 
 const KINDS = ["fetch", "fetch-request", "xhr"] as const;
 const MODES = ["default"] as const;

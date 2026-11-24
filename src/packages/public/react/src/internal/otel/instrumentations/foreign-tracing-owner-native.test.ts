@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import type { ForeignStyle } from "../../../../test/foreign-writer.js";
+import type { ForeignStyle } from "../../../../test/foreign/writer.js";
 import {
   baggageKeys,
   headerNames,
@@ -9,7 +9,7 @@ import {
   openRuntime,
   owner,
   probe,
-} from "../../../../test/foreign-sdk.test-utils.js";
+} from "../../../../test/foreign/sdk.test-utils.js";
 
 const KINDS = ["fetch", "fetch-request", "xhr"] as const;
 

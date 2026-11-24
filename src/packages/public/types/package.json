@@ -37,6 +37,57 @@
         "default": "./dist/data/*.cjs"
       }
     },
+    "./data/source-map-batch": {
+      "import": {
+        "types": "./dist/data/source/source-map-batch.d.mts",
+        "default": "./dist/data/source/source-map-batch.mjs"
+      },
+      "require": {
+        "types": "./dist/data/source/source-map-batch.d.cts",
+        "default": "./dist/data/source/source-map-batch.cjs"
+      }
+    },
+    "./data/source-map-diagnostics": {
+      "import": {
+        "types": "./dist/data/source/source-map-diagnostics.d.mts",
+        "default": "./dist/data/source/source-map-diagnostics.mjs"
+      },
+      "require": {
+        "types": "./dist/data/source/source-map-diagnostics.d.cts",
+        "default": "./dist/data/source/source-map-diagnostics.cjs"
+      }
+    },
+    "./data/source-map-status": {
+      "import": {
+        "types": "./dist/data/source/source-map-status.d.mts",
+        "default": "./dist/data/source/source-map-status.mjs"
+      },
+      "require": {
+        "types": "./dist/data/source/source-map-status.d.cts",
+        "default": "./dist/data/source/source-map-status.cjs"
+      }
+    },
+    "./data/source-map-upload-batch": {
+      "import": {
+        "types": "./dist/data/source/source-map-upload-batch.d.mts",
+        "default": "./dist/data/source/source-map-upload-batch.mjs"
+      },
+      "require": {
+        "types": "./dist/data/source/source-map-upload-batch.d.cts",
+        "default": "./dist/data/source/source-map-upload-batch.cjs"
+      }
+    },
+    "./data/source-maps": {
+      "import": {
+        "types": "./dist/data/source/source-maps.d.mts",
+        "default": "./dist/data/source/source-maps.mjs"
+      },
+      "require": {
+        "types": "./dist/data/source/source-maps.d.cts",
+        "default": "./dist/data/source/source-maps.cjs"
+      }
+    },
+    "./data/source/*": null,
     "./sdk/plugins/*": {
       "import": {
         "types": "./dist/sdk/plugins/*.d.mts",

@@ -16,7 +16,7 @@ import type { ObserverCallbackInformation } from "@opentelemetry/instrumentation
 import type { LoggerProvider } from "@opentelemetry/sdk-logs";
 
 import { THIRD_PARTY_IGNORE } from "../../third-party-hosts.js";
-import { excludeFromExport } from "../export-filter.js";
+import { excludeFromExport } from "../export/filter.js";
 import { requestObservationLogger } from "../request-observer/request-observer-events.js";
 import type { TraceHeaderWriter } from "../trace-headers.js";
 import { ATTR_URL_FULL, ATTR_URL_PATH, stampUrlAttrs } from "../url-attrs.js";
@@ -26,8 +26,8 @@ import {
 } from "./failure-policy.js";
 import type { CaptureFailedRequestsOption } from "./failure-policy.js";
 import { propagationTargets } from "./propagation-targets.js";
-import { createRequestInstrumentations } from "./request-instrumentations.js";
-import type { RequestInstrumentationsInput } from "./request-instrumentations.js";
+import { createRequestInstrumentations } from "./request/instrumentations.js";
+import type { RequestInstrumentationsInput } from "./request/instrumentations.js";
 import type { PropagateToEntry, TraceHeadersOption } from "./header-policy.js";
 
 const ATTR_LONGTASK_CONTAINER_TYPE = "longtask.container_type" as const;

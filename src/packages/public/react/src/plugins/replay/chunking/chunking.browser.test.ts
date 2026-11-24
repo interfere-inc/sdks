@@ -1,11 +1,11 @@
 import { EventType } from "@rrweb/types";
 
 import {
-  classifyReplayEvent,
   splitReplayEvents,
   toReplayChunkPayload,
   utf8ByteLength,
 } from "./chunking.js";
+import { classifyReplayEvent } from "./classify.js";
 import type { BufferedReplayEvent } from "./chunking.js";
 import { describe, expect, test } from "vitest";
 

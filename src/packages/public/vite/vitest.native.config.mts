@@ -19,7 +19,7 @@ export default defineConfig({
     alias: {
       "#request-flush": fileURLToPath(
         new URL(
-          "src/internal/server/request-flush.workerd.ts",
+          "src/internal/server/request/flush.workerd.ts",
           import.meta.url,
         ),
       ),

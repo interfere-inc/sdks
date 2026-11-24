@@ -17,6 +17,7 @@
     "scripts/**/*.ts",
     "test/**/*.ts",
     "test/**/*.mts",
+    "*.test.ts",
     "*.config.ts"
   ],
   "exclude": ["dist", "node_modules"]

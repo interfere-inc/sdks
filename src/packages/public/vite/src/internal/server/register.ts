@@ -40,7 +40,7 @@ import { captureError } from "./capture";
 import { resolveReleaseSlug } from "../release-slug";
 import { readInterfereServerEnv } from "./env";
 import { FreshnessStampingPropagator } from "./freshness-propagator";
-import { RequestPropagation } from "./request-propagation";
+import { RequestPropagation } from "./request/propagation";
 import type { ServerInstrumentationOptions } from "./instrumentation-options";
 import { ensureRemoteConfig } from "./remote-config";
 import { runtime } from "./runtime";

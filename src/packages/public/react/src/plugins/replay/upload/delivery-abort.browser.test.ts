@@ -1,5 +1,5 @@
 import { HttpResponse, http } from "msw";
-import { createPluginContext } from "../../../../test/fixtures/plugin-context.js";
+import { createPluginContext } from "../../../../test/fixtures/plugin/context.js";
 import { worker } from "../../../../test/msw.js";
 import { createCompressor } from "../compression/compressor-host.js";
 import { deliverChunk } from "./delivery.js";

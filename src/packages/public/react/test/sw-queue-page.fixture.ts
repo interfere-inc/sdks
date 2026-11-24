@@ -5,7 +5,7 @@ import {
   IngestBackoffError,
   fetchIngest,
 } from "../src/internal/ingest-backoff/ingest-backoff.js";
-import type { IngestQueueMessage } from "../src/internal/sw-queue.js";
+import type { IngestQueueMessage } from "../src/internal/sw/queue.js";
 
 const queueName = new URL(location.href).searchParams.get("queue");
 

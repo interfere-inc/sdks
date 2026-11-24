@@ -10,13 +10,15 @@ import { observePageEvents } from "../browser/browser-page-events.commands.ts";
 import { collectGarbage } from "../browser/browser-gc.commands.ts";
 import { parkPointer } from "../browser/browser-pointer.commands.ts";
 import {
-  closeBrowserPopups,
   printDocument,
-  setBrowserMetadata,
-  setClipboardAccess,
   setColorScheme,
   setMediaType,
   setReducedMotion,
+} from "../browser/browser-media.commands.ts";
+import {
+  closeBrowserPopups,
+  setBrowserMetadata,
+  setClipboardAccess,
   setVirtualAuthenticator,
 } from "../browser/browser-platform.commands.ts";
 

@@ -119,4 +119,4 @@ export function capture(error: unknown) {
 export {
   requestCancellation,
   requestRecovered,
-} from "./internal/otel/instrumentations/request-cancellation.js";
+} from "./internal/otel/instrumentations/request/cancellation.js";

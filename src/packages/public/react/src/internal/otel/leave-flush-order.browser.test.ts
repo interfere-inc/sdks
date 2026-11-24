@@ -14,7 +14,7 @@ import {
 } from "../../../test/fixtures/export-collector.js";
 import { worker } from "../../../test/msw.js";
 import { reserveKeepaliveBody } from "../page-lifecycle/page-lifecycle.js";
-import { clearExportCarryover } from "./export-carryover.js";
+import { clearExportCarryover } from "./export/carryover.js";
 import { buildOtelProvider } from "./provider.js";
 
 const prefix = "interfere:export:v1:";

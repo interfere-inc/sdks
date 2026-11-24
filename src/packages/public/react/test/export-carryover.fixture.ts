@@ -3,7 +3,7 @@ import { ExportResultCode } from "@opentelemetry/core";
 import {
   clearExportCarryover,
   withExportCarryover,
-} from "../src/internal/otel/export-carryover.js";
+} from "../src/internal/otel/export/carryover.js";
 
 const delivered: string[] = [];
 const pending: (() => void)[] = [];
