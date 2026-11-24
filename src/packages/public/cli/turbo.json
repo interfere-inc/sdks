@@ -3,6 +3,7 @@
     "build": {
       "inputs": [
         "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/.mise.toml",
         "generated/**",
         "!**/*.test.*"
       ],
@@ -30,6 +31,7 @@
     "test": {
       "inputs": [
         "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/.mise.toml",
         "generated/**"
       ],
       "env": [
