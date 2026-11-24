@@ -13,6 +13,12 @@ export default defineConfig({
             "#request-flush": fileURLToPath(
               new URL("src/internal/server/request-flush.ts", import.meta.url),
             ),
+            "#outbound-instrumentation": fileURLToPath(
+              new URL(
+                "src/internal/server/outbound-instrumentation.ts",
+                import.meta.url,
+              ),
+            ),
           },
         },
         test: { name: "node", exclude: ["**/*.native.test.ts"] },

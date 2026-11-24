@@ -27,12 +27,13 @@ import {
   OTLPMetricExporterBase,
 } from "@opentelemetry/exporter-metrics-otlp-http";
 import { registerInstrumentations } from "@opentelemetry/instrumentation";
-import { UndiciInstrumentation } from "@opentelemetry/instrumentation-undici";
 import { defaultServiceName } from "@opentelemetry/resources";
 import {
   MeterProvider,
   PeriodicExportingMetricReader,
 } from "@opentelemetry/sdk-metrics";
+
+import { outboundInstrumentations } from "#outbound-instrumentation";
 
 import { PRODUCER_VERSION } from "../../version";
 import { captureError } from "./capture";
@@ -161,23 +162,10 @@ export async function register(opts: ServerInstrumentationOptions = {}) {
           ? registerInstrumentations({
               tracerProvider,
               meterProvider,
-              instrumentations: [
-                new UndiciInstrumentation({
-                  ignoreRequestHook: (request) =>
-                    ignoreUrls.some((pattern) =>
-                      pattern instanceof RegExp
-                        ? new RegExp(pattern.source, pattern.flags).test(
-                            `${request.origin}${request.path}`,
-                          )
-                        : `${request.origin}${request.path}`.includes(pattern),
-                    ),
-                  requestHook: (span, request) =>
-                    requestPropagation.observe(
-                      span,
-                      `${request.origin}${request.path}`,
-                    ),
-                }),
-              ],
+              instrumentations: outboundInstrumentations(
+                ignoreUrls,
+                requestPropagation,
+              ),
             })
           : undefined;
 

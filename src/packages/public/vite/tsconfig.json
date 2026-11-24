@@ -4,7 +4,10 @@
     "types": ["node", "vitest/globals"],
     "outDir": "./dist",
     "paths": {
-      "#request-flush": ["./src/internal/server/request-flush.ts"]
+      "#request-flush": ["./src/internal/server/request-flush.ts"],
+      "#outbound-instrumentation": [
+        "./src/internal/server/outbound-instrumentation.ts"
+      ]
     }
   },
   "include": ["src/**/*", "test/**/*"],

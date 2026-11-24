@@ -23,6 +23,12 @@ export default defineConfig({
           import.meta.url,
         ),
       ),
+      "#outbound-instrumentation": fileURLToPath(
+        new URL(
+          "src/internal/server/outbound-instrumentation.workerd.ts",
+          import.meta.url,
+        ),
+      ),
     },
     conditions: ["workerd", "monorepo"],
   },

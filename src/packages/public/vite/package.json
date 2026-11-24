@@ -36,6 +36,14 @@
       },
       "types": "./dist/internal/server/request-flush.d.mts",
       "default": "./dist/internal/server/request-flush.mjs"
+    },
+    "#outbound-instrumentation": {
+      "workerd": {
+        "types": "./dist/internal/server/outbound-instrumentation.workerd.d.mts",
+        "default": "./dist/internal/server/outbound-instrumentation.workerd.mjs"
+      },
+      "types": "./dist/internal/server/outbound-instrumentation.d.mts",
+      "default": "./dist/internal/server/outbound-instrumentation.mjs"
     }
   },
   "exports": {
