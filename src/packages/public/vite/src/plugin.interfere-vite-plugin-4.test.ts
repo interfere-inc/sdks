@@ -243,7 +243,7 @@ describe("interfere vite plugin", () => {
       );
     });
 
-    test("continues a production build with one warning without a commit SHA", async () => {
+    test("continues a production build with one commit SHA warning, after the public key deprecation warning", async () => {
       vi.stubEnv("GIT_DIR", path.join(projectDir, "missing-git"));
 
       const capture = captureLogger();
@@ -263,6 +263,7 @@ describe("interfere vite plugin", () => {
       expect(fetchSpy).not.toHaveBeenCalled();
 
       expect(capture.warns).toStrictEqual([
+        expect.stringContaining("VITE_INTERFERE_PUBLIC_KEY is deprecated"),
         expect.stringContaining("Commit SHA missing"),
       ]);
     });

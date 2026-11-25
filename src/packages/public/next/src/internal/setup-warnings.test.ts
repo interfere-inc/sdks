@@ -2,11 +2,17 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
+import { log } from "./logger.js";
 import {
   readNextMajorVersion,
   supportsProductionCompileHook,
+  warnIfPublicKeyDeprecated,
 } from "./setup-warnings.js";
-import { expect, test } from "vitest";
+import { afterEach, expect, test, vi } from "vitest";
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 test.each([
   { manifest: null, expected: null },
@@ -89,4 +95,23 @@ test("assumes the production compile hook outside a Next installation", async ()
   } finally {
     await rm(project, { recursive: true, force: true });
   }
+});
+
+test("warns once that INTERFERE_PUBLIC_KEY is deprecated", () => {
+  const warn = vi.spyOn(log, "warn");
+
+  warnIfPublicKeyDeprecated("interfere_pk_test");
+
+  expect(warn).toHaveBeenCalledExactlyOnceWith(
+    "INTERFERE_PUBLIC_KEY is deprecated",
+    expect.arrayContaining([expect.stringContaining("14.0")]),
+  );
+});
+
+test("stays quiet without a public key", () => {
+  const warn = vi.spyOn(log, "warn");
+
+  warnIfPublicKeyDeprecated(null);
+
+  expect(warn).not.toHaveBeenCalled();
 });

@@ -41,6 +41,7 @@ import { resolveReleaseSlug } from "./internal/release-slug.js";
 import {
   readNextMajorVersion,
   supportsProductionCompileHook,
+  warnIfPublicKeyDeprecated,
   warnIfServerInstrumentationMissing,
 } from "./internal/setup-warnings.js";
 
@@ -326,6 +327,8 @@ function buildResolvedInterfereConfig(
       ...surfaceGlobals(config.surfaceConfig),
     },
   });
+
+  warnIfPublicKeyDeprecated(config.publicKey);
 
   const browserCredential =
     config.publicKey !== null || Boolean(config.registeredRelease?.token);

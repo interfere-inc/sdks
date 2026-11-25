@@ -10,10 +10,6 @@ pub struct SubmitProblemFeedbackRequest {
     pub actionability: Option<SubmitProblemFeedbackRequestActionability>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub comment: Option<String>,
-    /// Retry key for one submission. Omit it to keep a single feedback per user and problem, which a later submission replaces.
-    #[serde(rename = "submissionId")]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub submission_id: Option<String>,
 }
 
 impl SubmitProblemFeedbackRequest {
@@ -28,7 +24,6 @@ pub struct SubmitProblemFeedbackRequestBuilder {
     accuracy: Option<SubmitProblemFeedbackRequestAccuracy>,
     actionability: Option<SubmitProblemFeedbackRequestActionability>,
     comment: Option<String>,
-    submission_id: Option<String>,
 }
 
 impl SubmitProblemFeedbackRequestBuilder {
@@ -47,18 +42,12 @@ impl SubmitProblemFeedbackRequestBuilder {
         self
     }
 
-    pub fn submission_id(mut self, value: impl Into<String>) -> Self {
-        self.submission_id = Some(value.into());
-        self
-    }
-
     /// Consumes the builder and constructs a [`SubmitProblemFeedbackRequest`].
     pub fn build(self) -> Result<SubmitProblemFeedbackRequest, BuildError> {
         Ok(SubmitProblemFeedbackRequest {
             accuracy: self.accuracy,
             actionability: self.actionability,
             comment: self.comment,
-            submission_id: self.submission_id,
         })
     }
 }

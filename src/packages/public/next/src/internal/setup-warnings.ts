@@ -92,3 +92,14 @@ function readNextVersion(projectDir: string) {
     return null;
   }
 }
+
+export function warnIfPublicKeyDeprecated(publicKey: string | null) {
+  if (publicKey === null) {
+    return;
+  }
+
+  log.warn("INTERFERE_PUBLIC_KEY is deprecated", [
+    "It will be removed in 14.0. INTERFERE_API_KEY alone sets up a build.",
+    "Remove INTERFERE_PUBLIC_KEY from your environment.",
+  ]);
+}

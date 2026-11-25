@@ -7,6 +7,7 @@ import type { ResolvedConfig } from "vite";
 
 import type { BrowserConfig } from "./browser-define";
 import { DIAGNOSTIC_CONTEXT } from "./preflight";
+import { warnIfPublicKeyDeprecated } from "./public-key-deprecation";
 import type { PluginState } from "./release-build";
 import { pickEnvValue } from "../plugin-env";
 import type { InterfereViteOptions } from "../plugin-options";
@@ -111,6 +112,8 @@ export function buildPluginState(
 }
 
 export function announceSetup(state: PluginState) {
+  warnIfPublicKeyDeprecated(state.logger, state.publicKey);
+
   state.logger.info(
     `[interfere] ingest → ${state.apiHost ?? "Interfere (default)"}`,
   );
