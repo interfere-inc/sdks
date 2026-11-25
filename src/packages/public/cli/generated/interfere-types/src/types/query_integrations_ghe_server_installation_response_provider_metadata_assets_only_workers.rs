@@ -26,6 +26,9 @@ pub struct QueryIntegrationsGheServerInstallationResponseProviderMetadataAssetsO
     #[serde(rename = "assetsOnlyWorkers")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub assets_only_workers: Option<Vec<String>>,
+    #[serde(rename = "workerGroups")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub worker_groups: Option<HashMap<String, QueryIntegrationsGheServerInstallationResponseProviderMetadataAssetsOnlyWorkersWorkerGroupsValue>>,
     #[serde(rename = "workersDiscoveredAt")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub workers_discovered_at: Option<i64>,
@@ -56,6 +59,7 @@ pub struct QueryIntegrationsGheServerInstallationResponseProviderMetadataAssetsO
     version_cutoffs: Option<HashMap<String, String>>,
     workers: Option<HashMap<String, String>>,
     assets_only_workers: Option<Vec<String>>,
+    worker_groups: Option<HashMap<String, QueryIntegrationsGheServerInstallationResponseProviderMetadataAssetsOnlyWorkersWorkerGroupsValue>>,
     workers_discovered_at: Option<i64>,
     provider: Option<QueryIntegrationsGheServerInstallationResponseProviderMetadataAssetsOnlyWorkersProvider>,
     oauth_scopes: Option<Vec<String>>,
@@ -108,6 +112,11 @@ impl QueryIntegrationsGheServerInstallationResponseProviderMetadataAssetsOnlyWor
         self
     }
 
+    pub fn worker_groups(mut self, value: HashMap<String, QueryIntegrationsGheServerInstallationResponseProviderMetadataAssetsOnlyWorkersWorkerGroupsValue>) -> Self {
+        self.worker_groups = Some(value);
+        self
+    }
+
     pub fn workers_discovered_at(mut self, value: i64) -> Self {
         self.workers_discovered_at = Some(value);
         self
@@ -144,6 +153,7 @@ impl QueryIntegrationsGheServerInstallationResponseProviderMetadataAssetsOnlyWor
             version_cutoffs: self.version_cutoffs,
             workers: self.workers,
             assets_only_workers: self.assets_only_workers,
+            worker_groups: self.worker_groups,
             workers_discovered_at: self.workers_discovered_at,
             provider: self.provider.ok_or_else(|| BuildError::missing_field("provider"))?,
             oauth_scopes: self.oauth_scopes,

@@ -12,6 +12,13 @@ const cloudflareSourceIdEnvKeySchema = z.enum(["WORKERS_CI_COMMIT_SHA"]);
 
 export const cloudflareSourceIdEnvKeys = cloudflareSourceIdEnvKeySchema.options;
 
+export const cloudflareWorkerGroup = z.object({
+  service: z.string().min(1).max(255),
+  environment: z.string().min(1).max(255).nullable(),
+});
+
+export type CloudflareWorkerGroup = z.infer<typeof cloudflareWorkerGroup>;
+
 export const cloudflareAccountMetadata = z.object({
   accountType: z.literal("account"),
   avatar: z.string().nullable().default(null),
@@ -22,6 +29,7 @@ export const cloudflareAccountMetadata = z.object({
   versionCutoffs: z.record(z.string(), z.string()).default({}),
   workers: z.record(z.string(), z.string()).default({}),
   assetsOnlyWorkers: z.array(z.string()).optional(),
+  workerGroups: z.record(z.string(), cloudflareWorkerGroup).optional(),
   workersDiscoveredAt: z.number().int().nonnegative().optional(),
 });
 

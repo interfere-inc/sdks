@@ -11,6 +11,8 @@ pub struct ProblemTimeseriesResponseDataItem {
     #[serde(rename = "affectedUsers")]
     #[serde(default)]
     pub affected_users: i64,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub environments: Option<Vec<ProblemTimeseriesResponseDataItemEnvironmentsItem>>,
 }
 
 impl ProblemTimeseriesResponseDataItem {
@@ -25,6 +27,7 @@ pub struct ProblemTimeseriesResponseDataItemBuilder {
     day: Option<NaiveDate>,
     occurrences: Option<i64>,
     affected_users: Option<i64>,
+    environments: Option<Vec<ProblemTimeseriesResponseDataItemEnvironmentsItem>>,
 }
 
 impl ProblemTimeseriesResponseDataItemBuilder {
@@ -43,6 +46,11 @@ impl ProblemTimeseriesResponseDataItemBuilder {
         self
     }
 
+    pub fn environments(mut self, value: Vec<ProblemTimeseriesResponseDataItemEnvironmentsItem>) -> Self {
+        self.environments = Some(value);
+        self
+    }
+
     /// Consumes the builder and constructs a [`ProblemTimeseriesResponseDataItem`].
     /// This method will fail if any of the following fields are not set:
     /// - [`day`](ProblemTimeseriesResponseDataItemBuilder::day)
@@ -53,6 +61,7 @@ impl ProblemTimeseriesResponseDataItemBuilder {
             day: self.day.ok_or_else(|| BuildError::missing_field("day"))?,
             occurrences: self.occurrences.ok_or_else(|| BuildError::missing_field("occurrences"))?,
             affected_users: self.affected_users.ok_or_else(|| BuildError::missing_field("affected_users"))?,
+            environments: self.environments,
         })
     }
 }
