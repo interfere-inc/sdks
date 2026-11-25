@@ -2,7 +2,7 @@ pub use crate::prelude::*;
 #[allow(unused_imports)]
 use super::*;
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 #[serde(untagged)]
 pub enum QueryProblemsGetByIdResponseTimelineEventsItemRequestContractResolution {
         QueryProblemsGetByIdResponseTimelineEventsItemRequestContractResolutionZero(QueryProblemsGetByIdResponseTimelineEventsItemRequestContractResolutionZero),

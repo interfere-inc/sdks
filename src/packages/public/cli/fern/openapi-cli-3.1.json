@@ -4077,6 +4077,447 @@
           }
         ]
       },
+      "RequiredEvidence": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "source-map",
+                      "source-access",
+                      "release",
+                      "replay",
+                      "capture",
+                      "user-attribution",
+                      "app-data",
+                      "recovery-window",
+                      "upstream-service",
+                      "other"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "enum": [
+                      "logs",
+                      "configuration",
+                      "answer"
+                    ],
+                    "type": "string"
+                  }
+                ]
+              },
+              "provider": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "dependency": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "mode": {
+                    "enum": [
+                      "any",
+                      "all"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "groupId",
+                  "mode"
+                ],
+                "additionalProperties": false
+              },
+              "capability": {
+                "const": "mcp"
+              },
+              "incidentScope": {
+                "type": "object",
+                "properties": {
+                  "problemId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "sourceId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
+                  },
+                  "recordId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255,
+                    "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service."
+                  },
+                  "windowStart": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "windowEnd": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "problemId",
+                  "sourceId",
+                  "recordId",
+                  "windowStart",
+                  "windowEnd"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "kind",
+              "provider",
+              "dependency",
+              "capability",
+              "incidentScope"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "source-map",
+                      "source-access",
+                      "release",
+                      "replay",
+                      "capture",
+                      "user-attribution",
+                      "app-data",
+                      "recovery-window",
+                      "upstream-service",
+                      "other"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "enum": [
+                      "logs",
+                      "configuration",
+                      "answer"
+                    ],
+                    "type": "string"
+                  }
+                ]
+              },
+              "provider": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "dependency": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "mode": {
+                    "enum": [
+                      "any",
+                      "all"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "groupId",
+                  "mode"
+                ],
+                "additionalProperties": false
+              },
+              "capability": {
+                "const": "replay"
+              },
+              "incidentScope": {
+                "type": "object",
+                "properties": {
+                  "problemId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "sourceId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
+                  },
+                  "recordId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service."
+                  },
+                  "windowStart": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "windowEnd": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "problemId",
+                  "sourceId",
+                  "recordId",
+                  "windowStart",
+                  "windowEnd"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "kind",
+              "provider",
+              "dependency",
+              "capability",
+              "incidentScope"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "source-map",
+                      "source-access",
+                      "release",
+                      "replay",
+                      "capture",
+                      "user-attribution",
+                      "app-data",
+                      "recovery-window",
+                      "upstream-service",
+                      "other"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "enum": [
+                      "logs",
+                      "configuration",
+                      "answer"
+                    ],
+                    "type": "string"
+                  }
+                ]
+              },
+              "provider": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "dependency": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "mode": {
+                    "enum": [
+                      "any",
+                      "all"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "groupId",
+                  "mode"
+                ],
+                "additionalProperties": false
+              },
+              "capability": {
+                "const": "user-attribution"
+              },
+              "incidentScope": {
+                "type": "object",
+                "properties": {
+                  "problemId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "sourceId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
+                  },
+                  "recordId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service."
+                  },
+                  "windowStart": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "windowEnd": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "problemId",
+                  "sourceId",
+                  "recordId",
+                  "windowStart",
+                  "windowEnd"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "kind",
+              "provider",
+              "dependency",
+              "capability",
+              "incidentScope"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "source-map",
+                      "source-access",
+                      "release",
+                      "replay",
+                      "capture",
+                      "user-attribution",
+                      "app-data",
+                      "recovery-window",
+                      "upstream-service",
+                      "other"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "enum": [
+                      "logs",
+                      "configuration",
+                      "answer"
+                    ],
+                    "type": "string"
+                  }
+                ]
+              },
+              "provider": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "dependency": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "mode": {
+                    "enum": [
+                      "any",
+                      "all"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "groupId",
+                  "mode"
+                ],
+                "additionalProperties": false
+              },
+              "capability": {
+                "enum": [
+                  "native-logs",
+                  "repository",
+                  "release",
+                  "source-map",
+                  "human-answer"
+                ],
+                "type": "string"
+              },
+              "incidentScope": {
+                "type": "object",
+                "properties": {
+                  "problemId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "sourceId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
+                  },
+                  "recordId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255,
+                    "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service."
+                  },
+                  "windowStart": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "windowEnd": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "problemId",
+                  "sourceId",
+                  "recordId",
+                  "windowStart",
+                  "windowEnd"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "kind",
+              "provider",
+              "dependency",
+              "capability",
+              "incidentScope"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
       "RpcUnexpectedError": {
         "type": "object",
         "properties": {
@@ -5916,122 +6357,7 @@
                     "maximum": 9007199254740991
                   },
                   "requiredEvidence": {
-                    "type": "object",
-                    "properties": {
-                      "kind": {
-                        "anyOf": [
-                          {
-                            "enum": [
-                              "source-map",
-                              "source-access",
-                              "release",
-                              "replay",
-                              "capture",
-                              "user-attribution",
-                              "app-data",
-                              "recovery-window",
-                              "upstream-service",
-                              "other"
-                            ],
-                            "type": "string"
-                          },
-                          {
-                            "enum": [
-                              "logs",
-                              "configuration",
-                              "answer"
-                            ],
-                            "type": "string"
-                          }
-                        ]
-                      },
-                      "provider": {
-                        "type": "string",
-                        "minLength": 1,
-                        "maxLength": 120
-                      },
-                      "capability": {
-                        "enum": [
-                          "native-logs",
-                          "repository",
-                          "mcp",
-                          "replay",
-                          "release",
-                          "source-map",
-                          "user-attribution",
-                          "human-answer"
-                        ],
-                        "type": "string"
-                      },
-                      "incidentScope": {
-                        "type": "object",
-                        "properties": {
-                          "problemId": {
-                            "type": "string",
-                            "format": "uuid"
-                          },
-                          "sourceId": {
-                            "type": "string",
-                            "format": "uuid",
-                            "description": "The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
-                          },
-                          "recordId": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 255,
-                            "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service."
-                          },
-                          "windowStart": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "maximum": 9007199254740991
-                          },
-                          "windowEnd": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "maximum": 9007199254740991
-                          }
-                        },
-                        "required": [
-                          "problemId",
-                          "sourceId",
-                          "recordId",
-                          "windowStart",
-                          "windowEnd"
-                        ],
-                        "additionalProperties": false
-                      },
-                      "dependency": {
-                        "type": "object",
-                        "properties": {
-                          "groupId": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 120
-                          },
-                          "mode": {
-                            "enum": [
-                              "any",
-                              "all"
-                            ],
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "groupId",
-                          "mode"
-                        ],
-                        "additionalProperties": false
-                      }
-                    },
-                    "required": [
-                      "kind",
-                      "provider",
-                      "capability",
-                      "incidentScope",
-                      "dependency"
-                    ],
-                    "additionalProperties": false
+                    "$ref": "#/components/schemas/RequiredEvidence"
                   },
                   "evidenceStatus": {
                     "type": "object",
@@ -6055,122 +6381,7 @@
                         "type": "object",
                         "properties": {
                           "requiredEvidence": {
-                            "type": "object",
-                            "properties": {
-                              "kind": {
-                                "anyOf": [
-                                  {
-                                    "enum": [
-                                      "source-map",
-                                      "source-access",
-                                      "release",
-                                      "replay",
-                                      "capture",
-                                      "user-attribution",
-                                      "app-data",
-                                      "recovery-window",
-                                      "upstream-service",
-                                      "other"
-                                    ],
-                                    "type": "string"
-                                  },
-                                  {
-                                    "enum": [
-                                      "logs",
-                                      "configuration",
-                                      "answer"
-                                    ],
-                                    "type": "string"
-                                  }
-                                ]
-                              },
-                              "provider": {
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 120
-                              },
-                              "capability": {
-                                "enum": [
-                                  "native-logs",
-                                  "repository",
-                                  "mcp",
-                                  "replay",
-                                  "release",
-                                  "source-map",
-                                  "user-attribution",
-                                  "human-answer"
-                                ],
-                                "type": "string"
-                              },
-                              "incidentScope": {
-                                "type": "object",
-                                "properties": {
-                                  "problemId": {
-                                    "type": "string",
-                                    "format": "uuid"
-                                  },
-                                  "sourceId": {
-                                    "type": "string",
-                                    "format": "uuid",
-                                    "description": "The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
-                                  },
-                                  "recordId": {
-                                    "type": "string",
-                                    "minLength": 1,
-                                    "maxLength": 255,
-                                    "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service."
-                                  },
-                                  "windowStart": {
-                                    "type": "integer",
-                                    "minimum": 0,
-                                    "maximum": 9007199254740991
-                                  },
-                                  "windowEnd": {
-                                    "type": "integer",
-                                    "minimum": 0,
-                                    "maximum": 9007199254740991
-                                  }
-                                },
-                                "required": [
-                                  "problemId",
-                                  "sourceId",
-                                  "recordId",
-                                  "windowStart",
-                                  "windowEnd"
-                                ],
-                                "additionalProperties": false
-                              },
-                              "dependency": {
-                                "type": "object",
-                                "properties": {
-                                  "groupId": {
-                                    "type": "string",
-                                    "minLength": 1,
-                                    "maxLength": 120
-                                  },
-                                  "mode": {
-                                    "enum": [
-                                      "any",
-                                      "all"
-                                    ],
-                                    "type": "string"
-                                  }
-                                },
-                                "required": [
-                                  "groupId",
-                                  "mode"
-                                ],
-                                "additionalProperties": false
-                              }
-                            },
-                            "required": [
-                              "kind",
-                              "provider",
-                              "capability",
-                              "incidentScope",
-                              "dependency"
-                            ],
-                            "additionalProperties": false
+                            "$ref": "#/components/schemas/RequiredEvidence"
                           },
                           "observedAt": {
                             "type": "integer",
@@ -10044,122 +10255,7 @@
                     "const": 1
                   },
                   "requiredEvidence": {
-                    "type": "object",
-                    "properties": {
-                      "kind": {
-                        "anyOf": [
-                          {
-                            "enum": [
-                              "source-map",
-                              "source-access",
-                              "release",
-                              "replay",
-                              "capture",
-                              "user-attribution",
-                              "app-data",
-                              "recovery-window",
-                              "upstream-service",
-                              "other"
-                            ],
-                            "type": "string"
-                          },
-                          {
-                            "enum": [
-                              "logs",
-                              "configuration",
-                              "answer"
-                            ],
-                            "type": "string"
-                          }
-                        ]
-                      },
-                      "provider": {
-                        "type": "string",
-                        "minLength": 1,
-                        "maxLength": 120
-                      },
-                      "capability": {
-                        "enum": [
-                          "native-logs",
-                          "repository",
-                          "mcp",
-                          "replay",
-                          "release",
-                          "source-map",
-                          "user-attribution",
-                          "human-answer"
-                        ],
-                        "type": "string"
-                      },
-                      "incidentScope": {
-                        "type": "object",
-                        "properties": {
-                          "problemId": {
-                            "type": "string",
-                            "format": "uuid"
-                          },
-                          "sourceId": {
-                            "type": "string",
-                            "format": "uuid",
-                            "description": "The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
-                          },
-                          "recordId": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 255,
-                            "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service."
-                          },
-                          "windowStart": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "maximum": 9007199254740991
-                          },
-                          "windowEnd": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "maximum": 9007199254740991
-                          }
-                        },
-                        "required": [
-                          "problemId",
-                          "sourceId",
-                          "recordId",
-                          "windowStart",
-                          "windowEnd"
-                        ],
-                        "additionalProperties": false
-                      },
-                      "dependency": {
-                        "type": "object",
-                        "properties": {
-                          "groupId": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 120
-                          },
-                          "mode": {
-                            "enum": [
-                              "any",
-                              "all"
-                            ],
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "groupId",
-                          "mode"
-                        ],
-                        "additionalProperties": false
-                      }
-                    },
-                    "required": [
-                      "kind",
-                      "provider",
-                      "capability",
-                      "incidentScope",
-                      "dependency"
-                    ],
-                    "additionalProperties": false
+                    "$ref": "#/components/schemas/RequiredEvidence"
                   },
                   "scope": {
                     "type": "object",
@@ -10393,122 +10489,7 @@
                                     "type": "object",
                                     "properties": {
                                       "requiredEvidence": {
-                                        "type": "object",
-                                        "properties": {
-                                          "kind": {
-                                            "anyOf": [
-                                              {
-                                                "enum": [
-                                                  "source-map",
-                                                  "source-access",
-                                                  "release",
-                                                  "replay",
-                                                  "capture",
-                                                  "user-attribution",
-                                                  "app-data",
-                                                  "recovery-window",
-                                                  "upstream-service",
-                                                  "other"
-                                                ],
-                                                "type": "string"
-                                              },
-                                              {
-                                                "enum": [
-                                                  "logs",
-                                                  "configuration",
-                                                  "answer"
-                                                ],
-                                                "type": "string"
-                                              }
-                                            ]
-                                          },
-                                          "provider": {
-                                            "type": "string",
-                                            "minLength": 1,
-                                            "maxLength": 120
-                                          },
-                                          "capability": {
-                                            "enum": [
-                                              "native-logs",
-                                              "repository",
-                                              "mcp",
-                                              "replay",
-                                              "release",
-                                              "source-map",
-                                              "user-attribution",
-                                              "human-answer"
-                                            ],
-                                            "type": "string"
-                                          },
-                                          "incidentScope": {
-                                            "type": "object",
-                                            "properties": {
-                                              "problemId": {
-                                                "type": "string",
-                                                "format": "uuid"
-                                              },
-                                              "sourceId": {
-                                                "type": "string",
-                                                "format": "uuid",
-                                                "description": "The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
-                                              },
-                                              "recordId": {
-                                                "type": "string",
-                                                "minLength": 1,
-                                                "maxLength": 255,
-                                                "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service."
-                                              },
-                                              "windowStart": {
-                                                "type": "integer",
-                                                "minimum": 0,
-                                                "maximum": 9007199254740991
-                                              },
-                                              "windowEnd": {
-                                                "type": "integer",
-                                                "minimum": 0,
-                                                "maximum": 9007199254740991
-                                              }
-                                            },
-                                            "required": [
-                                              "problemId",
-                                              "sourceId",
-                                              "recordId",
-                                              "windowStart",
-                                              "windowEnd"
-                                            ],
-                                            "additionalProperties": false
-                                          },
-                                          "dependency": {
-                                            "type": "object",
-                                            "properties": {
-                                              "groupId": {
-                                                "type": "string",
-                                                "minLength": 1,
-                                                "maxLength": 120
-                                              },
-                                              "mode": {
-                                                "enum": [
-                                                  "any",
-                                                  "all"
-                                                ],
-                                                "type": "string"
-                                              }
-                                            },
-                                            "required": [
-                                              "groupId",
-                                              "mode"
-                                            ],
-                                            "additionalProperties": false
-                                          }
-                                        },
-                                        "required": [
-                                          "kind",
-                                          "provider",
-                                          "capability",
-                                          "incidentScope",
-                                          "dependency"
-                                        ],
-                                        "additionalProperties": false
+                                        "$ref": "#/components/schemas/RequiredEvidence"
                                       },
                                       "observedAt": {
                                         "type": "integer",
@@ -10550,122 +10531,7 @@
                                     "type": "object",
                                     "properties": {
                                       "requiredEvidence": {
-                                        "type": "object",
-                                        "properties": {
-                                          "kind": {
-                                            "anyOf": [
-                                              {
-                                                "enum": [
-                                                  "source-map",
-                                                  "source-access",
-                                                  "release",
-                                                  "replay",
-                                                  "capture",
-                                                  "user-attribution",
-                                                  "app-data",
-                                                  "recovery-window",
-                                                  "upstream-service",
-                                                  "other"
-                                                ],
-                                                "type": "string"
-                                              },
-                                              {
-                                                "enum": [
-                                                  "logs",
-                                                  "configuration",
-                                                  "answer"
-                                                ],
-                                                "type": "string"
-                                              }
-                                            ]
-                                          },
-                                          "provider": {
-                                            "type": "string",
-                                            "minLength": 1,
-                                            "maxLength": 120
-                                          },
-                                          "capability": {
-                                            "enum": [
-                                              "native-logs",
-                                              "repository",
-                                              "mcp",
-                                              "replay",
-                                              "release",
-                                              "source-map",
-                                              "user-attribution",
-                                              "human-answer"
-                                            ],
-                                            "type": "string"
-                                          },
-                                          "incidentScope": {
-                                            "type": "object",
-                                            "properties": {
-                                              "problemId": {
-                                                "type": "string",
-                                                "format": "uuid"
-                                              },
-                                              "sourceId": {
-                                                "type": "string",
-                                                "format": "uuid",
-                                                "description": "The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
-                                              },
-                                              "recordId": {
-                                                "type": "string",
-                                                "minLength": 1,
-                                                "maxLength": 255,
-                                                "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service."
-                                              },
-                                              "windowStart": {
-                                                "type": "integer",
-                                                "minimum": 0,
-                                                "maximum": 9007199254740991
-                                              },
-                                              "windowEnd": {
-                                                "type": "integer",
-                                                "minimum": 0,
-                                                "maximum": 9007199254740991
-                                              }
-                                            },
-                                            "required": [
-                                              "problemId",
-                                              "sourceId",
-                                              "recordId",
-                                              "windowStart",
-                                              "windowEnd"
-                                            ],
-                                            "additionalProperties": false
-                                          },
-                                          "dependency": {
-                                            "type": "object",
-                                            "properties": {
-                                              "groupId": {
-                                                "type": "string",
-                                                "minLength": 1,
-                                                "maxLength": 120
-                                              },
-                                              "mode": {
-                                                "enum": [
-                                                  "any",
-                                                  "all"
-                                                ],
-                                                "type": "string"
-                                              }
-                                            },
-                                            "required": [
-                                              "groupId",
-                                              "mode"
-                                            ],
-                                            "additionalProperties": false
-                                          }
-                                        },
-                                        "required": [
-                                          "kind",
-                                          "provider",
-                                          "capability",
-                                          "incidentScope",
-                                          "dependency"
-                                        ],
-                                        "additionalProperties": false
+                                        "$ref": "#/components/schemas/RequiredEvidence"
                                       },
                                       "observedAt": {
                                         "type": "integer",
@@ -37434,122 +37300,7 @@
                             "maximum": 9007199254740991
                           },
                           "requiredEvidence": {
-                            "type": "object",
-                            "properties": {
-                              "kind": {
-                                "anyOf": [
-                                  {
-                                    "enum": [
-                                      "source-map",
-                                      "source-access",
-                                      "release",
-                                      "replay",
-                                      "capture",
-                                      "user-attribution",
-                                      "app-data",
-                                      "recovery-window",
-                                      "upstream-service",
-                                      "other"
-                                    ],
-                                    "type": "string"
-                                  },
-                                  {
-                                    "enum": [
-                                      "logs",
-                                      "configuration",
-                                      "answer"
-                                    ],
-                                    "type": "string"
-                                  }
-                                ]
-                              },
-                              "provider": {
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 120
-                              },
-                              "capability": {
-                                "enum": [
-                                  "native-logs",
-                                  "repository",
-                                  "mcp",
-                                  "replay",
-                                  "release",
-                                  "source-map",
-                                  "user-attribution",
-                                  "human-answer"
-                                ],
-                                "type": "string"
-                              },
-                              "incidentScope": {
-                                "type": "object",
-                                "properties": {
-                                  "problemId": {
-                                    "type": "string",
-                                    "format": "uuid"
-                                  },
-                                  "sourceId": {
-                                    "type": "string",
-                                    "format": "uuid",
-                                    "description": "The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
-                                  },
-                                  "recordId": {
-                                    "type": "string",
-                                    "minLength": 1,
-                                    "maxLength": 255,
-                                    "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service."
-                                  },
-                                  "windowStart": {
-                                    "type": "integer",
-                                    "minimum": 0,
-                                    "maximum": 9007199254740991
-                                  },
-                                  "windowEnd": {
-                                    "type": "integer",
-                                    "minimum": 0,
-                                    "maximum": 9007199254740991
-                                  }
-                                },
-                                "required": [
-                                  "problemId",
-                                  "sourceId",
-                                  "recordId",
-                                  "windowStart",
-                                  "windowEnd"
-                                ],
-                                "additionalProperties": false
-                              },
-                              "dependency": {
-                                "type": "object",
-                                "properties": {
-                                  "groupId": {
-                                    "type": "string",
-                                    "minLength": 1,
-                                    "maxLength": 120
-                                  },
-                                  "mode": {
-                                    "enum": [
-                                      "any",
-                                      "all"
-                                    ],
-                                    "type": "string"
-                                  }
-                                },
-                                "required": [
-                                  "groupId",
-                                  "mode"
-                                ],
-                                "additionalProperties": false
-                              }
-                            },
-                            "required": [
-                              "kind",
-                              "provider",
-                              "capability",
-                              "incidentScope",
-                              "dependency"
-                            ],
-                            "additionalProperties": false
+                            "$ref": "#/components/schemas/RequiredEvidence"
                           },
                           "evidenceStatus": {
                             "type": "object",
@@ -37573,122 +37324,7 @@
                                 "type": "object",
                                 "properties": {
                                   "requiredEvidence": {
-                                    "type": "object",
-                                    "properties": {
-                                      "kind": {
-                                        "anyOf": [
-                                          {
-                                            "enum": [
-                                              "source-map",
-                                              "source-access",
-                                              "release",
-                                              "replay",
-                                              "capture",
-                                              "user-attribution",
-                                              "app-data",
-                                              "recovery-window",
-                                              "upstream-service",
-                                              "other"
-                                            ],
-                                            "type": "string"
-                                          },
-                                          {
-                                            "enum": [
-                                              "logs",
-                                              "configuration",
-                                              "answer"
-                                            ],
-                                            "type": "string"
-                                          }
-                                        ]
-                                      },
-                                      "provider": {
-                                        "type": "string",
-                                        "minLength": 1,
-                                        "maxLength": 120
-                                      },
-                                      "capability": {
-                                        "enum": [
-                                          "native-logs",
-                                          "repository",
-                                          "mcp",
-                                          "replay",
-                                          "release",
-                                          "source-map",
-                                          "user-attribution",
-                                          "human-answer"
-                                        ],
-                                        "type": "string"
-                                      },
-                                      "incidentScope": {
-                                        "type": "object",
-                                        "properties": {
-                                          "problemId": {
-                                            "type": "string",
-                                            "format": "uuid"
-                                          },
-                                          "sourceId": {
-                                            "type": "string",
-                                            "format": "uuid",
-                                            "description": "The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
-                                          },
-                                          "recordId": {
-                                            "type": "string",
-                                            "minLength": 1,
-                                            "maxLength": 255,
-                                            "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service."
-                                          },
-                                          "windowStart": {
-                                            "type": "integer",
-                                            "minimum": 0,
-                                            "maximum": 9007199254740991
-                                          },
-                                          "windowEnd": {
-                                            "type": "integer",
-                                            "minimum": 0,
-                                            "maximum": 9007199254740991
-                                          }
-                                        },
-                                        "required": [
-                                          "problemId",
-                                          "sourceId",
-                                          "recordId",
-                                          "windowStart",
-                                          "windowEnd"
-                                        ],
-                                        "additionalProperties": false
-                                      },
-                                      "dependency": {
-                                        "type": "object",
-                                        "properties": {
-                                          "groupId": {
-                                            "type": "string",
-                                            "minLength": 1,
-                                            "maxLength": 120
-                                          },
-                                          "mode": {
-                                            "enum": [
-                                              "any",
-                                              "all"
-                                            ],
-                                            "type": "string"
-                                          }
-                                        },
-                                        "required": [
-                                          "groupId",
-                                          "mode"
-                                        ],
-                                        "additionalProperties": false
-                                      }
-                                    },
-                                    "required": [
-                                      "kind",
-                                      "provider",
-                                      "capability",
-                                      "incidentScope",
-                                      "dependency"
-                                    ],
-                                    "additionalProperties": false
+                                    "$ref": "#/components/schemas/RequiredEvidence"
                                   },
                                   "observedAt": {
                                     "type": "integer",
@@ -39781,122 +39417,7 @@
                             "const": 1
                           },
                           "requiredEvidence": {
-                            "type": "object",
-                            "properties": {
-                              "kind": {
-                                "anyOf": [
-                                  {
-                                    "enum": [
-                                      "source-map",
-                                      "source-access",
-                                      "release",
-                                      "replay",
-                                      "capture",
-                                      "user-attribution",
-                                      "app-data",
-                                      "recovery-window",
-                                      "upstream-service",
-                                      "other"
-                                    ],
-                                    "type": "string"
-                                  },
-                                  {
-                                    "enum": [
-                                      "logs",
-                                      "configuration",
-                                      "answer"
-                                    ],
-                                    "type": "string"
-                                  }
-                                ]
-                              },
-                              "provider": {
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 120
-                              },
-                              "capability": {
-                                "enum": [
-                                  "native-logs",
-                                  "repository",
-                                  "mcp",
-                                  "replay",
-                                  "release",
-                                  "source-map",
-                                  "user-attribution",
-                                  "human-answer"
-                                ],
-                                "type": "string"
-                              },
-                              "incidentScope": {
-                                "type": "object",
-                                "properties": {
-                                  "problemId": {
-                                    "type": "string",
-                                    "format": "uuid"
-                                  },
-                                  "sourceId": {
-                                    "type": "string",
-                                    "format": "uuid",
-                                    "description": "The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
-                                  },
-                                  "recordId": {
-                                    "type": "string",
-                                    "minLength": 1,
-                                    "maxLength": 255,
-                                    "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service."
-                                  },
-                                  "windowStart": {
-                                    "type": "integer",
-                                    "minimum": 0,
-                                    "maximum": 9007199254740991
-                                  },
-                                  "windowEnd": {
-                                    "type": "integer",
-                                    "minimum": 0,
-                                    "maximum": 9007199254740991
-                                  }
-                                },
-                                "required": [
-                                  "problemId",
-                                  "sourceId",
-                                  "recordId",
-                                  "windowStart",
-                                  "windowEnd"
-                                ],
-                                "additionalProperties": false
-                              },
-                              "dependency": {
-                                "type": "object",
-                                "properties": {
-                                  "groupId": {
-                                    "type": "string",
-                                    "minLength": 1,
-                                    "maxLength": 120
-                                  },
-                                  "mode": {
-                                    "enum": [
-                                      "any",
-                                      "all"
-                                    ],
-                                    "type": "string"
-                                  }
-                                },
-                                "required": [
-                                  "groupId",
-                                  "mode"
-                                ],
-                                "additionalProperties": false
-                              }
-                            },
-                            "required": [
-                              "kind",
-                              "provider",
-                              "capability",
-                              "incidentScope",
-                              "dependency"
-                            ],
-                            "additionalProperties": false
+                            "$ref": "#/components/schemas/RequiredEvidence"
                           },
                           "scope": {
                             "type": "object",
@@ -40078,15 +39599,7 @@
                                             "type": "object",
                                             "properties": {
                                               "requiredEvidence": {
-                                                "type": "object",
-                                                "properties": {
-                                                  "kind": {},
-                                                  "provider": {},
-                                                  "capability": {},
-                                                  "incidentScope": {},
-                                                  "dependency": {}
-                                                },
-                                                "additionalProperties": false
+                                                "$ref": "#/components/schemas/RequiredEvidence"
                                               },
                                               "observedAt": {
                                                 "type": "integer",
@@ -40128,15 +39641,7 @@
                                             "type": "object",
                                             "properties": {
                                               "requiredEvidence": {
-                                                "type": "object",
-                                                "properties": {
-                                                  "kind": {},
-                                                  "provider": {},
-                                                  "capability": {},
-                                                  "incidentScope": {},
-                                                  "dependency": {}
-                                                },
-                                                "additionalProperties": false
+                                                "$ref": "#/components/schemas/RequiredEvidence"
                                               },
                                               "observedAt": {
                                                 "type": "integer",
@@ -42749,122 +42254,7 @@
                               "maximum": 9007199254740991
                             },
                             "requiredEvidence": {
-                              "type": "object",
-                              "properties": {
-                                "kind": {
-                                  "anyOf": [
-                                    {
-                                      "enum": [
-                                        "source-map",
-                                        "source-access",
-                                        "release",
-                                        "replay",
-                                        "capture",
-                                        "user-attribution",
-                                        "app-data",
-                                        "recovery-window",
-                                        "upstream-service",
-                                        "other"
-                                      ],
-                                      "type": "string"
-                                    },
-                                    {
-                                      "enum": [
-                                        "logs",
-                                        "configuration",
-                                        "answer"
-                                      ],
-                                      "type": "string"
-                                    }
-                                  ]
-                                },
-                                "provider": {
-                                  "type": "string",
-                                  "minLength": 1,
-                                  "maxLength": 120
-                                },
-                                "capability": {
-                                  "enum": [
-                                    "native-logs",
-                                    "repository",
-                                    "mcp",
-                                    "replay",
-                                    "release",
-                                    "source-map",
-                                    "user-attribution",
-                                    "human-answer"
-                                  ],
-                                  "type": "string"
-                                },
-                                "incidentScope": {
-                                  "type": "object",
-                                  "properties": {
-                                    "problemId": {
-                                      "type": "string",
-                                      "format": "uuid"
-                                    },
-                                    "sourceId": {
-                                      "type": "string",
-                                      "format": "uuid",
-                                      "description": "The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
-                                    },
-                                    "recordId": {
-                                      "type": "string",
-                                      "minLength": 1,
-                                      "maxLength": 255,
-                                      "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service."
-                                    },
-                                    "windowStart": {
-                                      "type": "integer",
-                                      "minimum": 0,
-                                      "maximum": 9007199254740991
-                                    },
-                                    "windowEnd": {
-                                      "type": "integer",
-                                      "minimum": 0,
-                                      "maximum": 9007199254740991
-                                    }
-                                  },
-                                  "required": [
-                                    "problemId",
-                                    "sourceId",
-                                    "recordId",
-                                    "windowStart",
-                                    "windowEnd"
-                                  ],
-                                  "additionalProperties": false
-                                },
-                                "dependency": {
-                                  "type": "object",
-                                  "properties": {
-                                    "groupId": {
-                                      "type": "string",
-                                      "minLength": 1,
-                                      "maxLength": 120
-                                    },
-                                    "mode": {
-                                      "enum": [
-                                        "any",
-                                        "all"
-                                      ],
-                                      "type": "string"
-                                    }
-                                  },
-                                  "required": [
-                                    "groupId",
-                                    "mode"
-                                  ],
-                                  "additionalProperties": false
-                                }
-                              },
-                              "required": [
-                                "kind",
-                                "provider",
-                                "capability",
-                                "incidentScope",
-                                "dependency"
-                              ],
-                              "additionalProperties": false
+                              "$ref": "#/components/schemas/RequiredEvidence"
                             },
                             "evidenceStatus": {
                               "type": "object",
@@ -42888,122 +42278,7 @@
                                   "type": "object",
                                   "properties": {
                                     "requiredEvidence": {
-                                      "type": "object",
-                                      "properties": {
-                                        "kind": {
-                                          "anyOf": [
-                                            {
-                                              "enum": [
-                                                "source-map",
-                                                "source-access",
-                                                "release",
-                                                "replay",
-                                                "capture",
-                                                "user-attribution",
-                                                "app-data",
-                                                "recovery-window",
-                                                "upstream-service",
-                                                "other"
-                                              ],
-                                              "type": "string"
-                                            },
-                                            {
-                                              "enum": [
-                                                "logs",
-                                                "configuration",
-                                                "answer"
-                                              ],
-                                              "type": "string"
-                                            }
-                                          ]
-                                        },
-                                        "provider": {
-                                          "type": "string",
-                                          "minLength": 1,
-                                          "maxLength": 120
-                                        },
-                                        "capability": {
-                                          "enum": [
-                                            "native-logs",
-                                            "repository",
-                                            "mcp",
-                                            "replay",
-                                            "release",
-                                            "source-map",
-                                            "user-attribution",
-                                            "human-answer"
-                                          ],
-                                          "type": "string"
-                                        },
-                                        "incidentScope": {
-                                          "type": "object",
-                                          "properties": {
-                                            "problemId": {
-                                              "type": "string",
-                                              "format": "uuid"
-                                            },
-                                            "sourceId": {
-                                              "type": "string",
-                                              "format": "uuid",
-                                              "description": "The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
-                                            },
-                                            "recordId": {
-                                              "type": "string",
-                                              "minLength": 1,
-                                              "maxLength": 255,
-                                              "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service."
-                                            },
-                                            "windowStart": {
-                                              "type": "integer",
-                                              "minimum": 0,
-                                              "maximum": 9007199254740991
-                                            },
-                                            "windowEnd": {
-                                              "type": "integer",
-                                              "minimum": 0,
-                                              "maximum": 9007199254740991
-                                            }
-                                          },
-                                          "required": [
-                                            "problemId",
-                                            "sourceId",
-                                            "recordId",
-                                            "windowStart",
-                                            "windowEnd"
-                                          ],
-                                          "additionalProperties": false
-                                        },
-                                        "dependency": {
-                                          "type": "object",
-                                          "properties": {
-                                            "groupId": {
-                                              "type": "string",
-                                              "minLength": 1,
-                                              "maxLength": 120
-                                            },
-                                            "mode": {
-                                              "enum": [
-                                                "any",
-                                                "all"
-                                              ],
-                                              "type": "string"
-                                            }
-                                          },
-                                          "required": [
-                                            "groupId",
-                                            "mode"
-                                          ],
-                                          "additionalProperties": false
-                                        }
-                                      },
-                                      "required": [
-                                        "kind",
-                                        "provider",
-                                        "capability",
-                                        "incidentScope",
-                                        "dependency"
-                                      ],
-                                      "additionalProperties": false
+                                      "$ref": "#/components/schemas/RequiredEvidence"
                                     },
                                     "observedAt": {
                                       "type": "integer",
@@ -45465,122 +44740,7 @@
                               "const": 1
                             },
                             "requiredEvidence": {
-                              "type": "object",
-                              "properties": {
-                                "kind": {
-                                  "anyOf": [
-                                    {
-                                      "enum": [
-                                        "source-map",
-                                        "source-access",
-                                        "release",
-                                        "replay",
-                                        "capture",
-                                        "user-attribution",
-                                        "app-data",
-                                        "recovery-window",
-                                        "upstream-service",
-                                        "other"
-                                      ],
-                                      "type": "string"
-                                    },
-                                    {
-                                      "enum": [
-                                        "logs",
-                                        "configuration",
-                                        "answer"
-                                      ],
-                                      "type": "string"
-                                    }
-                                  ]
-                                },
-                                "provider": {
-                                  "type": "string",
-                                  "minLength": 1,
-                                  "maxLength": 120
-                                },
-                                "capability": {
-                                  "enum": [
-                                    "native-logs",
-                                    "repository",
-                                    "mcp",
-                                    "replay",
-                                    "release",
-                                    "source-map",
-                                    "user-attribution",
-                                    "human-answer"
-                                  ],
-                                  "type": "string"
-                                },
-                                "incidentScope": {
-                                  "type": "object",
-                                  "properties": {
-                                    "problemId": {
-                                      "type": "string",
-                                      "format": "uuid"
-                                    },
-                                    "sourceId": {
-                                      "type": "string",
-                                      "format": "uuid",
-                                      "description": "The incident service id (the Problem's serviceId) or a repository Datasource id. Before MCP connection, keep this existing incident anchor. Use an authorized MCP evidence Datasource id only after discovery; never invent one to request a connection."
-                                    },
-                                    "recordId": {
-                                      "type": "string",
-                                      "minLength": 1,
-                                      "maxLength": 255,
-                                      "description": "Exact requested trace/span id, replay session id, release id, device id, repository file path, or known provider record id. Before MCP discovery, keep the known incident record id; use an MCP resource URI only after authorized discovery. Never invent a URI or use an arbitrary record from the same service."
-                                    },
-                                    "windowStart": {
-                                      "type": "integer",
-                                      "minimum": 0,
-                                      "maximum": 9007199254740991
-                                    },
-                                    "windowEnd": {
-                                      "type": "integer",
-                                      "minimum": 0,
-                                      "maximum": 9007199254740991
-                                    }
-                                  },
-                                  "required": [
-                                    "problemId",
-                                    "sourceId",
-                                    "recordId",
-                                    "windowStart",
-                                    "windowEnd"
-                                  ],
-                                  "additionalProperties": false
-                                },
-                                "dependency": {
-                                  "type": "object",
-                                  "properties": {
-                                    "groupId": {
-                                      "type": "string",
-                                      "minLength": 1,
-                                      "maxLength": 120
-                                    },
-                                    "mode": {
-                                      "enum": [
-                                        "any",
-                                        "all"
-                                      ],
-                                      "type": "string"
-                                    }
-                                  },
-                                  "required": [
-                                    "groupId",
-                                    "mode"
-                                  ],
-                                  "additionalProperties": false
-                                }
-                              },
-                              "required": [
-                                "kind",
-                                "provider",
-                                "capability",
-                                "incidentScope",
-                                "dependency"
-                              ],
-                              "additionalProperties": false
+                              "$ref": "#/components/schemas/RequiredEvidence"
                             },
                             "scope": {
                               "type": "object",
@@ -45814,59 +44974,7 @@
                                               "type": "object",
                                               "properties": {
                                                 "requiredEvidence": {
-                                                  "type": "object",
-                                                  "properties": {
-                                                    "kind": {
-                                                      "anyOf": [
-                                                        {},
-                                                        {}
-                                                      ]
-                                                    },
-                                                    "provider": {
-                                                      "type": "string",
-                                                      "minLength": 1,
-                                                      "maxLength": 120
-                                                    },
-                                                    "capability": {
-                                                      "enum": [
-                                                        "native-logs",
-                                                        "repository",
-                                                        "mcp",
-                                                        "replay",
-                                                        "release",
-                                                        "source-map",
-                                                        "user-attribution",
-                                                        "human-answer"
-                                                      ],
-                                                      "type": "string"
-                                                    },
-                                                    "incidentScope": {
-                                                      "type": "object",
-                                                      "properties": {
-                                                        "problemId": {},
-                                                        "sourceId": {},
-                                                        "recordId": {},
-                                                        "windowStart": {},
-                                                        "windowEnd": {}
-                                                      },
-                                                      "additionalProperties": false
-                                                    },
-                                                    "dependency": {
-                                                      "type": "object",
-                                                      "properties": {
-                                                        "groupId": {},
-                                                        "mode": {}
-                                                      },
-                                                      "additionalProperties": false
-                                                    }
-                                                  },
-                                                  "required": [
-                                                    "provider",
-                                                    "capability",
-                                                    "incidentScope",
-                                                    "dependency"
-                                                  ],
-                                                  "additionalProperties": false
+                                                  "$ref": "#/components/schemas/RequiredEvidence"
                                                 },
                                                 "observedAt": {
                                                   "type": "integer",
@@ -45908,59 +45016,7 @@
                                               "type": "object",
                                               "properties": {
                                                 "requiredEvidence": {
-                                                  "type": "object",
-                                                  "properties": {
-                                                    "kind": {
-                                                      "anyOf": [
-                                                        {},
-                                                        {}
-                                                      ]
-                                                    },
-                                                    "provider": {
-                                                      "type": "string",
-                                                      "minLength": 1,
-                                                      "maxLength": 120
-                                                    },
-                                                    "capability": {
-                                                      "enum": [
-                                                        "native-logs",
-                                                        "repository",
-                                                        "mcp",
-                                                        "replay",
-                                                        "release",
-                                                        "source-map",
-                                                        "user-attribution",
-                                                        "human-answer"
-                                                      ],
-                                                      "type": "string"
-                                                    },
-                                                    "incidentScope": {
-                                                      "type": "object",
-                                                      "properties": {
-                                                        "problemId": {},
-                                                        "sourceId": {},
-                                                        "recordId": {},
-                                                        "windowStart": {},
-                                                        "windowEnd": {}
-                                                      },
-                                                      "additionalProperties": false
-                                                    },
-                                                    "dependency": {
-                                                      "type": "object",
-                                                      "properties": {
-                                                        "groupId": {},
-                                                        "mode": {}
-                                                      },
-                                                      "additionalProperties": false
-                                                    }
-                                                  },
-                                                  "required": [
-                                                    "provider",
-                                                    "capability",
-                                                    "incidentScope",
-                                                    "dependency"
-                                                  ],
-                                                  "additionalProperties": false
+                                                  "$ref": "#/components/schemas/RequiredEvidence"
                                                 },
                                                 "observedAt": {
                                                   "type": "integer",
@@ -60662,6 +59718,23 @@
                           "id",
                           "contentDigest",
                           "kind"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "const": "repository-lookup"
+                          },
+                          "contentDigest": {
+                            "type": "string",
+                            "pattern": "^[a-f0-9]{64}$"
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "contentDigest"
                         ],
                         "additionalProperties": false
                       },

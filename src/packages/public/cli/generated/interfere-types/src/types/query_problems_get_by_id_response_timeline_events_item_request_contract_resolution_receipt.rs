@@ -2,7 +2,7 @@ pub use crate::prelude::*;
 #[allow(unused_imports)]
 use super::*;
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct QueryProblemsGetByIdResponseTimelineEventsItemRequestContractResolutionReceipt {
     #[serde(default)]
     pub at: i64,

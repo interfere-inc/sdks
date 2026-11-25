@@ -13,7 +13,7 @@ pub struct QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentAct
     pub repository_access_ready_at: Option<i64>,
     #[serde(rename = "requiredEvidence")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub required_evidence: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindRequiredEvidence>,
+    pub required_evidence: Option<RequiredEvidence>,
     #[serde(rename = "evidenceStatus")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub evidence_status: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindEvidenceStatus>,
@@ -75,7 +75,7 @@ pub struct QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentAct
     action_kind: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindActionKind>,
     repository: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindRepository>,
     repository_access_ready_at: Option<i64>,
-    required_evidence: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindRequiredEvidence>,
+    required_evidence: Option<RequiredEvidence>,
     evidence_status: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindEvidenceStatus>,
     target_id: Option<String>,
     mcp_connection: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindMcpConnection>,
@@ -111,7 +111,7 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKin
         self
     }
 
-    pub fn required_evidence(mut self, value: QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindRequiredEvidence) -> Self {
+    pub fn required_evidence(mut self, value: RequiredEvidence) -> Self {
         self.required_evidence = Some(value);
         self
     }

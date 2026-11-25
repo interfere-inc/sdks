@@ -4,13 +4,13 @@ use super::*;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum ProblemEvidenceResponseObservationsItemEvidenceItemSixKind {
-    #[serde(rename = "same-request-problem")]
-    SameRequestProblem,
+    #[serde(rename = "prior-problem")]
+    PriorProblem,
 }
 impl fmt::Display for ProblemEvidenceResponseObservationsItemEvidenceItemSixKind {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let s = match self {
-            Self::SameRequestProblem => "same-request-problem",
+            Self::PriorProblem => "prior-problem",
         };
         write!(f, "{}", s)
     }

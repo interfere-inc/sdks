@@ -11,13 +11,15 @@ pub enum ProblemEvidenceResponseObservationsItemEvidenceItem {
 
         ProblemEvidenceResponseObservationsItemEvidenceItemId(ProblemEvidenceResponseObservationsItemEvidenceItemId),
 
+        ProblemEvidenceResponseObservationsItemEvidenceItemThree(ProblemEvidenceResponseObservationsItemEvidenceItemThree),
+
         ProblemEvidenceResponseObservationsItemEvidenceItemEndLine(ProblemEvidenceResponseObservationsItemEvidenceItemEndLine),
 
         ProblemEvidenceResponseObservationsItemEvidenceItemReleaseId(ProblemEvidenceResponseObservationsItemEvidenceItemReleaseId),
 
-        ProblemEvidenceResponseObservationsItemEvidenceItemFive(ProblemEvidenceResponseObservationsItemEvidenceItemFive),
-
         ProblemEvidenceResponseObservationsItemEvidenceItemSix(ProblemEvidenceResponseObservationsItemEvidenceItemSix),
+
+        ProblemEvidenceResponseObservationsItemEvidenceItemSeven(ProblemEvidenceResponseObservationsItemEvidenceItemSeven),
 
         ProblemEvidenceResponseObservationsItemEvidenceItemAffectedUsers(ProblemEvidenceResponseObservationsItemEvidenceItemAffectedUsers),
 
@@ -29,7 +31,7 @@ pub enum ProblemEvidenceResponseObservationsItemEvidenceItem {
 
         ProblemEvidenceResponseObservationsItemEvidenceItemMinSeverity(ProblemEvidenceResponseObservationsItemEvidenceItemMinSeverity),
 
-        ProblemEvidenceResponseObservationsItemEvidenceItemContentDigest(ProblemEvidenceResponseObservationsItemEvidenceItemContentDigest),
+        ProblemEvidenceResponseObservationsItemEvidenceItemSince(ProblemEvidenceResponseObservationsItemEvidenceItemSince),
 }
 
 impl ProblemEvidenceResponseObservationsItemEvidenceItem {
@@ -45,6 +47,10 @@ impl ProblemEvidenceResponseObservationsItemEvidenceItem {
         matches!(self, Self::ProblemEvidenceResponseObservationsItemEvidenceItemId(_))
     }
 
+    pub fn is_problem_evidence_response_observations_item_evidence_item_three(&self) -> bool {
+        matches!(self, Self::ProblemEvidenceResponseObservationsItemEvidenceItemThree(_))
+    }
+
     pub fn is_problem_evidence_response_observations_item_evidence_item_end_line(&self) -> bool {
         matches!(self, Self::ProblemEvidenceResponseObservationsItemEvidenceItemEndLine(_))
     }
@@ -53,12 +59,12 @@ impl ProblemEvidenceResponseObservationsItemEvidenceItem {
         matches!(self, Self::ProblemEvidenceResponseObservationsItemEvidenceItemReleaseId(_))
     }
 
-    pub fn is_problem_evidence_response_observations_item_evidence_item_five(&self) -> bool {
-        matches!(self, Self::ProblemEvidenceResponseObservationsItemEvidenceItemFive(_))
-    }
-
     pub fn is_problem_evidence_response_observations_item_evidence_item_six(&self) -> bool {
         matches!(self, Self::ProblemEvidenceResponseObservationsItemEvidenceItemSix(_))
+    }
+
+    pub fn is_problem_evidence_response_observations_item_evidence_item_seven(&self) -> bool {
+        matches!(self, Self::ProblemEvidenceResponseObservationsItemEvidenceItemSeven(_))
     }
 
     pub fn is_problem_evidence_response_observations_item_evidence_item_affected_users(&self) -> bool {
@@ -81,8 +87,8 @@ impl ProblemEvidenceResponseObservationsItemEvidenceItem {
         matches!(self, Self::ProblemEvidenceResponseObservationsItemEvidenceItemMinSeverity(_))
     }
 
-    pub fn is_problem_evidence_response_observations_item_evidence_item_content_digest(&self) -> bool {
-        matches!(self, Self::ProblemEvidenceResponseObservationsItemEvidenceItemContentDigest(_))
+    pub fn is_problem_evidence_response_observations_item_evidence_item_since(&self) -> bool {
+        matches!(self, Self::ProblemEvidenceResponseObservationsItemEvidenceItemSince(_))
     }
 
 
@@ -128,6 +134,20 @@ impl ProblemEvidenceResponseObservationsItemEvidenceItem {
                 }
     }
 
+    pub fn as_problem_evidence_response_observations_item_evidence_item_three(&self) -> Option<&ProblemEvidenceResponseObservationsItemEvidenceItemThree> {
+        match self {
+                    Self::ProblemEvidenceResponseObservationsItemEvidenceItemThree(value) => Some(value),
+                    _ => None,
+                }
+    }
+
+    pub fn into_problem_evidence_response_observations_item_evidence_item_three(self) -> Option<ProblemEvidenceResponseObservationsItemEvidenceItemThree> {
+        match self {
+                    Self::ProblemEvidenceResponseObservationsItemEvidenceItemThree(value) => Some(value),
+                    _ => None,
+                }
+    }
+
     pub fn as_problem_evidence_response_observations_item_evidence_item_end_line(&self) -> Option<&ProblemEvidenceResponseObservationsItemEvidenceItemEndLine> {
         match self {
                     Self::ProblemEvidenceResponseObservationsItemEvidenceItemEndLine(value) => Some(value),
@@ -156,20 +176,6 @@ impl ProblemEvidenceResponseObservationsItemEvidenceItem {
                 }
     }
 
-    pub fn as_problem_evidence_response_observations_item_evidence_item_five(&self) -> Option<&ProblemEvidenceResponseObservationsItemEvidenceItemFive> {
-        match self {
-                    Self::ProblemEvidenceResponseObservationsItemEvidenceItemFive(value) => Some(value),
-                    _ => None,
-                }
-    }
-
-    pub fn into_problem_evidence_response_observations_item_evidence_item_five(self) -> Option<ProblemEvidenceResponseObservationsItemEvidenceItemFive> {
-        match self {
-                    Self::ProblemEvidenceResponseObservationsItemEvidenceItemFive(value) => Some(value),
-                    _ => None,
-                }
-    }
-
     pub fn as_problem_evidence_response_observations_item_evidence_item_six(&self) -> Option<&ProblemEvidenceResponseObservationsItemEvidenceItemSix> {
         match self {
                     Self::ProblemEvidenceResponseObservationsItemEvidenceItemSix(value) => Some(value),
@@ -180,6 +186,20 @@ impl ProblemEvidenceResponseObservationsItemEvidenceItem {
     pub fn into_problem_evidence_response_observations_item_evidence_item_six(self) -> Option<ProblemEvidenceResponseObservationsItemEvidenceItemSix> {
         match self {
                     Self::ProblemEvidenceResponseObservationsItemEvidenceItemSix(value) => Some(value),
+                    _ => None,
+                }
+    }
+
+    pub fn as_problem_evidence_response_observations_item_evidence_item_seven(&self) -> Option<&ProblemEvidenceResponseObservationsItemEvidenceItemSeven> {
+        match self {
+                    Self::ProblemEvidenceResponseObservationsItemEvidenceItemSeven(value) => Some(value),
+                    _ => None,
+                }
+    }
+
+    pub fn into_problem_evidence_response_observations_item_evidence_item_seven(self) -> Option<ProblemEvidenceResponseObservationsItemEvidenceItemSeven> {
+        match self {
+                    Self::ProblemEvidenceResponseObservationsItemEvidenceItemSeven(value) => Some(value),
                     _ => None,
                 }
     }
@@ -254,16 +274,16 @@ impl ProblemEvidenceResponseObservationsItemEvidenceItem {
                 }
     }
 
-    pub fn as_problem_evidence_response_observations_item_evidence_item_content_digest(&self) -> Option<&ProblemEvidenceResponseObservationsItemEvidenceItemContentDigest> {
+    pub fn as_problem_evidence_response_observations_item_evidence_item_since(&self) -> Option<&ProblemEvidenceResponseObservationsItemEvidenceItemSince> {
         match self {
-                    Self::ProblemEvidenceResponseObservationsItemEvidenceItemContentDigest(value) => Some(value),
+                    Self::ProblemEvidenceResponseObservationsItemEvidenceItemSince(value) => Some(value),
                     _ => None,
                 }
     }
 
-    pub fn into_problem_evidence_response_observations_item_evidence_item_content_digest(self) -> Option<ProblemEvidenceResponseObservationsItemEvidenceItemContentDigest> {
+    pub fn into_problem_evidence_response_observations_item_evidence_item_since(self) -> Option<ProblemEvidenceResponseObservationsItemEvidenceItemSince> {
         match self {
-                    Self::ProblemEvidenceResponseObservationsItemEvidenceItemContentDigest(value) => Some(value),
+                    Self::ProblemEvidenceResponseObservationsItemEvidenceItemSince(value) => Some(value),
                     _ => None,
                 }
     }
@@ -275,16 +295,17 @@ impl fmt::Display for ProblemEvidenceResponseObservationsItemEvidenceItem {
             Self::ProblemEvidenceResponseObservationsItemEvidenceItemSourceFrame(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::ProblemEvidenceResponseObservationsItemEvidenceItemConnectionRevision(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::ProblemEvidenceResponseObservationsItemEvidenceItemId(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::ProblemEvidenceResponseObservationsItemEvidenceItemThree(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::ProblemEvidenceResponseObservationsItemEvidenceItemEndLine(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::ProblemEvidenceResponseObservationsItemEvidenceItemReleaseId(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
-            Self::ProblemEvidenceResponseObservationsItemEvidenceItemFive(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::ProblemEvidenceResponseObservationsItemEvidenceItemSix(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::ProblemEvidenceResponseObservationsItemEvidenceItemSeven(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::ProblemEvidenceResponseObservationsItemEvidenceItemAffectedUsers(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::ProblemEvidenceResponseObservationsItemEvidenceItemAfterEventCount(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::ProblemEvidenceResponseObservationsItemEvidenceItemRecordCount(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::ProblemEvidenceResponseObservationsItemEvidenceItemEvidenceDigest(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::ProblemEvidenceResponseObservationsItemEvidenceItemMinSeverity(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
-            Self::ProblemEvidenceResponseObservationsItemEvidenceItemContentDigest(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::ProblemEvidenceResponseObservationsItemEvidenceItemSince(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
         }
     }
 }

@@ -2,10 +2,10 @@ pub use crate::prelude::*;
 #[allow(unused_imports)]
 use super::*;
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct QueryProblemsGetByIdResponseTimelineEventsItemRequestContractResolutionReceiptReceiptConnectionEvidence {
     #[serde(rename = "requiredEvidence")]
-    pub required_evidence: QueryProblemsGetByIdResponseTimelineEventsItemRequestContractResolutionReceiptReceiptConnectionEvidenceRequiredEvidence,
+    pub required_evidence: RequiredEvidence,
     #[serde(rename = "observedAt")]
     #[serde(default)]
     pub observed_at: i64,
@@ -23,13 +23,13 @@ impl QueryProblemsGetByIdResponseTimelineEventsItemRequestContractResolutionRece
 #[derive(Clone, PartialEq, Default, Debug)]
 #[non_exhaustive]
 pub struct QueryProblemsGetByIdResponseTimelineEventsItemRequestContractResolutionReceiptReceiptConnectionEvidenceBuilder {
-    required_evidence: Option<QueryProblemsGetByIdResponseTimelineEventsItemRequestContractResolutionReceiptReceiptConnectionEvidenceRequiredEvidence>,
+    required_evidence: Option<RequiredEvidence>,
     observed_at: Option<i64>,
     record_id: Option<String>,
 }
 
 impl QueryProblemsGetByIdResponseTimelineEventsItemRequestContractResolutionReceiptReceiptConnectionEvidenceBuilder {
-    pub fn required_evidence(mut self, value: QueryProblemsGetByIdResponseTimelineEventsItemRequestContractResolutionReceiptReceiptConnectionEvidenceRequiredEvidence) -> Self {
+    pub fn required_evidence(mut self, value: RequiredEvidence) -> Self {
         self.required_evidence = Some(value);
         self
     }

@@ -2,13 +2,13 @@ pub use crate::prelude::*;
 #[allow(unused_imports)]
 use super::*;
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct QueryProblemsGetByIdResponseTimelineEventsItemRequestContract {
     #[serde(default)]
     pub version: String,
     #[serde(rename = "requiredEvidence")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub required_evidence: Option<QueryProblemsGetByIdResponseTimelineEventsItemRequestContractRequiredEvidence>,
+    pub required_evidence: Option<RequiredEvidence>,
     #[serde(default)]
     pub scope: QueryProblemsGetByIdResponseTimelineEventsItemRequestContractScope,
     pub completion: QueryProblemsGetByIdResponseTimelineEventsItemRequestContractCompletion,
@@ -25,7 +25,7 @@ impl QueryProblemsGetByIdResponseTimelineEventsItemRequestContract {
 #[non_exhaustive]
 pub struct QueryProblemsGetByIdResponseTimelineEventsItemRequestContractBuilder {
     version: Option<String>,
-    required_evidence: Option<QueryProblemsGetByIdResponseTimelineEventsItemRequestContractRequiredEvidence>,
+    required_evidence: Option<RequiredEvidence>,
     scope: Option<QueryProblemsGetByIdResponseTimelineEventsItemRequestContractScope>,
     completion: Option<QueryProblemsGetByIdResponseTimelineEventsItemRequestContractCompletion>,
     resolution: Option<QueryProblemsGetByIdResponseTimelineEventsItemRequestContractResolution>,
@@ -37,7 +37,7 @@ impl QueryProblemsGetByIdResponseTimelineEventsItemRequestContractBuilder {
         self
     }
 
-    pub fn required_evidence(mut self, value: QueryProblemsGetByIdResponseTimelineEventsItemRequestContractRequiredEvidence) -> Self {
+    pub fn required_evidence(mut self, value: RequiredEvidence) -> Self {
         self.required_evidence = Some(value);
         self
     }

@@ -5,7 +5,7 @@ use super::*;
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindEvidenceStatusReceipt {
     #[serde(rename = "requiredEvidence")]
-    pub required_evidence: QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindEvidenceStatusReceiptRequiredEvidence,
+    pub required_evidence: RequiredEvidence,
     #[serde(rename = "observedAt")]
     #[serde(default)]
     pub observed_at: i64,
@@ -23,13 +23,13 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKin
 #[derive(Clone, PartialEq, Default, Debug)]
 #[non_exhaustive]
 pub struct QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindEvidenceStatusReceiptBuilder {
-    required_evidence: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindEvidenceStatusReceiptRequiredEvidence>,
+    required_evidence: Option<RequiredEvidence>,
     observed_at: Option<i64>,
     record_id: Option<String>,
 }
 
 impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindEvidenceStatusReceiptBuilder {
-    pub fn required_evidence(mut self, value: QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentActionKindEvidenceStatusReceiptRequiredEvidence) -> Self {
+    pub fn required_evidence(mut self, value: RequiredEvidence) -> Self {
         self.required_evidence = Some(value);
         self
     }

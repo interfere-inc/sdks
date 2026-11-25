@@ -2,11 +2,10 @@ pub use crate::prelude::*;
 #[allow(unused_imports)]
 use super::*;
 
-#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct QueryProblemsPreviousAccountsResponseItemTimelineEventsItemRequestContractResolutionReceiptReceiptKindEvidence {
     #[serde(rename = "requiredEvidence")]
-    #[serde(default)]
-    pub required_evidence: QueryProblemsPreviousAccountsResponseItemTimelineEventsItemRequestContractResolutionReceiptReceiptKindEvidenceRequiredEvidence,
+    pub required_evidence: RequiredEvidence,
     #[serde(rename = "observedAt")]
     #[serde(default)]
     pub observed_at: i64,
@@ -24,13 +23,13 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemRequestContractR
 #[derive(Clone, PartialEq, Default, Debug)]
 #[non_exhaustive]
 pub struct QueryProblemsPreviousAccountsResponseItemTimelineEventsItemRequestContractResolutionReceiptReceiptKindEvidenceBuilder {
-    required_evidence: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemRequestContractResolutionReceiptReceiptKindEvidenceRequiredEvidence>,
+    required_evidence: Option<RequiredEvidence>,
     observed_at: Option<i64>,
     record_id: Option<String>,
 }
 
 impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemRequestContractResolutionReceiptReceiptKindEvidenceBuilder {
-    pub fn required_evidence(mut self, value: QueryProblemsPreviousAccountsResponseItemTimelineEventsItemRequestContractResolutionReceiptReceiptKindEvidenceRequiredEvidence) -> Self {
+    pub fn required_evidence(mut self, value: RequiredEvidence) -> Self {
         self.required_evidence = Some(value);
         self
     }

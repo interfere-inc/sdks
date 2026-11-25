@@ -13,7 +13,7 @@ pub struct TimelineEventContentActionKind {
     pub repository_access_ready_at: Option<i64>,
     #[serde(rename = "requiredEvidence")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub required_evidence: Option<TimelineEventContentActionKindRequiredEvidence>,
+    pub required_evidence: Option<RequiredEvidence>,
     #[serde(rename = "evidenceStatus")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub evidence_status: Option<TimelineEventContentActionKindEvidenceStatus>,
@@ -75,7 +75,7 @@ pub struct TimelineEventContentActionKindBuilder {
     action_kind: Option<TimelineEventContentActionKindActionKind>,
     repository: Option<TimelineEventContentActionKindRepository>,
     repository_access_ready_at: Option<i64>,
-    required_evidence: Option<TimelineEventContentActionKindRequiredEvidence>,
+    required_evidence: Option<RequiredEvidence>,
     evidence_status: Option<TimelineEventContentActionKindEvidenceStatus>,
     target_id: Option<String>,
     mcp_connection: Option<TimelineEventContentActionKindMcpConnection>,
@@ -111,7 +111,7 @@ impl TimelineEventContentActionKindBuilder {
         self
     }
 
-    pub fn required_evidence(mut self, value: TimelineEventContentActionKindRequiredEvidence) -> Self {
+    pub fn required_evidence(mut self, value: RequiredEvidence) -> Self {
         self.required_evidence = Some(value);
         self
     }

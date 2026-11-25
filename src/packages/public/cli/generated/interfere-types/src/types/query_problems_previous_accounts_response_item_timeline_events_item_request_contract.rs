@@ -8,7 +8,7 @@ pub struct QueryProblemsPreviousAccountsResponseItemTimelineEventsItemRequestCon
     pub version: String,
     #[serde(rename = "requiredEvidence")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub required_evidence: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemRequestContractRequiredEvidence>,
+    pub required_evidence: Option<RequiredEvidence>,
     #[serde(default)]
     pub scope: QueryProblemsPreviousAccountsResponseItemTimelineEventsItemRequestContractScope,
     pub completion: QueryProblemsPreviousAccountsResponseItemTimelineEventsItemRequestContractCompletion,
@@ -25,7 +25,7 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemRequestContract 
 #[non_exhaustive]
 pub struct QueryProblemsPreviousAccountsResponseItemTimelineEventsItemRequestContractBuilder {
     version: Option<String>,
-    required_evidence: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemRequestContractRequiredEvidence>,
+    required_evidence: Option<RequiredEvidence>,
     scope: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemRequestContractScope>,
     completion: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemRequestContractCompletion>,
     resolution: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemRequestContractResolution>,
@@ -37,7 +37,7 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemRequestContractB
         self
     }
 
-    pub fn required_evidence(mut self, value: QueryProblemsPreviousAccountsResponseItemTimelineEventsItemRequestContractRequiredEvidence) -> Self {
+    pub fn required_evidence(mut self, value: RequiredEvidence) -> Self {
         self.required_evidence = Some(value);
         self
     }

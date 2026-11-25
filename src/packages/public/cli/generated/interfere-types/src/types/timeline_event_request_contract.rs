@@ -8,7 +8,7 @@ pub struct TimelineEventRequestContract {
     pub version: String,
     #[serde(rename = "requiredEvidence")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub required_evidence: Option<TimelineEventRequestContractRequiredEvidence>,
+    pub required_evidence: Option<RequiredEvidence>,
     #[serde(default)]
     pub scope: TimelineEventRequestContractScope,
     pub completion: TimelineEventRequestContractCompletion,
@@ -25,7 +25,7 @@ impl TimelineEventRequestContract {
 #[non_exhaustive]
 pub struct TimelineEventRequestContractBuilder {
     version: Option<String>,
-    required_evidence: Option<TimelineEventRequestContractRequiredEvidence>,
+    required_evidence: Option<RequiredEvidence>,
     scope: Option<TimelineEventRequestContractScope>,
     completion: Option<TimelineEventRequestContractCompletion>,
     resolution: Option<TimelineEventRequestContractResolution>,
@@ -37,7 +37,7 @@ impl TimelineEventRequestContractBuilder {
         self
     }
 
-    pub fn required_evidence(mut self, value: TimelineEventRequestContractRequiredEvidence) -> Self {
+    pub fn required_evidence(mut self, value: RequiredEvidence) -> Self {
         self.required_evidence = Some(value);
         self
     }

@@ -13,7 +13,7 @@ pub struct QueryProblemsGetByIdResponseTimelineEventsItemContentActionKind {
     pub repository_access_ready_at: Option<i64>,
     #[serde(rename = "requiredEvidence")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub required_evidence: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentActionKindRequiredEvidence>,
+    pub required_evidence: Option<RequiredEvidence>,
     #[serde(rename = "evidenceStatus")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub evidence_status: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentActionKindEvidenceStatus>,
@@ -75,7 +75,7 @@ pub struct QueryProblemsGetByIdResponseTimelineEventsItemContentActionKindBuilde
     action_kind: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentActionKindActionKind>,
     repository: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentActionKindRepository>,
     repository_access_ready_at: Option<i64>,
-    required_evidence: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentActionKindRequiredEvidence>,
+    required_evidence: Option<RequiredEvidence>,
     evidence_status: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentActionKindEvidenceStatus>,
     target_id: Option<String>,
     mcp_connection: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentActionKindMcpConnection>,
@@ -111,7 +111,7 @@ impl QueryProblemsGetByIdResponseTimelineEventsItemContentActionKindBuilder {
         self
     }
 
-    pub fn required_evidence(mut self, value: QueryProblemsGetByIdResponseTimelineEventsItemContentActionKindRequiredEvidence) -> Self {
+    pub fn required_evidence(mut self, value: RequiredEvidence) -> Self {
         self.required_evidence = Some(value);
         self
     }
