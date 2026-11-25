@@ -3,11 +3,11 @@ pub use crate::prelude::*;
 use super::*;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
-pub enum TimelineEventContentEvidenceGapPublicationDecisionRejection {
+pub enum TimelineEventContentEvidenceGapPublicationBasisRejection {
     #[serde(rename = "review")]
     Review,
 }
-impl fmt::Display for TimelineEventContentEvidenceGapPublicationDecisionRejection {
+impl fmt::Display for TimelineEventContentEvidenceGapPublicationBasisRejection {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let s = match self {
             Self::Review => "review",

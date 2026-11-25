@@ -4,7 +4,7 @@ use super::*;
 
 #[non_exhaustive]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapPublicationDecisionKind {
+pub enum QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceGapPublicationBasisKind {
     Note,
     RootCause,
     Fix,
@@ -13,7 +13,7 @@ pub enum QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapPublica
     /// it will be captured here with the raw string value.
     __Unknown(String),
 }
-impl Serialize for QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapPublicationDecisionKind {
+impl Serialize for QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceGapPublicationBasisKind {
     fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         match self {
             Self::Note => serializer.serialize_str("note"),
@@ -24,7 +24,7 @@ impl Serialize for QueryProblemsGetByIdResponseTimelineEventsItemContentEvidence
     }
 }
 
-impl<'de> Deserialize<'de> for QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapPublicationDecisionKind {
+impl<'de> Deserialize<'de> for QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceGapPublicationBasisKind {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         let value = String::deserialize(deserializer)?;
         match value.as_str() {
@@ -36,7 +36,7 @@ impl<'de> Deserialize<'de> for QueryProblemsGetByIdResponseTimelineEventsItemCon
     }
 }
 
-impl fmt::Display for QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapPublicationDecisionKind {
+impl fmt::Display for QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceGapPublicationBasisKind {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Note => write!(f, "note"),

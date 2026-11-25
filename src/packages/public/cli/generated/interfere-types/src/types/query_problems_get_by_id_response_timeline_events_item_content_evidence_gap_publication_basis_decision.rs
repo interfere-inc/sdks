@@ -4,7 +4,7 @@ use super::*;
 
 #[non_exhaustive]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapPublicationDecisionDecision {
+pub enum QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapPublicationBasisDecision {
     Unsupported,
     InsufficientEvidence,
     /// This variant is used for forward compatibility.
@@ -12,7 +12,7 @@ pub enum QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapPublica
     /// it will be captured here with the raw string value.
     __Unknown(String),
 }
-impl Serialize for QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapPublicationDecisionDecision {
+impl Serialize for QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapPublicationBasisDecision {
     fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         match self {
             Self::Unsupported => serializer.serialize_str("unsupported"),
@@ -22,7 +22,7 @@ impl Serialize for QueryProblemsGetByIdResponseTimelineEventsItemContentEvidence
     }
 }
 
-impl<'de> Deserialize<'de> for QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapPublicationDecisionDecision {
+impl<'de> Deserialize<'de> for QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapPublicationBasisDecision {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         let value = String::deserialize(deserializer)?;
         match value.as_str() {
@@ -33,7 +33,7 @@ impl<'de> Deserialize<'de> for QueryProblemsGetByIdResponseTimelineEventsItemCon
     }
 }
 
-impl fmt::Display for QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapPublicationDecisionDecision {
+impl fmt::Display for QueryProblemsGetByIdResponseTimelineEventsItemContentEvidenceGapPublicationBasisDecision {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Unsupported => write!(f, "unsupported"),

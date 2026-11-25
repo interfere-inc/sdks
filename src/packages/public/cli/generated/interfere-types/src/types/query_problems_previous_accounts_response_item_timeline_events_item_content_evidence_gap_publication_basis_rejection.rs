@@ -3,11 +3,11 @@ pub use crate::prelude::*;
 use super::*;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
-pub enum QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceGapPublicationDecisionRejection {
+pub enum QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceGapPublicationBasisRejection {
     #[serde(rename = "review")]
     Review,
 }
-impl fmt::Display for QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceGapPublicationDecisionRejection {
+impl fmt::Display for QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceGapPublicationBasisRejection {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let s = match self {
             Self::Review => "review",

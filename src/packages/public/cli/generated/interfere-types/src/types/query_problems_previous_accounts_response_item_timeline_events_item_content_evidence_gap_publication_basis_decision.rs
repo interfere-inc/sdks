@@ -4,7 +4,7 @@ use super::*;
 
 #[non_exhaustive]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum TimelineEventContentEvidenceGapPublicationDecisionDecision {
+pub enum QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceGapPublicationBasisDecision {
     Unsupported,
     InsufficientEvidence,
     /// This variant is used for forward compatibility.
@@ -12,7 +12,7 @@ pub enum TimelineEventContentEvidenceGapPublicationDecisionDecision {
     /// it will be captured here with the raw string value.
     __Unknown(String),
 }
-impl Serialize for TimelineEventContentEvidenceGapPublicationDecisionDecision {
+impl Serialize for QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceGapPublicationBasisDecision {
     fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         match self {
             Self::Unsupported => serializer.serialize_str("unsupported"),
@@ -22,7 +22,7 @@ impl Serialize for TimelineEventContentEvidenceGapPublicationDecisionDecision {
     }
 }
 
-impl<'de> Deserialize<'de> for TimelineEventContentEvidenceGapPublicationDecisionDecision {
+impl<'de> Deserialize<'de> for QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceGapPublicationBasisDecision {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         let value = String::deserialize(deserializer)?;
         match value.as_str() {
@@ -33,7 +33,7 @@ impl<'de> Deserialize<'de> for TimelineEventContentEvidenceGapPublicationDecisio
     }
 }
 
-impl fmt::Display for TimelineEventContentEvidenceGapPublicationDecisionDecision {
+impl fmt::Display for QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEvidenceGapPublicationBasisDecision {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Unsupported => write!(f, "unsupported"),

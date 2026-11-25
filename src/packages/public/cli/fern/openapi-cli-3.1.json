@@ -7243,6 +7243,13 @@
                             "maximum": 9007199254740991,
                             "exclusiveMinimum": 0
                           },
+                          "basis": {
+                            "enum": [
+                              "contradicted",
+                              "unsupported-without-contradiction"
+                            ],
+                            "type": "string"
+                          },
                           "decision": {
                             "enum": [
                               "unsupported",
@@ -38375,6 +38382,13 @@
                                     "maximum": 9007199254740991,
                                     "exclusiveMinimum": 0
                                   },
+                                  "basis": {
+                                    "enum": [
+                                      "contradicted",
+                                      "unsupported-without-contradiction"
+                                    ],
+                                    "type": "string"
+                                  },
                                   "decision": {
                                     "enum": [
                                       "unsupported",
@@ -43754,6 +43768,13 @@
                                       "minimum": -9007199254740991,
                                       "maximum": 9007199254740991,
                                       "exclusiveMinimum": 0
+                                    },
+                                    "basis": {
+                                      "enum": [
+                                        "contradicted",
+                                        "unsupported-without-contradiction"
+                                      ],
+                                      "type": "string"
                                     },
                                     "decision": {
                                       "enum": [

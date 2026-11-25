@@ -4,7 +4,7 @@ use super::*;
 
 #[non_exhaustive]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum TimelineEventContentEvidenceGapPublicationDecisionKind {
+pub enum TimelineEventContentEvidenceGapPublicationBasisKind {
     Note,
     RootCause,
     Fix,
@@ -13,7 +13,7 @@ pub enum TimelineEventContentEvidenceGapPublicationDecisionKind {
     /// it will be captured here with the raw string value.
     __Unknown(String),
 }
-impl Serialize for TimelineEventContentEvidenceGapPublicationDecisionKind {
+impl Serialize for TimelineEventContentEvidenceGapPublicationBasisKind {
     fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         match self {
             Self::Note => serializer.serialize_str("note"),
@@ -24,7 +24,7 @@ impl Serialize for TimelineEventContentEvidenceGapPublicationDecisionKind {
     }
 }
 
-impl<'de> Deserialize<'de> for TimelineEventContentEvidenceGapPublicationDecisionKind {
+impl<'de> Deserialize<'de> for TimelineEventContentEvidenceGapPublicationBasisKind {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         let value = String::deserialize(deserializer)?;
         match value.as_str() {
@@ -36,7 +36,7 @@ impl<'de> Deserialize<'de> for TimelineEventContentEvidenceGapPublicationDecisio
     }
 }
 
-impl fmt::Display for TimelineEventContentEvidenceGapPublicationDecisionKind {
+impl fmt::Display for TimelineEventContentEvidenceGapPublicationBasisKind {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Note => write!(f, "note"),
