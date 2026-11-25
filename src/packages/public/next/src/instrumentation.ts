@@ -79,6 +79,7 @@ export async function register(opts: ServerInstrumentationOptions = {}) {
         ...opts,
         _internalAdditionalSpanProcessors: [
           nextSpanExceptionProcessor,
+          // oxlint-disable-next-line eslint/no-underscore-dangle -- Published option that other @interfere packages pass across versions.
           ...(opts._internalAdditionalSpanProcessors ?? []),
         ],
       },

@@ -69,6 +69,7 @@ export function resolveTracingOptions(
     resolvedTracing.serviceNamespace = opts.serviceNamespace;
   }
 
+  /* oxlint-disable eslint/no-underscore-dangle -- Published option that other @interfere packages pass across versions. */
   if (opts._internalAdditionalSpanProcessors) {
     resolvedTracing.additionalSpanProcessors =
       opts._internalAdditionalSpanProcessors;
@@ -84,6 +85,7 @@ export function resolveTracingOptions(
       opts._internalAdditionalMetricReaders;
   }
 
+  /* oxlint-enable eslint/no-underscore-dangle */
   if (backendHosts) {
     resolvedTracing.backendHosts = backendHosts;
   }

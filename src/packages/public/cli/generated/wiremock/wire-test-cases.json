@@ -2876,7 +2876,7 @@
       "requiresAuth": true,
       "response": {
         "status": 200,
-        "body": "{\n  \"coverage\": {\n    \"completeness\": \"unknown\",\n    \"counts\": \"observed\",\n    \"scope\": \"retained_history\",\n    \"bucket\": \"distinct_identities\"\n  },\n  \"data\": [\n    {\n      \"day\": \"2023-01-15\",\n      \"occurrences\": 1,\n      \"affectedUsers\": 1,\n      \"environments\": [\n        {\n          \"environment\": \"environment\",\n          \"occurrences\": 1\n        }\n      ]\n    }\n  ]\n}"
+        "body": "{\n  \"coverage\": {\n    \"completeness\": \"unknown\",\n    \"counts\": \"observed\",\n    \"scope\": \"retained_history\",\n    \"bucket\": \"distinct_identities\"\n  },\n  \"environments\": [\n    \"environments\"\n  ],\n  \"data\": [\n    {\n      \"day\": \"2023-01-15\",\n      \"occurrences\": 1,\n      \"affectedUsers\": 1,\n      \"environments\": [\n        {\n          \"environment\": \"environment\",\n          \"occurrences\": 1\n        }\n      ]\n    }\n  ]\n}"
       }
     },
     {

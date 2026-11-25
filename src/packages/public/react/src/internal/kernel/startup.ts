@@ -40,8 +40,11 @@ export function prepareKernel(opts: KernelInternalOptions) {
     },
   });
 
-  if (opts._wrapperVersions?.length) {
-    Object.assign(globalThis, { [SDK_STACK_GLOBAL]: opts._wrapperVersions });
+  // oxlint-disable-next-line eslint/no-underscore-dangle -- Published option that other @interfere packages pass across versions.
+  const wrapperVersions = opts._wrapperVersions;
+
+  if (wrapperVersions?.length) {
+    Object.assign(globalThis, { [SDK_STACK_GLOBAL]: wrapperVersions });
   }
 
   return { fetcher, service, serviceName, tracker };
@@ -86,6 +89,7 @@ export function applyRemoteStartup(input: RemoteStartupInput) {
   const tracingInput = {
     kernel,
     releaseSlug: readReleaseSlugFromGlobals(),
+    // oxlint-disable-next-line eslint/no-underscore-dangle -- Published option that other @interfere packages pass across versions.
     sdkStack: buildSdkStack(opts._wrapperVersions),
     targets,
   };

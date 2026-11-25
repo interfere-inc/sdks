@@ -176,6 +176,7 @@ export async function startNodeRuntime(input: NodeRuntimeInput) {
             }),
           ),
         ]),
+    // oxlint-disable-next-line eslint/no-underscore-dangle -- Published option that other @interfere packages pass across versions.
     ...(options._internalAdditionalSpanProcessors ?? []),
   ];
 
@@ -299,6 +300,7 @@ export async function startNodeRuntime(input: NodeRuntimeInput) {
                 ),
               ),
             }),
+            // oxlint-disable-next-line eslint/no-underscore-dangle -- Published option that other @interfere packages pass across versions.
             ...(options._internalAdditionalLogRecordProcessors ?? []),
           ],
         })));

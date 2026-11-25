@@ -1,4 +1,8 @@
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
+import {
+  PUBLIC_KEY_GLOBAL,
+  RELEASE_SLUG_GLOBAL,
+} from "@interfere/types/sdk/injected-globals";
 import { RELEASE_TOKEN_GLOBAL } from "@interfere/types/sdk/release/token";
 
 import { existsSync } from "node:fs";
@@ -72,8 +76,8 @@ export function configureBuild({
   );
 
   const hasMetadata =
-    Boolean(values.__INTERFERE_RELEASE_SLUG__) ||
-    values.__INTERFERE_PUBLIC_KEY__ !== undefined ||
+    Boolean(values[RELEASE_SLUG_GLOBAL]) ||
+    values[PUBLIC_KEY_GLOBAL] !== undefined ||
     values[RELEASE_TOKEN_GLOBAL] !== undefined;
 
   const injectionApplies = targets.length > 0;

@@ -6,6 +6,8 @@ use super::*;
 pub struct ProblemTimeseriesResponse {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub coverage: Option<ProblemTimeseriesResponseCoverage>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub environments: Option<Vec<String>>,
     #[serde(default)]
     pub data: Vec<ProblemTimeseriesResponseDataItem>,
 }
@@ -20,12 +22,18 @@ impl ProblemTimeseriesResponse {
 #[non_exhaustive]
 pub struct ProblemTimeseriesResponseBuilder {
     coverage: Option<ProblemTimeseriesResponseCoverage>,
+    environments: Option<Vec<String>>,
     data: Option<Vec<ProblemTimeseriesResponseDataItem>>,
 }
 
 impl ProblemTimeseriesResponseBuilder {
     pub fn coverage(mut self, value: ProblemTimeseriesResponseCoverage) -> Self {
         self.coverage = Some(value);
+        self
+    }
+
+    pub fn environments(mut self, value: Vec<String>) -> Self {
+        self.environments = Some(value);
         self
     }
 
@@ -40,6 +48,7 @@ impl ProblemTimeseriesResponseBuilder {
     pub fn build(self) -> Result<ProblemTimeseriesResponse, BuildError> {
         Ok(ProblemTimeseriesResponse {
             coverage: self.coverage,
+            environments: self.environments,
             data: self.data.ok_or_else(|| BuildError::missing_field("data"))?,
         })
     }
