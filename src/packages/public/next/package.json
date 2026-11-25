@@ -1,6 +1,6 @@
 {
   "name": "@interfere/next",
-  "version": "13.1.5",
+  "version": "13.1.6",
   "description": "Build software that never breaks.",
   "keywords": [
     "error-tracking",

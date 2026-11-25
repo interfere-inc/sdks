@@ -1,5 +1,16 @@
 # @interfere/react
 
+## 13.1.6
+
+### Patch Changes
+
+- df0fceb: Requests your app sends to its own origin or a `tracing.propagateTo` origin while `init()` is still starting now carry Interfere session baggage, so a request made as the first page renders is linked to its browser session.
+
+### Network
+
+- Headers:
+  - df0fceb: `fetch` and `XMLHttpRequest` requests sent before `init()` resolves carry the `baggage` header with `interfere.session.id` (and `interfere.device.id` when device capture is allowed) on the origins and with the header lists that already receive it after startup.
+
 ## 13.1.5
 
 ### Patch Changes

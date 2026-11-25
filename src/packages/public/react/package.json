@@ -1,6 +1,6 @@
 {
   "name": "@interfere/react",
-  "version": "13.1.5",
+  "version": "13.1.6",
   "description": "Client-side React SDK for Interfere. Error tracking, session replay, and analytics.",
   "keywords": [
     "error-tracking",

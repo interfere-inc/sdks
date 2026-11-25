@@ -1,5 +1,11 @@
 # @interfere/cli
 
+## 1.22.0
+
+### Minor Changes
+
+- Regenerate CLI commands and API types from the current API schema.
+
 ## 1.21.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@interfere/vite",
-  "version": "13.1.5",
+  "version": "13.1.6",
   "description": "Vite build plugin and client + server initialization for Interfere.",
   "keywords": [
     "error-tracking",

@@ -14,12 +14,6 @@ pub struct SubmitProblemFeedbackRequest {
     #[serde(rename = "submissionId")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub submission_id: Option<String>,
-    /// Ignored. The server records the submission time.
-    #[serde(rename = "submittedAt")]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(default)]
-    #[serde(with = "crate::core::flexible_datetime::offset::option")]
-    pub submitted_at: Option<DateTime<FixedOffset>>,
 }
 
 impl SubmitProblemFeedbackRequest {
@@ -35,7 +29,6 @@ pub struct SubmitProblemFeedbackRequestBuilder {
     actionability: Option<SubmitProblemFeedbackRequestActionability>,
     comment: Option<String>,
     submission_id: Option<String>,
-    submitted_at: Option<DateTime<FixedOffset>>,
 }
 
 impl SubmitProblemFeedbackRequestBuilder {
@@ -59,11 +52,6 @@ impl SubmitProblemFeedbackRequestBuilder {
         self
     }
 
-    pub fn submitted_at(mut self, value: DateTime<FixedOffset>) -> Self {
-        self.submitted_at = Some(value);
-        self
-    }
-
     /// Consumes the builder and constructs a [`SubmitProblemFeedbackRequest`].
     pub fn build(self) -> Result<SubmitProblemFeedbackRequest, BuildError> {
         Ok(SubmitProblemFeedbackRequest {
@@ -71,7 +59,6 @@ impl SubmitProblemFeedbackRequestBuilder {
             actionability: self.actionability,
             comment: self.comment,
             submission_id: self.submission_id,
-            submitted_at: self.submitted_at,
         })
     }
 }

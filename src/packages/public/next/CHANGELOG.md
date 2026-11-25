@@ -1,5 +1,12 @@
 # @interfere/next
 
+## 13.1.6
+
+### Patch Changes
+
+- Updated dependencies [df0fceb]
+  - @interfere/react@13.1.6
+
 ## 13.1.5
 
 ### Patch Changes

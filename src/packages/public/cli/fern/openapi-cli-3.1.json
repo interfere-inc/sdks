@@ -85032,11 +85032,6 @@
                     "type": "string",
                     "format": "uuid",
                     "description": "Retry key for one submission. Omit it to keep a single feedback per user and problem, which a later submission replaces."
-                  },
-                  "submittedAt": {
-                    "type": "string",
-                    "format": "date-time",
-                    "description": "Ignored. The server records the submission time."
                   }
                 },
                 "additionalProperties": false
