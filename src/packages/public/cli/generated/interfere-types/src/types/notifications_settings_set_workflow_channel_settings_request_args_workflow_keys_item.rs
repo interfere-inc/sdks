@@ -16,7 +16,6 @@ pub enum SetWorkflowChannelSettingsRequestArgsWorkflowKeysItem {
     TeamMembershipRequest,
     WorkspaceBilling,
     WorkspaceIntegrationStatus,
-    WorkspaceSurfaceBindingMissing,
     /// This variant is used for forward compatibility.
     /// If the server sends a value not recognized by the current SDK version,
     /// it will be captured here with the raw string value.
@@ -36,7 +35,6 @@ impl Serialize for SetWorkflowChannelSettingsRequestArgsWorkflowKeysItem {
             Self::TeamMembershipRequest => serializer.serialize_str("team-membership-request"),
             Self::WorkspaceBilling => serializer.serialize_str("workspace-billing"),
             Self::WorkspaceIntegrationStatus => serializer.serialize_str("workspace-integration-status"),
-            Self::WorkspaceSurfaceBindingMissing => serializer.serialize_str("workspace-surface-binding-missing"),
             Self::__Unknown(val) => serializer.serialize_str(val),
         }
     }
@@ -57,7 +55,6 @@ impl<'de> Deserialize<'de> for SetWorkflowChannelSettingsRequestArgsWorkflowKeys
             "team-membership-request" => Ok(Self::TeamMembershipRequest),
             "workspace-billing" => Ok(Self::WorkspaceBilling),
             "workspace-integration-status" => Ok(Self::WorkspaceIntegrationStatus),
-            "workspace-surface-binding-missing" => Ok(Self::WorkspaceSurfaceBindingMissing),
             _ => Ok(Self::__Unknown(value)),
         }
     }
@@ -77,7 +74,6 @@ impl fmt::Display for SetWorkflowChannelSettingsRequestArgsWorkflowKeysItem {
             Self::TeamMembershipRequest => write!(f, "team-membership-request"),
             Self::WorkspaceBilling => write!(f, "workspace-billing"),
             Self::WorkspaceIntegrationStatus => write!(f, "workspace-integration-status"),
-            Self::WorkspaceSurfaceBindingMissing => write!(f, "workspace-surface-binding-missing"),
             Self::__Unknown(val) => write!(f, "{}", val),
         }
     }

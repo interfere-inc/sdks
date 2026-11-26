@@ -35867,8 +35867,7 @@
                     "subscriptions-comment",
                     "team-membership-request",
                     "workspace-billing",
-                    "workspace-integration-status",
-                    "workspace-surface-binding-missing"
+                    "workspace-integration-status"
                   ],
                   "type": "string"
                 },
@@ -74389,8 +74388,7 @@
                             "subscriptions-comment",
                             "team-membership-request",
                             "workspace-billing",
-                            "workspace-integration-status",
-                            "workspace-surface-binding-missing"
+                            "workspace-integration-status"
                           ],
                           "type": "string"
                         }
