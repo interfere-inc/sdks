@@ -1,6 +1,6 @@
 import { arrayBuffer } from "node:stream/consumers";
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
-/* oxlint-disable typescript/require-await */
+/* oxlint-disable eslint/no-console, typescript/require-await */
 import { execFile } from "node:child_process";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { createServer } from "node:http";
@@ -196,6 +196,14 @@ export async function createHarness() {
   const context = await browser.newContext();
 
   const page = await context.newPage();
+
+  page.on("pageerror", (error) => console.error(error));
+
+  page.on("requestfailed", (request) =>
+    console.error(
+      `requestfailed: ${request.url()} ${request.failure()?.errorText ?? ""}`,
+    ),
+  );
 
   const cdp = await context.newCDPSession(page);
 

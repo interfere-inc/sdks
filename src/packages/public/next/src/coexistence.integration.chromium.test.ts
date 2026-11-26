@@ -1,3 +1,4 @@
+import { reportChromiumFailures } from "../test/chromium-diagnostics";
 import { chromium } from "@playwright/test";
 import type { Browser } from "@playwright/test";
 import { afterAll, beforeAll, expect, onTestFinished, test } from "vitest";
@@ -106,6 +107,8 @@ test("a missing replay chunk leaves other lazy plugins and application interacti
   onTestFinished(async () => context.close());
 
   const page = await context.newPage();
+
+  reportChromiumFailures(page);
 
   const blocked = Promise.withResolvers<string>();
   const pluginFailure = Promise.withResolvers<string>();

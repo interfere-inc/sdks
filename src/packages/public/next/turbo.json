@@ -9,7 +9,11 @@
     },
     "test": {
       "dependsOn": ["$TURBO_EXTENDS$", "build"],
-      "tags": ["$TURBO_EXTENDS$", "test-other-browsers"]
+      "tags": [
+        "$TURBO_EXTENDS$",
+        "test-other-browsers",
+        "test-workers-chromium"
+      ]
     },
     "build": {
       "inputs": [

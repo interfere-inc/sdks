@@ -1,3 +1,4 @@
+import { reportChromiumFailures } from "../test/chromium-diagnostics";
 import { chromium } from "@playwright/test";
 import type { Browser } from "@playwright/test";
 import { HttpResponse } from "msw";
@@ -86,6 +87,8 @@ beforeAll(
     });
 
     const page = await context.newPage();
+
+    reportChromiumFailures(page);
 
     const response = await page.goto(host.url, { timeout: COMPILE_MS });
 

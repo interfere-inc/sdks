@@ -1,3 +1,4 @@
+import { reportChromiumFailures } from "./chromium-diagnostics";
 import { chromium } from "@playwright/test";
 import type { Browser, Page } from "@playwright/test";
 import { afterAll, assert, beforeAll, expect, onTestFinished } from "vitest";
@@ -103,6 +104,8 @@ async function open() {
   });
 
   const page = await context.newPage();
+
+  reportChromiumFailures(page);
 
   expect((await page.goto(`${host.url}/journeys`))?.status()).toBe(200);
 

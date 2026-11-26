@@ -1,5 +1,6 @@
 import react from "@vitejs/plugin-react";
 import { defineConfig, mergeConfig } from "vitest/config";
+import type { ViteUserConfig } from "vitest/config";
 
 import { browser } from "@interfere/test-config/browser";
 import { node } from "@interfere/test-config/node";
@@ -11,6 +12,17 @@ const edgeTests = [
   "src/edge-bundle.qualification.ts",
 ];
 
+const chromiumTests = "**/*.chromium.test.ts";
+
+const nodeServer = {
+  // WARNING: vi.resetModules() reloads inlined workspace code, so the OpenTelemetry SDK bundled into server-core must load natively to keep one class identity.
+  deps: { external: [/\/server-core\/dist\/(?:otel|vendor)\//u] },
+};
+
+const chromiumProject: ViteUserConfig = node({
+  test: { name: "chromium", server: nodeServer },
+});
+
 export default defineConfig({
   root: import.meta.dirname,
   test: {
@@ -19,12 +31,9 @@ export default defineConfig({
       node({
         test: {
           name: "node",
-          exclude: edgeTests,
+          exclude: [...edgeTests, chromiumTests],
           sequence: { groupOrder: 1 },
-          // WARNING: vi.resetModules() reloads inlined workspace code, so the OpenTelemetry SDK bundled into server-core must load natively to keep one class identity.
-          server: {
-            deps: { external: [/\/server-core\/dist\/(?:otel|vendor)\//u] },
-          },
+          server: nodeServer,
         },
       }),
       mergeConfig(base, {
@@ -53,6 +62,10 @@ export default defineConfig({
           sequence: { groupOrder: 1 },
         },
       }),
+      {
+        ...chromiumProject,
+        test: { ...chromiumProject.test, include: [chromiumTests] },
+      },
     ],
   },
 });

@@ -1,4 +1,5 @@
 import { defineConfig } from "vitest/config";
+import type { ViteUserConfig } from "vitest/config";
 import { node } from "@interfere/test-config/node";
 import babel from "@rolldown/plugin-babel";
 import react from "@vitejs/plugin-react";
@@ -35,9 +36,22 @@ const browserProject = browser({
   },
 });
 
+const chromiumTests = "**/*.chromium.test.ts";
+
+const nodeProject = node({ test: { name: "node", exclude: [chromiumTests] } });
+
+const chromiumProject: ViteUserConfig = node({ test: { name: "chromium" } });
+
 export default defineConfig({
   root: import.meta.dirname,
   test: {
-    projects: [node({ test: { name: "node" } }), browserProject],
+    projects: [
+      nodeProject,
+      browserProject,
+      {
+        ...chromiumProject,
+        test: { ...chromiumProject.test, include: [chromiumTests] },
+      },
+    ],
   },
 });

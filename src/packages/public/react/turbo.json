@@ -5,7 +5,7 @@
   "tasks": {
     "test": {
       "dependsOn": ["$TURBO_EXTENDS$", "build"],
-      "tags": ["$TURBO_EXTENDS$", "test-react"]
+      "tags": ["$TURBO_EXTENDS$", "test-react", "test-workers-chromium"]
     },
     "typecheck": {
       "dependsOn": ["$TURBO_EXTENDS$", "build"]

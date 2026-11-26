@@ -1,3 +1,4 @@
+import { reportChromiumFailures } from "../test/chromium-diagnostics";
 import { chromium } from "@playwright/test";
 import type { Browser } from "@playwright/test";
 import { readFile, readdir } from "node:fs/promises";
@@ -99,6 +100,8 @@ describe.each([
         userAgent:
           "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
       });
+
+      reportChromiumFailures(page);
 
       await page.addInitScript(() => {
         Object.assign(globalThis, { __INTERFERE_FORCE_ENABLE__: true });

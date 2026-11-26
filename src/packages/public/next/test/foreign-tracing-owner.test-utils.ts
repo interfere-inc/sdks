@@ -6,6 +6,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 import { chromium } from "@playwright/test";
+import { reportChromiumFailures } from "./chromium-diagnostics.js";
 import type { Browser, Page } from "@playwright/test";
 import { afterAll, beforeAll, onTestFinished } from "vitest";
 import { z } from "zod";
@@ -143,6 +144,8 @@ export function foreignTracingOwnerHarness() {
 
     const page = await warm.newPage();
 
+    reportChromiumFailures(page);
+
     await page.goto(`${host.url}/journey`);
 
     await page
@@ -269,6 +272,8 @@ export function foreignTracingOwnerHarness() {
     }
 
     const page = await context.newPage();
+
+    reportChromiumFailures(page);
 
     const consoleLines: string[] = [];
 

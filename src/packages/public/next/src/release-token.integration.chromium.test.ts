@@ -1,3 +1,4 @@
+import { reportChromiumFailures } from "../test/chromium-diagnostics";
 import { chromium } from "@playwright/test";
 import type { Browser } from "@playwright/test";
 import { HttpResponse } from "msw";
@@ -110,6 +111,8 @@ test("a build with only a workspace secret exports browser telemetry under its b
   });
 
   const page = await context.newPage();
+
+  reportChromiumFailures(page);
 
   expect((await page.goto(host.url))?.status()).toBe(200);
 

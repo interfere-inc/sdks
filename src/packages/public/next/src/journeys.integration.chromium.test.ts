@@ -1,3 +1,4 @@
+import { reportChromiumFailures } from "../test/chromium-diagnostics";
 import type { Page } from "@playwright/test";
 import { readFile, readdir } from "node:fs/promises";
 import { join } from "node:path";
@@ -351,7 +352,7 @@ test("a production build without SDK credentials still serves customer routes", 
 
   await expect(response.json()).resolves.toStrictEqual({ healthy: true });
 
-  const page = await journey.browser.newPage();
+  const page = reportChromiumFailures(await journey.browser.newPage());
 
   onTestFinished(async () => page.close());
 

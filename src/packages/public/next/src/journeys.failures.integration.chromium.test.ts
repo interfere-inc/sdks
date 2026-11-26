@@ -1,3 +1,4 @@
+import { reportChromiumFailures } from "../test/chromium-diagnostics";
 import {
   afterAll,
   assert,
@@ -82,6 +83,8 @@ async function visit(url: string) {
   });
 
   const page = await context.newPage();
+
+  reportChromiumFailures(page);
 
   await page.goto(url);
 
