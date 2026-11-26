@@ -185,6 +185,8 @@ test("a 429 with Retry-After is retried and the batch is delivered exactly once"
 test("a flush waits for an export an earlier flush already has in flight", async () => {
   const held: (() => void)[] = [];
 
+  const received = Promise.withResolvers<undefined>();
+
   const bodies: string[] = [];
 
   const server = createServer((request, response) => {
@@ -200,6 +202,8 @@ test("a flush waits for an export an earlier flush already has in flight", async
 
         response.end("{}");
       });
+
+      received.resolve(undefined);
     });
   });
 
@@ -237,7 +241,7 @@ test("a flush waits for an export an earlier flush already has in flight", async
     backgroundDone = true;
   })();
 
-  await vi.waitUntil(() => held.length > 0);
+  await received.promise;
 
   const explicit = runtime.flush();
 

@@ -29,12 +29,16 @@ const requests: string[] = [];
 
 const hold = { ms: 0 };
 
+let delivered: PromiseWithResolvers<undefined>;
+
 const collector = http.post("*", async ({ request }) => {
   const body = await request.text();
 
   await delay(hold.ms);
 
   requests.push(body);
+
+  delivered.resolve(undefined);
 
   return HttpResponse.json({});
 });
@@ -62,6 +66,8 @@ beforeEach(() => {
   vi.resetModules();
 
   requests.length = 0;
+
+  delivered = Promise.withResolvers<undefined>();
 
   hold.ms = 0;
 
@@ -196,7 +202,7 @@ test.each([
 
     expect(requests).toHaveLength(landed);
 
-    await vi.waitUntil(() => requests.length === 1, { timeout: 5000 });
+    await delivered.promise;
   },
 );
 
