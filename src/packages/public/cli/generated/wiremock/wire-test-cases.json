@@ -2897,6 +2897,391 @@
       }
     },
     {
+      "id": "get_6",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/queries/services.byId",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "serviceId": "serviceId"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"id\": \"id\",\n  \"organizationId\": \"organizationId\",\n  \"namespace\": \"namespace\",\n  \"name\": \"name\",\n  \"connectionId\": \"connectionId\",\n  \"resource\": \"resource\",\n  \"sourceDatasourceId\": \"sourceDatasourceId\",\n  \"sourceWorkingDirectory\": \"sourceWorkingDirectory\",\n  \"reportableEnvironment\": \"reportableEnvironment\",\n  \"type\": \"type\",\n  \"typeSource\": \"typeSource\",\n  \"createdAt\": 1.1,\n  \"updatedAt\": 1.1,\n  \"lastSeenAt\": 1.1,\n  \"firstTelemetryAt\": 1.1,\n  \"websiteSettings\": {\n    \"anonymousReplayPolicy\": \"always\",\n    \"anonymousUserTracking\": true,\n    \"environmentFiltering\": true,\n    \"plugins\": {\n      \"errors\": true,\n      \"device\": true,\n      \"pageEvents\": true,\n      \"rageClick\": true,\n      \"replay\": true,\n      \"logs\": true\n    }\n  },\n  \"destinationResource\": \"destinationResource\",\n  \"pausedAt\": 1.1,\n  \"mergedIntoId\": \"mergedIntoId\",\n  \"archivedAt\": 1.1\n}"
+      }
+    },
+    {
+      "id": "by_ids",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/queries/services.byIds",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "serviceIds": [
+            "serviceIds"
+          ]
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "[\n  {\n    \"id\": \"id\",\n    \"organizationId\": \"organizationId\",\n    \"namespace\": \"namespace\",\n    \"name\": \"name\",\n    \"connectionId\": \"connectionId\",\n    \"resource\": \"resource\",\n    \"sourceDatasourceId\": \"sourceDatasourceId\",\n    \"sourceWorkingDirectory\": \"sourceWorkingDirectory\",\n    \"reportableEnvironment\": \"reportableEnvironment\",\n    \"type\": \"type\",\n    \"typeSource\": \"typeSource\",\n    \"createdAt\": 1.1,\n    \"updatedAt\": 1.1,\n    \"lastSeenAt\": 1.1,\n    \"firstTelemetryAt\": 1.1,\n    \"websiteSettings\": {\n      \"anonymousReplayPolicy\": \"always\",\n      \"anonymousUserTracking\": true,\n      \"environmentFiltering\": true\n    },\n    \"destinationResource\": \"destinationResource\",\n    \"pausedAt\": 1.1,\n    \"mergedIntoId\": \"mergedIntoId\",\n    \"archivedAt\": 1.1,\n    \"sourceDatasource\": {\n      \"id\": \"id\",\n      \"organizationId\": \"organizationId\",\n      \"connectionId\": \"connectionId\",\n      \"surfaceId\": \"surfaceId\",\n      \"kind\": \"kind\",\n      \"name\": \"name\",\n      \"url\": \"url\",\n      \"availability\": \"availability\",\n      \"createdAt\": 1.1,\n      \"deletedAt\": 1.1,\n      \"updatedAt\": 1.1\n    }\n  }\n]"
+      }
+    },
+    {
+      "id": "for_workspace",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/queries/services.forWorkspace",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {}
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "[\n  {\n    \"id\": \"id\",\n    \"organizationId\": \"organizationId\",\n    \"namespace\": \"namespace\",\n    \"name\": \"name\",\n    \"connectionId\": \"connectionId\",\n    \"resource\": \"resource\",\n    \"sourceDatasourceId\": \"sourceDatasourceId\",\n    \"sourceWorkingDirectory\": \"sourceWorkingDirectory\",\n    \"reportableEnvironment\": \"reportableEnvironment\",\n    \"type\": \"type\",\n    \"typeSource\": \"typeSource\",\n    \"createdAt\": 1.1,\n    \"updatedAt\": 1.1,\n    \"lastSeenAt\": 1.1,\n    \"firstTelemetryAt\": 1.1,\n    \"websiteSettings\": {\n      \"anonymousReplayPolicy\": \"always\",\n      \"anonymousUserTracking\": true,\n      \"environmentFiltering\": true\n    },\n    \"destinationResource\": \"destinationResource\",\n    \"pausedAt\": 1.1,\n    \"mergedIntoId\": \"mergedIntoId\",\n    \"archivedAt\": 1.1,\n    \"sourceDatasource\": {\n      \"id\": \"id\",\n      \"organizationId\": \"organizationId\",\n      \"connectionId\": \"connectionId\",\n      \"surfaceId\": \"surfaceId\",\n      \"kind\": \"kind\",\n      \"name\": \"name\",\n      \"url\": \"url\",\n      \"availability\": \"availability\",\n      \"createdAt\": 1.1,\n      \"deletedAt\": 1.1,\n      \"updatedAt\": 1.1\n    }\n  }\n]"
+      }
+    },
+    {
+      "id": "archive",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/services.archive",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "serviceId": "serviceId"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true\n}"
+      }
+    },
+    {
+      "id": "link_destination",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/services.linkDestination",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "connectionId": "connectionId",
+          "resourceId": "resourceId",
+          "serviceId": "serviceId"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true\n}"
+      }
+    },
+    {
+      "id": "link_repository",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/services.linkRepository",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "connectionId": "connectionId",
+          "repositoryId": "repositoryId",
+          "serviceId": "serviceId"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true\n}"
+      }
+    },
+    {
+      "id": "set_anonymous_replay_policy",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/services.setAnonymousReplayPolicy",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "serviceId": "serviceId",
+          "policy": "always"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true\n}"
+      }
+    },
+    {
+      "id": "set_anonymous_user_tracking",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/services.setAnonymousUserTracking",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "serviceId": "serviceId",
+          "enabled": true
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true\n}"
+      }
+    },
+    {
+      "id": "set_sdk_plugin",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/services.setSdkPlugin",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "serviceId": "serviceId",
+          "plugin": "replay",
+          "enabled": true
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true\n}"
+      }
+    },
+    {
+      "id": "set_type",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/services.setType",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "serviceId": "serviceId",
+          "type": "unclassified"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true\n}"
+      }
+    },
+    {
+      "id": "set_website_settings",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/services.setWebsiteSettings",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "serviceId": "serviceId",
+          "websiteSettings": {
+            "anonymousReplayPolicy": "always",
+            "anonymousUserTracking": true,
+            "environmentFiltering": true
+          }
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true\n}"
+      }
+    },
+    {
+      "id": "unarchive",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/services.unarchive",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "serviceId": "serviceId"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true\n}"
+      }
+    },
+    {
+      "id": "unlink_destination",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/services.unlinkDestination",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "serviceId": "serviceId"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true\n}"
+      }
+    },
+    {
+      "id": "unlink_repository",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/services.unlinkRepository",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "serviceId": "serviceId"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true\n}"
+      }
+    },
+    {
+      "id": "serviceactivity",
+      "method": "GET",
+      "path": "/v3/workspaces/{workspace}/services/activity",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": null,
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"services\": [\n    {\n      \"serviceId\": \"serviceId\",\n      \"lastSeenAt\": 1\n    }\n  ],\n  \"buckets\": [\n    1\n  ],\n  \"signals\": [\n    {\n      \"serviceId\": \"serviceId\",\n      \"traces\": [\n        1\n      ],\n      \"logs\": [\n        1\n      ],\n      \"metrics\": [\n        1\n      ],\n      \"platform\": \"vercel\"\n    }\n  ],\n  \"sdks\": [\n    {\n      \"serviceId\": \"serviceId\",\n      \"name\": \"name\",\n      \"version\": \"version\",\n      \"status\": \"supported\",\n      \"spans\": 1\n    }\n  ],\n  \"retired\": [\n    \"retired\"\n  ]\n}"
+      }
+    },
+    {
+      "id": "createservice",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/services",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "name": "name",
+        "type": "other"
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"id\": \"id\"\n}"
+      }
+    },
+    {
+      "id": "deleteservice",
+      "method": "DELETE",
+      "path": "/v3/workspaces/{workspace}/services",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "name": "name"
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"ok\": \"ok\"\n}"
+      }
+    },
+    {
+      "id": "setservicereportableenvironment",
+      "method": "PUT",
+      "path": "/v3/workspaces/{workspace}/services/reportable-environment",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "name": "name",
+        "reportableEnvironment": null
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"ok\": \"ok\"\n}"
+      }
+    },
+    {
+      "id": "setservicesource",
+      "method": "PUT",
+      "path": "/v3/workspaces/{workspace}/services/source",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "name": "name",
+        "source": null
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"ok\": \"ok\"\n}"
+      }
+    },
+    {
       "id": "createbillingcheckout",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/billing/checkout",
@@ -3073,97 +3458,6 @@
       }
     },
     {
-      "id": "serviceactivity",
-      "method": "GET",
-      "path": "/v3/workspaces/{workspace}/services/activity",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": null,
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "{\n  \"services\": [\n    {\n      \"serviceId\": \"serviceId\",\n      \"lastSeenAt\": 1\n    }\n  ],\n  \"buckets\": [\n    1\n  ],\n  \"signals\": [\n    {\n      \"serviceId\": \"serviceId\",\n      \"traces\": [\n        1\n      ],\n      \"logs\": [\n        1\n      ],\n      \"metrics\": [\n        1\n      ],\n      \"platform\": \"vercel\"\n    }\n  ],\n  \"sdks\": [\n    {\n      \"serviceId\": \"serviceId\",\n      \"name\": \"name\",\n      \"version\": \"version\",\n      \"status\": \"supported\",\n      \"spans\": 1\n    }\n  ],\n  \"retired\": [\n    \"retired\"\n  ]\n}"
-      }
-    },
-    {
-      "id": "createservice",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/services",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "name": "name",
-        "type": "other"
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "{\n  \"id\": \"id\"\n}"
-      }
-    },
-    {
-      "id": "deleteservice",
-      "method": "DELETE",
-      "path": "/v3/workspaces/{workspace}/services",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "name": "name"
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "{\n  \"ok\": \"ok\"\n}"
-      }
-    },
-    {
-      "id": "setservicereportableenvironment",
-      "method": "PUT",
-      "path": "/v3/workspaces/{workspace}/services/reportable-environment",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "name": "name",
-        "reportableEnvironment": null
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "{\n  \"ok\": \"ok\"\n}"
-      }
-    },
-    {
-      "id": "setservicesource",
-      "method": "PUT",
-      "path": "/v3/workspaces/{workspace}/services/source",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "name": "name",
-        "source": null
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "{\n  \"ok\": \"ok\"\n}"
-      }
-    },
-    {
       "id": "validatekey",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/keys/validate",
@@ -3322,7 +3616,7 @@
       }
     },
     {
-      "id": "get_6",
+      "id": "get_7",
       "method": "GET",
       "path": "/v3/workspaces/{workspace}/api-keys/{apiKeyId}",
       "params": {
@@ -3376,7 +3670,7 @@
       }
     },
     {
-      "id": "for_workspace",
+      "id": "for_workspace_1",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/publicKeys.forWorkspace",
       "params": {
@@ -3480,7 +3774,7 @@
       }
     },
     {
-      "id": "get_7",
+      "id": "get_8",
       "method": "GET",
       "path": "/v3/workspaces/{workspace}/surfaces/{surfaceSlug}/publicKeys/{publicKeyId}",
       "params": {
@@ -3870,7 +4164,7 @@
       }
     },
     {
-      "id": "get_8",
+      "id": "get_9",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/supportThreads.byId",
       "params": {
@@ -7251,6 +7545,410 @@
       "expectError": true
     },
     {
+      "id": "get_6_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/queries/services.byId",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "serviceId": "serviceId"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "by_ids_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/queries/services.byIds",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "serviceIds": [
+            "serviceIds"
+          ]
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "for_workspace_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/queries/services.forWorkspace",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {}
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "archive_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/services.archive",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "serviceId": "serviceId"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "link_destination_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/services.linkDestination",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "connectionId": "connectionId",
+          "resourceId": "resourceId",
+          "serviceId": "serviceId"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "link_repository_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/services.linkRepository",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "connectionId": "connectionId",
+          "repositoryId": "repositoryId",
+          "serviceId": "serviceId"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "set_anonymous_replay_policy_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/services.setAnonymousReplayPolicy",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "serviceId": "serviceId",
+          "policy": "always"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "set_anonymous_user_tracking_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/services.setAnonymousUserTracking",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "serviceId": "serviceId",
+          "enabled": true
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "set_sdk_plugin_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/services.setSdkPlugin",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "serviceId": "serviceId",
+          "plugin": "replay",
+          "enabled": true
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "set_type_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/services.setType",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "serviceId": "serviceId",
+          "type": "unclassified"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "set_website_settings_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/services.setWebsiteSettings",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "serviceId": "serviceId",
+          "websiteSettings": {
+            "anonymousReplayPolicy": "always",
+            "anonymousUserTracking": true,
+            "environmentFiltering": true
+          }
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "unarchive_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/services.unarchive",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "serviceId": "serviceId"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "unlink_destination_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/services.unlinkDestination",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "serviceId": "serviceId"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "unlink_repository_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/actions/services.unlinkRepository",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "args": {
+          "serviceId": "serviceId"
+        }
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "serviceactivity_error",
+      "method": "GET",
+      "path": "/v3/workspaces/{workspace}/services/activity",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": null,
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "createservice_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/services",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "name": "name",
+        "type": "other"
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "deleteservice_error",
+      "method": "DELETE",
+      "path": "/v3/workspaces/{workspace}/services",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "name": "name"
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "setservicereportableenvironment_error",
+      "method": "PUT",
+      "path": "/v3/workspaces/{workspace}/services/reportable-environment",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "name": "name",
+        "reportableEnvironment": null
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "setservicesource_error",
+      "method": "PUT",
+      "path": "/v3/workspaces/{workspace}/services/source",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {
+        "name": "name",
+        "source": null
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
       "id": "createbillingcheckout_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/billing/checkout",
@@ -7436,102 +8134,6 @@
       "expectError": true
     },
     {
-      "id": "serviceactivity_error",
-      "method": "GET",
-      "path": "/v3/workspaces/{workspace}/services/activity",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": null,
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
-      "id": "createservice_error",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/services",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "name": "name",
-        "type": "other"
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
-      "id": "deleteservice_error",
-      "method": "DELETE",
-      "path": "/v3/workspaces/{workspace}/services",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "name": "name"
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
-      "id": "setservicereportableenvironment_error",
-      "method": "PUT",
-      "path": "/v3/workspaces/{workspace}/services/reportable-environment",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "name": "name",
-        "reportableEnvironment": null
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
-      "id": "setservicesource_error",
-      "method": "PUT",
-      "path": "/v3/workspaces/{workspace}/services/source",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "name": "name",
-        "source": null
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
       "id": "validatekey_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/keys/validate",
@@ -7698,7 +8300,7 @@
       "expectError": true
     },
     {
-      "id": "get_6_error",
+      "id": "get_7_error",
       "method": "GET",
       "path": "/v3/workspaces/{workspace}/api-keys/{apiKeyId}",
       "params": {
@@ -7755,7 +8357,7 @@
       "expectError": true
     },
     {
-      "id": "for_workspace_error",
+      "id": "for_workspace_1_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/publicKeys.forWorkspace",
       "params": {
@@ -7864,7 +8466,7 @@
       "expectError": true
     },
     {
-      "id": "get_7_error",
+      "id": "get_8_error",
       "method": "GET",
       "path": "/v3/workspaces/{workspace}/surfaces/{surfaceSlug}/publicKeys/{publicKeyId}",
       "params": {
@@ -8273,7 +8875,7 @@
       "expectError": true
     },
     {
-      "id": "get_8_error",
+      "id": "get_9_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/supportThreads.byId",
       "params": {

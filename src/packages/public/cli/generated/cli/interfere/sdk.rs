@@ -95,6 +95,7 @@ pub fn client(ctx: &AppContext) -> interfere_sdk::api::ApiClient {
             http_client: http_client.clone(),
             timeline: interfere_sdk::api::resources::problems::TimelineClient { http_client: http_client.clone() },
         },
+        services: interfere_sdk::api::ServicesClient { http_client: http_client.clone() },
         billing: interfere_sdk::api::BillingClient {
             http_client: http_client.clone(),
             invoices: interfere_sdk::api::resources::billing::InvoicesClient { http_client: http_client.clone() },
@@ -105,7 +106,6 @@ pub fn client(ctx: &AppContext) -> interfere_sdk::api::ApiClient {
             sessions: interfere_sdk::api::resources::replay::SessionsClient2 { http_client: http_client.clone() },
         },
         feedback: interfere_sdk::api::FeedbackClient { http_client: http_client.clone() },
-        services: interfere_sdk::api::ServicesClient { http_client: http_client.clone() },
         surface_keys: interfere_sdk::api::SurfaceKeysClient { http_client: http_client.clone() },
         keys: interfere_sdk::api::KeysClient {
             http_client: http_client.clone(),

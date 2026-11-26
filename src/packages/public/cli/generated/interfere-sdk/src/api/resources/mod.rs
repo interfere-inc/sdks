@@ -19,11 +19,11 @@
 //! - **Integrations**
 //! - **Manage workspace members, invitations, and your profile**
 //! - **Problems**
+//! - **Services**
 //! - **Billing**
 //! - **Manage the tiers that label companies**
 //! - **Replay**
 //! - **Feedback**
-//! - **Services**
 //! - **Surface keys**
 //! - **Keys**
 //! - **Scim**
@@ -80,11 +80,11 @@ pub struct ApiClient {
     pub integrations: IntegrationsClient,
     pub users: UsersClient,
     pub problems: ProblemsClient,
+    pub services: ServicesClient,
     pub billing: BillingClient,
     pub tiers: TiersClient,
     pub replay: ReplayClient,
     pub feedback: FeedbackClient,
-    pub services: ServicesClient,
     pub surface_keys: SurfaceKeysClient,
     pub keys: KeysClient,
     pub scim: ScimClient,
@@ -114,11 +114,11 @@ impl ApiClient {
             integrations: IntegrationsClient::new(config.clone())?,
             users: UsersClient::new(config.clone())?,
             problems: ProblemsClient::new(config.clone())?,
+            services: ServicesClient::new(config.clone())?,
             billing: BillingClient::new(config.clone())?,
             tiers: TiersClient::new(config.clone())?,
             replay: ReplayClient::new(config.clone())?,
             feedback: FeedbackClient::new(config.clone())?,
-            services: ServicesClient::new(config.clone())?,
             surface_keys: SurfaceKeysClient::new(config.clone())?,
             keys: KeysClient::new(config.clone())?,
             scim: ScimClient::new(config.clone())?,

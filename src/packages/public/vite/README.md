@@ -286,7 +286,7 @@ Ingest requests never carry cookies. `apiHost` posts to your own site's subdomai
 
 ### Service identity
 
-Set `serviceName` explicitly in `interfere()`, browser `init()` and server `register()` to preserve an existing name when you rename your package. Find the current name under **Services**.
+Set `serviceName` explicitly in `interfere()`, browser `init()` and server `register()` to preserve an existing name when you rename your package. Find the current name under **Data**.
 
 ## Migrating From 0.x
 

@@ -80,6 +80,8 @@ Set `INTERFERE_WORKSPACE` or pass `--workspace` for workspace operations. Named 
 
 ## Services and workspace keys
 
+Use `interfere services --help` to discover service reads and settings commands. `services.setType` records an explicit type that telemetry inference cannot overwrite. `services.setWebsiteSettings` replaces the service's website settings without requiring an App or changing workspace defaults. Read the service first and preserve settings you are not changing; use the generated command's `--schema` to inspect the complete settings object. MCP exposes the same operations under the `services` group.
+
 Interfere organizes telemetry by service. `serviceName`, with an optional `serviceNamespace`, names the service, and every request carries it: SDK requests send `x-interfere-service` and `x-interfere-service-namespace`, and OTLP requests use the `service.name` and `service.namespace` resource attributes. Interfere records a service the first time it sees one, within the workspace's service limit.
 
 Build plugins use a workspace secret with `release:write` and a service name to register releases and bake release tokens into browser bundles. Servers and collectors use a workspace secret with `org:telemetry:write`. Source-map publication is automatic in the framework plugins.

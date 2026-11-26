@@ -471,7 +471,7 @@ async function runBuildReleasePipeline(
     }
 
     log.info("Completed", [
-      `https://interfere.com/~/${result.release.org.slug}/services`,
+      `https://interfere.com/~/${result.release.org.slug}/data`,
       `Release: ${result.release.destination.slug}`,
       `Build: ${result.buildId}`,
       config.uploadSourceMaps

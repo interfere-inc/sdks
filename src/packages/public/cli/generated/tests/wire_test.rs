@@ -1801,6 +1801,101 @@ async fn wire_problemsessions() {
 }
 
 #[tokio::test]
+async fn wire_get_6() {
+    run_case("get_6").await;
+}
+
+#[tokio::test]
+async fn wire_by_ids() {
+    run_case("by_ids").await;
+}
+
+#[tokio::test]
+async fn wire_for_workspace() {
+    run_case("for_workspace").await;
+}
+
+#[tokio::test]
+async fn wire_archive() {
+    run_case("archive").await;
+}
+
+#[tokio::test]
+async fn wire_link_destination() {
+    run_case("link_destination").await;
+}
+
+#[tokio::test]
+async fn wire_link_repository() {
+    run_case("link_repository").await;
+}
+
+#[tokio::test]
+async fn wire_set_anonymous_replay_policy() {
+    run_case("set_anonymous_replay_policy").await;
+}
+
+#[tokio::test]
+async fn wire_set_anonymous_user_tracking() {
+    run_case("set_anonymous_user_tracking").await;
+}
+
+#[tokio::test]
+async fn wire_set_sdk_plugin() {
+    run_case("set_sdk_plugin").await;
+}
+
+#[tokio::test]
+async fn wire_set_type() {
+    run_case("set_type").await;
+}
+
+#[tokio::test]
+async fn wire_set_website_settings() {
+    run_case("set_website_settings").await;
+}
+
+#[tokio::test]
+async fn wire_unarchive() {
+    run_case("unarchive").await;
+}
+
+#[tokio::test]
+async fn wire_unlink_destination() {
+    run_case("unlink_destination").await;
+}
+
+#[tokio::test]
+async fn wire_unlink_repository() {
+    run_case("unlink_repository").await;
+}
+
+#[tokio::test]
+async fn wire_serviceactivity() {
+    run_case("serviceactivity").await;
+}
+
+#[tokio::test]
+async fn wire_createservice() {
+    run_case("createservice").await;
+}
+
+#[tokio::test]
+async fn wire_deleteservice() {
+    run_case("deleteservice").await;
+}
+
+#[tokio::test]
+async fn wire_setservicereportableenvironment() {
+    run_case("setservicereportableenvironment").await;
+}
+
+#[tokio::test]
+async fn wire_setservicesource() {
+    run_case("setservicesource").await;
+}
+
+#[tokio::test]
 async fn wire_createbillingcheckout() {
     run_case("createbillingcheckout").await;
 }
@@ -1846,31 +1941,6 @@ async fn wire_submitworkspacefeedback() {
 }
 
 #[tokio::test]
-async fn wire_serviceactivity() {
-    run_case("serviceactivity").await;
-}
-
-#[tokio::test]
-async fn wire_createservice() {
-    run_case("createservice").await;
-}
-
-#[tokio::test]
-async fn wire_deleteservice() {
-    run_case("deleteservice").await;
-}
-
-#[tokio::test]
-async fn wire_setservicereportableenvironment() {
-    run_case("setservicereportableenvironment").await;
-}
-
-#[tokio::test]
-async fn wire_setservicesource() {
-    run_case("setservicesource").await;
-}
-
-#[tokio::test]
 async fn wire_validatekey() {
     run_case("validatekey").await;
 }
@@ -1911,8 +1981,8 @@ async fn wire_create_1() {
 }
 
 #[tokio::test]
-async fn wire_get_6() {
-    run_case("get_6").await;
+async fn wire_get_7() {
+    run_case("get_7").await;
 }
 
 #[tokio::test]
@@ -1926,8 +1996,8 @@ async fn wire_list_for_surface_1() {
 }
 
 #[tokio::test]
-async fn wire_for_workspace() {
-    run_case("for_workspace").await;
+async fn wire_for_workspace_1() {
+    run_case("for_workspace_1").await;
 }
 
 #[tokio::test]
@@ -1951,8 +2021,8 @@ async fn wire_rotate() {
 }
 
 #[tokio::test]
-async fn wire_get_7() {
-    run_case("get_7").await;
+async fn wire_get_8() {
+    run_case("get_8").await;
 }
 
 #[tokio::test]
@@ -2046,8 +2116,8 @@ async fn wire_create_2() {
 }
 
 #[tokio::test]
-async fn wire_get_8() {
-    run_case("get_8").await;
+async fn wire_get_9() {
+    run_case("get_9").await;
 }
 
 #[tokio::test]
@@ -2881,6 +2951,101 @@ async fn wire_problemsessions_error() {
 }
 
 #[tokio::test]
+async fn wire_get_6_error() {
+    run_case("get_6_error").await;
+}
+
+#[tokio::test]
+async fn wire_by_ids_error() {
+    run_case("by_ids_error").await;
+}
+
+#[tokio::test]
+async fn wire_for_workspace_error() {
+    run_case("for_workspace_error").await;
+}
+
+#[tokio::test]
+async fn wire_archive_error() {
+    run_case("archive_error").await;
+}
+
+#[tokio::test]
+async fn wire_link_destination_error() {
+    run_case("link_destination_error").await;
+}
+
+#[tokio::test]
+async fn wire_link_repository_error() {
+    run_case("link_repository_error").await;
+}
+
+#[tokio::test]
+async fn wire_set_anonymous_replay_policy_error() {
+    run_case("set_anonymous_replay_policy_error").await;
+}
+
+#[tokio::test]
+async fn wire_set_anonymous_user_tracking_error() {
+    run_case("set_anonymous_user_tracking_error").await;
+}
+
+#[tokio::test]
+async fn wire_set_sdk_plugin_error() {
+    run_case("set_sdk_plugin_error").await;
+}
+
+#[tokio::test]
+async fn wire_set_type_error() {
+    run_case("set_type_error").await;
+}
+
+#[tokio::test]
+async fn wire_set_website_settings_error() {
+    run_case("set_website_settings_error").await;
+}
+
+#[tokio::test]
+async fn wire_unarchive_error() {
+    run_case("unarchive_error").await;
+}
+
+#[tokio::test]
+async fn wire_unlink_destination_error() {
+    run_case("unlink_destination_error").await;
+}
+
+#[tokio::test]
+async fn wire_unlink_repository_error() {
+    run_case("unlink_repository_error").await;
+}
+
+#[tokio::test]
+async fn wire_serviceactivity_error() {
+    run_case("serviceactivity_error").await;
+}
+
+#[tokio::test]
+async fn wire_createservice_error() {
+    run_case("createservice_error").await;
+}
+
+#[tokio::test]
+async fn wire_deleteservice_error() {
+    run_case("deleteservice_error").await;
+}
+
+#[tokio::test]
+async fn wire_setservicereportableenvironment_error() {
+    run_case("setservicereportableenvironment_error").await;
+}
+
+#[tokio::test]
+async fn wire_setservicesource_error() {
+    run_case("setservicesource_error").await;
+}
+
+#[tokio::test]
 async fn wire_createbillingcheckout_error() {
     run_case("createbillingcheckout_error").await;
 }
@@ -2926,31 +3091,6 @@ async fn wire_submitworkspacefeedback_error() {
 }
 
 #[tokio::test]
-async fn wire_serviceactivity_error() {
-    run_case("serviceactivity_error").await;
-}
-
-#[tokio::test]
-async fn wire_createservice_error() {
-    run_case("createservice_error").await;
-}
-
-#[tokio::test]
-async fn wire_deleteservice_error() {
-    run_case("deleteservice_error").await;
-}
-
-#[tokio::test]
-async fn wire_setservicereportableenvironment_error() {
-    run_case("setservicereportableenvironment_error").await;
-}
-
-#[tokio::test]
-async fn wire_setservicesource_error() {
-    run_case("setservicesource_error").await;
-}
-
-#[tokio::test]
 async fn wire_validatekey_error() {
     run_case("validatekey_error").await;
 }
@@ -2991,8 +3131,8 @@ async fn wire_create_1_error() {
 }
 
 #[tokio::test]
-async fn wire_get_6_error() {
-    run_case("get_6_error").await;
+async fn wire_get_7_error() {
+    run_case("get_7_error").await;
 }
 
 #[tokio::test]
@@ -3006,8 +3146,8 @@ async fn wire_list_for_surface_1_error() {
 }
 
 #[tokio::test]
-async fn wire_for_workspace_error() {
-    run_case("for_workspace_error").await;
+async fn wire_for_workspace_1_error() {
+    run_case("for_workspace_1_error").await;
 }
 
 #[tokio::test]
@@ -3031,8 +3171,8 @@ async fn wire_rotate_error() {
 }
 
 #[tokio::test]
-async fn wire_get_7_error() {
-    run_case("get_7_error").await;
+async fn wire_get_8_error() {
+    run_case("get_8_error").await;
 }
 
 #[tokio::test]
@@ -3126,8 +3266,8 @@ async fn wire_create_2_error() {
 }
 
 #[tokio::test]
-async fn wire_get_8_error() {
-    run_case("get_8_error").await;
+async fn wire_get_9_error() {
+    run_case("get_9_error").await;
 }
 
 #[tokio::test]

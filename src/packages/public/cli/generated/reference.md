@@ -1567,6 +1567,28 @@ List provisioned SCIM groups and their workspace role mappings. Pass the workspa
 
 ### `interfere services`
 
+#### `interfere services archive`
+
+Archive a service: hide it from the Data page without deleting it. Its keys, sessions, findings, problems and retained telemetry are untouched, and a service that still sends telemetry stays archived. Use services.unarchive to restore it. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
+
+`POST /v3/workspaces/{workspaceSlug}/actions/services.archive`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
+
+#### `interfere services by-ids`
+
+Read up to 500 OpenTelemetry services in this workspace by their IDs, one row for each ID that exists, ordered by namespace and name. Requires integration settings read permission. IDs from another workspace or that do not exist are omitted. Use services.forWorkspace to discover service IDs. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
+
+`POST /v3/workspaces/{workspaceSlug}/queries/services.byIds`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
+
 #### `interfere services create-service`
 
 Creates the service before its first telemetry, or finds the one with this namespace, name and resource, and stores the chosen type with type_source user. A user's type replaces a type inferred from telemetry and is never changed by telemetry afterwards. The call is idempotent. A website needs the org:surfaces:write permission, a backend or other service org:integration_settings:write.
@@ -1589,6 +1611,50 @@ Deletes an OpenTelemetry service and its release history: releases, release depl
 | `--workspace-slug` | `string` | Yes |  |
 | `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
 
+#### `interfere services for-workspace`
+
+List the OpenTelemetry services in this workspace, one row for each service.namespace and service.name pair. Requires integration settings read permission. A null namespace means the service sent none; unknown_service means it sent no service.name. Read last-seen times from the service activity endpoint. Returns up to limit rows (default and maximum 500), ordered by namespace and name. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
+
+`POST /v3/workspaces/{workspaceSlug}/queries/services.forWorkspace`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
+
+#### `interfere services get`
+
+Read one OpenTelemetry service in this workspace by its ID. Requires integration settings read permission. Use services.forWorkspace to discover service IDs. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
+
+`POST /v3/workspaces/{workspaceSlug}/queries/services.byId`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
+
+#### `interfere services link-destination`
+
+Link a service to the Vercel project, Cloudflare Worker or CLI it deploys through. Resolve the service ID from services.forWorkspace and the connection and project or Worker ID from connections.connectedInstallations first (for the CLI, pass resourceId "cli"); linking replaces the service's current destination. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
+
+`POST /v3/workspaces/{workspaceSlug}/actions/services.linkDestination`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
+
+#### `interfere services link-repository`
+
+Link a service to a repository and, optionally, the repository folder that holds its code. Resolve the service ID from services.forWorkspace and the repository from connections.githubRepositories first. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
+
+`POST /v3/workspaces/{workspaceSlug}/actions/services.linkRepository`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
+
 #### `interfere services service-activity`
 
 Returns the latest span time for each OpenTelemetry service in the workspace over the last 7 days. Services with no spans in that window are omitted. Also returns hourly span, log and metric point counts per service over the last 24 hours, aligned to `buckets`; services with no signals in that window are omitted from `signals`. `sdks` lists the Interfere SDK name and version that sent each namespace-less service's spans over the same 24 hours, with span counts. Each row’s `status` is `supported`, `outdated` or `unknown` for the newest SDK version that service reported, against the minimum supported SDK version.
@@ -1598,6 +1664,39 @@ Returns the latest span time for each OpenTelemetry service in the workspace ove
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
 | `--workspace-slug` | `string` | Yes |  |
+
+#### `interfere services set-anonymous-replay-policy`
+
+Choose when a service records session replay for visitors that are not identified: always, on_error (only once an error occurs) or never. A service without its own setting uses on_error. Identified users always record. Resolve the service ID from services.forWorkspace and inspect its current setting first. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
+
+`POST /v3/workspaces/{workspaceSlug}/actions/services.setAnonymousReplayPolicy`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
+
+#### `interfere services set-anonymous-user-tracking`
+
+Turn anonymous user tracking on or off for a service. Off stops the browser SDK from following visitors across visits. Resolve the service ID from services.forWorkspace and inspect its current setting first. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
+
+`POST /v3/workspaces/{workspaceSlug}/actions/services.setAnonymousUserTracking`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
+
+#### `interfere services set-sdk-plugin`
+
+Turn one browser SDK feature (replay, logs, pageEvents or rageClick) on or off for a service. Resolve the service ID from services.forWorkspace and inspect its current setting first. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
+
+`POST /v3/workspaces/{workspaceSlug}/actions/services.setSdkPlugin`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
 
 #### `interfere services set-service-reportable-environment`
 
@@ -1615,6 +1714,61 @@ Sets the environment whose exceptions create findings and problems for an OpenTe
 Links an OpenTelemetry service to the repository Datasource and optional working directory that hold its code, or removes the link when source is null. Investigations read the commit from each Fact's service.version; no app or release is created.
 
 `PUT /v3/workspaces/{workspaceSlug}/services/source`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
+
+#### `interfere services set-type`
+
+Set a service's type to website, backend, other or unclassified. The explicit choice takes precedence over automatic inference. Resolve the service ID from services.forWorkspace first. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
+
+`POST /v3/workspaces/{workspaceSlug}/actions/services.setType`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
+
+#### `interfere services set-website-settings`
+
+Replace a service's website settings, including anonymous replay policy, anonymous-user tracking, environment filtering and browser SDK plugins. Read services.byId first and preserve settings the user did not ask to change. This works without an App and leaves workspace defaults unchanged. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
+
+`POST /v3/workspaces/{workspaceSlug}/actions/services.setWebsiteSettings`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
+
+#### `interfere services unarchive`
+
+Restore an archived service to the Data page. Nothing else changes. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
+
+`POST /v3/workspaces/{workspaceSlug}/actions/services.unarchive`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
+
+#### `interfere services unlink-destination`
+
+Remove the destination link from a service. Inspect its current destination first. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
+
+`POST /v3/workspaces/{workspaceSlug}/actions/services.unlinkDestination`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
+
+#### `interfere services unlink-repository`
+
+Remove the repository link from a service. Inspect its current repository first. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
+
+`POST /v3/workspaces/{workspaceSlug}/actions/services.unlinkRepository`
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|

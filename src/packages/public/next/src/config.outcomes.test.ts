@@ -319,7 +319,7 @@ test("links the services page when the release has no app", async () => {
     });
 
     expect(info).toHaveBeenCalledWith("Completed", [
-      "https://interfere.com/~/acme/services",
+      "https://interfere.com/~/acme/data",
       `Release: ${RELEASE_SLUG}`,
       expect.stringContaining("Build: "),
       "Artifacts: 1 source maps",

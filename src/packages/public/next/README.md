@@ -456,7 +456,7 @@ Upgrade every `@interfere/*` package together. Most apps change nothing else.
 | `tracing.propagateContextUrls`, wildcard origins        | Removed. List each origin in `propagateTo`.                                                                                                    |
 | `<TraceMeta />` from `@interfere/next/server`           | Remove it. `withInterfere()` adds the trace metadata.                                                                                          |
 | The server OpenTelemetry kit (`buildInterfereOtelKit`)  | Removed. Use `register({ tracing: "application" })` with `correlationSpanProcessor()`, as [above](#using-datadog-sentry-or-opentelemetry-too). |
-| A 12.x service name that differs from your package name | Set `serviceName` in `withInterfere()` to keep it. Find it under **Services** in the dashboard.                                                |
+| A 12.x service name that differs from your package name | Set `serviceName` in `withInterfere()` to keep it. Find it under **Data** in the dashboard.                                                    |
 
 The [13.0 release notes](./CHANGELOG.md) list every change.
 
