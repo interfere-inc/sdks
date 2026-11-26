@@ -5,20 +5,14 @@ use super::*;
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(untagged)]
 pub enum UnprocessableEntityErrorBody {
-        UnprocessableEntityErrorBodyZero(UnprocessableEntityErrorBodyZero),
-
-        UnprocessableEntityErrorBodyOne(UnprocessableEntityErrorBodyOne),
+        UnprocessableEntityErrorBodyCode(UnprocessableEntityErrorBodyCode),
 
         RpcUnexpectedError(RpcUnexpectedError),
 }
 
 impl UnprocessableEntityErrorBody {
-    pub fn is_unprocessable_entity_error_body_zero(&self) -> bool {
-        matches!(self, Self::UnprocessableEntityErrorBodyZero(_))
-    }
-
-    pub fn is_unprocessable_entity_error_body_one(&self) -> bool {
-        matches!(self, Self::UnprocessableEntityErrorBodyOne(_))
+    pub fn is_unprocessable_entity_error_body_code(&self) -> bool {
+        matches!(self, Self::UnprocessableEntityErrorBodyCode(_))
     }
 
     pub fn is_rpc_unexpected_error(&self) -> bool {
@@ -26,30 +20,16 @@ impl UnprocessableEntityErrorBody {
     }
 
 
-    pub fn as_unprocessable_entity_error_body_zero(&self) -> Option<&UnprocessableEntityErrorBodyZero> {
+    pub fn as_unprocessable_entity_error_body_code(&self) -> Option<&UnprocessableEntityErrorBodyCode> {
         match self {
-                    Self::UnprocessableEntityErrorBodyZero(value) => Some(value),
+                    Self::UnprocessableEntityErrorBodyCode(value) => Some(value),
                     _ => None,
                 }
     }
 
-    pub fn into_unprocessable_entity_error_body_zero(self) -> Option<UnprocessableEntityErrorBodyZero> {
+    pub fn into_unprocessable_entity_error_body_code(self) -> Option<UnprocessableEntityErrorBodyCode> {
         match self {
-                    Self::UnprocessableEntityErrorBodyZero(value) => Some(value),
-                    _ => None,
-                }
-    }
-
-    pub fn as_unprocessable_entity_error_body_one(&self) -> Option<&UnprocessableEntityErrorBodyOne> {
-        match self {
-                    Self::UnprocessableEntityErrorBodyOne(value) => Some(value),
-                    _ => None,
-                }
-    }
-
-    pub fn into_unprocessable_entity_error_body_one(self) -> Option<UnprocessableEntityErrorBodyOne> {
-        match self {
-                    Self::UnprocessableEntityErrorBodyOne(value) => Some(value),
+                    Self::UnprocessableEntityErrorBodyCode(value) => Some(value),
                     _ => None,
                 }
     }
@@ -72,8 +52,7 @@ impl UnprocessableEntityErrorBody {
 impl fmt::Display for UnprocessableEntityErrorBody {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::UnprocessableEntityErrorBodyZero(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
-            Self::UnprocessableEntityErrorBodyOne(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::UnprocessableEntityErrorBodyCode(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::RpcUnexpectedError(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
         }
     }

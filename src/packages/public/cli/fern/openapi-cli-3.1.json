@@ -62951,6 +62951,56 @@
           "success"
         ]
       },
+      "CorrectRootCauseResponse": {
+        "type": "object",
+        "properties": {
+          "problemId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "eventId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "supersedes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "completed": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "problemId",
+          "eventId",
+          "supersedes",
+          "completed"
+        ]
+      },
+      "MarkProblemDuplicateResponse": {
+        "type": "object",
+        "properties": {
+          "problemId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "keeperProblemId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "problemId",
+          "keeperProblemId"
+        ]
+      },
       "ServiceActivityResponse": {
         "type": "object",
         "properties": {
@@ -64678,6 +64728,84 @@
                     "message": {
                       "type": "string",
                       "default": "Workspace not found."
+                    },
+                    "data": {}
+                  },
+                  "required": [
+                    "defined",
+                    "code",
+                    "status",
+                    "message"
+                  ]
+                },
+                {
+                  "$ref": "#/components/schemas/RpcUnexpectedError"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "ErrorResponse_20ff2bff8a72dc0f5938b0795190bfbf967135be22cb13a2428773dcf64cccc8": {
+        "description": "Request conflicts with current state",
+        "content": {
+          "application/json": {
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "defined": {
+                      "const": true
+                    },
+                    "code": {
+                      "const": "PROBLEM_INVESTIGATION_IN_PROGRESS"
+                    },
+                    "status": {
+                      "const": 409
+                    },
+                    "message": {
+                      "type": "string",
+                      "default": "This Problem is still being investigated. Dismiss it once the investigation finishes or fails."
+                    },
+                    "data": {}
+                  },
+                  "required": [
+                    "defined",
+                    "code",
+                    "status",
+                    "message"
+                  ]
+                },
+                {
+                  "$ref": "#/components/schemas/RpcUnexpectedError"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "ErrorResponse_950315a6f2064d88a0de7d604c8436700aebfc5d9427d860c1ba412f0df5b85e": {
+        "description": "Upload exceeds the size limit",
+        "content": {
+          "application/json": {
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "defined": {
+                      "const": true
+                    },
+                    "code": {
+                      "const": "PROBLEM_CORRECTION_TOO_LARGE"
+                    },
+                    "status": {
+                      "const": 413
+                    },
+                    "message": {
+                      "type": "string",
+                      "default": "This correction is larger than a correction can be."
                     },
                     "data": {}
                   },
@@ -85980,6 +86108,528 @@
           },
           "404": {
             "$ref": "#/components/responses/ErrorResponse_2d362a4dcfdc8c518b10b2e559d310a0e755e37ef284408e24e0d620e2481b70"
+          },
+          "503": {
+            "$ref": "#/components/responses/ErrorResponse_b7d254f6bd68a887b2398a1b58fb8fe3913110d7236a6e4540d7d2aa990fb12b"
+          }
+        },
+        "x-cloudflare-labels": [
+          "cf-api-endpoint"
+        ],
+        "security": [
+          {
+            "clerkSession": []
+          }
+        ],
+        "x-interfere-read-only": false,
+        "x-fern-retries": {
+          "disabled": true
+        }
+      }
+    },
+    "/v3/workspaces/{workspaceSlug}/problems/{problemId}/root-cause/correction": {
+      "post": {
+        "operationId": "correctRootCause",
+        "summary": "Correct root cause",
+        "description": "Records the root cause a workspace member established. It supersedes the investigation's root cause, which is kept as the superseded version. Name code by repository, path and line range; never paste code. With completeEnding, an investigation that failed or is waiting for an answer completes with this root cause and its open questions are withdrawn. Refused while the investigation is running. Retry with the same request ID: a retry finishes a completion the first attempt started.",
+        "tags": [
+          "Problems"
+        ],
+        "parameters": [
+          {
+            "name": "workspaceSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
+            },
+            "x-fern-parameter-name": "workspace"
+          },
+          {
+            "name": "problemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "requestId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "cause": {
+                    "type": "object",
+                    "properties": {
+                      "summary": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 2000
+                      },
+                      "causeClass": {
+                        "enum": [
+                          "code",
+                          "dependency",
+                          "infrastructure",
+                          "external"
+                        ],
+                        "type": "string"
+                      },
+                      "locations": {
+                        "type": "array",
+                        "maxItems": 20,
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "repository": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 200
+                            },
+                            "path": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 500
+                            },
+                            "lines": {
+                              "type": "object",
+                              "properties": {
+                                "start": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 9007199254740991
+                                },
+                                "end": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 9007199254740991
+                                }
+                              },
+                              "required": [
+                                "start",
+                                "end"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "repository",
+                            "path"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "default": []
+                      }
+                    },
+                    "required": [
+                      "summary",
+                      "causeClass"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "reason": {
+                    "enum": [
+                      "wrong-mechanism",
+                      "wrong-location",
+                      "missing-detail",
+                      "wording"
+                    ],
+                    "type": "string"
+                  },
+                  "completeEnding": {
+                    "type": "boolean",
+                    "default": false
+                  }
+                },
+                "required": [
+                  "requestId",
+                  "cause",
+                  "reason"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CorrectRootCauseResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/RpcValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse_d7174de43f943d10193d5f31cc4615acb6d01e6a15ef9a1a861235cb9792319b"
+          },
+          "403": {
+            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse_2d362a4dcfdc8c518b10b2e559d310a0e755e37ef284408e24e0d620e2481b70"
+          },
+          "409": {
+            "$ref": "#/components/responses/ErrorResponse_20ff2bff8a72dc0f5938b0795190bfbf967135be22cb13a2428773dcf64cccc8"
+          },
+          "413": {
+            "$ref": "#/components/responses/ErrorResponse_950315a6f2064d88a0de7d604c8436700aebfc5d9427d860c1ba412f0df5b85e"
+          },
+          "503": {
+            "$ref": "#/components/responses/ErrorResponse_b7d254f6bd68a887b2398a1b58fb8fe3913110d7236a6e4540d7d2aa990fb12b"
+          }
+        },
+        "x-cloudflare-labels": [
+          "cf-api-endpoint"
+        ],
+        "security": [
+          {
+            "clerkSession": []
+          }
+        ],
+        "x-interfere-read-only": false,
+        "x-fern-retries": {
+          "disabled": true
+        }
+      }
+    },
+    "/v3/workspaces/{workspaceSlug}/problems/{problemId}/fix/correction": {
+      "post": {
+        "operationId": "correctFix",
+        "summary": "Correct fix",
+        "description": "Records the fix a workspace member established. It supersedes the investigation's fix, which is kept as the superseded version. Name code by repository, path and line range; never paste code. Refused while the investigation is running. Retry with the same request ID.",
+        "tags": [
+          "Problems"
+        ],
+        "parameters": [
+          {
+            "name": "workspaceSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
+            },
+            "x-fern-parameter-name": "workspace"
+          },
+          {
+            "name": "problemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "requestId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "summary": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4000
+                  },
+                  "locations": {
+                    "type": "array",
+                    "maxItems": 20,
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "repository": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 200
+                        },
+                        "path": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 500
+                        },
+                        "lines": {
+                          "type": "object",
+                          "properties": {
+                            "start": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740991
+                            },
+                            "end": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740991
+                            }
+                          },
+                          "required": [
+                            "start",
+                            "end"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "repository",
+                        "path"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "default": []
+                  },
+                  "reason": {
+                    "enum": [
+                      "wrong-mechanism",
+                      "wrong-location",
+                      "missing-detail",
+                      "wording"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "requestId",
+                  "summary",
+                  "reason"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CorrectRootCauseResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/RpcValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse_d7174de43f943d10193d5f31cc4615acb6d01e6a15ef9a1a861235cb9792319b"
+          },
+          "403": {
+            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse_2d362a4dcfdc8c518b10b2e559d310a0e755e37ef284408e24e0d620e2481b70"
+          },
+          "409": {
+            "$ref": "#/components/responses/ErrorResponse_20ff2bff8a72dc0f5938b0795190bfbf967135be22cb13a2428773dcf64cccc8"
+          },
+          "413": {
+            "$ref": "#/components/responses/ErrorResponse_950315a6f2064d88a0de7d604c8436700aebfc5d9427d860c1ba412f0df5b85e"
+          },
+          "503": {
+            "$ref": "#/components/responses/ErrorResponse_b7d254f6bd68a887b2398a1b58fb8fe3913110d7236a6e4540d7d2aa990fb12b"
+          }
+        },
+        "x-cloudflare-labels": [
+          "cf-api-endpoint"
+        ],
+        "security": [
+          {
+            "clerkSession": []
+          }
+        ],
+        "x-interfere-read-only": false,
+        "x-fern-retries": {
+          "disabled": true
+        }
+      }
+    },
+    "/v3/workspaces/{workspaceSlug}/problems/{problemId}/duplicate": {
+      "post": {
+        "operationId": "markProblemDuplicate",
+        "summary": "Mark as duplicate",
+        "description": "Merges this problem into the open problem it duplicates. Its findings and occurrences move to that problem, and both problems record the merge. Refused, with a reason, when the problems cannot merge, for example when the keeper is closed or they belong to different services. Retry with the same request ID.",
+        "tags": [
+          "Problems"
+        ],
+        "parameters": [
+          {
+            "name": "workspaceSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
+            },
+            "x-fern-parameter-name": "workspace"
+          },
+          {
+            "name": "problemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "requestId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "keeperProblemId": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "requestId",
+                  "keeperProblemId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarkProblemDuplicateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/RpcValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse_d7174de43f943d10193d5f31cc4615acb6d01e6a15ef9a1a861235cb9792319b"
+          },
+          "403": {
+            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse_2d362a4dcfdc8c518b10b2e559d310a0e755e37ef284408e24e0d620e2481b70"
+          },
+          "409": {
+            "description": "Request conflicts with current state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "defined": {
+                          "const": true
+                        },
+                        "code": {
+                          "const": "PROBLEM_MERGE_REFUSED"
+                        },
+                        "status": {
+                          "const": 409
+                        },
+                        "message": {
+                          "type": "string",
+                          "default": "This Problem cannot be merged into that Problem."
+                        },
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "reason": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "reason"
+                          ],
+                          "title": "ProblemMergeRefusedDetails"
+                        }
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                        "data"
+                      ]
+                    },
+                    {
+                      "$ref": "#/components/schemas/RpcUnexpectedError"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request cannot be processed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "defined": {
+                          "const": true
+                        },
+                        "code": {
+                          "const": "PROBLEM_DUPLICATE_OF_ITSELF"
+                        },
+                        "status": {
+                          "const": 422
+                        },
+                        "message": {
+                          "type": "string",
+                          "default": "A Problem cannot be a duplicate of itself."
+                        },
+                        "data": {}
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message"
+                      ]
+                    },
+                    {
+                      "$ref": "#/components/schemas/RpcUnexpectedError"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "503": {
             "$ref": "#/components/responses/ErrorResponse_b7d254f6bd68a887b2398a1b58fb8fe3913110d7236a6e4540d7d2aa990fb12b"

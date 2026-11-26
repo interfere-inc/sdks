@@ -1801,6 +1801,21 @@ async fn wire_problemsessions() {
 }
 
 #[tokio::test]
+async fn wire_correctrootcause() {
+    run_case("correctrootcause").await;
+}
+
+#[tokio::test]
+async fn wire_correctfix() {
+    run_case("correctfix").await;
+}
+
+#[tokio::test]
+async fn wire_markproblemduplicate() {
+    run_case("markproblemduplicate").await;
+}
+
+#[tokio::test]
 async fn wire_get_6() {
     run_case("get_6").await;
 }
@@ -2923,6 +2938,21 @@ async fn wire_problemtimeseries_error() {
 #[tokio::test]
 async fn wire_problemsessions_error() {
     run_case("problemsessions_error").await;
+}
+
+#[tokio::test]
+async fn wire_correctrootcause_error() {
+    run_case("correctrootcause_error").await;
+}
+
+#[tokio::test]
+async fn wire_correctfix_error() {
+    run_case("correctfix_error").await;
+}
+
+#[tokio::test]
+async fn wire_markproblemduplicate_error() {
+    run_case("markproblemduplicate_error").await;
 }
 
 #[tokio::test]

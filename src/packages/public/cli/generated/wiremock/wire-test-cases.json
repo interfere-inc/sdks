@@ -2897,6 +2897,71 @@
       }
     },
     {
+      "id": "correctrootcause",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/problems/{problemId}/root-cause/correction",
+      "params": {
+        "workspace": "workspaceSlug",
+        "problemId": "problemId"
+      },
+      "body": {
+        "requestId": "requestId",
+        "cause": {
+          "summary": "summary",
+          "causeClass": "code"
+        },
+        "reason": "wrong-mechanism"
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"problemId\": \"problemId\",\n  \"eventId\": \"eventId\",\n  \"supersedes\": \"supersedes\",\n  \"completed\": true\n}"
+      }
+    },
+    {
+      "id": "correctfix",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/problems/{problemId}/fix/correction",
+      "params": {
+        "workspace": "workspaceSlug",
+        "problemId": "problemId"
+      },
+      "body": {
+        "requestId": "requestId",
+        "summary": "summary",
+        "reason": "wrong-mechanism"
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"problemId\": \"problemId\",\n  \"eventId\": \"eventId\",\n  \"supersedes\": \"supersedes\",\n  \"completed\": true\n}"
+      }
+    },
+    {
+      "id": "markproblemduplicate",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/problems/{problemId}/duplicate",
+      "params": {
+        "workspace": "workspaceSlug",
+        "problemId": "problemId"
+      },
+      "body": {
+        "requestId": "requestId",
+        "keeperProblemId": "keeperProblemId"
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"problemId\": \"problemId\",\n  \"keeperProblemId\": \"keeperProblemId\"\n}"
+      }
+    },
+    {
       "id": "get_6",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/services.byId",
@@ -7437,6 +7502,74 @@
         "problemId": "problemId"
       },
       "body": null,
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "correctrootcause_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/problems/{problemId}/root-cause/correction",
+      "params": {
+        "workspace": "workspaceSlug",
+        "problemId": "problemId"
+      },
+      "body": {
+        "requestId": "requestId",
+        "cause": {
+          "summary": "summary",
+          "causeClass": "code"
+        },
+        "reason": "wrong-mechanism"
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "correctfix_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/problems/{problemId}/fix/correction",
+      "params": {
+        "workspace": "workspaceSlug",
+        "problemId": "problemId"
+      },
+      "body": {
+        "requestId": "requestId",
+        "summary": "summary",
+        "reason": "wrong-mechanism"
+      },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "markproblemduplicate_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/problems/{problemId}/duplicate",
+      "params": {
+        "workspace": "workspaceSlug",
+        "problemId": "problemId"
+      },
+      "body": {
+        "requestId": "requestId",
+        "keeperProblemId": "keeperProblemId"
+      },
       "queryMatchers": [],
       "headerMatchers": [],
       "requiresAuth": true,

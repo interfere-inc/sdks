@@ -1433,4 +1433,222 @@ impl ProblemsClient {
             )
             .await
     }
+
+    /// Records the root cause a workspace member established. It supersedes the investigation's root cause, which is kept as the superseded version. Name code by repository, path and line range; never paste code. With completeEnding, an investigation that failed or is waiting for an answer completes with this root cause and its open questions are withdrawn. Refused while the investigation is running. Retry with the same request ID: a retry finishes a completion the first attempt started.
+    ///
+    /// # Arguments
+    ///
+    /// * `workspace` - Workspace URL slug, using lowercase letters, numbers, and hyphens.
+    /// * `options` - Additional request options such as headers, timeout, etc.
+    ///
+    /// # Returns
+    ///
+    /// JSON response from the API
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use interfere_sdk::prelude::*;
+    ///
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     let config = ClientConfig {
+    ///         api_key: Some("<value>".to_string()),
+    ///         ..Default::default()
+    ///     };
+    ///     let client = InterfereClient::new(config).expect("Failed to build client");
+    ///     client
+    ///         .problems
+    ///         .correct_root_cause(
+    ///             &"workspaceSlug".to_string(),
+    ///             &"problemId".to_string(),
+    ///             &CorrectRootCauseRequest {
+    ///                 request_id: "requestId".to_string(),
+    ///                 cause: CorrectRootCauseRequestCause {
+    ///                     summary: "summary".to_string(),
+    ///                     cause_class: CorrectRootCauseRequestCauseCauseClass::Code,
+    ///                     locations: None,
+    ///                 },
+    ///                 reason: CorrectRootCauseRequestReason::WrongMechanism,
+    ///                 complete_ending: None,
+    ///             },
+    ///             None,
+    ///         )
+    ///         .await;
+    /// }
+    /// ```
+    pub async fn correct_root_cause(
+        &self,
+        workspace: &str,
+        problem_id: &str,
+        request: &CorrectRootCauseRequest,
+        options: Option<RequestOptions>,
+    ) -> Result<CorrectRootCauseResponse, ApiError> {
+        let endpoint_auth_headers = self
+            .http_client
+            .resolve_endpoint_auth_headers(&options, &[&["clerkSession"] as &[&str]])
+            .await?;
+        let options = {
+            let mut o = options.unwrap_or_default();
+            for (header_key, header_value) in endpoint_auth_headers {
+                o.additional_headers.insert(header_key, header_value);
+            }
+            o.max_retries = Some(0);
+            Some(o)
+        };
+        self.http_client
+            .execute_request(
+                Method::POST,
+                &format!(
+                    "v3/workspaces/{}/problems/{}/root-cause/correction",
+                    workspace, problem_id
+                ),
+                Some(serde_json::to_value(request).map_err(ApiError::Serialization)?),
+                None,
+                options,
+            )
+            .await
+    }
+
+    /// Records the fix a workspace member established. It supersedes the investigation's fix, which is kept as the superseded version. Name code by repository, path and line range; never paste code. Refused while the investigation is running. Retry with the same request ID.
+    ///
+    /// # Arguments
+    ///
+    /// * `workspace` - Workspace URL slug, using lowercase letters, numbers, and hyphens.
+    /// * `options` - Additional request options such as headers, timeout, etc.
+    ///
+    /// # Returns
+    ///
+    /// JSON response from the API
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use interfere_sdk::prelude::*;
+    ///
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     let config = ClientConfig {
+    ///         api_key: Some("<value>".to_string()),
+    ///         ..Default::default()
+    ///     };
+    ///     let client = InterfereClient::new(config).expect("Failed to build client");
+    ///     client
+    ///         .problems
+    ///         .correct_fix(
+    ///             &"workspaceSlug".to_string(),
+    ///             &"problemId".to_string(),
+    ///             &CorrectFixRequest {
+    ///                 request_id: "requestId".to_string(),
+    ///                 summary: "summary".to_string(),
+    ///                 reason: CorrectFixRequestReason::WrongMechanism,
+    ///                 locations: None,
+    ///             },
+    ///             None,
+    ///         )
+    ///         .await;
+    /// }
+    /// ```
+    pub async fn correct_fix(
+        &self,
+        workspace: &str,
+        problem_id: &str,
+        request: &CorrectFixRequest,
+        options: Option<RequestOptions>,
+    ) -> Result<CorrectRootCauseResponse, ApiError> {
+        let endpoint_auth_headers = self
+            .http_client
+            .resolve_endpoint_auth_headers(&options, &[&["clerkSession"] as &[&str]])
+            .await?;
+        let options = {
+            let mut o = options.unwrap_or_default();
+            for (header_key, header_value) in endpoint_auth_headers {
+                o.additional_headers.insert(header_key, header_value);
+            }
+            o.max_retries = Some(0);
+            Some(o)
+        };
+        self.http_client
+            .execute_request(
+                Method::POST,
+                &format!(
+                    "v3/workspaces/{}/problems/{}/fix/correction",
+                    workspace, problem_id
+                ),
+                Some(serde_json::to_value(request).map_err(ApiError::Serialization)?),
+                None,
+                options,
+            )
+            .await
+    }
+
+    /// Merges this problem into the open problem it duplicates. Its findings and occurrences move to that problem, and both problems record the merge. Refused, with a reason, when the problems cannot merge, for example when the keeper is closed or they belong to different services. Retry with the same request ID.
+    ///
+    /// # Arguments
+    ///
+    /// * `workspace` - Workspace URL slug, using lowercase letters, numbers, and hyphens.
+    /// * `options` - Additional request options such as headers, timeout, etc.
+    ///
+    /// # Returns
+    ///
+    /// JSON response from the API
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use interfere_sdk::prelude::*;
+    ///
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     let config = ClientConfig {
+    ///         api_key: Some("<value>".to_string()),
+    ///         ..Default::default()
+    ///     };
+    ///     let client = InterfereClient::new(config).expect("Failed to build client");
+    ///     client
+    ///         .problems
+    ///         .mark_problem_duplicate(
+    ///             &"workspaceSlug".to_string(),
+    ///             &"problemId".to_string(),
+    ///             &MarkProblemDuplicateRequest {
+    ///                 request_id: "requestId".to_string(),
+    ///                 keeper_problem_id: "keeperProblemId".to_string(),
+    ///             },
+    ///             None,
+    ///         )
+    ///         .await;
+    /// }
+    /// ```
+    pub async fn mark_problem_duplicate(
+        &self,
+        workspace: &str,
+        problem_id: &str,
+        request: &MarkProblemDuplicateRequest,
+        options: Option<RequestOptions>,
+    ) -> Result<MarkProblemDuplicateResponse, ApiError> {
+        let endpoint_auth_headers = self
+            .http_client
+            .resolve_endpoint_auth_headers(&options, &[&["clerkSession"] as &[&str]])
+            .await?;
+        let options = {
+            let mut o = options.unwrap_or_default();
+            for (header_key, header_value) in endpoint_auth_headers {
+                o.additional_headers.insert(header_key, header_value);
+            }
+            o.max_retries = Some(0);
+            Some(o)
+        };
+        self.http_client
+            .execute_request(
+                Method::POST,
+                &format!(
+                    "v3/workspaces/{}/problems/{}/duplicate",
+                    workspace, problem_id
+                ),
+                Some(serde_json::to_value(request).map_err(ApiError::Serialization)?),
+                None,
+                options,
+            )
+            .await
+    }
 }

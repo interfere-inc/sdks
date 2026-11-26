@@ -1061,6 +1061,30 @@ Returns affected-user counts grouped into time buckets for a problem.
 | `--workspace-slug` | `string` | Yes |  |
 | `--problem-id` | `string (uuid)` | Yes |  |
 
+#### `interfere problems correct-fix`
+
+Records the fix a workspace member established. It supersedes the investigation's fix, which is kept as the superseded version. Name code by repository, path and line range; never paste code. Refused while the investigation is running. Retry with the same request ID.
+
+`POST /v3/workspaces/{workspaceSlug}/problems/{problemId}/fix/correction`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+| `--problem-id` | `string (uuid)` | Yes |  |
+| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
+
+#### `interfere problems correct-root-cause`
+
+Records the root cause a workspace member established. It supersedes the investigation's root cause, which is kept as the superseded version. Name code by repository, path and line range; never paste code. With completeEnding, an investigation that failed or is waiting for an answer completes with this root cause and its open questions are withdrawn. Refused while the investigation is running. Retry with the same request ID: a retry finishes a completion the first attempt started.
+
+`POST /v3/workspaces/{workspaceSlug}/problems/{problemId}/root-cause/correction`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+| `--problem-id` | `string (uuid)` | Yes |  |
+| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
+
 #### `interfere problems dismiss`
 
 Dismiss a problem with a reason: noise, notAMalfunction or wontFix, or duplicateOf with the problemId of the Problem that already tracks the defect (resolve it with problems.list first). Inspect its current evidence and state before applying the requested dismissal. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
@@ -1115,6 +1139,18 @@ List visible, non-deleted problems ordered by lastSeenAt descending, including a
 |------|------|----------|-------------|
 | `--workspace-slug` | `string` | Yes |  |
 | `--json` | `JSON` | No | Request body as JSON (or use individual body-field flags) |
+
+#### `interfere problems mark-problem-duplicate`
+
+Merges this problem into the open problem it duplicates. Its findings and occurrences move to that problem, and both problems record the merge. Refused, with a reason, when the problems cannot merge, for example when the keeper is closed or they belong to different services. Retry with the same request ID.
+
+`POST /v3/workspaces/{workspaceSlug}/problems/{problemId}/duplicate`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+| `--problem-id` | `string (uuid)` | Yes |  |
+| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
 
 #### `interfere problems navigable`
 

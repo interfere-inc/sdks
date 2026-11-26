@@ -5,7 +5,7 @@
 //!
 //! ## Type Categories
 //!
-//! - **Request/Response Types**: 2261 types for API operations
+//! - **Request/Response Types**: 2274 types for API operations
 //! - **Model Types**: 665 types for data representation
 
 pub mod drain_drain_otlp_export_request_signal;
@@ -97,6 +97,14 @@ pub mod problems_update_category_problems_request_args;
 pub mod problems_update_details_problems_request_args;
 pub mod problems_update_priority_problems_request_args_priority;
 pub mod problems_update_priority_problems_request_args;
+pub mod problems_correct_root_cause_request_cause_cause_class;
+pub mod problems_correct_root_cause_request_cause_locations_item_lines;
+pub mod problems_correct_root_cause_request_cause_locations_item;
+pub mod problems_correct_root_cause_request_cause;
+pub mod problems_correct_root_cause_request_reason;
+pub mod problems_correct_fix_request_locations_item_lines;
+pub mod problems_correct_fix_request_locations_item;
+pub mod problems_correct_fix_request_reason;
 pub mod services_get_services_request_args;
 pub mod services_by_ids_services_request_args;
 pub mod services_for_workspace_services_request_args;
@@ -231,10 +239,10 @@ pub mod conflict_error_body_zero_code;
 pub mod conflict_error_body_zero;
 pub mod conflict_error_body_one_code;
 pub mod conflict_error_body_one;
+pub mod conflict_error_body_code_data;
 pub mod conflict_error_body_zero_data_blockers_item;
 pub mod conflict_error_body_zero_data;
 pub mod conflict_error_body_one_data;
-pub mod conflict_error_body_code_data;
 pub mod bad_request_error_body_code_code;
 pub mod bad_request_error_body_code;
 pub mod bad_request_error_body;
@@ -2720,6 +2728,8 @@ pub mod problem_sessions_response_sessions_item_surface_id;
 pub mod problem_sessions_response_sessions_item;
 pub mod problem_sessions_response;
 pub mod submit_problem_feedback_response;
+pub mod correct_root_cause_response;
+pub mod mark_problem_duplicate_response;
 pub mod service_activity_response_services_item;
 pub mod service_activity_response_signals_item_platform;
 pub mod service_activity_response_signals_item;
@@ -2845,6 +2855,9 @@ pub mod update_assignee_problems_request;
 pub mod update_category_problems_request;
 pub mod update_details_problems_request;
 pub mod update_priority_problems_request;
+pub mod correct_root_cause_request;
+pub mod correct_fix_request;
+pub mod mark_problem_duplicate_request;
 pub mod get_services_request;
 pub mod by_ids_services_request;
 pub mod for_workspace_services_request;
@@ -3024,6 +3037,14 @@ pub use problems_update_category_problems_request_args::UpdateCategoryProblemsRe
 pub use problems_update_details_problems_request_args::UpdateDetailsProblemsRequestArgs;
 pub use problems_update_priority_problems_request_args_priority::UpdatePriorityProblemsRequestArgsPriority;
 pub use problems_update_priority_problems_request_args::UpdatePriorityProblemsRequestArgs;
+pub use problems_correct_root_cause_request_cause_cause_class::CorrectRootCauseRequestCauseCauseClass;
+pub use problems_correct_root_cause_request_cause_locations_item_lines::CorrectRootCauseRequestCauseLocationsItemLines;
+pub use problems_correct_root_cause_request_cause_locations_item::CorrectRootCauseRequestCauseLocationsItem;
+pub use problems_correct_root_cause_request_cause::CorrectRootCauseRequestCause;
+pub use problems_correct_root_cause_request_reason::CorrectRootCauseRequestReason;
+pub use problems_correct_fix_request_locations_item_lines::CorrectFixRequestLocationsItemLines;
+pub use problems_correct_fix_request_locations_item::CorrectFixRequestLocationsItem;
+pub use problems_correct_fix_request_reason::CorrectFixRequestReason;
 pub use services_get_services_request_args::GetServicesRequestArgs;
 pub use services_by_ids_services_request_args::ByIdsServicesRequestArgs;
 pub use services_for_workspace_services_request_args::ForWorkspaceServicesRequestArgs;
@@ -3158,10 +3179,10 @@ pub use conflict_error_body_zero_code::ConflictErrorBodyZeroCode;
 pub use conflict_error_body_zero::ConflictErrorBodyZero;
 pub use conflict_error_body_one_code::ConflictErrorBodyOneCode;
 pub use conflict_error_body_one::ConflictErrorBodyOne;
+pub use conflict_error_body_code_data::ConflictErrorBodyCodeData;
 pub use conflict_error_body_zero_data_blockers_item::ConflictErrorBodyZeroDataBlockersItem;
 pub use conflict_error_body_zero_data::ConflictErrorBodyZeroData;
 pub use conflict_error_body_one_data::ConflictErrorBodyOneData;
-pub use conflict_error_body_code_data::ConflictErrorBodyCodeData;
 pub use bad_request_error_body_code_code::BadRequestErrorBodyCodeCode;
 pub use bad_request_error_body_code::BadRequestErrorBodyCode;
 pub use bad_request_error_body::BadRequestErrorBody;
@@ -5647,6 +5668,8 @@ pub use problem_sessions_response_sessions_item_surface_id::ProblemSessionsRespo
 pub use problem_sessions_response_sessions_item::ProblemSessionsResponseSessionsItem;
 pub use problem_sessions_response::ProblemSessionsResponse;
 pub use submit_problem_feedback_response::SubmitProblemFeedbackResponse;
+pub use correct_root_cause_response::CorrectRootCauseResponse;
+pub use mark_problem_duplicate_response::MarkProblemDuplicateResponse;
 pub use service_activity_response_services_item::ServiceActivityResponseServicesItem;
 pub use service_activity_response_signals_item_platform::ServiceActivityResponseSignalsItemPlatform;
 pub use service_activity_response_signals_item::ServiceActivityResponseSignalsItem;
@@ -5772,6 +5795,9 @@ pub use update_assignee_problems_request::UpdateAssigneeProblemsRequest;
 pub use update_category_problems_request::UpdateCategoryProblemsRequest;
 pub use update_details_problems_request::UpdateDetailsProblemsRequest;
 pub use update_priority_problems_request::UpdatePriorityProblemsRequest;
+pub use correct_root_cause_request::CorrectRootCauseRequest;
+pub use correct_fix_request::CorrectFixRequest;
+pub use mark_problem_duplicate_request::MarkProblemDuplicateRequest;
 pub use get_services_request::GetServicesRequest;
 pub use by_ids_services_request::ByIdsServicesRequest;
 pub use for_workspace_services_request::ForWorkspaceServicesRequest;

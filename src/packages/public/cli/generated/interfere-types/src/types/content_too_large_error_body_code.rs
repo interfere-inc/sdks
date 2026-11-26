@@ -2,7 +2,7 @@ pub use crate::prelude::*;
 #[allow(unused_imports)]
 use super::*;
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct ContentTooLargeErrorBodyCode {
     #[serde(default)]
     pub defined: String,
@@ -11,8 +11,8 @@ pub struct ContentTooLargeErrorBodyCode {
     pub status: String,
     #[serde(default)]
     pub message: String,
-    #[serde(default)]
-    pub data: ContentTooLargeErrorBodyCodeData,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub data: Option<serde_json::Value>,
 }
 
 impl ContentTooLargeErrorBodyCode {
@@ -28,7 +28,7 @@ pub struct ContentTooLargeErrorBodyCodeBuilder {
     code: Option<ContentTooLargeErrorBodyCodeCode>,
     status: Option<String>,
     message: Option<String>,
-    data: Option<ContentTooLargeErrorBodyCodeData>,
+    data: Option<serde_json::Value>,
 }
 
 impl ContentTooLargeErrorBodyCodeBuilder {
@@ -52,7 +52,7 @@ impl ContentTooLargeErrorBodyCodeBuilder {
         self
     }
 
-    pub fn data(mut self, value: ContentTooLargeErrorBodyCodeData) -> Self {
+    pub fn data(mut self, value: serde_json::Value) -> Self {
         self.data = Some(value);
         self
     }
@@ -63,14 +63,13 @@ impl ContentTooLargeErrorBodyCodeBuilder {
     /// - [`code`](ContentTooLargeErrorBodyCodeBuilder::code)
     /// - [`status`](ContentTooLargeErrorBodyCodeBuilder::status)
     /// - [`message`](ContentTooLargeErrorBodyCodeBuilder::message)
-    /// - [`data`](ContentTooLargeErrorBodyCodeBuilder::data)
     pub fn build(self) -> Result<ContentTooLargeErrorBodyCode, BuildError> {
         Ok(ContentTooLargeErrorBodyCode {
             defined: self.defined.ok_or_else(|| BuildError::missing_field("defined"))?,
             code: self.code.ok_or_else(|| BuildError::missing_field("code"))?,
             status: self.status.ok_or_else(|| BuildError::missing_field("status"))?,
             message: self.message.ok_or_else(|| BuildError::missing_field("message"))?,
-            data: self.data.ok_or_else(|| BuildError::missing_field("data"))?,
+            data: self.data,
         })
     }
 }
