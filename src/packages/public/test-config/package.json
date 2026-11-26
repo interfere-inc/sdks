@@ -8,6 +8,9 @@
     "url": "git+https://github.com/interfere-inc/sdks.git",
     "directory": "src/packages/public/test-config"
   },
+  "bin": {
+    "interfere-test": "./src/cli.ts"
+  },
   "type": "module",
   "exports": {
     "./base": "./src/configs/base.ts",

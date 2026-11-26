@@ -282,6 +282,9 @@
     "src/packages/public/test-config": {
       "name": "@interfere/test-config",
       "version": "0.0.0",
+      "bin": {
+        "interfere-test": "./src/cli.ts",
+      },
       "dependencies": {
         "@mswjs/interceptors": "catalog:",
         "@vitest/browser-playwright": "catalog:",
