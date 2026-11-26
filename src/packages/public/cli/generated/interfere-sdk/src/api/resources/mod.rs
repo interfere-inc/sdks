@@ -29,7 +29,6 @@
 //! - **Scim**
 //! - **Sso**
 //! - **Support**
-//! - **Surfaces**
 
 use crate::{ApiError, ClientConfig};
 
@@ -55,7 +54,6 @@ pub mod sessions;
 pub mod sso;
 pub mod support;
 pub mod surface_keys;
-pub mod surfaces;
 pub mod tenants;
 pub mod tiers;
 pub mod traces;
@@ -90,7 +88,6 @@ pub struct ApiClient {
     pub scim: ScimClient,
     pub sso: SsoClient,
     pub support: SupportClient,
-    pub surfaces: SurfacesClient,
 }
 
 impl ApiClient {
@@ -124,7 +121,6 @@ impl ApiClient {
             scim: ScimClient::new(config.clone())?,
             sso: SsoClient::new(config.clone())?,
             support: SupportClient::new(config.clone())?,
-            surfaces: SurfacesClient::new(config.clone())?,
         })
     }
 }
@@ -151,7 +147,6 @@ pub use sessions::SessionsClient;
 pub use sso::SsoClient;
 pub use support::SupportClient;
 pub use surface_keys::SurfaceKeysClient;
-pub use surfaces::SurfacesClient;
 pub use tenants::TenantsClient;
 pub use tiers::TiersClient;
 pub use traces::TracesClient;

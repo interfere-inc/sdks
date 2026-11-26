@@ -2131,31 +2131,6 @@ async fn wire_create_3() {
 }
 
 #[tokio::test]
-async fn wire_for_inbox() {
-    run_case("for_inbox").await;
-}
-
-#[tokio::test]
-async fn wire_list_for_surface_2() {
-    run_case("list_for_surface_2").await;
-}
-
-#[tokio::test]
-async fn wire_delete_5() {
-    run_case("delete_5").await;
-}
-
-#[tokio::test]
-async fn wire_set_production_1() {
-    run_case("set_production_1").await;
-}
-
-#[tokio::test]
-async fn wire_set_reportable_1() {
-    run_case("set_reportable_1").await;
-}
-
-#[tokio::test]
 async fn wire_list_15() {
     run_case("list_15").await;
 }
@@ -3278,31 +3253,6 @@ async fn wire_list_14_error() {
 #[tokio::test]
 async fn wire_create_3_error() {
     run_case("create_3_error").await;
-}
-
-#[tokio::test]
-async fn wire_for_inbox_error() {
-    run_case("for_inbox_error").await;
-}
-
-#[tokio::test]
-async fn wire_list_for_surface_2_error() {
-    run_case("list_for_surface_2_error").await;
-}
-
-#[tokio::test]
-async fn wire_delete_5_error() {
-    run_case("delete_5_error").await;
-}
-
-#[tokio::test]
-async fn wire_set_production_1_error() {
-    run_case("set_production_1_error").await;
-}
-
-#[tokio::test]
-async fn wire_set_reportable_1_error() {
-    run_case("set_reportable_1_error").await;
 }
 
 #[tokio::test]

@@ -5,7 +5,7 @@
 //!
 //! ## Type Categories
 //!
-//! - **Request/Response Types**: 2277 types for API operations
+//! - **Request/Response Types**: 2259 types for API operations
 //! - **Model Types**: 664 types for data representation
 
 pub mod drain_drain_otlp_export_request_signal;
@@ -158,10 +158,6 @@ pub mod scim_directories_set_enabled_directories_request_args;
 pub mod support_messages_for_thread_messages_request_args;
 pub mod support_threads_get_threads_request_args;
 pub mod support_threads_create_threads_request_priority;
-pub mod surfaces_environments_list_for_surface_environments_request_args;
-pub mod surfaces_environments_delete_environments_request_args;
-pub mod surfaces_environments_set_production_environments_request_args;
-pub mod surfaces_environments_set_reportable_environments_request_args;
 pub mod users_invitations_create_invitations_request_args_role;
 pub mod users_invitations_create_invitations_request_args;
 pub mod users_invitations_resend_invitations_request_args_role;
@@ -2409,12 +2405,6 @@ pub mod query_support_threads_by_id_response;
 pub mod query_support_threads_for_org_response_item_status;
 pub mod query_support_threads_for_org_response_item;
 pub mod query_support_threads_for_org_response;
-pub mod query_surface_environments_for_inbox_response_item_identifiers_item;
-pub mod query_surface_environments_for_inbox_response_item;
-pub mod query_surface_environments_for_inbox_response;
-pub mod query_surface_environments_for_surface_response_item_identifiers_item;
-pub mod query_surface_environments_for_surface_response_item;
-pub mod query_surface_environments_for_surface_response;
 pub mod query_users_me_response_source;
 pub mod query_users_me_response;
 pub mod mutation_api_keys_revoke_response;
@@ -2471,9 +2461,6 @@ pub mod mutation_services_set_website_settings_response;
 pub mod mutation_services_unarchive_response;
 pub mod mutation_services_unlink_destination_response;
 pub mod mutation_services_unlink_repository_response;
-pub mod mutation_surface_environments_delete_response;
-pub mod mutation_surface_environments_set_production_response;
-pub mod mutation_surface_environments_set_reportable_response;
 pub mod mutation_timeline_events_create_comment_response;
 pub mod mutation_timeline_events_respond_to_action_response;
 pub mod mutation_timeline_events_soft_delete_comment_response;
@@ -2913,11 +2900,6 @@ pub mod create_messages_request;
 pub mod get_threads_request;
 pub mod list_threads_request;
 pub mod create_threads_request;
-pub mod for_inbox_environments_request;
-pub mod list_for_surface_environments_request;
-pub mod delete_environments_request_request;
-pub mod set_production_environments_request_request;
-pub mod set_reportable_environments_request_request;
 pub mod list_tiers_request;
 pub mod list_invitations_request;
 pub mod mine_invitations_request;
@@ -3100,10 +3082,6 @@ pub use scim_directories_set_enabled_directories_request_args::SetEnabledDirecto
 pub use support_messages_for_thread_messages_request_args::ForThreadMessagesRequestArgs;
 pub use support_threads_get_threads_request_args::GetThreadsRequestArgs;
 pub use support_threads_create_threads_request_priority::CreateThreadsRequestPriority;
-pub use surfaces_environments_list_for_surface_environments_request_args::ListForSurfaceEnvironmentsRequestArgs;
-pub use surfaces_environments_delete_environments_request_args::DeleteEnvironmentsRequestArgs2;
-pub use surfaces_environments_set_production_environments_request_args::SetProductionEnvironmentsRequestArgs2;
-pub use surfaces_environments_set_reportable_environments_request_args::SetReportableEnvironmentsRequestArgs2;
 pub use users_invitations_create_invitations_request_args_role::CreateInvitationsRequestArgsRole;
 pub use users_invitations_create_invitations_request_args::CreateInvitationsRequestArgs;
 pub use users_invitations_resend_invitations_request_args_role::ResendInvitationsRequestArgsRole;
@@ -5351,12 +5329,6 @@ pub use query_support_threads_by_id_response::QuerySupportThreadsByIdResponse;
 pub use query_support_threads_for_org_response_item_status::QuerySupportThreadsForOrgResponseItemStatus;
 pub use query_support_threads_for_org_response_item::QuerySupportThreadsForOrgResponseItem;
 pub use query_support_threads_for_org_response::QuerySupportThreadsForOrgResponse;
-pub use query_surface_environments_for_inbox_response_item_identifiers_item::QuerySurfaceEnvironmentsForInboxResponseItemIdentifiersItem;
-pub use query_surface_environments_for_inbox_response_item::QuerySurfaceEnvironmentsForInboxResponseItem;
-pub use query_surface_environments_for_inbox_response::QuerySurfaceEnvironmentsForInboxResponse;
-pub use query_surface_environments_for_surface_response_item_identifiers_item::QuerySurfaceEnvironmentsForSurfaceResponseItemIdentifiersItem;
-pub use query_surface_environments_for_surface_response_item::QuerySurfaceEnvironmentsForSurfaceResponseItem;
-pub use query_surface_environments_for_surface_response::QuerySurfaceEnvironmentsForSurfaceResponse;
 pub use query_users_me_response_source::QueryUsersMeResponseSource;
 pub use query_users_me_response::QueryUsersMeResponse;
 pub use mutation_api_keys_revoke_response::MutationApiKeysRevokeResponse;
@@ -5413,9 +5385,6 @@ pub use mutation_services_set_website_settings_response::MutationServicesSetWebs
 pub use mutation_services_unarchive_response::MutationServicesUnarchiveResponse;
 pub use mutation_services_unlink_destination_response::MutationServicesUnlinkDestinationResponse;
 pub use mutation_services_unlink_repository_response::MutationServicesUnlinkRepositoryResponse;
-pub use mutation_surface_environments_delete_response::MutationSurfaceEnvironmentsDeleteResponse;
-pub use mutation_surface_environments_set_production_response::MutationSurfaceEnvironmentsSetProductionResponse;
-pub use mutation_surface_environments_set_reportable_response::MutationSurfaceEnvironmentsSetReportableResponse;
 pub use mutation_timeline_events_create_comment_response::MutationTimelineEventsCreateCommentResponse;
 pub use mutation_timeline_events_respond_to_action_response::MutationTimelineEventsRespondToActionResponse;
 pub use mutation_timeline_events_soft_delete_comment_response::MutationTimelineEventsSoftDeleteCommentResponse;
@@ -5855,11 +5824,6 @@ pub use create_messages_request::CreateMessagesRequest;
 pub use get_threads_request::GetThreadsRequest;
 pub use list_threads_request::ListThreadsRequest;
 pub use create_threads_request::CreateThreadsRequest;
-pub use for_inbox_environments_request::ForInboxEnvironmentsRequest;
-pub use list_for_surface_environments_request::ListForSurfaceEnvironmentsRequest;
-pub use delete_environments_request_request::DeleteEnvironmentsRequest2;
-pub use set_production_environments_request_request::SetProductionEnvironmentsRequest2;
-pub use set_reportable_environments_request_request::SetReportableEnvironmentsRequest2;
 pub use list_tiers_request::ListTiersRequest;
 pub use list_invitations_request::ListInvitationsRequest;
 pub use mine_invitations_request::MineInvitationsRequest;

@@ -14,7 +14,7 @@ pub use resources::{
     DrainClient, EnvironmentsClient, FeedbackClient, FindingsClient, IntegrationsClient,
     KeysClient, NetworkClient, NotificationsClient, ProblemsClient, ReleasesClient, ReplayClient,
     ScimClient, ServicesClient, SessionsClient, SsoClient, SupportClient, SurfaceKeysClient,
-    SurfacesClient, TenantsClient, TiersClient, TracesClient, UsersClient, WorkspacesClient,
+    TenantsClient, TiersClient, TracesClient, UsersClient, WorkspacesClient,
 };
 
 pub use interfere_types::*;

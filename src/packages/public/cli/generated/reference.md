@@ -34,7 +34,6 @@ Full command reference for `interfere`.
 - [`interfere support messages`](#interfere-support-messages)
 - [`interfere support threads`](#interfere-support-threads)
 - [`interfere surface-keys`](#interfere-surface-keys)
-- [`interfere surfaces environments`](#interfere-surfaces-environments)
 - [`interfere tenants`](#interfere-tenants)
 - [`interfere tenants tiers`](#interfere-tenants-tiers)
 - [`interfere tiers`](#interfere-tiers)
@@ -1935,65 +1934,6 @@ List workspace support conversations and their state. Reading does not contact s
 Do not assume a found Interfere key works. Call this for every public or secret key found in environment variables, .env files, Worker secrets or CI secrets before reusing it. The key is checked live against the same authentication the SDKs and build plugins use and compared with this workspace; it is never stored, logged or returned. Act on outcome and nextStep: only `valid` means the key can be reused here.
 
 `POST /v3/workspaces/{workspaceSlug}/keys/validate`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
-
----
-
-### `interfere surfaces environments`
-
-#### `interfere surfaces environments delete` `[DEPRECATED]`
-
-Deprecated: use environments.delete, which addresses the workspace environment by name. Delete an app (surface) environment identified from surfaces.environments.listForSurface. Verify the intended app and environment. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
-
-`POST /v3/workspaces/{workspaceSlug}/actions/surfaceEnvironments.delete`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
-
-#### `interfere surfaces environments for-inbox` `[DEPRECATED]`
-
-Deprecated: use environments.list. List app (surface) environments used for inbox filtering. Use returned identifiers when selecting an environment. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
-
-`POST /v3/workspaces/{workspaceSlug}/queries/surfaceEnvironments.forInbox`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-| `--json` | `JSON` | No | Request body as JSON (or use individual body-field flags) |
-
-#### `interfere surfaces environments list-for-surface` `[DEPRECATED]`
-
-Deprecated: use environments.list. List an app's (surface's) environments to resolve environment identifiers before filtering problems or activity. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
-
-`POST /v3/workspaces/{workspaceSlug}/queries/surfaceEnvironments.forSurface`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
-
-#### `interfere surfaces environments set-production` `[DEPRECATED]`
-
-Deprecated: use environments.setProduction, which addresses the workspace environment by name. Mark an app (surface) environment as production or not. Problems seen only in non-production environments skip workspace Slack, personal Slack and desktop push notifications. Identify the environment from surfaces.environments.listForSurface. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
-
-`POST /v3/workspaces/{workspaceSlug}/actions/surfaceEnvironments.setProduction`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
-
-#### `interfere surfaces environments set-reportable` `[DEPRECATED]`
-
-Deprecated: use environments.setReportable, which addresses the workspace environment by name. Turn Problem reporting for an app (surface) environment on or off. Off stops new Problems from that environment; existing Problems stay. Identify the environment from surfaces.environments.listForSurface. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
-
-`POST /v3/workspaces/{workspaceSlug}/actions/surfaceEnvironments.setReportable`
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|

@@ -126,10 +126,6 @@ pub fn client(ctx: &AppContext) -> interfere_sdk::api::ApiClient {
             messages: interfere_sdk::api::resources::support::MessagesClient { http_client: http_client.clone() },
             threads: interfere_sdk::api::resources::support::ThreadsClient { http_client: http_client.clone() },
         },
-        surfaces: interfere_sdk::api::SurfacesClient {
-            http_client: http_client.clone(),
-            environments: interfere_sdk::api::resources::surfaces::EnvironmentsClient2 { http_client: http_client.clone() },
-        },
     }
 }
 
