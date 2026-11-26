@@ -16,7 +16,7 @@ import type {
 } from "./network-failure-types.js";
 import { recordHttpFailure, transferRequestEvidence } from "./callsite.js";
 import { requestEvidenceSpan } from "./evidence-span.js";
-import type { ResponseEvidence } from "../response-discriminators.js";
+import type { ResponseEvidence } from "@interfere/types/sdk/response/evidence";
 import {
   recordResponseEvidence,
   responseEvidenceAttributes,

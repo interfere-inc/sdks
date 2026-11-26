@@ -12,7 +12,7 @@ import { applyFetchSpanAttrs } from "./request/outcome.js";
 import type { BundledInstrumentations } from "./instrumentations.js";
 import type { CaptureFailedRequestsOption } from "./failure-policy.js";
 import { response } from "./failed-response.fixture.js";
-import type { ResponseEvidence } from "./response-discriminators.js";
+import type { ResponseEvidence } from "@interfere/types/sdk/response/evidence";
 
 let exporter: InMemorySpanExporter;
 let provider: TracerProvider;

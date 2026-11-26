@@ -18,12 +18,15 @@ import {
   applyFetchSpanAttrs,
   isPrefetchRequest,
 } from "./outcome.js";
-import { fetchResponseEvidence } from "../response-evidence.js";
-import type { ResponseEvidence } from "../response-discriminators.js";
+import { fetchResponseEvidence } from "@interfere/types/sdk/response/evidence";
+import type { ResponseEvidence } from "@interfere/types/sdk/response/evidence";
+import { createLogger } from "../../../../util/log.js";
 import {
   composeRequestMethod,
   requestPropagator,
 } from "../upstream-request.js";
+
+const log = createLogger("response-evidence");
 
 const ATTR_ERROR_TYPE = "error.type" as const;
 
@@ -219,7 +222,7 @@ export function createFetchInstrumentation(
             core.isTracked(url) &&
             !isPrefetchRequest(init ?? resource)
           ) {
-            evidence.set(response, fetchResponseEvidence(response));
+            evidence.set(response, fetchResponseEvidence(response, log.debug));
           }
 
           return response;

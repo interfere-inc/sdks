@@ -288,6 +288,10 @@ function redactAttributes(
     redactMessage(serialized, policy),
   );
 
+  rewrite(attributes, "http.response.error_detail", (detail) =>
+    redactMessage(detail, policy),
+  );
+
   for (const key of FRAME_ATTRIBUTE_KEYS) {
     rewrite(attributes, key, (frames) => redactFrames(frames, policy));
   }

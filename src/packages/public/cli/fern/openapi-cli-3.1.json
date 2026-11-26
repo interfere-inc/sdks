@@ -10229,6 +10229,29 @@
                         ],
                         "additionalProperties": false
                       },
+                      "publicContractReceipts": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 3,
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "format": "uuid"
+                            },
+                            "contentDigest": {
+                              "type": "string",
+                              "pattern": "^[a-f0-9]{64}$"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "contentDigest"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
                       "summary": {
                         "type": "string",
                         "minLength": 1
@@ -40480,6 +40503,29 @@
                                 ],
                                 "additionalProperties": false
                               },
+                              "publicContractReceipts": {
+                                "type": "array",
+                                "minItems": 1,
+                                "maxItems": 3,
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "format": "uuid"
+                                    },
+                                    "contentDigest": {
+                                      "type": "string",
+                                      "pattern": "^[a-f0-9]{64}$"
+                                    }
+                                  },
+                                  "required": [
+                                    "id",
+                                    "contentDigest"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
                               "summary": {
                                 "type": "string",
                                 "minLength": 1
@@ -46321,6 +46367,29 @@
                                     "type"
                                   ],
                                   "additionalProperties": false
+                                },
+                                "publicContractReceipts": {
+                                  "type": "array",
+                                  "minItems": 1,
+                                  "maxItems": 3,
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string",
+                                        "format": "uuid"
+                                      },
+                                      "contentDigest": {
+                                        "type": "string",
+                                        "pattern": "^[a-f0-9]{64}$"
+                                      }
+                                    },
+                                    "required": [
+                                      "id",
+                                      "contentDigest"
+                                    ],
+                                    "additionalProperties": false
+                                  }
                                 },
                                 "summary": {
                                   "type": "string",

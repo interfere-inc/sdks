@@ -54,6 +54,8 @@ import { bridgeConsoleToOtel } from "./console-bridge.js";
 import { serverCredentialHeaders } from "./credential.js";
 import type { ServerCredential } from "./credential.js";
 import { containSpanProcessor } from "./contained-span-processor.js";
+import { contain } from "./contain.js";
+import { installFetchErrorEvidence } from "./fetch-error-evidence.js";
 import {
   EXISTING_PROPAGATOR_WARNING,
   EXISTING_PROVIDER_WARNING,
@@ -189,9 +191,12 @@ export async function startNodeRuntime(input: NodeRuntimeInput) {
   let contextManager: AsyncLocalStorageContextManager | undefined;
   let instrumentation: Pick<ServerPipeline, "flush" | "shutdown"> | undefined;
   let restoreConsole: (() => void) | undefined;
+  let restoreFetch: (() => void) | null | undefined;
 
   async function shutdown() {
     restoreConsole?.();
+
+    restoreFetch?.();
 
     await instrumentation?.shutdown();
 
@@ -315,6 +320,8 @@ export async function startNodeRuntime(input: NodeRuntimeInput) {
         resource,
         ownsPropagator && !drain,
       );
+
+      restoreFetch = contain("fetch error evidence", installFetchErrorEvidence);
     }
 
     if (!input.logDrain && options.consoleBridge !== false) {

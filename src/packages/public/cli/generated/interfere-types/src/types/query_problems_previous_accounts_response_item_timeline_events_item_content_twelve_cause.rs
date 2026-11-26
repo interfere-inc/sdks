@@ -11,6 +11,9 @@ pub struct QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTwe
     #[serde(skip_serializing_if = "Option::is_none")]
     pub correction: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTwelveCauseCorrection>,
     pub doc: QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTwelveCauseDoc,
+    #[serde(rename = "publicContractReceipts")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub public_contract_receipts: Option<Vec<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTwelveCausePublicContractReceiptsItem>>,
     #[serde(default)]
     pub summary: String,
     /// A short title for this block, around 30 characters. Name what the block tells the reader, not the investigation stage. The card truncates what does not fit, so a longer title costs the tail of the label and nothing else.
@@ -35,6 +38,7 @@ pub struct QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTwe
     confidence: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTwelveCauseConfidence>,
     correction: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTwelveCauseCorrection>,
     doc: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTwelveCauseDoc>,
+    public_contract_receipts: Option<Vec<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTwelveCausePublicContractReceiptsItem>>,
     summary: Option<String>,
     title: Option<String>,
     unconfirmed: Option<String>,
@@ -59,6 +63,11 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTwelveCau
 
     pub fn doc(mut self, value: QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTwelveCauseDoc) -> Self {
         self.doc = Some(value);
+        self
+    }
+
+    pub fn public_contract_receipts(mut self, value: Vec<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTwelveCausePublicContractReceiptsItem>) -> Self {
+        self.public_contract_receipts = Some(value);
         self
     }
 
@@ -93,6 +102,7 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTwelveCau
             confidence: self.confidence,
             correction: self.correction,
             doc: self.doc.ok_or_else(|| BuildError::missing_field("doc"))?,
+            public_contract_receipts: self.public_contract_receipts,
             summary: self.summary.ok_or_else(|| BuildError::missing_field("summary"))?,
             title: self.title,
             unconfirmed: self.unconfirmed,

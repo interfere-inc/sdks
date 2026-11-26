@@ -1,106 +1,18 @@
 import type { Attributes, Span } from "@opentelemetry/api";
-import { createLogger } from "../../../util/log.js";
 import {
+  RESPONSE_EVIDENCE_MAX_BYTES,
   responseDiscriminators,
+  responseSkipReason,
   skippedResponseEvidence,
-} from "./response-discriminators.js";
-import type { ResponseEvidence } from "./response-discriminators.js";
-
-const log = createLogger("response-evidence");
-
-const MAX_BYTES = 64 * 1024;
-
-function skipReason(getHeader: (name: string) => string | null) {
-  const length = getHeader("content-length");
-  const type = getHeader("content-type")?.split(";", 1)[0]?.trim();
-
-  if (length === null || !/^\d+$/u.test(length)) {
-    return "no-content-length";
-  }
-
-  if (Number(length) > MAX_BYTES) {
-    return "over-64KiB";
-  }
-
-  if (!(type === "application/json" || type?.endsWith("+json"))) {
-    return "non-json";
-  }
-
-  return null;
-}
-
-async function readResponse(response: Response) {
-  let clone: Response;
-
-  try {
-    clone = response.clone();
-  } catch {
-    return skippedResponseEvidence("unreadable");
-  }
-
-  const reader = clone.body?.getReader();
-
-  if (!reader) {
-    return skippedResponseEvidence("empty-body");
-  }
-
-  let timer: ReturnType<typeof setTimeout> | undefined;
-
-  const expired = new Promise<undefined>((resolve) => {
-    timer = setTimeout(() => resolve(undefined), 1000);
-  });
-
-  const decoder = new TextDecoder();
-  let bytes = 0;
-  let text = "";
-
-  try {
-    while (true) {
-      // oxlint-disable-next-line eslint/no-await-in-loop -- Read each bounded stream chunk before requesting another.
-      const chunk = await Promise.race([reader.read(), expired]);
-
-      if (!chunk) {
-        return skippedResponseEvidence("timeout");
-      }
-
-      if (chunk.done) {
-        break;
-      }
-
-      bytes += chunk.value.byteLength;
-
-      if (bytes > MAX_BYTES) {
-        return skippedResponseEvidence("over-64KiB");
-      }
-
-      text += decoder.decode(chunk.value, { stream: true });
-    }
-
-    return responseDiscriminators(
-      JSON.parse(text + decoder.decode()),
-      response.status,
-    );
-  } catch {
-    return skippedResponseEvidence("invalid-json");
-  } finally {
-    clearTimeout(timer);
-
-    // oxlint-disable-next-line promise/prefer-await-to-then -- Tee cancellation can wait for the app to consume its branch; never delay telemetry settlement on it.
-    void reader.cancel().catch(log.debug);
-  }
-}
-
-/** Collects bounded response identifiers from a clone, never consuming the application's body. */
-export async function fetchResponseEvidence(response: Response) {
-  const reason = skipReason((name) => response.headers.get(name));
-
-  return reason ? skippedResponseEvidence(reason) : readResponse(response);
-}
+} from "@interfere/types/sdk/response/evidence";
+import type { ResponseEvidence } from "@interfere/types/sdk/response/evidence";
 
 /** Extracts bounded protocol error identifiers and the capture disposition. */
 export function xhrResponseEvidence(xhr: XMLHttpRequest) {
   try {
-    const reason = skipReason((name) => xhr.getResponseHeader(name));
+    const reason = responseSkipReason((name) => xhr.getResponseHeader(name), {
+      lengthRequired: true,
+    });
 
     if (reason) {
       return skippedResponseEvidence(reason);
@@ -115,8 +27,9 @@ export function xhrResponseEvidence(xhr: XMLHttpRequest) {
     }
 
     if (
-      xhr.responseText.length > MAX_BYTES ||
-      new TextEncoder().encode(xhr.responseText).byteLength > MAX_BYTES
+      xhr.responseText.length > RESPONSE_EVIDENCE_MAX_BYTES ||
+      new TextEncoder().encode(xhr.responseText).byteLength >
+        RESPONSE_EVIDENCE_MAX_BYTES
     ) {
       return skippedResponseEvidence("over-64KiB");
     }

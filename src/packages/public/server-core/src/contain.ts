@@ -1,7 +1,7 @@
 const reported = new Set<string>();
 
 // oxlint-disable-next-line anti-slop/no-unknown-parameters -- Contained failures are arbitrary thrown values from SDK internals or third-party OTel code.
-function reportContainedFailure(site: string, error: unknown) {
+export function reportContainedFailure(site: string, error: unknown) {
   if (reported.has(site)) {
     return;
   }
