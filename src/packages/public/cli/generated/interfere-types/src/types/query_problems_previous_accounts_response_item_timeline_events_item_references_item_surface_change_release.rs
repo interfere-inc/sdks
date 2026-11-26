@@ -11,6 +11,9 @@ pub struct QueryProblemsPreviousAccountsResponseItemTimelineEventsItemReferences
     #[serde(rename = "surfaceId")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub surface_id: Option<String>,
+    #[serde(rename = "serviceId")]
+    #[serde(default)]
+    pub service_id: String,
     #[serde(rename = "organizationId")]
     #[serde(default)]
     pub organization_id: String,
@@ -78,6 +81,7 @@ pub struct QueryProblemsPreviousAccountsResponseItemTimelineEventsItemReferences
     id: Option<String>,
     slug: Option<String>,
     surface_id: Option<String>,
+    service_id: Option<String>,
     organization_id: Option<String>,
     build_id: Option<String>,
     source_metadata: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemReferencesItemSurfaceChangeReleaseSourceMetadata>,
@@ -109,6 +113,11 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemReferencesItemSu
 
     pub fn surface_id(mut self, value: impl Into<String>) -> Self {
         self.surface_id = Some(value.into());
+        self
+    }
+
+    pub fn service_id(mut self, value: impl Into<String>) -> Self {
+        self.service_id = Some(value.into());
         self
     }
 
@@ -196,6 +205,7 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemReferencesItemSu
     /// This method will fail if any of the following fields are not set:
     /// - [`id`](QueryProblemsPreviousAccountsResponseItemTimelineEventsItemReferencesItemSurfaceChangeReleaseBuilder::id)
     /// - [`slug`](QueryProblemsPreviousAccountsResponseItemTimelineEventsItemReferencesItemSurfaceChangeReleaseBuilder::slug)
+    /// - [`service_id`](QueryProblemsPreviousAccountsResponseItemTimelineEventsItemReferencesItemSurfaceChangeReleaseBuilder::service_id)
     /// - [`organization_id`](QueryProblemsPreviousAccountsResponseItemTimelineEventsItemReferencesItemSurfaceChangeReleaseBuilder::organization_id)
     /// - [`status`](QueryProblemsPreviousAccountsResponseItemTimelineEventsItemReferencesItemSurfaceChangeReleaseBuilder::status)
     /// - [`created_at`](QueryProblemsPreviousAccountsResponseItemTimelineEventsItemReferencesItemSurfaceChangeReleaseBuilder::created_at)
@@ -205,6 +215,7 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemReferencesItemSu
             id: self.id.ok_or_else(|| BuildError::missing_field("id"))?,
             slug: self.slug.ok_or_else(|| BuildError::missing_field("slug"))?,
             surface_id: self.surface_id,
+            service_id: self.service_id.ok_or_else(|| BuildError::missing_field("service_id"))?,
             organization_id: self.organization_id.ok_or_else(|| BuildError::missing_field("organization_id"))?,
             build_id: self.build_id,
             source_metadata: self.source_metadata,

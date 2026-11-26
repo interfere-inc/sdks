@@ -2,13 +2,15 @@ pub use crate::prelude::*;
 #[allow(unused_imports)]
 use super::*;
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct QueryProblemsGetByIdResponseTimelineEventsItemContentDismissal {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub dismissal: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentDismissalDismissal>,
     #[serde(rename = "recoveryEvidence")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recovery_evidence: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentDismissalRecoveryEvidence>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub recurrence: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentDismissalRecurrence>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub retry: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentDismissalRetry>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -28,6 +30,7 @@ impl QueryProblemsGetByIdResponseTimelineEventsItemContentDismissal {
 pub struct QueryProblemsGetByIdResponseTimelineEventsItemContentDismissalBuilder {
     dismissal: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentDismissalDismissal>,
     recovery_evidence: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentDismissalRecoveryEvidence>,
+    recurrence: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentDismissalRecurrence>,
     retry: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentDismissalRetry>,
     status: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentDismissalStatus>,
     previous_status: Option<QueryProblemsGetByIdResponseTimelineEventsItemContentDismissalPreviousStatus>,
@@ -41,6 +44,11 @@ impl QueryProblemsGetByIdResponseTimelineEventsItemContentDismissalBuilder {
 
     pub fn recovery_evidence(mut self, value: QueryProblemsGetByIdResponseTimelineEventsItemContentDismissalRecoveryEvidence) -> Self {
         self.recovery_evidence = Some(value);
+        self
+    }
+
+    pub fn recurrence(mut self, value: QueryProblemsGetByIdResponseTimelineEventsItemContentDismissalRecurrence) -> Self {
+        self.recurrence = Some(value);
         self
     }
 
@@ -66,6 +74,7 @@ impl QueryProblemsGetByIdResponseTimelineEventsItemContentDismissalBuilder {
         Ok(QueryProblemsGetByIdResponseTimelineEventsItemContentDismissal {
             dismissal: self.dismissal,
             recovery_evidence: self.recovery_evidence,
+            recurrence: self.recurrence,
             retry: self.retry,
             status: self.status,
             previous_status: self.previous_status.ok_or_else(|| BuildError::missing_field("previous_status"))?,

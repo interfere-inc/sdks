@@ -12,6 +12,8 @@ pub struct ServiceActivityResponse {
     pub signals: Vec<ServiceActivityResponseSignalsItem>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sdks: Option<Vec<ServiceActivityResponseSdksItem>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub retired: Option<Vec<String>>,
 }
 
 impl ServiceActivityResponse {
@@ -27,6 +29,7 @@ pub struct ServiceActivityResponseBuilder {
     buckets: Option<Vec<i64>>,
     signals: Option<Vec<ServiceActivityResponseSignalsItem>>,
     sdks: Option<Vec<ServiceActivityResponseSdksItem>>,
+    retired: Option<Vec<String>>,
 }
 
 impl ServiceActivityResponseBuilder {
@@ -50,6 +53,11 @@ impl ServiceActivityResponseBuilder {
         self
     }
 
+    pub fn retired(mut self, value: Vec<String>) -> Self {
+        self.retired = Some(value);
+        self
+    }
+
     /// Consumes the builder and constructs a [`ServiceActivityResponse`].
     /// This method will fail if any of the following fields are not set:
     /// - [`services`](ServiceActivityResponseBuilder::services)
@@ -61,6 +69,7 @@ impl ServiceActivityResponseBuilder {
             buckets: self.buckets.ok_or_else(|| BuildError::missing_field("buckets"))?,
             signals: self.signals.ok_or_else(|| BuildError::missing_field("signals"))?,
             sdks: self.sdks,
+            retired: self.retired,
         })
     }
 }

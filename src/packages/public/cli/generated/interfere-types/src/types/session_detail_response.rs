@@ -2,7 +2,7 @@ pub use crate::prelude::*;
 #[allow(unused_imports)]
 use super::*;
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct SessionDetailResponse {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub browser: Option<String>,
@@ -39,7 +39,8 @@ pub struct SessionDetailResponse {
     #[serde(default)]
     pub session_record_id: String,
     #[serde(rename = "surfaceId")]
-    pub surface_id: SessionDetailResponseSurfaceId,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub surface_id: Option<SessionDetailResponseSurfaceId>,
 }
 
 impl SessionDetailResponse {
@@ -136,7 +137,6 @@ impl SessionDetailResponseBuilder {
     /// - [`navigations`](SessionDetailResponseBuilder::navigations)
     /// - [`session_id`](SessionDetailResponseBuilder::session_id)
     /// - [`session_record_id`](SessionDetailResponseBuilder::session_record_id)
-    /// - [`surface_id`](SessionDetailResponseBuilder::surface_id)
     pub fn build(self) -> Result<SessionDetailResponse, BuildError> {
         Ok(SessionDetailResponse {
             browser: self.browser,
@@ -150,7 +150,7 @@ impl SessionDetailResponseBuilder {
             sequence: self.sequence,
             session_id: self.session_id.ok_or_else(|| BuildError::missing_field("session_id"))?,
             session_record_id: self.session_record_id.ok_or_else(|| BuildError::missing_field("session_record_id"))?,
-            surface_id: self.surface_id.ok_or_else(|| BuildError::missing_field("surface_id"))?,
+            surface_id: self.surface_id,
         })
     }
 }

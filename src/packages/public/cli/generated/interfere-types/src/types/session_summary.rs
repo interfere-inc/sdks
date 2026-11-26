@@ -2,7 +2,7 @@ pub use crate::prelude::*;
 #[allow(unused_imports)]
 use super::*;
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct SessionSummary {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub browser: Option<String>,
@@ -43,7 +43,8 @@ pub struct SessionSummary {
     #[serde(default)]
     pub session_id: String,
     #[serde(rename = "surfaceId")]
-    pub surface_id: SessionSummarySurfaceId,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub surface_id: Option<SessionSummarySurfaceId>,
 }
 
 impl SessionSummary {
@@ -146,7 +147,6 @@ impl SessionSummaryBuilder {
     /// - [`last_event_at`](SessionSummaryBuilder::last_event_at)
     /// - [`recording_key`](SessionSummaryBuilder::recording_key)
     /// - [`session_id`](SessionSummaryBuilder::session_id)
-    /// - [`surface_id`](SessionSummaryBuilder::surface_id)
     pub fn build(self) -> Result<SessionSummary, BuildError> {
         Ok(SessionSummary {
             browser: self.browser,
@@ -161,7 +161,7 @@ impl SessionSummaryBuilder {
             recording_key: self.recording_key.ok_or_else(|| BuildError::missing_field("recording_key"))?,
             sequence: self.sequence,
             session_id: self.session_id.ok_or_else(|| BuildError::missing_field("session_id"))?,
-            surface_id: self.surface_id.ok_or_else(|| BuildError::missing_field("surface_id"))?,
+            surface_id: self.surface_id,
         })
     }
 }

@@ -6,6 +6,9 @@ use super::*;
 pub struct QueryProblemsGetByIdResponseTimelineEventsItemRequestContract {
     #[serde(default)]
     pub version: String,
+    #[serde(rename = "askedBy")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub asked_by: Option<QueryProblemsGetByIdResponseTimelineEventsItemRequestContractAskedBy>,
     #[serde(rename = "requiredEvidence")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub required_evidence: Option<RequiredEvidence>,
@@ -25,6 +28,7 @@ impl QueryProblemsGetByIdResponseTimelineEventsItemRequestContract {
 #[non_exhaustive]
 pub struct QueryProblemsGetByIdResponseTimelineEventsItemRequestContractBuilder {
     version: Option<String>,
+    asked_by: Option<QueryProblemsGetByIdResponseTimelineEventsItemRequestContractAskedBy>,
     required_evidence: Option<RequiredEvidence>,
     scope: Option<QueryProblemsGetByIdResponseTimelineEventsItemRequestContractScope>,
     completion: Option<QueryProblemsGetByIdResponseTimelineEventsItemRequestContractCompletion>,
@@ -34,6 +38,11 @@ pub struct QueryProblemsGetByIdResponseTimelineEventsItemRequestContractBuilder 
 impl QueryProblemsGetByIdResponseTimelineEventsItemRequestContractBuilder {
     pub fn version(mut self, value: impl Into<String>) -> Self {
         self.version = Some(value.into());
+        self
+    }
+
+    pub fn asked_by(mut self, value: QueryProblemsGetByIdResponseTimelineEventsItemRequestContractAskedBy) -> Self {
+        self.asked_by = Some(value);
         self
     }
 
@@ -66,6 +75,7 @@ impl QueryProblemsGetByIdResponseTimelineEventsItemRequestContractBuilder {
     pub fn build(self) -> Result<QueryProblemsGetByIdResponseTimelineEventsItemRequestContract, BuildError> {
         Ok(QueryProblemsGetByIdResponseTimelineEventsItemRequestContract {
             version: self.version.ok_or_else(|| BuildError::missing_field("version"))?,
+            asked_by: self.asked_by,
             required_evidence: self.required_evidence,
             scope: self.scope.ok_or_else(|| BuildError::missing_field("scope"))?,
             completion: self.completion.ok_or_else(|| BuildError::missing_field("completion"))?,

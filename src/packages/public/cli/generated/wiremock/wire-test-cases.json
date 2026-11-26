@@ -421,15 +421,15 @@
       }
     },
     {
-      "id": "list_for_surface",
+      "id": "for_service",
       "method": "POST",
-      "path": "/v3/workspaces/{workspace}/queries/releases.forSurface",
+      "path": "/v3/workspaces/{workspace}/queries/releases.forService",
       "params": {
         "workspace": "workspaceSlug"
       },
       "body": {
         "args": {
-          "surfaceSlug": "surfaceSlug"
+          "serviceId": "serviceId"
         }
       },
       "queryMatchers": [],
@@ -437,19 +437,19 @@
       "requiresAuth": true,
       "response": {
         "status": 200,
-        "body": "[\n  {\n    \"id\": \"id\",\n    \"slug\": \"slug\",\n    \"surfaceId\": \"surfaceId\",\n    \"organizationId\": \"organizationId\",\n    \"buildId\": \"buildId\",\n    \"sourceMetadata\": {\n      \"authorLogin\": \"authorLogin\",\n      \"authorAvatarUrl\": \"authorAvatarUrl\",\n      \"branch\": \"branch\",\n      \"commitMessage\": \"commitMessage\",\n      \"commitSha\": \"commitSha\",\n      \"provider\": \"github\",\n      \"runId\": \"runId\",\n      \"runUrl\": \"runUrl\",\n      \"runnerName\": \"runnerName\"\n    },\n    \"destinationMetadata\": {\n      \"deploymentId\": \"deploymentId\",\n      \"deploymentUrl\": \"deploymentUrl\",\n      \"destinationReleaseId\": \"destinationReleaseId\",\n      \"environment\": \"environment\",\n      \"environmentName\": \"environmentName\",\n      \"environmentTarget\": \"environmentTarget\",\n      \"provider\": \"vercel\"\n    },\n    \"producerVersion\": \"producerVersion\",\n    \"sourceChangeId\": \"sourceChangeId\",\n    \"destinationChangeId\": \"destinationChangeId\",\n    \"environment\": \"environment\",\n    \"status\": \"pending\",\n    \"sourceFileCount\": 1,\n    \"sourceMapCount\": 1,\n    \"deployedAt\": 1.1,\n    \"revokedAt\": 1.1,\n    \"createdAt\": 1.1,\n    \"deletedAt\": 1.1,\n    \"updatedAt\": 1.1,\n    \"sourceChange\": {\n      \"causedById\": \"causedById\",\n      \"displayDescription\": \"displayDescription\",\n      \"displayLabel\": \"displayLabel\",\n      \"displayUrl\": \"displayUrl\",\n      \"id\": \"id\",\n      \"kind\": \"kind\",\n      \"occurredAt\": 1.1,\n      \"organizationId\": \"organizationId\",\n      \"payload\": {},\n      \"provider\": \"provider\",\n      \"surfaceId\": \"surfaceId\",\n      \"createdAt\": 1.1,\n      \"deletedAt\": 1.1,\n      \"updatedAt\": 1.1\n    },\n    \"destinationChange\": {\n      \"causedById\": \"causedById\",\n      \"displayDescription\": \"displayDescription\",\n      \"displayLabel\": \"displayLabel\",\n      \"displayUrl\": \"displayUrl\",\n      \"id\": \"id\",\n      \"kind\": \"kind\",\n      \"occurredAt\": 1.1,\n      \"organizationId\": \"organizationId\",\n      \"payload\": {},\n      \"provider\": \"provider\",\n      \"surfaceId\": \"surfaceId\",\n      \"createdAt\": 1.1,\n      \"deletedAt\": 1.1,\n      \"updatedAt\": 1.1\n    },\n    \"deployments\": [\n      {\n        \"id\": \"id\",\n        \"organizationId\": \"organizationId\",\n        \"surfaceId\": null,\n        \"releaseId\": \"releaseId\",\n        \"environment\": null,\n        \"provider\": \"provider\",\n        \"surfaceChangeId\": null,\n        \"status\": \"pending\",\n        \"deployedAt\": null,\n        \"createdAt\": 1.1,\n        \"deletedAt\": null,\n        \"updatedAt\": 1.1\n      }\n    ]\n  }\n]"
+        "body": "[\n  {\n    \"id\": \"id\",\n    \"slug\": \"slug\",\n    \"surfaceId\": \"surfaceId\",\n    \"serviceId\": \"serviceId\",\n    \"organizationId\": \"organizationId\",\n    \"buildId\": \"buildId\",\n    \"sourceMetadata\": {\n      \"authorLogin\": \"authorLogin\",\n      \"authorAvatarUrl\": \"authorAvatarUrl\",\n      \"branch\": \"branch\",\n      \"commitMessage\": \"commitMessage\",\n      \"commitSha\": \"commitSha\",\n      \"provider\": \"github\",\n      \"runId\": \"runId\",\n      \"runUrl\": \"runUrl\",\n      \"runnerName\": \"runnerName\"\n    },\n    \"destinationMetadata\": {\n      \"deploymentId\": \"deploymentId\",\n      \"deploymentUrl\": \"deploymentUrl\",\n      \"destinationReleaseId\": \"destinationReleaseId\",\n      \"environment\": \"environment\",\n      \"environmentName\": \"environmentName\",\n      \"environmentTarget\": \"environmentTarget\",\n      \"provider\": \"vercel\"\n    },\n    \"producerVersion\": \"producerVersion\",\n    \"sourceChangeId\": \"sourceChangeId\",\n    \"destinationChangeId\": \"destinationChangeId\",\n    \"environment\": \"environment\",\n    \"status\": \"pending\",\n    \"sourceFileCount\": 1,\n    \"sourceMapCount\": 1,\n    \"deployedAt\": 1.1,\n    \"revokedAt\": 1.1,\n    \"createdAt\": 1.1,\n    \"deletedAt\": 1.1,\n    \"updatedAt\": 1.1,\n    \"sourceChange\": {\n      \"causedById\": \"causedById\",\n      \"displayDescription\": \"displayDescription\",\n      \"displayLabel\": \"displayLabel\",\n      \"displayUrl\": \"displayUrl\",\n      \"id\": \"id\",\n      \"kind\": \"kind\",\n      \"occurredAt\": 1.1,\n      \"organizationId\": \"organizationId\",\n      \"payload\": {},\n      \"provider\": \"provider\",\n      \"surfaceId\": \"surfaceId\",\n      \"createdAt\": 1.1,\n      \"deletedAt\": 1.1,\n      \"updatedAt\": 1.1\n    },\n    \"destinationChange\": {\n      \"causedById\": \"causedById\",\n      \"displayDescription\": \"displayDescription\",\n      \"displayLabel\": \"displayLabel\",\n      \"displayUrl\": \"displayUrl\",\n      \"id\": \"id\",\n      \"kind\": \"kind\",\n      \"occurredAt\": 1.1,\n      \"organizationId\": \"organizationId\",\n      \"payload\": {},\n      \"provider\": \"provider\",\n      \"surfaceId\": \"surfaceId\",\n      \"createdAt\": 1.1,\n      \"deletedAt\": 1.1,\n      \"updatedAt\": 1.1\n    },\n    \"deployments\": [\n      {\n        \"id\": \"id\",\n        \"organizationId\": \"organizationId\",\n        \"surfaceId\": null,\n        \"releaseId\": \"releaseId\",\n        \"environment\": null,\n        \"provider\": \"provider\",\n        \"surfaceChangeId\": null,\n        \"status\": \"pending\",\n        \"deployedAt\": null,\n        \"createdAt\": 1.1,\n        \"deletedAt\": null,\n        \"updatedAt\": 1.1\n      }\n    ]\n  }\n]"
       }
     },
     {
-      "id": "latest_by_surface",
+      "id": "latest_by_service",
       "method": "POST",
-      "path": "/v3/workspaces/{workspace}/queries/releases.latestBySurface",
+      "path": "/v3/workspaces/{workspace}/queries/releases.latestByService",
       "params": {
         "workspace": "workspaceSlug"
       },
       "body": {
         "args": {
-          "surfaceSlug": "surfaceSlug",
+          "serviceId": "serviceId",
           "primaryEnvironment": null
         }
       },
@@ -458,19 +458,19 @@
       "requiresAuth": true,
       "response": {
         "status": 200,
-        "body": "{\n  \"id\": \"id\",\n  \"slug\": \"slug\",\n  \"surfaceId\": \"surfaceId\",\n  \"organizationId\": \"organizationId\",\n  \"buildId\": \"buildId\",\n  \"sourceMetadata\": {\n    \"authorLogin\": \"authorLogin\",\n    \"authorAvatarUrl\": \"authorAvatarUrl\",\n    \"branch\": \"branch\",\n    \"commitMessage\": \"commitMessage\",\n    \"commitSha\": \"commitSha\",\n    \"provider\": \"github\",\n    \"runId\": \"runId\",\n    \"runUrl\": \"runUrl\",\n    \"runnerName\": \"runnerName\"\n  },\n  \"destinationMetadata\": {\n    \"deploymentId\": \"deploymentId\",\n    \"deploymentUrl\": \"deploymentUrl\",\n    \"destinationReleaseId\": \"destinationReleaseId\",\n    \"environment\": \"environment\",\n    \"environmentName\": \"environmentName\",\n    \"environmentTarget\": \"environmentTarget\",\n    \"provider\": \"vercel\"\n  },\n  \"producerVersion\": \"producerVersion\",\n  \"sourceChangeId\": \"sourceChangeId\",\n  \"destinationChangeId\": \"destinationChangeId\",\n  \"environment\": \"environment\",\n  \"status\": \"pending\",\n  \"sourceFileCount\": 1,\n  \"sourceMapCount\": 1,\n  \"deployedAt\": 1.1,\n  \"revokedAt\": 1.1,\n  \"createdAt\": 1.1,\n  \"deletedAt\": 1.1,\n  \"updatedAt\": 1.1,\n  \"sourceChange\": {\n    \"causedById\": \"causedById\",\n    \"displayDescription\": \"displayDescription\",\n    \"displayLabel\": \"displayLabel\",\n    \"displayUrl\": \"displayUrl\",\n    \"id\": \"id\",\n    \"kind\": \"kind\",\n    \"occurredAt\": 1.1,\n    \"organizationId\": \"organizationId\",\n    \"payload\": {\n      \"key\": \"value\"\n    },\n    \"provider\": \"provider\",\n    \"surfaceId\": \"surfaceId\",\n    \"createdAt\": 1.1,\n    \"deletedAt\": 1.1,\n    \"updatedAt\": 1.1\n  },\n  \"destinationChange\": {\n    \"causedById\": \"causedById\",\n    \"displayDescription\": \"displayDescription\",\n    \"displayLabel\": \"displayLabel\",\n    \"displayUrl\": \"displayUrl\",\n    \"id\": \"id\",\n    \"kind\": \"kind\",\n    \"occurredAt\": 1.1,\n    \"organizationId\": \"organizationId\",\n    \"payload\": {\n      \"key\": \"value\"\n    },\n    \"provider\": \"provider\",\n    \"surfaceId\": \"surfaceId\",\n    \"createdAt\": 1.1,\n    \"deletedAt\": 1.1,\n    \"updatedAt\": 1.1\n  },\n  \"deployments\": [\n    {\n      \"id\": \"id\",\n      \"organizationId\": \"organizationId\",\n      \"surfaceId\": \"surfaceId\",\n      \"releaseId\": \"releaseId\",\n      \"environment\": \"environment\",\n      \"provider\": \"provider\",\n      \"surfaceChangeId\": \"surfaceChangeId\",\n      \"status\": \"pending\",\n      \"deployedAt\": 1.1,\n      \"createdAt\": 1.1,\n      \"deletedAt\": 1.1,\n      \"updatedAt\": 1.1\n    }\n  ]\n}"
+        "body": "{\n  \"id\": \"id\",\n  \"slug\": \"slug\",\n  \"surfaceId\": \"surfaceId\",\n  \"serviceId\": \"serviceId\",\n  \"organizationId\": \"organizationId\",\n  \"buildId\": \"buildId\",\n  \"sourceMetadata\": {\n    \"authorLogin\": \"authorLogin\",\n    \"authorAvatarUrl\": \"authorAvatarUrl\",\n    \"branch\": \"branch\",\n    \"commitMessage\": \"commitMessage\",\n    \"commitSha\": \"commitSha\",\n    \"provider\": \"github\",\n    \"runId\": \"runId\",\n    \"runUrl\": \"runUrl\",\n    \"runnerName\": \"runnerName\"\n  },\n  \"destinationMetadata\": {\n    \"deploymentId\": \"deploymentId\",\n    \"deploymentUrl\": \"deploymentUrl\",\n    \"destinationReleaseId\": \"destinationReleaseId\",\n    \"environment\": \"environment\",\n    \"environmentName\": \"environmentName\",\n    \"environmentTarget\": \"environmentTarget\",\n    \"provider\": \"vercel\"\n  },\n  \"producerVersion\": \"producerVersion\",\n  \"sourceChangeId\": \"sourceChangeId\",\n  \"destinationChangeId\": \"destinationChangeId\",\n  \"environment\": \"environment\",\n  \"status\": \"pending\",\n  \"sourceFileCount\": 1,\n  \"sourceMapCount\": 1,\n  \"deployedAt\": 1.1,\n  \"revokedAt\": 1.1,\n  \"createdAt\": 1.1,\n  \"deletedAt\": 1.1,\n  \"updatedAt\": 1.1,\n  \"sourceChange\": {\n    \"causedById\": \"causedById\",\n    \"displayDescription\": \"displayDescription\",\n    \"displayLabel\": \"displayLabel\",\n    \"displayUrl\": \"displayUrl\",\n    \"id\": \"id\",\n    \"kind\": \"kind\",\n    \"occurredAt\": 1.1,\n    \"organizationId\": \"organizationId\",\n    \"payload\": {\n      \"key\": \"value\"\n    },\n    \"provider\": \"provider\",\n    \"surfaceId\": \"surfaceId\",\n    \"createdAt\": 1.1,\n    \"deletedAt\": 1.1,\n    \"updatedAt\": 1.1\n  },\n  \"destinationChange\": {\n    \"causedById\": \"causedById\",\n    \"displayDescription\": \"displayDescription\",\n    \"displayLabel\": \"displayLabel\",\n    \"displayUrl\": \"displayUrl\",\n    \"id\": \"id\",\n    \"kind\": \"kind\",\n    \"occurredAt\": 1.1,\n    \"organizationId\": \"organizationId\",\n    \"payload\": {\n      \"key\": \"value\"\n    },\n    \"provider\": \"provider\",\n    \"surfaceId\": \"surfaceId\",\n    \"createdAt\": 1.1,\n    \"deletedAt\": 1.1,\n    \"updatedAt\": 1.1\n  },\n  \"deployments\": [\n    {\n      \"id\": \"id\",\n      \"organizationId\": \"organizationId\",\n      \"surfaceId\": \"surfaceId\",\n      \"releaseId\": \"releaseId\",\n      \"environment\": \"environment\",\n      \"provider\": \"provider\",\n      \"surfaceChangeId\": \"surfaceChangeId\",\n      \"status\": \"pending\",\n      \"deployedAt\": 1.1,\n      \"createdAt\": 1.1,\n      \"deletedAt\": 1.1,\n      \"updatedAt\": 1.1\n    }\n  ]\n}"
       }
     },
     {
-      "id": "recent_by_surface",
+      "id": "recent_by_service",
       "method": "POST",
-      "path": "/v3/workspaces/{workspace}/queries/releases.recentBySurface",
+      "path": "/v3/workspaces/{workspace}/queries/releases.recentByService",
       "params": {
         "workspace": "workspaceSlug"
       },
       "body": {
         "args": {
-          "surfaceSlug": "surfaceSlug",
+          "serviceId": "serviceId",
           "limit": 1.1
         }
       },
@@ -479,7 +479,7 @@
       "requiresAuth": true,
       "response": {
         "status": 200,
-        "body": "[\n  {\n    \"id\": \"id\",\n    \"slug\": \"slug\",\n    \"surfaceId\": \"surfaceId\",\n    \"organizationId\": \"organizationId\",\n    \"buildId\": \"buildId\",\n    \"sourceMetadata\": {\n      \"authorLogin\": \"authorLogin\",\n      \"authorAvatarUrl\": \"authorAvatarUrl\",\n      \"branch\": \"branch\",\n      \"commitMessage\": \"commitMessage\",\n      \"commitSha\": \"commitSha\",\n      \"provider\": \"github\",\n      \"runId\": \"runId\",\n      \"runUrl\": \"runUrl\",\n      \"runnerName\": \"runnerName\"\n    },\n    \"destinationMetadata\": {\n      \"deploymentId\": \"deploymentId\",\n      \"deploymentUrl\": \"deploymentUrl\",\n      \"destinationReleaseId\": \"destinationReleaseId\",\n      \"environment\": \"environment\",\n      \"environmentName\": \"environmentName\",\n      \"environmentTarget\": \"environmentTarget\",\n      \"provider\": \"vercel\"\n    },\n    \"producerVersion\": \"producerVersion\",\n    \"sourceChangeId\": \"sourceChangeId\",\n    \"destinationChangeId\": \"destinationChangeId\",\n    \"environment\": \"environment\",\n    \"status\": \"pending\",\n    \"sourceFileCount\": 1,\n    \"sourceMapCount\": 1,\n    \"deployedAt\": 1.1,\n    \"revokedAt\": 1.1,\n    \"createdAt\": 1.1,\n    \"deletedAt\": 1.1,\n    \"updatedAt\": 1.1,\n    \"sourceChange\": {\n      \"causedById\": \"causedById\",\n      \"displayDescription\": \"displayDescription\",\n      \"displayLabel\": \"displayLabel\",\n      \"displayUrl\": \"displayUrl\",\n      \"id\": \"id\",\n      \"kind\": \"kind\",\n      \"occurredAt\": 1.1,\n      \"organizationId\": \"organizationId\",\n      \"payload\": {},\n      \"provider\": \"provider\",\n      \"surfaceId\": \"surfaceId\",\n      \"createdAt\": 1.1,\n      \"deletedAt\": 1.1,\n      \"updatedAt\": 1.1\n    },\n    \"destinationChange\": {\n      \"causedById\": \"causedById\",\n      \"displayDescription\": \"displayDescription\",\n      \"displayLabel\": \"displayLabel\",\n      \"displayUrl\": \"displayUrl\",\n      \"id\": \"id\",\n      \"kind\": \"kind\",\n      \"occurredAt\": 1.1,\n      \"organizationId\": \"organizationId\",\n      \"payload\": {},\n      \"provider\": \"provider\",\n      \"surfaceId\": \"surfaceId\",\n      \"createdAt\": 1.1,\n      \"deletedAt\": 1.1,\n      \"updatedAt\": 1.1\n    },\n    \"deployments\": [\n      {\n        \"id\": \"id\",\n        \"organizationId\": \"organizationId\",\n        \"surfaceId\": null,\n        \"releaseId\": \"releaseId\",\n        \"environment\": null,\n        \"provider\": \"provider\",\n        \"surfaceChangeId\": null,\n        \"status\": \"pending\",\n        \"deployedAt\": null,\n        \"createdAt\": 1.1,\n        \"deletedAt\": null,\n        \"updatedAt\": 1.1\n      }\n    ]\n  }\n]"
+        "body": "[\n  {\n    \"id\": \"id\",\n    \"slug\": \"slug\",\n    \"surfaceId\": \"surfaceId\",\n    \"serviceId\": \"serviceId\",\n    \"organizationId\": \"organizationId\",\n    \"buildId\": \"buildId\",\n    \"sourceMetadata\": {\n      \"authorLogin\": \"authorLogin\",\n      \"authorAvatarUrl\": \"authorAvatarUrl\",\n      \"branch\": \"branch\",\n      \"commitMessage\": \"commitMessage\",\n      \"commitSha\": \"commitSha\",\n      \"provider\": \"github\",\n      \"runId\": \"runId\",\n      \"runUrl\": \"runUrl\",\n      \"runnerName\": \"runnerName\"\n    },\n    \"destinationMetadata\": {\n      \"deploymentId\": \"deploymentId\",\n      \"deploymentUrl\": \"deploymentUrl\",\n      \"destinationReleaseId\": \"destinationReleaseId\",\n      \"environment\": \"environment\",\n      \"environmentName\": \"environmentName\",\n      \"environmentTarget\": \"environmentTarget\",\n      \"provider\": \"vercel\"\n    },\n    \"producerVersion\": \"producerVersion\",\n    \"sourceChangeId\": \"sourceChangeId\",\n    \"destinationChangeId\": \"destinationChangeId\",\n    \"environment\": \"environment\",\n    \"status\": \"pending\",\n    \"sourceFileCount\": 1,\n    \"sourceMapCount\": 1,\n    \"deployedAt\": 1.1,\n    \"revokedAt\": 1.1,\n    \"createdAt\": 1.1,\n    \"deletedAt\": 1.1,\n    \"updatedAt\": 1.1,\n    \"sourceChange\": {\n      \"causedById\": \"causedById\",\n      \"displayDescription\": \"displayDescription\",\n      \"displayLabel\": \"displayLabel\",\n      \"displayUrl\": \"displayUrl\",\n      \"id\": \"id\",\n      \"kind\": \"kind\",\n      \"occurredAt\": 1.1,\n      \"organizationId\": \"organizationId\",\n      \"payload\": {},\n      \"provider\": \"provider\",\n      \"surfaceId\": \"surfaceId\",\n      \"createdAt\": 1.1,\n      \"deletedAt\": 1.1,\n      \"updatedAt\": 1.1\n    },\n    \"destinationChange\": {\n      \"causedById\": \"causedById\",\n      \"displayDescription\": \"displayDescription\",\n      \"displayLabel\": \"displayLabel\",\n      \"displayUrl\": \"displayUrl\",\n      \"id\": \"id\",\n      \"kind\": \"kind\",\n      \"occurredAt\": 1.1,\n      \"organizationId\": \"organizationId\",\n      \"payload\": {},\n      \"provider\": \"provider\",\n      \"surfaceId\": \"surfaceId\",\n      \"createdAt\": 1.1,\n      \"deletedAt\": 1.1,\n      \"updatedAt\": 1.1\n    },\n    \"deployments\": [\n      {\n        \"id\": \"id\",\n        \"organizationId\": \"organizationId\",\n        \"surfaceId\": null,\n        \"releaseId\": \"releaseId\",\n        \"environment\": null,\n        \"provider\": \"provider\",\n        \"surfaceChangeId\": null,\n        \"status\": \"pending\",\n        \"deployedAt\": null,\n        \"createdAt\": 1.1,\n        \"deletedAt\": null,\n        \"updatedAt\": 1.1\n      }\n    ]\n  }\n]"
       }
     },
     {
@@ -2524,7 +2524,7 @@
       "requiresAuth": true,
       "response": {
         "status": 200,
-        "body": "[\n  {\n    \"authorAgentId\": \"authorAgentId\",\n    \"authorConnectionId\": \"authorConnectionId\",\n    \"authorType\": \"AGENT\",\n    \"authorUserId\": \"authorUserId\",\n    \"bodyText\": \"bodyText\",\n    \"content\": {\n      \"actionKind\": \"access-request\",\n      \"repository\": {\n        \"id\": \"id\",\n        \"name\": \"name\",\n        \"url\": \"url\",\n        \"provider\": \"provider\"\n      },\n      \"repositoryAccessReadyAt\": 1,\n      \"requiredEvidence\": {\n        \"kind\": \"source-map\",\n        \"provider\": \"provider\",\n        \"dependency\": {\n          \"groupId\": \"groupId\",\n          \"mode\": \"any\"\n        },\n        \"capability\": \"mcp\",\n        \"incidentScope\": {\n          \"problemId\": \"problemId\",\n          \"sourceId\": \"sourceId\",\n          \"recordId\": \"recordId\",\n          \"windowStart\": 1,\n          \"windowEnd\": 1\n        }\n      },\n      \"evidenceStatus\": {\n        \"capabilityReady\": true,\n        \"requestedEvidenceArrived\": true,\n        \"checkedAt\": 1\n      },\n      \"targetId\": \"targetId\",\n      \"mcpConnection\": {\n        \"targetId\": \"targetId\",\n        \"connectionId\": \"connectionId\",\n        \"datasourceId\": \"datasourceId\",\n        \"connectionRevision\": 1,\n        \"verifiedAt\": 1\n      },\n      \"mcpReadinessConsumed\": {\n        \"targetId\": \"targetId\",\n        \"connectionId\": \"connectionId\",\n        \"datasourceId\": \"datasourceId\",\n        \"connectionRevision\": 1,\n        \"verifiedAt\": 1\n      },\n      \"mcpSetupWithdrawal\": {\n        \"receipt\": {\n          \"kind\": \"mcp\",\n          \"connectionRevision\": 1,\n          \"operation\": {\n            \"kind\": \"tools\"\n          },\n          \"provenance\": {\n            \"datasourceId\": \"datasourceId\",\n            \"connectionId\": \"connectionId\",\n            \"externalId\": \"externalId\",\n            \"observedAt\": \"2024-01-15T09:30:00Z\",\n            \"retrievedAt\": \"2024-01-15T09:30:00Z\"\n          },\n          \"contentDigest\": \"contentDigest\"\n        },\n        \"at\": 1,\n        \"reason\": \"reason\"\n      },\n      \"gapKind\": \"release\",\n      \"integrationName\": \"integrationName\",\n      \"docsUrl\": \"docsUrl\",\n      \"service\": {\n        \"id\": \"id\",\n        \"name\": \"name\"\n      },\n      \"surface\": {\n        \"name\": \"name\",\n        \"slug\": \"slug\"\n      },\n      \"answer\": \"answer\",\n      \"options\": [\n        {\n          \"id\": \"id\",\n          \"label\": \"label\"\n        }\n      ],\n      \"placeholder\": \"placeholder\",\n      \"question\": \"question\",\n      \"respondedAt\": 1.1,\n      \"selectedOptionId\": \"selectedOptionId\",\n      \"selectedOptionIds\": [\n        \"selectedOptionIds\"\n      ]\n    },\n    \"requestContract\": {\n      \"version\": \"version\",\n      \"requiredEvidence\": {\n        \"kind\": \"source-map\",\n        \"provider\": \"provider\",\n        \"dependency\": {\n          \"groupId\": \"groupId\",\n          \"mode\": \"any\"\n        },\n        \"capability\": \"mcp\",\n        \"incidentScope\": {\n          \"problemId\": \"problemId\",\n          \"sourceId\": \"sourceId\",\n          \"recordId\": \"recordId\",\n          \"windowStart\": 1,\n          \"windowEnd\": 1\n        }\n      },\n      \"scope\": {\n        \"organizationId\": \"organizationId\",\n        \"problemId\": \"problemId\"\n      },\n      \"completion\": {\n        \"kind\": \"answer\",\n        \"actionKind\": \"text-input\"\n      },\n      \"resolution\": {\n        \"status\": \"pending\"\n      }\n    },\n    \"editedAt\": 1.1,\n    \"eventTimestamp\": 1.1,\n    \"id\": \"id\",\n    \"mentions\": [\n      \"mentions\"\n    ],\n    \"organizationId\": \"organizationId\",\n    \"parentId\": \"parentId\",\n    \"position\": 1,\n    \"problemId\": \"problemId\",\n    \"sequence\": 1,\n    \"type\": \"PROBLEM_DETECTED\",\n    \"createdAt\": 1.1,\n    \"deletedAt\": 1.1,\n    \"updatedAt\": 1.1\n  }\n]"
+        "body": "[\n  {\n    \"authorAgentId\": \"authorAgentId\",\n    \"authorConnectionId\": \"authorConnectionId\",\n    \"authorType\": \"AGENT\",\n    \"authorUserId\": \"authorUserId\",\n    \"bodyText\": \"bodyText\",\n    \"content\": {\n      \"actionKind\": \"access-request\",\n      \"repository\": {\n        \"id\": \"id\",\n        \"name\": \"name\",\n        \"url\": \"url\",\n        \"provider\": \"provider\"\n      },\n      \"repositoryAccessReadyAt\": 1,\n      \"requiredEvidence\": {\n        \"kind\": \"source-map\",\n        \"provider\": \"provider\",\n        \"dependency\": {\n          \"groupId\": \"groupId\",\n          \"mode\": \"any\"\n        },\n        \"capability\": \"mcp\",\n        \"incidentScope\": {\n          \"problemId\": \"problemId\",\n          \"sourceId\": \"sourceId\",\n          \"recordId\": \"recordId\",\n          \"windowStart\": 1,\n          \"windowEnd\": 1\n        }\n      },\n      \"evidenceStatus\": {\n        \"capabilityReady\": true,\n        \"requestedEvidenceArrived\": true,\n        \"checkedAt\": 1\n      },\n      \"targetId\": \"targetId\",\n      \"mcpConnection\": {\n        \"targetId\": \"targetId\",\n        \"connectionId\": \"connectionId\",\n        \"datasourceId\": \"datasourceId\",\n        \"connectionRevision\": 1,\n        \"verifiedAt\": 1\n      },\n      \"mcpReadinessConsumed\": {\n        \"targetId\": \"targetId\",\n        \"connectionId\": \"connectionId\",\n        \"datasourceId\": \"datasourceId\",\n        \"connectionRevision\": 1,\n        \"verifiedAt\": 1\n      },\n      \"mcpSetupWithdrawal\": {\n        \"receipt\": {\n          \"kind\": \"mcp\",\n          \"connectionRevision\": 1,\n          \"operation\": {\n            \"kind\": \"tools\"\n          },\n          \"provenance\": {\n            \"datasourceId\": \"datasourceId\",\n            \"connectionId\": \"connectionId\",\n            \"externalId\": \"externalId\",\n            \"observedAt\": \"2024-01-15T09:30:00Z\",\n            \"retrievedAt\": \"2024-01-15T09:30:00Z\"\n          },\n          \"contentDigest\": \"contentDigest\"\n        },\n        \"at\": 1,\n        \"reason\": \"reason\"\n      },\n      \"gapKind\": \"release\",\n      \"integrationName\": \"integrationName\",\n      \"docsUrl\": \"docsUrl\",\n      \"service\": {\n        \"id\": \"id\",\n        \"name\": \"name\"\n      },\n      \"surface\": {\n        \"name\": \"name\",\n        \"slug\": \"slug\"\n      },\n      \"answer\": \"answer\",\n      \"options\": [\n        {\n          \"id\": \"id\",\n          \"label\": \"label\"\n        }\n      ],\n      \"placeholder\": \"placeholder\",\n      \"question\": \"question\",\n      \"respondedAt\": 1.1,\n      \"selectedOptionId\": \"selectedOptionId\",\n      \"selectedOptionIds\": [\n        \"selectedOptionIds\"\n      ]\n    },\n    \"requestContract\": {\n      \"version\": \"version\",\n      \"askedBy\": {\n        \"runId\": \"runId\"\n      },\n      \"requiredEvidence\": {\n        \"kind\": \"source-map\",\n        \"provider\": \"provider\",\n        \"dependency\": {\n          \"groupId\": \"groupId\",\n          \"mode\": \"any\"\n        },\n        \"capability\": \"mcp\",\n        \"incidentScope\": {\n          \"problemId\": \"problemId\",\n          \"sourceId\": \"sourceId\",\n          \"recordId\": \"recordId\",\n          \"windowStart\": 1,\n          \"windowEnd\": 1\n        }\n      },\n      \"scope\": {\n        \"organizationId\": \"organizationId\",\n        \"problemId\": \"problemId\"\n      },\n      \"completion\": {\n        \"kind\": \"answer\",\n        \"actionKind\": \"text-input\"\n      },\n      \"resolution\": {\n        \"status\": \"pending\"\n      }\n    },\n    \"editedAt\": 1.1,\n    \"eventTimestamp\": 1.1,\n    \"id\": \"id\",\n    \"mentions\": [\n      \"mentions\"\n    ],\n    \"organizationId\": \"organizationId\",\n    \"parentId\": \"parentId\",\n    \"position\": 1,\n    \"problemId\": \"problemId\",\n    \"sequence\": 1,\n    \"type\": \"PROBLEM_DETECTED\",\n    \"createdAt\": 1.1,\n    \"deletedAt\": 1.1,\n    \"updatedAt\": 1.1\n  }\n]"
       }
     },
     {
@@ -2897,237 +2897,6 @@
       }
     },
     {
-      "id": "get_6",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/queries/surfaces.getBySlug",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "args": {
-          "surfaceSlug": "surfaceSlug"
-        }
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "{\n  \"createdAt\": 1.1,\n  \"deletedAt\": 1.1,\n  \"updatedAt\": 1.1,\n  \"anonymousReplayPolicy\": \"anonymousReplayPolicy\",\n  \"anonymousUserTracking\": true,\n  \"destinationConnectionId\": \"destinationConnectionId\",\n  \"destinationMappingId\": \"destinationMappingId\",\n  \"destinationMappingLabel\": \"destinationMappingLabel\",\n  \"destinationMappingUrl\": \"destinationMappingUrl\",\n  \"environmentFiltering\": true,\n  \"explicitOnly\": true,\n  \"id\": \"id\",\n  \"name\": \"name\",\n  \"onboardedAt\": 1.1,\n  \"organizationId\": \"organizationId\",\n  \"primaryEnvironmentId\": \"primaryEnvironmentId\",\n  \"primaryEnvironmentName\": \"primaryEnvironmentName\",\n  \"sdkConfig\": {\n    \"plugins\": {\n      \"errors\": true,\n      \"device\": true,\n      \"pageEvents\": true,\n      \"rageClick\": true,\n      \"replay\": true,\n      \"logs\": true\n    },\n    \"serverTracing\": \"full\",\n    \"logSourcing\": \"sdk\",\n    \"platform\": \"vercel\"\n  },\n  \"serviceId\": \"serviceId\",\n  \"slug\": \"slug\",\n  \"sourceDatasourceId\": \"sourceDatasourceId\",\n  \"sourceConnectionId\": \"sourceConnectionId\",\n  \"sourceMappingId\": \"sourceMappingId\",\n  \"sourceMappingLabel\": \"sourceMappingLabel\",\n  \"sourceMappingUrl\": \"sourceMappingUrl\",\n  \"sourceWorkingDirectory\": \"sourceWorkingDirectory\",\n  \"type\": \"nextjs\"\n}"
-      }
-    },
-    {
-      "id": "get_by_slug_include_deleted",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/queries/surfaces.getBySlugIncludeDeleted",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "args": {
-          "surfaceSlug": "surfaceSlug"
-        }
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "{\n  \"createdAt\": 1.1,\n  \"deletedAt\": 1.1,\n  \"updatedAt\": 1.1,\n  \"anonymousReplayPolicy\": \"anonymousReplayPolicy\",\n  \"anonymousUserTracking\": true,\n  \"destinationConnectionId\": \"destinationConnectionId\",\n  \"destinationMappingId\": \"destinationMappingId\",\n  \"destinationMappingLabel\": \"destinationMappingLabel\",\n  \"destinationMappingUrl\": \"destinationMappingUrl\",\n  \"environmentFiltering\": true,\n  \"explicitOnly\": true,\n  \"id\": \"id\",\n  \"name\": \"name\",\n  \"onboardedAt\": 1.1,\n  \"organizationId\": \"organizationId\",\n  \"primaryEnvironmentId\": \"primaryEnvironmentId\",\n  \"primaryEnvironmentName\": \"primaryEnvironmentName\",\n  \"sdkConfig\": {\n    \"plugins\": {\n      \"errors\": true,\n      \"device\": true,\n      \"pageEvents\": true,\n      \"rageClick\": true,\n      \"replay\": true,\n      \"logs\": true\n    },\n    \"serverTracing\": \"full\",\n    \"logSourcing\": \"sdk\",\n    \"platform\": \"vercel\"\n  },\n  \"serviceId\": \"serviceId\",\n  \"slug\": \"slug\",\n  \"sourceDatasourceId\": \"sourceDatasourceId\",\n  \"sourceConnectionId\": \"sourceConnectionId\",\n  \"sourceMappingId\": \"sourceMappingId\",\n  \"sourceMappingLabel\": \"sourceMappingLabel\",\n  \"sourceMappingUrl\": \"sourceMappingUrl\",\n  \"sourceWorkingDirectory\": \"sourceWorkingDirectory\",\n  \"type\": \"nextjs\"\n}"
-      }
-    },
-    {
-      "id": "list_8",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/queries/surfaces.list",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {},
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "[\n  {\n    \"createdAt\": 1.1,\n    \"deletedAt\": 1.1,\n    \"updatedAt\": 1.1,\n    \"anonymousReplayPolicy\": \"anonymousReplayPolicy\",\n    \"anonymousUserTracking\": true,\n    \"destinationConnectionId\": \"destinationConnectionId\",\n    \"destinationMappingId\": \"destinationMappingId\",\n    \"destinationMappingLabel\": \"destinationMappingLabel\",\n    \"destinationMappingUrl\": \"destinationMappingUrl\",\n    \"environmentFiltering\": true,\n    \"explicitOnly\": true,\n    \"id\": \"id\",\n    \"name\": \"name\",\n    \"onboardedAt\": 1.1,\n    \"organizationId\": \"organizationId\",\n    \"primaryEnvironmentId\": \"primaryEnvironmentId\",\n    \"primaryEnvironmentName\": \"primaryEnvironmentName\",\n    \"sdkConfig\": {\n      \"serverTracing\": \"full\",\n      \"logSourcing\": \"sdk\",\n      \"platform\": \"vercel\"\n    },\n    \"serviceId\": \"serviceId\",\n    \"slug\": \"slug\",\n    \"sourceDatasourceId\": \"sourceDatasourceId\",\n    \"sourceConnectionId\": \"sourceConnectionId\",\n    \"sourceMappingId\": \"sourceMappingId\",\n    \"sourceMappingLabel\": \"sourceMappingLabel\",\n    \"sourceMappingUrl\": \"sourceMappingUrl\",\n    \"sourceWorkingDirectory\": \"sourceWorkingDirectory\",\n    \"type\": \"nextjs\"\n  }\n]"
-      }
-    },
-    {
-      "id": "delete_1",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/actions/surfaces.delete",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "args": {
-          "surfaceSlug": "surfaceSlug"
-        }
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "{\n  \"success\": true\n}"
-      }
-    },
-    {
-      "id": "set_anonymous_replay_policy",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/actions/surfaces.setAnonymousReplayPolicy",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "args": {
-          "surfaceSlug": "surfaceSlug",
-          "policy": "always"
-        }
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "{\n  \"success\": true\n}"
-      }
-    },
-    {
-      "id": "set_anonymous_user_tracking",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/actions/surfaces.setAnonymousUserTracking",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "args": {
-          "surfaceSlug": "surfaceSlug",
-          "enabled": true
-        }
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "{\n  \"success\": true\n}"
-      }
-    },
-    {
-      "id": "set_onboarded",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/actions/surfaces.setOnboarded",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "args": {
-          "surfaceSlug": "surfaceSlug",
-          "onboarded": true
-        }
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "{\n  \"success\": true\n}"
-      }
-    },
-    {
-      "id": "set_sdk_plugin",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/actions/surfaces.setSdkPlugin",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "args": {
-          "surfaceSlug": "surfaceSlug",
-          "plugin": "replay",
-          "enabled": true
-        }
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "{\n  \"success\": true\n}"
-      }
-    },
-    {
-      "id": "update_name_1",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/actions/surfaces.updateName",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "args": {
-          "name": "name",
-          "surfaceSlug": "surfaceSlug"
-        }
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "{\n  \"success\": true\n}"
-      }
-    },
-    {
-      "id": "surfaceactivity",
-      "method": "GET",
-      "path": "/v3/workspaces/{workspace}/surfaces/activity",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": null,
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "{\n  \"key\": {\n    \"hasRecentEvents\": true,\n    \"sparkline\": [\n      1.1\n    ],\n    \"status\": \"down\"\n  }\n}"
-      }
-    },
-    {
-      "id": "surfacesdkstatus",
-      "method": "GET",
-      "path": "/v3/workspaces/{workspace}/surfaces/activity/sdk-status",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": null,
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "{\n  \"outdatedSurfaceIds\": [\n    \"outdatedSurfaceIds\"\n  ],\n  \"unanalysedSurfaceIds\": [\n    \"unanalysedSurfaceIds\"\n  ]\n}"
-      }
-    },
-    {
-      "id": "surfaceeventstimeseries",
-      "method": "GET",
-      "path": "/v3/workspaces/{workspace}/surfaces/{surfaceSlug}/events/timeseries",
-      "params": {
-        "workspace": "workspaceSlug",
-        "surfaceSlug": "surfaceSlug"
-      },
-      "body": null,
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "{\n  \"unavailableLinkedServiceSignals\": [\n    \"traces\"\n  ],\n  \"window\": \"4h\",\n  \"bucketRows\": [\n    {\n      \"logs\": 1.1,\n      \"metrics\": 1.1,\n      \"traces\": 1.1,\n      \"start\": \"2024-01-15T09:30:00Z\",\n      \"end\": \"2024-01-15T09:30:00Z\",\n      \"index\": 1,\n      \"isLatest\": true,\n      \"isQuiet\": true,\n      \"total\": 1.1\n    }\n  ],\n  \"buckets\": [\n    \"2024-01-15T09:30:00Z\"\n  ],\n  \"series\": {\n    \"traces\": [\n      1.1\n    ],\n    \"logs\": [\n      1.1\n    ],\n    \"metrics\": [\n      1.1\n    ]\n  }\n}"
-      }
-    },
-    {
       "id": "createbillingcheckout",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/billing/checkout",
@@ -3167,7 +2936,7 @@
       }
     },
     {
-      "id": "list_9",
+      "id": "list_8",
       "method": "GET",
       "path": "/v3/workspaces/{workspace}/tiers",
       "params": {
@@ -3201,7 +2970,7 @@
       }
     },
     {
-      "id": "delete_2",
+      "id": "delete_1",
       "method": "DELETE",
       "path": "/v3/workspaces/{workspace}/tiers/{value}",
       "params": {
@@ -3316,7 +3085,7 @@
       "requiresAuth": true,
       "response": {
         "status": 200,
-        "body": "{\n  \"services\": [\n    {\n      \"serviceId\": \"serviceId\",\n      \"lastSeenAt\": 1\n    }\n  ],\n  \"buckets\": [\n    1\n  ],\n  \"signals\": [\n    {\n      \"serviceId\": \"serviceId\",\n      \"traces\": [\n        1\n      ],\n      \"logs\": [\n        1\n      ],\n      \"metrics\": [\n        1\n      ],\n      \"platform\": \"vercel\"\n    }\n  ],\n  \"sdks\": [\n    {\n      \"serviceId\": \"serviceId\",\n      \"name\": \"name\",\n      \"version\": \"version\",\n      \"status\": \"supported\",\n      \"spans\": 1\n    }\n  ]\n}"
+        "body": "{\n  \"services\": [\n    {\n      \"serviceId\": \"serviceId\",\n      \"lastSeenAt\": 1\n    }\n  ],\n  \"buckets\": [\n    1\n  ],\n  \"signals\": [\n    {\n      \"serviceId\": \"serviceId\",\n      \"traces\": [\n        1\n      ],\n      \"logs\": [\n        1\n      ],\n      \"metrics\": [\n        1\n      ],\n      \"platform\": \"vercel\"\n    }\n  ],\n  \"sdks\": [\n    {\n      \"serviceId\": \"serviceId\",\n      \"name\": \"name\",\n      \"version\": \"version\",\n      \"status\": \"supported\",\n      \"spans\": 1\n    }\n  ],\n  \"retired\": [\n    \"retired\"\n  ]\n}"
       }
     },
     {
@@ -3413,7 +3182,7 @@
       }
     },
     {
-      "id": "list_10",
+      "id": "list_9",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/billingInvoices.forOrg",
       "params": {
@@ -3449,7 +3218,7 @@
       }
     },
     {
-      "id": "list_11",
+      "id": "list_10",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/apiKeys.forOrg",
       "params": {
@@ -3469,7 +3238,7 @@
       }
     },
     {
-      "id": "list_for_surface_1",
+      "id": "list_for_surface",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/apiKeys.forSurface",
       "params": {
@@ -3509,7 +3278,7 @@
       }
     },
     {
-      "id": "update_name_2",
+      "id": "update_name_1",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/actions/apiKeys.updateName",
       "params": {
@@ -3553,7 +3322,7 @@
       }
     },
     {
-      "id": "get_7",
+      "id": "get_6",
       "method": "GET",
       "path": "/v3/workspaces/{workspace}/api-keys/{apiKeyId}",
       "params": {
@@ -3570,7 +3339,7 @@
       }
     },
     {
-      "id": "delete_3",
+      "id": "delete_2",
       "method": "DELETE",
       "path": "/v3/workspaces/{workspace}/api-keys/{apiKeyId}",
       "params": {
@@ -3587,7 +3356,7 @@
       }
     },
     {
-      "id": "list_for_surface_2",
+      "id": "list_for_surface_1",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/publicKeys.forSurface",
       "params": {
@@ -3668,7 +3437,7 @@
       }
     },
     {
-      "id": "update_name_3",
+      "id": "update_name_2",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/actions/publicKeys.updateName",
       "params": {
@@ -3711,7 +3480,7 @@
       }
     },
     {
-      "id": "get_8",
+      "id": "get_7",
       "method": "GET",
       "path": "/v3/workspaces/{workspace}/surfaces/{surfaceSlug}/publicKeys/{publicKeyId}",
       "params": {
@@ -3729,7 +3498,7 @@
       }
     },
     {
-      "id": "delete_4",
+      "id": "delete_3",
       "method": "DELETE",
       "path": "/v3/workspaces/{workspace}/surfaces/{surfaceSlug}/publicKeys/{publicKeyId}",
       "params": {
@@ -3972,7 +3741,7 @@
       }
     },
     {
-      "id": "delete_5",
+      "id": "delete_4",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/actions/replaySessions.delete",
       "params": {
@@ -3992,7 +3761,7 @@
       }
     },
     {
-      "id": "list_12",
+      "id": "list_11",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/scimDirectories.forOrg",
       "params": {
@@ -4029,7 +3798,7 @@
       }
     },
     {
-      "id": "list_13",
+      "id": "list_12",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/scimGroups.forOrg",
       "params": {
@@ -4045,7 +3814,7 @@
       }
     },
     {
-      "id": "list_14",
+      "id": "list_13",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/enterpriseConnections.forOrg",
       "params": {
@@ -4101,7 +3870,7 @@
       }
     },
     {
-      "id": "get_9",
+      "id": "get_8",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/supportThreads.byId",
       "params": {
@@ -4121,7 +3890,7 @@
       }
     },
     {
-      "id": "list_15",
+      "id": "list_14",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/supportThreads.forOrg",
       "params": {
@@ -4173,7 +3942,7 @@
       }
     },
     {
-      "id": "list_for_surface_3",
+      "id": "list_for_surface_2",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/surfaceEnvironments.forSurface",
       "params": {
@@ -4193,7 +3962,7 @@
       }
     },
     {
-      "id": "delete_6",
+      "id": "delete_5",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/actions/surfaceEnvironments.delete",
       "params": {
@@ -4255,7 +4024,7 @@
       }
     },
     {
-      "id": "list_16",
+      "id": "list_15",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/tiers.list",
       "params": {
@@ -4271,7 +4040,7 @@
       }
     },
     {
-      "id": "list_17",
+      "id": "list_16",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/invitations.forOrg",
       "params": {
@@ -4384,7 +4153,7 @@
       }
     },
     {
-      "id": "list_18",
+      "id": "list_17",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/membershipRequests.forOrg",
       "params": {
@@ -4875,15 +4644,15 @@
       "expectError": true
     },
     {
-      "id": "list_for_surface_error",
+      "id": "for_service_error",
       "method": "POST",
-      "path": "/v3/workspaces/{workspace}/queries/releases.forSurface",
+      "path": "/v3/workspaces/{workspace}/queries/releases.forService",
       "params": {
         "workspace": "workspaceSlug"
       },
       "body": {
         "args": {
-          "surfaceSlug": "surfaceSlug"
+          "serviceId": "serviceId"
         }
       },
       "queryMatchers": [],
@@ -4896,15 +4665,15 @@
       "expectError": true
     },
     {
-      "id": "latest_by_surface_error",
+      "id": "latest_by_service_error",
       "method": "POST",
-      "path": "/v3/workspaces/{workspace}/queries/releases.latestBySurface",
+      "path": "/v3/workspaces/{workspace}/queries/releases.latestByService",
       "params": {
         "workspace": "workspaceSlug"
       },
       "body": {
         "args": {
-          "surfaceSlug": "surfaceSlug",
+          "serviceId": "serviceId",
           "primaryEnvironment": null
         }
       },
@@ -4918,15 +4687,15 @@
       "expectError": true
     },
     {
-      "id": "recent_by_surface_error",
+      "id": "recent_by_service_error",
       "method": "POST",
-      "path": "/v3/workspaces/{workspace}/queries/releases.recentBySurface",
+      "path": "/v3/workspaces/{workspace}/queries/releases.recentByService",
       "params": {
         "workspace": "workspaceSlug"
       },
       "body": {
         "args": {
-          "surfaceSlug": "surfaceSlug",
+          "serviceId": "serviceId",
           "limit": 1.1
         }
       },
@@ -7482,249 +7251,6 @@
       "expectError": true
     },
     {
-      "id": "get_6_error",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/queries/surfaces.getBySlug",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "args": {
-          "surfaceSlug": "surfaceSlug"
-        }
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
-      "id": "get_by_slug_include_deleted_error",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/queries/surfaces.getBySlugIncludeDeleted",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "args": {
-          "surfaceSlug": "surfaceSlug"
-        }
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
-      "id": "list_8_error",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/queries/surfaces.list",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {},
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
-      "id": "delete_1_error",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/actions/surfaces.delete",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "args": {
-          "surfaceSlug": "surfaceSlug"
-        }
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
-      "id": "set_anonymous_replay_policy_error",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/actions/surfaces.setAnonymousReplayPolicy",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "args": {
-          "surfaceSlug": "surfaceSlug",
-          "policy": "always"
-        }
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
-      "id": "set_anonymous_user_tracking_error",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/actions/surfaces.setAnonymousUserTracking",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "args": {
-          "surfaceSlug": "surfaceSlug",
-          "enabled": true
-        }
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
-      "id": "set_onboarded_error",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/actions/surfaces.setOnboarded",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "args": {
-          "surfaceSlug": "surfaceSlug",
-          "onboarded": true
-        }
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
-      "id": "set_sdk_plugin_error",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/actions/surfaces.setSdkPlugin",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "args": {
-          "surfaceSlug": "surfaceSlug",
-          "plugin": "replay",
-          "enabled": true
-        }
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
-      "id": "update_name_1_error",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/actions/surfaces.updateName",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "args": {
-          "name": "name",
-          "surfaceSlug": "surfaceSlug"
-        }
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
-      "id": "surfaceactivity_error",
-      "method": "GET",
-      "path": "/v3/workspaces/{workspace}/surfaces/activity",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": null,
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
-      "id": "surfacesdkstatus_error",
-      "method": "GET",
-      "path": "/v3/workspaces/{workspace}/surfaces/activity/sdk-status",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": null,
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
-      "id": "surfaceeventstimeseries_error",
-      "method": "GET",
-      "path": "/v3/workspaces/{workspace}/surfaces/{surfaceSlug}/events/timeseries",
-      "params": {
-        "workspace": "workspaceSlug",
-        "surfaceSlug": "surfaceSlug"
-      },
-      "body": null,
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
       "id": "createbillingcheckout_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/billing/checkout",
@@ -7766,7 +7292,7 @@
       "expectError": true
     },
     {
-      "id": "list_9_error",
+      "id": "list_8_error",
       "method": "GET",
       "path": "/v3/workspaces/{workspace}/tiers",
       "params": {
@@ -7802,7 +7328,7 @@
       "expectError": true
     },
     {
-      "id": "delete_2_error",
+      "id": "delete_1_error",
       "method": "DELETE",
       "path": "/v3/workspaces/{workspace}/tiers/{value}",
       "params": {
@@ -8025,7 +7551,7 @@
       "expectError": true
     },
     {
-      "id": "list_10_error",
+      "id": "list_9_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/billingInvoices.forOrg",
       "params": {
@@ -8063,7 +7589,7 @@
       "expectError": true
     },
     {
-      "id": "list_11_error",
+      "id": "list_10_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/apiKeys.forOrg",
       "params": {
@@ -8084,7 +7610,7 @@
       "expectError": true
     },
     {
-      "id": "list_for_surface_1_error",
+      "id": "list_for_surface_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/apiKeys.forSurface",
       "params": {
@@ -8126,7 +7652,7 @@
       "expectError": true
     },
     {
-      "id": "update_name_2_error",
+      "id": "update_name_1_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/actions/apiKeys.updateName",
       "params": {
@@ -8172,7 +7698,7 @@
       "expectError": true
     },
     {
-      "id": "get_7_error",
+      "id": "get_6_error",
       "method": "GET",
       "path": "/v3/workspaces/{workspace}/api-keys/{apiKeyId}",
       "params": {
@@ -8190,7 +7716,7 @@
       "expectError": true
     },
     {
-      "id": "delete_3_error",
+      "id": "delete_2_error",
       "method": "DELETE",
       "path": "/v3/workspaces/{workspace}/api-keys/{apiKeyId}",
       "params": {
@@ -8208,7 +7734,7 @@
       "expectError": true
     },
     {
-      "id": "list_for_surface_2_error",
+      "id": "list_for_surface_1_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/publicKeys.forSurface",
       "params": {
@@ -8293,7 +7819,7 @@
       "expectError": true
     },
     {
-      "id": "update_name_3_error",
+      "id": "update_name_2_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/actions/publicKeys.updateName",
       "params": {
@@ -8338,7 +7864,7 @@
       "expectError": true
     },
     {
-      "id": "get_8_error",
+      "id": "get_7_error",
       "method": "GET",
       "path": "/v3/workspaces/{workspace}/surfaces/{surfaceSlug}/publicKeys/{publicKeyId}",
       "params": {
@@ -8357,7 +7883,7 @@
       "expectError": true
     },
     {
-      "id": "delete_4_error",
+      "id": "delete_3_error",
       "method": "DELETE",
       "path": "/v3/workspaces/{workspace}/surfaces/{surfaceSlug}/publicKeys/{publicKeyId}",
       "params": {
@@ -8611,7 +8137,7 @@
       "expectError": true
     },
     {
-      "id": "delete_5_error",
+      "id": "delete_4_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/actions/replaySessions.delete",
       "params": {
@@ -8632,7 +8158,7 @@
       "expectError": true
     },
     {
-      "id": "list_12_error",
+      "id": "list_11_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/scimDirectories.forOrg",
       "params": {
@@ -8671,7 +8197,7 @@
       "expectError": true
     },
     {
-      "id": "list_13_error",
+      "id": "list_12_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/scimGroups.forOrg",
       "params": {
@@ -8688,7 +8214,7 @@
       "expectError": true
     },
     {
-      "id": "list_14_error",
+      "id": "list_13_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/enterpriseConnections.forOrg",
       "params": {
@@ -8747,7 +8273,7 @@
       "expectError": true
     },
     {
-      "id": "get_9_error",
+      "id": "get_8_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/supportThreads.byId",
       "params": {
@@ -8768,7 +8294,7 @@
       "expectError": true
     },
     {
-      "id": "list_15_error",
+      "id": "list_14_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/supportThreads.forOrg",
       "params": {
@@ -8823,7 +8349,7 @@
       "expectError": true
     },
     {
-      "id": "list_for_surface_3_error",
+      "id": "list_for_surface_2_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/surfaceEnvironments.forSurface",
       "params": {
@@ -8844,7 +8370,7 @@
       "expectError": true
     },
     {
-      "id": "delete_6_error",
+      "id": "delete_5_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/actions/surfaceEnvironments.delete",
       "params": {
@@ -8909,7 +8435,7 @@
       "expectError": true
     },
     {
-      "id": "list_16_error",
+      "id": "list_15_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/tiers.list",
       "params": {
@@ -8926,7 +8452,7 @@
       "expectError": true
     },
     {
-      "id": "list_17_error",
+      "id": "list_16_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/invitations.forOrg",
       "params": {
@@ -9045,7 +8571,7 @@
       "expectError": true
     },
     {
-      "id": "list_18_error",
+      "id": "list_17_error",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/queries/membershipRequests.forOrg",
       "params": {

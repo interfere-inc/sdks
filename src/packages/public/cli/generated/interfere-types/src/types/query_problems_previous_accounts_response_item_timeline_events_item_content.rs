@@ -17,17 +17,19 @@ pub enum QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContent {
 
         QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDescription(QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDescription),
 
-        QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentSix(QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentSix),
+        QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentCorrection(QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentCorrection),
+
+        QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentAction(QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentAction),
 
         QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentChart(QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentChart),
 
-        QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentBasis(QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentBasis),
+        QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentPriority(QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentPriority),
 
-        QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentNine(QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentNine),
-
-        QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentCosineScore(QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentCosineScore),
+        QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTen(QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTen),
 
         QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEleven(QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEleven),
+
+        QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTwelve(QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTwelve),
 
         QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentRelease(QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentRelease),
 
@@ -61,28 +63,32 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContent {
         matches!(self, Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDescription(_))
     }
 
-    pub fn is_query_problems_previous_accounts_response_item_timeline_events_item_content_six(&self) -> bool {
-        matches!(self, Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentSix(_))
+    pub fn is_query_problems_previous_accounts_response_item_timeline_events_item_content_correction(&self) -> bool {
+        matches!(self, Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentCorrection(_))
+    }
+
+    pub fn is_query_problems_previous_accounts_response_item_timeline_events_item_content_action(&self) -> bool {
+        matches!(self, Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentAction(_))
     }
 
     pub fn is_query_problems_previous_accounts_response_item_timeline_events_item_content_chart(&self) -> bool {
         matches!(self, Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentChart(_))
     }
 
-    pub fn is_query_problems_previous_accounts_response_item_timeline_events_item_content_basis(&self) -> bool {
-        matches!(self, Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentBasis(_))
+    pub fn is_query_problems_previous_accounts_response_item_timeline_events_item_content_priority(&self) -> bool {
+        matches!(self, Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentPriority(_))
     }
 
-    pub fn is_query_problems_previous_accounts_response_item_timeline_events_item_content_nine(&self) -> bool {
-        matches!(self, Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentNine(_))
-    }
-
-    pub fn is_query_problems_previous_accounts_response_item_timeline_events_item_content_cosine_score(&self) -> bool {
-        matches!(self, Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentCosineScore(_))
+    pub fn is_query_problems_previous_accounts_response_item_timeline_events_item_content_ten(&self) -> bool {
+        matches!(self, Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTen(_))
     }
 
     pub fn is_query_problems_previous_accounts_response_item_timeline_events_item_content_eleven(&self) -> bool {
         matches!(self, Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEleven(_))
+    }
+
+    pub fn is_query_problems_previous_accounts_response_item_timeline_events_item_content_twelve(&self) -> bool {
+        matches!(self, Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTwelve(_))
     }
 
     pub fn is_query_problems_previous_accounts_response_item_timeline_events_item_content_release(&self) -> bool {
@@ -182,16 +188,30 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContent {
                 }
     }
 
-    pub fn as_query_problems_previous_accounts_response_item_timeline_events_item_content_six(&self) -> Option<&QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentSix> {
+    pub fn as_query_problems_previous_accounts_response_item_timeline_events_item_content_correction(&self) -> Option<&QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentCorrection> {
         match self {
-                    Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentSix(value) => Some(value),
+                    Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentCorrection(value) => Some(value),
                     _ => None,
                 }
     }
 
-    pub fn into_query_problems_previous_accounts_response_item_timeline_events_item_content_six(self) -> Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentSix> {
+    pub fn into_query_problems_previous_accounts_response_item_timeline_events_item_content_correction(self) -> Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentCorrection> {
         match self {
-                    Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentSix(value) => Some(value),
+                    Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentCorrection(value) => Some(value),
+                    _ => None,
+                }
+    }
+
+    pub fn as_query_problems_previous_accounts_response_item_timeline_events_item_content_action(&self) -> Option<&QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentAction> {
+        match self {
+                    Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentAction(value) => Some(value),
+                    _ => None,
+                }
+    }
+
+    pub fn into_query_problems_previous_accounts_response_item_timeline_events_item_content_action(self) -> Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentAction> {
+        match self {
+                    Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentAction(value) => Some(value),
                     _ => None,
                 }
     }
@@ -210,44 +230,30 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContent {
                 }
     }
 
-    pub fn as_query_problems_previous_accounts_response_item_timeline_events_item_content_basis(&self) -> Option<&QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentBasis> {
+    pub fn as_query_problems_previous_accounts_response_item_timeline_events_item_content_priority(&self) -> Option<&QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentPriority> {
         match self {
-                    Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentBasis(value) => Some(value),
+                    Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentPriority(value) => Some(value),
                     _ => None,
                 }
     }
 
-    pub fn into_query_problems_previous_accounts_response_item_timeline_events_item_content_basis(self) -> Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentBasis> {
+    pub fn into_query_problems_previous_accounts_response_item_timeline_events_item_content_priority(self) -> Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentPriority> {
         match self {
-                    Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentBasis(value) => Some(value),
+                    Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentPriority(value) => Some(value),
                     _ => None,
                 }
     }
 
-    pub fn as_query_problems_previous_accounts_response_item_timeline_events_item_content_nine(&self) -> Option<&QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentNine> {
+    pub fn as_query_problems_previous_accounts_response_item_timeline_events_item_content_ten(&self) -> Option<&QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTen> {
         match self {
-                    Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentNine(value) => Some(value),
+                    Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTen(value) => Some(value),
                     _ => None,
                 }
     }
 
-    pub fn into_query_problems_previous_accounts_response_item_timeline_events_item_content_nine(self) -> Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentNine> {
+    pub fn into_query_problems_previous_accounts_response_item_timeline_events_item_content_ten(self) -> Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTen> {
         match self {
-                    Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentNine(value) => Some(value),
-                    _ => None,
-                }
-    }
-
-    pub fn as_query_problems_previous_accounts_response_item_timeline_events_item_content_cosine_score(&self) -> Option<&QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentCosineScore> {
-        match self {
-                    Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentCosineScore(value) => Some(value),
-                    _ => None,
-                }
-    }
-
-    pub fn into_query_problems_previous_accounts_response_item_timeline_events_item_content_cosine_score(self) -> Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentCosineScore> {
-        match self {
-                    Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentCosineScore(value) => Some(value),
+                    Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTen(value) => Some(value),
                     _ => None,
                 }
     }
@@ -262,6 +268,20 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContent {
     pub fn into_query_problems_previous_accounts_response_item_timeline_events_item_content_eleven(self) -> Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEleven> {
         match self {
                     Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEleven(value) => Some(value),
+                    _ => None,
+                }
+    }
+
+    pub fn as_query_problems_previous_accounts_response_item_timeline_events_item_content_twelve(&self) -> Option<&QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTwelve> {
+        match self {
+                    Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTwelve(value) => Some(value),
+                    _ => None,
+                }
+    }
+
+    pub fn into_query_problems_previous_accounts_response_item_timeline_events_item_content_twelve(self) -> Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTwelve> {
+        match self {
+                    Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTwelve(value) => Some(value),
                     _ => None,
                 }
     }
@@ -318,12 +338,13 @@ impl fmt::Display for QueryProblemsPreviousAccountsResponseItemTimelineEventsIte
             Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentCategory(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentFour(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDescription(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
-            Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentSix(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentCorrection(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentAction(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentChart(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
-            Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentBasis(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
-            Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentNine(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
-            Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentCosineScore(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentPriority(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTen(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentEleven(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTwelve(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentRelease(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissal(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTitle(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),

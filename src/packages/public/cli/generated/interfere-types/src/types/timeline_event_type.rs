@@ -20,6 +20,7 @@ pub enum TimelineEventType {
     RootCause,
     Fix,
     TitleSet,
+    MergeChanged,
     /// This variant is used for forward compatibility.
     /// If the server sends a value not recognized by the current SDK version,
     /// it will be captured here with the raw string value.
@@ -43,6 +44,7 @@ impl Serialize for TimelineEventType {
             Self::RootCause => serializer.serialize_str("ROOT_CAUSE"),
             Self::Fix => serializer.serialize_str("FIX"),
             Self::TitleSet => serializer.serialize_str("TITLE_SET"),
+            Self::MergeChanged => serializer.serialize_str("MERGE_CHANGED"),
             Self::__Unknown(val) => serializer.serialize_str(val),
         }
     }
@@ -67,6 +69,7 @@ impl<'de> Deserialize<'de> for TimelineEventType {
             "ROOT_CAUSE" => Ok(Self::RootCause),
             "FIX" => Ok(Self::Fix),
             "TITLE_SET" => Ok(Self::TitleSet),
+            "MERGE_CHANGED" => Ok(Self::MergeChanged),
             _ => Ok(Self::__Unknown(value)),
         }
     }
@@ -90,6 +93,7 @@ impl fmt::Display for TimelineEventType {
             Self::RootCause => write!(f, "ROOT_CAUSE"),
             Self::Fix => write!(f, "FIX"),
             Self::TitleSet => write!(f, "TITLE_SET"),
+            Self::MergeChanged => write!(f, "MERGE_CHANGED"),
             Self::__Unknown(val) => write!(f, "{}", val),
         }
     }

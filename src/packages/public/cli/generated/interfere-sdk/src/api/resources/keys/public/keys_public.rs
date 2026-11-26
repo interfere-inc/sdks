@@ -431,7 +431,7 @@ impl PublicClient {
             .await
     }
 
-    /// Reads a publishable key's identity, current value and revocation status. Requires app read permission. Revoked keys and keys belonging to deleted apps report revoked: true.
+    /// Reads a publishable key's identity, current value and revocation status. Requires app read permission. Revoked keys report revoked: true, and so do keys of a deleted app unless the key is still mapped to a service and keeps ingesting.
     ///
     /// # Arguments
     ///

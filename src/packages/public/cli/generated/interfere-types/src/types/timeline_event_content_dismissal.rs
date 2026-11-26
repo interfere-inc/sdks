@@ -2,13 +2,15 @@ pub use crate::prelude::*;
 #[allow(unused_imports)]
 use super::*;
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct TimelineEventContentDismissal {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub dismissal: Option<TimelineEventContentDismissalDismissal>,
     #[serde(rename = "recoveryEvidence")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recovery_evidence: Option<TimelineEventContentDismissalRecoveryEvidence>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub recurrence: Option<TimelineEventContentDismissalRecurrence>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub retry: Option<TimelineEventContentDismissalRetry>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -28,6 +30,7 @@ impl TimelineEventContentDismissal {
 pub struct TimelineEventContentDismissalBuilder {
     dismissal: Option<TimelineEventContentDismissalDismissal>,
     recovery_evidence: Option<TimelineEventContentDismissalRecoveryEvidence>,
+    recurrence: Option<TimelineEventContentDismissalRecurrence>,
     retry: Option<TimelineEventContentDismissalRetry>,
     status: Option<TimelineEventContentDismissalStatus>,
     previous_status: Option<TimelineEventContentDismissalPreviousStatus>,
@@ -41,6 +44,11 @@ impl TimelineEventContentDismissalBuilder {
 
     pub fn recovery_evidence(mut self, value: TimelineEventContentDismissalRecoveryEvidence) -> Self {
         self.recovery_evidence = Some(value);
+        self
+    }
+
+    pub fn recurrence(mut self, value: TimelineEventContentDismissalRecurrence) -> Self {
+        self.recurrence = Some(value);
         self
     }
 
@@ -66,6 +74,7 @@ impl TimelineEventContentDismissalBuilder {
         Ok(TimelineEventContentDismissal {
             dismissal: self.dismissal,
             recovery_evidence: self.recovery_evidence,
+            recurrence: self.recurrence,
             retry: self.retry,
             status: self.status,
             previous_status: self.previous_status.ok_or_else(|| BuildError::missing_field("previous_status"))?,

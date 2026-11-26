@@ -79,11 +79,6 @@
       "x-displayName": "App keys"
     },
     {
-      "name": "Surfaces",
-      "description": "Workspace apps (surfaces) and their activity",
-      "x-displayName": "Apps"
-    },
-    {
       "name": "Traces",
       "description": "Finding occurrences, trace waterfalls, and stack traces"
     },
@@ -179,10 +174,6 @@
     {
       "name": "surfaces.environments",
       "x-displayName": "App environments"
-    },
-    {
-      "name": "surfaces",
-      "x-displayName": "Apps"
     },
     {
       "name": "problems.timeline"
@@ -4685,8 +4676,7 @@
           "platform",
           "recordingKey",
           "sequence",
-          "sessionId",
-          "surfaceId"
+          "sessionId"
         ]
       },
       "Connection": {
@@ -8174,6 +8164,81 @@
               {
                 "type": "object",
                 "properties": {
+                  "correction": {
+                    "type": "object",
+                    "properties": {
+                      "supersedes": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "reason": {
+                        "enum": [
+                          "wrong-mechanism",
+                          "wrong-location",
+                          "missing-detail",
+                          "wording"
+                        ],
+                        "type": "string"
+                      },
+                      "locations": {
+                        "type": "array",
+                        "maxItems": 20,
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "repository": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 200
+                            },
+                            "path": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 500
+                            },
+                            "lines": {
+                              "type": "object",
+                              "properties": {
+                                "start": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 9007199254740991
+                                },
+                                "end": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 9007199254740991
+                                }
+                              },
+                              "required": [
+                                "start",
+                                "end"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "repository",
+                            "path"
+                          ],
+                          "additionalProperties": false
+                        }
+                      }
+                    },
+                    "required": [
+                      "supersedes",
+                      "reason",
+                      "locations"
+                    ],
+                    "additionalProperties": false
+                  },
                   "doc": {
                     "type": "object",
                     "properties": {
@@ -8615,6 +8680,47 @@
                 "required": [
                   "doc",
                   "version"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "action": {
+                    "enum": [
+                      "merged",
+                      "split"
+                    ],
+                    "type": "string"
+                  },
+                  "role": {
+                    "enum": [
+                      "keeper",
+                      "duplicate"
+                    ],
+                    "type": "string"
+                  },
+                  "otherProblemId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "basis": {
+                    "enum": [
+                      "account",
+                      "fingerprint",
+                      "http-route",
+                      "same-request",
+                      "session-route",
+                      "page-load-refusal",
+                      "manual"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "action",
+                  "role",
+                  "otherProblemId"
                 ],
                 "additionalProperties": false
               },
@@ -9537,34 +9643,243 @@
                 ]
               },
               {
-                "type": "object",
-                "properties": {
-                  "cosineScore": {
-                    "type": "number"
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "version": {
+                        "const": 2
+                      },
+                      "fixReleaseId": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "recurredOnReleaseId": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "findingId": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "recurrence": {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "version": {
+                                "const": 1
+                              },
+                              "since": {
+                                "type": "number"
+                              },
+                              "fixReleaseId": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "format": "uuid"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "recurred": {
+                                "type": "array",
+                                "maxItems": 3,
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "format": "uuid"
+                                    },
+                                    "errorName": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "route": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "message": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "lastSeenAt": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "id",
+                                    "errorName",
+                                    "route",
+                                    "message",
+                                    "lastSeenAt"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "recurredCount": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991,
+                                "exclusiveMinimum": 0
+                              },
+                              "stopped": {
+                                "type": "array",
+                                "maxItems": 3,
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "format": "uuid"
+                                    },
+                                    "errorName": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "route": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "message": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "lastSeenAt": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "id",
+                                    "errorName",
+                                    "route",
+                                    "message",
+                                    "lastSeenAt"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "stoppedCount": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "summary": {
+                                "type": "string",
+                                "maxLength": 800
+                              }
+                            },
+                            "required": [
+                              "version",
+                              "since",
+                              "fixReleaseId",
+                              "recurred",
+                              "recurredCount",
+                              "stopped",
+                              "stoppedCount",
+                              "summary"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "version",
+                      "fixReleaseId",
+                      "recurredOnReleaseId",
+                      "findingId",
+                      "recurrence"
+                    ],
+                    "additionalProperties": false
                   },
-                  "findingId": {
-                    "type": "string",
-                    "format": "uuid"
-                  },
-                  "fingerprintMatchExact": {
-                    "type": "boolean"
-                  },
-                  "regressionProbability": {
-                    "type": "number"
-                  },
-                  "resolvedProblemId": {
-                    "type": "string",
-                    "format": "uuid"
+                  {
+                    "type": "object",
+                    "properties": {
+                      "cosineScore": {
+                        "type": "number"
+                      },
+                      "findingId": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "fingerprintMatchExact": {
+                        "type": "boolean"
+                      },
+                      "regressionProbability": {
+                        "type": "number"
+                      },
+                      "resolvedProblemId": {
+                        "type": "string",
+                        "format": "uuid"
+                      }
+                    },
+                    "required": [
+                      "cosineScore",
+                      "findingId",
+                      "fingerprintMatchExact",
+                      "regressionProbability",
+                      "resolvedProblemId"
+                    ],
+                    "additionalProperties": false
                   }
-                },
-                "required": [
-                  "cosineScore",
-                  "findingId",
-                  "fingerprintMatchExact",
-                  "regressionProbability",
-                  "resolvedProblemId"
-                ],
-                "additionalProperties": false
+                ]
               },
               {
                 "anyOf": [
@@ -9582,6 +9897,81 @@
                       },
                       "confidence": {
                         "const": "probable"
+                      },
+                      "correction": {
+                        "type": "object",
+                        "properties": {
+                          "supersedes": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "uuid"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "reason": {
+                            "enum": [
+                              "wrong-mechanism",
+                              "wrong-location",
+                              "missing-detail",
+                              "wording"
+                            ],
+                            "type": "string"
+                          },
+                          "locations": {
+                            "type": "array",
+                            "maxItems": 20,
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "repository": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 200
+                                },
+                                "path": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 500
+                                },
+                                "lines": {
+                                  "type": "object",
+                                  "properties": {
+                                    "start": {
+                                      "type": "integer",
+                                      "minimum": 1,
+                                      "maximum": 9007199254740991
+                                    },
+                                    "end": {
+                                      "type": "integer",
+                                      "minimum": 1,
+                                      "maximum": 9007199254740991
+                                    }
+                                  },
+                                  "required": [
+                                    "start",
+                                    "end"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "repository",
+                                "path"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "supersedes",
+                          "reason",
+                          "locations"
+                        ],
+                        "additionalProperties": false
                       },
                       "doc": {
                         "type": "object",
@@ -10216,6 +10606,162 @@
                       "reviewed"
                     ]
                   },
+                  "recurrence": {
+                    "type": "object",
+                    "properties": {
+                      "version": {
+                        "const": 1
+                      },
+                      "since": {
+                        "type": "number"
+                      },
+                      "fixReleaseId": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "recurred": {
+                        "type": "array",
+                        "maxItems": 3,
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "format": "uuid"
+                            },
+                            "errorName": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "route": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "message": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "lastSeenAt": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "errorName",
+                            "route",
+                            "message",
+                            "lastSeenAt"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "recurredCount": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991,
+                        "exclusiveMinimum": 0
+                      },
+                      "stopped": {
+                        "type": "array",
+                        "maxItems": 3,
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "format": "uuid"
+                            },
+                            "errorName": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "route": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "message": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "lastSeenAt": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "errorName",
+                            "route",
+                            "message",
+                            "lastSeenAt"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "stoppedCount": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "summary": {
+                        "type": "string",
+                        "maxLength": 800
+                      }
+                    },
+                    "required": [
+                      "version",
+                      "since",
+                      "fixReleaseId",
+                      "recurred",
+                      "recurredCount",
+                      "stopped",
+                      "stoppedCount",
+                      "summary"
+                    ],
+                    "additionalProperties": false
+                  },
                   "retry": {
                     "type": "object",
                     "properties": {
@@ -10285,6 +10831,19 @@
                 "properties": {
                   "version": {
                     "const": 1
+                  },
+                  "askedBy": {
+                    "type": "object",
+                    "properties": {
+                      "runId": {
+                        "type": "string",
+                        "format": "uuid"
+                      }
+                    },
+                    "required": [
+                      "runId"
+                    ],
+                    "additionalProperties": false
                   },
                   "requiredEvidence": {
                     "$ref": "#/components/schemas/RequiredEvidence"
@@ -10750,7 +11309,8 @@
               "OBSERVATION",
               "ROOT_CAUSE",
               "FIX",
-              "TITLE_SET"
+              "TITLE_SET",
+              "MERGE_CHANGED"
             ],
             "type": "string"
           },
@@ -35861,6 +36421,7 @@
                     "collab-mention",
                     "collab-reaction",
                     "problem-needs-attention",
+                    "problem-reopened",
                     "problem-routing",
                     "problems-digest",
                     "problems-opened",
@@ -38731,6 +39292,81 @@
                       {
                         "type": "object",
                         "properties": {
+                          "correction": {
+                            "type": "object",
+                            "properties": {
+                              "supersedes": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "format": "uuid"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "reason": {
+                                "enum": [
+                                  "wrong-mechanism",
+                                  "wrong-location",
+                                  "missing-detail",
+                                  "wording"
+                                ],
+                                "type": "string"
+                              },
+                              "locations": {
+                                "type": "array",
+                                "maxItems": 20,
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "repository": {
+                                      "type": "string",
+                                      "minLength": 1,
+                                      "maxLength": 200
+                                    },
+                                    "path": {
+                                      "type": "string",
+                                      "minLength": 1,
+                                      "maxLength": 500
+                                    },
+                                    "lines": {
+                                      "type": "object",
+                                      "properties": {
+                                        "start": {
+                                          "type": "integer",
+                                          "minimum": 1,
+                                          "maximum": 9007199254740991
+                                        },
+                                        "end": {
+                                          "type": "integer",
+                                          "minimum": 1,
+                                          "maximum": 9007199254740991
+                                        }
+                                      },
+                                      "required": [
+                                        "start",
+                                        "end"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  },
+                                  "required": [
+                                    "repository",
+                                    "path"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              }
+                            },
+                            "required": [
+                              "supersedes",
+                              "reason",
+                              "locations"
+                            ],
+                            "additionalProperties": false
+                          },
                           "doc": {
                             "type": "object",
                             "properties": {
@@ -38846,6 +39482,47 @@
                         "required": [
                           "doc",
                           "version"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "action": {
+                            "enum": [
+                              "merged",
+                              "split"
+                            ],
+                            "type": "string"
+                          },
+                          "role": {
+                            "enum": [
+                              "keeper",
+                              "duplicate"
+                            ],
+                            "type": "string"
+                          },
+                          "otherProblemId": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "basis": {
+                            "enum": [
+                              "account",
+                              "fingerprint",
+                              "http-route",
+                              "same-request",
+                              "session-route",
+                              "page-load-refusal",
+                              "manual"
+                            ],
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "action",
+                          "role",
+                          "otherProblemId"
                         ],
                         "additionalProperties": false
                       },
@@ -39440,34 +40117,243 @@
                         ]
                       },
                       {
-                        "type": "object",
-                        "properties": {
-                          "cosineScore": {
-                            "type": "number"
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "version": {
+                                "const": 2
+                              },
+                              "fixReleaseId": {
+                                "type": "string",
+                                "format": "uuid"
+                              },
+                              "recurredOnReleaseId": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "format": "uuid"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "findingId": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "format": "uuid"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "recurrence": {
+                                "anyOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "version": {
+                                        "const": 1
+                                      },
+                                      "since": {
+                                        "type": "number"
+                                      },
+                                      "fixReleaseId": {
+                                        "anyOf": [
+                                          {
+                                            "type": "string",
+                                            "format": "uuid"
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "recurred": {
+                                        "type": "array",
+                                        "maxItems": 3,
+                                        "items": {
+                                          "type": "object",
+                                          "properties": {
+                                            "id": {
+                                              "type": "string",
+                                              "format": "uuid"
+                                            },
+                                            "errorName": {
+                                              "anyOf": [
+                                                {
+                                                  "type": "string"
+                                                },
+                                                {
+                                                  "type": "null"
+                                                }
+                                              ]
+                                            },
+                                            "route": {
+                                              "anyOf": [
+                                                {
+                                                  "type": "string"
+                                                },
+                                                {
+                                                  "type": "null"
+                                                }
+                                              ]
+                                            },
+                                            "message": {
+                                              "anyOf": [
+                                                {
+                                                  "type": "string"
+                                                },
+                                                {
+                                                  "type": "null"
+                                                }
+                                              ]
+                                            },
+                                            "lastSeenAt": {
+                                              "type": "number"
+                                            }
+                                          },
+                                          "required": [
+                                            "id",
+                                            "errorName",
+                                            "route",
+                                            "message",
+                                            "lastSeenAt"
+                                          ],
+                                          "additionalProperties": false
+                                        }
+                                      },
+                                      "recurredCount": {
+                                        "type": "integer",
+                                        "minimum": -9007199254740991,
+                                        "maximum": 9007199254740991,
+                                        "exclusiveMinimum": 0
+                                      },
+                                      "stopped": {
+                                        "type": "array",
+                                        "maxItems": 3,
+                                        "items": {
+                                          "type": "object",
+                                          "properties": {
+                                            "id": {
+                                              "type": "string",
+                                              "format": "uuid"
+                                            },
+                                            "errorName": {
+                                              "anyOf": [
+                                                {
+                                                  "type": "string"
+                                                },
+                                                {
+                                                  "type": "null"
+                                                }
+                                              ]
+                                            },
+                                            "route": {
+                                              "anyOf": [
+                                                {
+                                                  "type": "string"
+                                                },
+                                                {
+                                                  "type": "null"
+                                                }
+                                              ]
+                                            },
+                                            "message": {
+                                              "anyOf": [
+                                                {
+                                                  "type": "string"
+                                                },
+                                                {
+                                                  "type": "null"
+                                                }
+                                              ]
+                                            },
+                                            "lastSeenAt": {
+                                              "type": "number"
+                                            }
+                                          },
+                                          "required": [
+                                            "id",
+                                            "errorName",
+                                            "route",
+                                            "message",
+                                            "lastSeenAt"
+                                          ],
+                                          "additionalProperties": false
+                                        }
+                                      },
+                                      "stoppedCount": {
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "maximum": 9007199254740991
+                                      },
+                                      "summary": {
+                                        "type": "string",
+                                        "maxLength": 800
+                                      }
+                                    },
+                                    "required": [
+                                      "version",
+                                      "since",
+                                      "fixReleaseId",
+                                      "recurred",
+                                      "recurredCount",
+                                      "stopped",
+                                      "stoppedCount",
+                                      "summary"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "version",
+                              "fixReleaseId",
+                              "recurredOnReleaseId",
+                              "findingId",
+                              "recurrence"
+                            ],
+                            "additionalProperties": false
                           },
-                          "findingId": {
-                            "type": "string",
-                            "format": "uuid"
-                          },
-                          "fingerprintMatchExact": {
-                            "type": "boolean"
-                          },
-                          "regressionProbability": {
-                            "type": "number"
-                          },
-                          "resolvedProblemId": {
-                            "type": "string",
-                            "format": "uuid"
+                          {
+                            "type": "object",
+                            "properties": {
+                              "cosineScore": {
+                                "type": "number"
+                              },
+                              "findingId": {
+                                "type": "string",
+                                "format": "uuid"
+                              },
+                              "fingerprintMatchExact": {
+                                "type": "boolean"
+                              },
+                              "regressionProbability": {
+                                "type": "number"
+                              },
+                              "resolvedProblemId": {
+                                "type": "string",
+                                "format": "uuid"
+                              }
+                            },
+                            "required": [
+                              "cosineScore",
+                              "findingId",
+                              "fingerprintMatchExact",
+                              "regressionProbability",
+                              "resolvedProblemId"
+                            ],
+                            "additionalProperties": false
                           }
-                        },
-                        "required": [
-                          "cosineScore",
-                          "findingId",
-                          "fingerprintMatchExact",
-                          "regressionProbability",
-                          "resolvedProblemId"
-                        ],
-                        "additionalProperties": false
+                        ]
                       },
                       {
                         "anyOf": [
@@ -39485,6 +40371,69 @@
                               },
                               "confidence": {
                                 "const": "probable"
+                              },
+                              "correction": {
+                                "type": "object",
+                                "properties": {
+                                  "supersedes": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "format": "uuid"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "reason": {
+                                    "enum": [
+                                      "wrong-mechanism",
+                                      "wrong-location",
+                                      "missing-detail",
+                                      "wording"
+                                    ],
+                                    "type": "string"
+                                  },
+                                  "locations": {
+                                    "type": "array",
+                                    "maxItems": 20,
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "repository": {
+                                          "type": "string",
+                                          "minLength": 1,
+                                          "maxLength": 200
+                                        },
+                                        "path": {
+                                          "type": "string",
+                                          "minLength": 1,
+                                          "maxLength": 500
+                                        },
+                                        "lines": {
+                                          "type": "object",
+                                          "properties": {
+                                            "start": {},
+                                            "end": {}
+                                          },
+                                          "additionalProperties": false
+                                        }
+                                      },
+                                      "required": [
+                                        "repository",
+                                        "path"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  }
+                                },
+                                "required": [
+                                  "supersedes",
+                                  "reason",
+                                  "locations"
+                                ],
+                                "additionalProperties": false
                               },
                               "doc": {
                                 "type": "object",
@@ -39697,6 +40646,162 @@
                               "reviewed"
                             ]
                           },
+                          "recurrence": {
+                            "type": "object",
+                            "properties": {
+                              "version": {
+                                "const": 1
+                              },
+                              "since": {
+                                "type": "number"
+                              },
+                              "fixReleaseId": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "format": "uuid"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "recurred": {
+                                "type": "array",
+                                "maxItems": 3,
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "format": "uuid"
+                                    },
+                                    "errorName": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "route": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "message": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "lastSeenAt": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "id",
+                                    "errorName",
+                                    "route",
+                                    "message",
+                                    "lastSeenAt"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "recurredCount": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991,
+                                "exclusiveMinimum": 0
+                              },
+                              "stopped": {
+                                "type": "array",
+                                "maxItems": 3,
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "format": "uuid"
+                                    },
+                                    "errorName": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "route": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "message": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "lastSeenAt": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "id",
+                                    "errorName",
+                                    "route",
+                                    "message",
+                                    "lastSeenAt"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "stoppedCount": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "summary": {
+                                "type": "string",
+                                "maxLength": 800
+                              }
+                            },
+                            "required": [
+                              "version",
+                              "since",
+                              "fixReleaseId",
+                              "recurred",
+                              "recurredCount",
+                              "stopped",
+                              "stoppedCount",
+                              "summary"
+                            ],
+                            "additionalProperties": false
+                          },
                           "retry": {
                             "type": "object",
                             "properties": {
@@ -39766,6 +40871,19 @@
                         "properties": {
                           "version": {
                             "const": 1
+                          },
+                          "askedBy": {
+                            "type": "object",
+                            "properties": {
+                              "runId": {
+                                "type": "string",
+                                "format": "uuid"
+                              }
+                            },
+                            "required": [
+                              "runId"
+                            ],
+                            "additionalProperties": false
                           },
                           "requiredEvidence": {
                             "$ref": "#/components/schemas/RequiredEvidence"
@@ -40179,7 +41297,8 @@
                       "OBSERVATION",
                       "ROOT_CAUSE",
                       "FIX",
-                      "TITLE_SET"
+                      "TITLE_SET",
+                      "MERGE_CHANGED"
                     ],
                     "type": "string"
                   },
@@ -40488,6 +41607,10 @@
                                               "type": "null"
                                             }
                                           ]
+                                        },
+                                        "serviceId": {
+                                          "type": "string",
+                                          "format": "uuid"
                                         },
                                         "organizationId": {
                                           "type": "string",
@@ -41135,6 +42258,7 @@
                                         "id",
                                         "slug",
                                         "surfaceId",
+                                        "serviceId",
                                         "organizationId",
                                         "buildId",
                                         "sourceMetadata",
@@ -43818,6 +44942,81 @@
                         {
                           "type": "object",
                           "properties": {
+                            "correction": {
+                              "type": "object",
+                              "properties": {
+                                "supersedes": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "format": "uuid"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "reason": {
+                                  "enum": [
+                                    "wrong-mechanism",
+                                    "wrong-location",
+                                    "missing-detail",
+                                    "wording"
+                                  ],
+                                  "type": "string"
+                                },
+                                "locations": {
+                                  "type": "array",
+                                  "maxItems": 20,
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "repository": {
+                                        "type": "string",
+                                        "minLength": 1,
+                                        "maxLength": 200
+                                      },
+                                      "path": {
+                                        "type": "string",
+                                        "minLength": 1,
+                                        "maxLength": 500
+                                      },
+                                      "lines": {
+                                        "type": "object",
+                                        "properties": {
+                                          "start": {
+                                            "type": "integer",
+                                            "minimum": 1,
+                                            "maximum": 9007199254740991
+                                          },
+                                          "end": {
+                                            "type": "integer",
+                                            "minimum": 1,
+                                            "maximum": 9007199254740991
+                                          }
+                                        },
+                                        "required": [
+                                          "start",
+                                          "end"
+                                        ],
+                                        "additionalProperties": false
+                                      }
+                                    },
+                                    "required": [
+                                      "repository",
+                                      "path"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "supersedes",
+                                "reason",
+                                "locations"
+                              ],
+                              "additionalProperties": false
+                            },
                             "doc": {
                               "type": "object",
                               "properties": {
@@ -43994,6 +45193,47 @@
                           "required": [
                             "doc",
                             "version"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "action": {
+                              "enum": [
+                                "merged",
+                                "split"
+                              ],
+                              "type": "string"
+                            },
+                            "role": {
+                              "enum": [
+                                "keeper",
+                                "duplicate"
+                              ],
+                              "type": "string"
+                            },
+                            "otherProblemId": {
+                              "type": "string",
+                              "format": "uuid"
+                            },
+                            "basis": {
+                              "enum": [
+                                "account",
+                                "fingerprint",
+                                "http-route",
+                                "same-request",
+                                "session-route",
+                                "page-load-refusal",
+                                "manual"
+                              ],
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "action",
+                            "role",
+                            "otherProblemId"
                           ],
                           "additionalProperties": false
                         },
@@ -44651,34 +45891,243 @@
                           ]
                         },
                         {
-                          "type": "object",
-                          "properties": {
-                            "cosineScore": {
-                              "type": "number"
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "version": {
+                                  "const": 2
+                                },
+                                "fixReleaseId": {
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "recurredOnReleaseId": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "format": "uuid"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "findingId": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "format": "uuid"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "recurrence": {
+                                  "anyOf": [
+                                    {
+                                      "type": "object",
+                                      "properties": {
+                                        "version": {
+                                          "const": 1
+                                        },
+                                        "since": {
+                                          "type": "number"
+                                        },
+                                        "fixReleaseId": {
+                                          "anyOf": [
+                                            {
+                                              "type": "string",
+                                              "format": "uuid"
+                                            },
+                                            {
+                                              "type": "null"
+                                            }
+                                          ]
+                                        },
+                                        "recurred": {
+                                          "type": "array",
+                                          "maxItems": 3,
+                                          "items": {
+                                            "type": "object",
+                                            "properties": {
+                                              "id": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                              },
+                                              "errorName": {
+                                                "anyOf": [
+                                                  {
+                                                    "type": "string"
+                                                  },
+                                                  {
+                                                    "type": "null"
+                                                  }
+                                                ]
+                                              },
+                                              "route": {
+                                                "anyOf": [
+                                                  {
+                                                    "type": "string"
+                                                  },
+                                                  {
+                                                    "type": "null"
+                                                  }
+                                                ]
+                                              },
+                                              "message": {
+                                                "anyOf": [
+                                                  {
+                                                    "type": "string"
+                                                  },
+                                                  {
+                                                    "type": "null"
+                                                  }
+                                                ]
+                                              },
+                                              "lastSeenAt": {
+                                                "type": "number"
+                                              }
+                                            },
+                                            "required": [
+                                              "id",
+                                              "errorName",
+                                              "route",
+                                              "message",
+                                              "lastSeenAt"
+                                            ],
+                                            "additionalProperties": false
+                                          }
+                                        },
+                                        "recurredCount": {
+                                          "type": "integer",
+                                          "minimum": -9007199254740991,
+                                          "maximum": 9007199254740991,
+                                          "exclusiveMinimum": 0
+                                        },
+                                        "stopped": {
+                                          "type": "array",
+                                          "maxItems": 3,
+                                          "items": {
+                                            "type": "object",
+                                            "properties": {
+                                              "id": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                              },
+                                              "errorName": {
+                                                "anyOf": [
+                                                  {
+                                                    "type": "string"
+                                                  },
+                                                  {
+                                                    "type": "null"
+                                                  }
+                                                ]
+                                              },
+                                              "route": {
+                                                "anyOf": [
+                                                  {
+                                                    "type": "string"
+                                                  },
+                                                  {
+                                                    "type": "null"
+                                                  }
+                                                ]
+                                              },
+                                              "message": {
+                                                "anyOf": [
+                                                  {
+                                                    "type": "string"
+                                                  },
+                                                  {
+                                                    "type": "null"
+                                                  }
+                                                ]
+                                              },
+                                              "lastSeenAt": {
+                                                "type": "number"
+                                              }
+                                            },
+                                            "required": [
+                                              "id",
+                                              "errorName",
+                                              "route",
+                                              "message",
+                                              "lastSeenAt"
+                                            ],
+                                            "additionalProperties": false
+                                          }
+                                        },
+                                        "stoppedCount": {
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 9007199254740991
+                                        },
+                                        "summary": {
+                                          "type": "string",
+                                          "maxLength": 800
+                                        }
+                                      },
+                                      "required": [
+                                        "version",
+                                        "since",
+                                        "fixReleaseId",
+                                        "recurred",
+                                        "recurredCount",
+                                        "stopped",
+                                        "stoppedCount",
+                                        "summary"
+                                      ],
+                                      "additionalProperties": false
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "version",
+                                "fixReleaseId",
+                                "recurredOnReleaseId",
+                                "findingId",
+                                "recurrence"
+                              ],
+                              "additionalProperties": false
                             },
-                            "findingId": {
-                              "type": "string",
-                              "format": "uuid"
-                            },
-                            "fingerprintMatchExact": {
-                              "type": "boolean"
-                            },
-                            "regressionProbability": {
-                              "type": "number"
-                            },
-                            "resolvedProblemId": {
-                              "type": "string",
-                              "format": "uuid"
+                            {
+                              "type": "object",
+                              "properties": {
+                                "cosineScore": {
+                                  "type": "number"
+                                },
+                                "findingId": {
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "fingerprintMatchExact": {
+                                  "type": "boolean"
+                                },
+                                "regressionProbability": {
+                                  "type": "number"
+                                },
+                                "resolvedProblemId": {
+                                  "type": "string",
+                                  "format": "uuid"
+                                }
+                              },
+                              "required": [
+                                "cosineScore",
+                                "findingId",
+                                "fingerprintMatchExact",
+                                "regressionProbability",
+                                "resolvedProblemId"
+                              ],
+                              "additionalProperties": false
                             }
-                          },
-                          "required": [
-                            "cosineScore",
-                            "findingId",
-                            "fingerprintMatchExact",
-                            "regressionProbability",
-                            "resolvedProblemId"
-                          ],
-                          "additionalProperties": false
+                          ]
                         },
                         {
                           "anyOf": [
@@ -44696,6 +46145,81 @@
                                 },
                                 "confidence": {
                                   "const": "probable"
+                                },
+                                "correction": {
+                                  "type": "object",
+                                  "properties": {
+                                    "supersedes": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string",
+                                          "format": "uuid"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "reason": {
+                                      "enum": [
+                                        "wrong-mechanism",
+                                        "wrong-location",
+                                        "missing-detail",
+                                        "wording"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    "locations": {
+                                      "type": "array",
+                                      "maxItems": 20,
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "repository": {
+                                            "type": "string",
+                                            "minLength": 1,
+                                            "maxLength": 200
+                                          },
+                                          "path": {
+                                            "type": "string",
+                                            "minLength": 1,
+                                            "maxLength": 500
+                                          },
+                                          "lines": {
+                                            "type": "object",
+                                            "properties": {
+                                              "start": {
+                                                "type": "integer",
+                                                "minimum": 1,
+                                                "maximum": 9007199254740991
+                                              },
+                                              "end": {
+                                                "type": "integer",
+                                                "minimum": 1,
+                                                "maximum": 9007199254740991
+                                              }
+                                            },
+                                            "required": [
+                                              "start",
+                                              "end"
+                                            ],
+                                            "additionalProperties": false
+                                          }
+                                        },
+                                        "required": [
+                                          "repository",
+                                          "path"
+                                        ],
+                                        "additionalProperties": false
+                                      }
+                                    }
+                                  },
+                                  "required": [
+                                    "supersedes",
+                                    "reason",
+                                    "locations"
+                                  ],
+                                  "additionalProperties": false
                                 },
                                 "doc": {
                                   "type": "object",
@@ -45020,6 +46544,162 @@
                                 "reviewed"
                               ]
                             },
+                            "recurrence": {
+                              "type": "object",
+                              "properties": {
+                                "version": {
+                                  "const": 1
+                                },
+                                "since": {
+                                  "type": "number"
+                                },
+                                "fixReleaseId": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "format": "uuid"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "recurred": {
+                                  "type": "array",
+                                  "maxItems": 3,
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string",
+                                        "format": "uuid"
+                                      },
+                                      "errorName": {
+                                        "anyOf": [
+                                          {
+                                            "type": "string"
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "route": {
+                                        "anyOf": [
+                                          {
+                                            "type": "string"
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "message": {
+                                        "anyOf": [
+                                          {
+                                            "type": "string"
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "lastSeenAt": {
+                                        "type": "number"
+                                      }
+                                    },
+                                    "required": [
+                                      "id",
+                                      "errorName",
+                                      "route",
+                                      "message",
+                                      "lastSeenAt"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "recurredCount": {
+                                  "type": "integer",
+                                  "minimum": -9007199254740991,
+                                  "maximum": 9007199254740991,
+                                  "exclusiveMinimum": 0
+                                },
+                                "stopped": {
+                                  "type": "array",
+                                  "maxItems": 3,
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string",
+                                        "format": "uuid"
+                                      },
+                                      "errorName": {
+                                        "anyOf": [
+                                          {
+                                            "type": "string"
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "route": {
+                                        "anyOf": [
+                                          {
+                                            "type": "string"
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "message": {
+                                        "anyOf": [
+                                          {
+                                            "type": "string"
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "lastSeenAt": {
+                                        "type": "number"
+                                      }
+                                    },
+                                    "required": [
+                                      "id",
+                                      "errorName",
+                                      "route",
+                                      "message",
+                                      "lastSeenAt"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "stoppedCount": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 9007199254740991
+                                },
+                                "summary": {
+                                  "type": "string",
+                                  "maxLength": 800
+                                }
+                              },
+                              "required": [
+                                "version",
+                                "since",
+                                "fixReleaseId",
+                                "recurred",
+                                "recurredCount",
+                                "stopped",
+                                "stoppedCount",
+                                "summary"
+                              ],
+                              "additionalProperties": false
+                            },
                             "retry": {
                               "type": "object",
                               "properties": {
@@ -45089,6 +46769,19 @@
                           "properties": {
                             "version": {
                               "const": 1
+                            },
+                            "askedBy": {
+                              "type": "object",
+                              "properties": {
+                                "runId": {
+                                  "type": "string",
+                                  "format": "uuid"
+                                }
+                              },
+                              "required": [
+                                "runId"
+                              ],
+                              "additionalProperties": false
                             },
                             "requiredEvidence": {
                               "$ref": "#/components/schemas/RequiredEvidence"
@@ -45554,7 +47247,8 @@
                         "OBSERVATION",
                         "ROOT_CAUSE",
                         "FIX",
-                        "TITLE_SET"
+                        "TITLE_SET",
+                        "MERGE_CHANGED"
                       ],
                       "type": "string"
                     },
@@ -45900,6 +47594,10 @@
                                                 "type": "null"
                                               }
                                             ]
+                                          },
+                                          "serviceId": {
+                                            "type": "string",
+                                            "format": "uuid"
                                           },
                                           "organizationId": {
                                             "type": "string",
@@ -46547,6 +48245,7 @@
                                           "id",
                                           "slug",
                                           "surfaceId",
+                                          "serviceId",
                                           "organizationId",
                                           "buildId",
                                           "sourceMetadata",
@@ -49455,7 +51154,7 @@
           "additionalProperties": false
         }
       },
-      "Query_releases_forSurfaceResponse": {
+      "Query_releases_forServiceResponse": {
         "type": "array",
         "items": {
           "type": "object",
@@ -49484,6 +51183,10 @@
                   "type": "null"
                 }
               ]
+            },
+            "serviceId": {
+              "type": "string",
+              "format": "uuid"
             },
             "organizationId": {
               "type": "string",
@@ -50727,6 +52430,7 @@
             "id",
             "slug",
             "surfaceId",
+            "serviceId",
             "organizationId",
             "buildId",
             "sourceMetadata",
@@ -50748,7 +52452,7 @@
           "additionalProperties": false
         }
       },
-      "Query_releases_latestBySurfaceResponse": {
+      "Query_releases_latestByServiceResponse": {
         "anyOf": [
           {
             "type": "object",
@@ -50777,6 +52481,10 @@
                     "type": "null"
                   }
                 ]
+              },
+              "serviceId": {
+                "type": "string",
+                "format": "uuid"
               },
               "organizationId": {
                 "type": "string",
@@ -52020,6 +53728,7 @@
               "id",
               "slug",
               "surfaceId",
+              "serviceId",
               "organizationId",
               "buildId",
               "sourceMetadata",
@@ -52045,7 +53754,7 @@
           }
         ]
       },
-      "Query_releases_recentBySurfaceResponse": {
+      "Query_releases_recentByServiceResponse": {
         "type": "array",
         "items": {
           "type": "object",
@@ -52074,6 +53783,10 @@
                   "type": "null"
                 }
               ]
+            },
+            "serviceId": {
+              "type": "string",
+              "format": "uuid"
             },
             "organizationId": {
               "type": "string",
@@ -53317,6 +55030,7 @@
             "id",
             "slug",
             "surfaceId",
+            "serviceId",
             "organizationId",
             "buildId",
             "sourceMetadata",
@@ -54488,1147 +56202,6 @@
           "additionalProperties": false
         }
       },
-      "Query_surfaces_getBySlugResponse": {
-        "anyOf": [
-          {
-            "type": "object",
-            "properties": {
-              "createdAt": {
-                "type": "number"
-              },
-              "deletedAt": {
-                "anyOf": [
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "updatedAt": {
-                "type": "number"
-              },
-              "anonymousReplayPolicy": {
-                "type": "string"
-              },
-              "anonymousUserTracking": {
-                "type": "boolean"
-              },
-              "destinationConnectionId": {
-                "anyOf": [
-                  {
-                    "anyOf": [
-                      {
-                        "type": "string",
-                        "format": "uuid"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "destinationMappingId": {
-                "anyOf": [
-                  {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "destinationMappingLabel": {
-                "anyOf": [
-                  {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "destinationMappingUrl": {
-                "anyOf": [
-                  {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "environmentFiltering": {
-                "type": "boolean"
-              },
-              "explicitOnly": {
-                "type": "boolean"
-              },
-              "id": {
-                "type": "string",
-                "format": "uuid"
-              },
-              "name": {
-                "type": "string"
-              },
-              "onboardedAt": {
-                "anyOf": [
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "organizationId": {
-                "type": "string",
-                "format": "uuid"
-              },
-              "primaryEnvironmentId": {
-                "anyOf": [
-                  {
-                    "anyOf": [
-                      {
-                        "type": "string",
-                        "format": "uuid"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "primaryEnvironmentName": {
-                "anyOf": [
-                  {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "sdkConfig": {
-                "anyOf": [
-                  {
-                    "type": "object",
-                    "properties": {
-                      "plugins": {
-                        "type": "object",
-                        "properties": {
-                          "errors": {
-                            "type": "boolean"
-                          },
-                          "device": {
-                            "type": "boolean"
-                          },
-                          "pageEvents": {
-                            "type": "boolean"
-                          },
-                          "rageClick": {
-                            "type": "boolean"
-                          },
-                          "replay": {
-                            "type": "boolean"
-                          },
-                          "logs": {
-                            "type": "boolean"
-                          }
-                        }
-                      },
-                      "serverTracing": {
-                        "enum": [
-                          "full",
-                          "drain"
-                        ],
-                        "type": "string"
-                      },
-                      "logSourcing": {
-                        "enum": [
-                          "sdk",
-                          "drain"
-                        ],
-                        "type": "string"
-                      },
-                      "platform": {
-                        "enum": [
-                          "vercel",
-                          "cloudflare"
-                        ],
-                        "type": "string"
-                      }
-                    }
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "serviceId": {
-                "anyOf": [
-                  {
-                    "anyOf": [
-                      {
-                        "type": "string",
-                        "format": "uuid"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "slug": {
-                "type": "string"
-              },
-              "sourceDatasourceId": {
-                "anyOf": [
-                  {
-                    "anyOf": [
-                      {
-                        "type": "string",
-                        "format": "uuid"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "sourceConnectionId": {
-                "anyOf": [
-                  {
-                    "anyOf": [
-                      {
-                        "type": "string",
-                        "format": "uuid"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "sourceMappingId": {
-                "anyOf": [
-                  {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "sourceMappingLabel": {
-                "anyOf": [
-                  {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "sourceMappingUrl": {
-                "anyOf": [
-                  {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "sourceWorkingDirectory": {
-                "anyOf": [
-                  {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "type": {
-                "enum": [
-                  "nextjs",
-                  "react",
-                  "generic"
-                ],
-                "type": "string"
-              }
-            },
-            "required": [
-              "createdAt",
-              "deletedAt",
-              "updatedAt",
-              "anonymousReplayPolicy",
-              "anonymousUserTracking",
-              "destinationConnectionId",
-              "destinationMappingId",
-              "destinationMappingLabel",
-              "destinationMappingUrl",
-              "environmentFiltering",
-              "explicitOnly",
-              "id",
-              "name",
-              "onboardedAt",
-              "organizationId",
-              "primaryEnvironmentId",
-              "primaryEnvironmentName",
-              "sdkConfig",
-              "serviceId",
-              "slug",
-              "sourceDatasourceId",
-              "sourceConnectionId",
-              "sourceMappingId",
-              "sourceMappingLabel",
-              "sourceMappingUrl",
-              "sourceWorkingDirectory",
-              "type"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "null"
-          }
-        ]
-      },
-      "Query_surfaces_getBySlugIncludeDeletedResponse": {
-        "type": "object",
-        "properties": {
-          "createdAt": {
-            "type": "number"
-          },
-          "deletedAt": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "updatedAt": {
-            "type": "number"
-          },
-          "anonymousReplayPolicy": {
-            "type": "string"
-          },
-          "anonymousUserTracking": {
-            "type": "boolean"
-          },
-          "destinationConnectionId": {
-            "anyOf": [
-              {
-                "anyOf": [
-                  {
-                    "type": "string",
-                    "format": "uuid"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "destinationMappingId": {
-            "anyOf": [
-              {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "destinationMappingLabel": {
-            "anyOf": [
-              {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "destinationMappingUrl": {
-            "anyOf": [
-              {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "environmentFiltering": {
-            "type": "boolean"
-          },
-          "explicitOnly": {
-            "type": "boolean"
-          },
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string"
-          },
-          "onboardedAt": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "organizationId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "primaryEnvironmentId": {
-            "anyOf": [
-              {
-                "anyOf": [
-                  {
-                    "type": "string",
-                    "format": "uuid"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "primaryEnvironmentName": {
-            "anyOf": [
-              {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "sdkConfig": {
-            "anyOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "plugins": {
-                    "type": "object",
-                    "properties": {
-                      "errors": {
-                        "type": "boolean"
-                      },
-                      "device": {
-                        "type": "boolean"
-                      },
-                      "pageEvents": {
-                        "type": "boolean"
-                      },
-                      "rageClick": {
-                        "type": "boolean"
-                      },
-                      "replay": {
-                        "type": "boolean"
-                      },
-                      "logs": {
-                        "type": "boolean"
-                      }
-                    }
-                  },
-                  "serverTracing": {
-                    "enum": [
-                      "full",
-                      "drain"
-                    ],
-                    "type": "string"
-                  },
-                  "logSourcing": {
-                    "enum": [
-                      "sdk",
-                      "drain"
-                    ],
-                    "type": "string"
-                  },
-                  "platform": {
-                    "enum": [
-                      "vercel",
-                      "cloudflare"
-                    ],
-                    "type": "string"
-                  }
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "serviceId": {
-            "anyOf": [
-              {
-                "anyOf": [
-                  {
-                    "type": "string",
-                    "format": "uuid"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "slug": {
-            "type": "string"
-          },
-          "sourceDatasourceId": {
-            "anyOf": [
-              {
-                "anyOf": [
-                  {
-                    "type": "string",
-                    "format": "uuid"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "sourceConnectionId": {
-            "anyOf": [
-              {
-                "anyOf": [
-                  {
-                    "type": "string",
-                    "format": "uuid"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "sourceMappingId": {
-            "anyOf": [
-              {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "sourceMappingLabel": {
-            "anyOf": [
-              {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "sourceMappingUrl": {
-            "anyOf": [
-              {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "sourceWorkingDirectory": {
-            "anyOf": [
-              {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "type": {
-            "enum": [
-              "nextjs",
-              "react",
-              "generic"
-            ],
-            "type": "string"
-          }
-        },
-        "required": [
-          "createdAt",
-          "deletedAt",
-          "updatedAt",
-          "anonymousReplayPolicy",
-          "anonymousUserTracking",
-          "destinationConnectionId",
-          "destinationMappingId",
-          "destinationMappingLabel",
-          "destinationMappingUrl",
-          "environmentFiltering",
-          "explicitOnly",
-          "id",
-          "name",
-          "onboardedAt",
-          "organizationId",
-          "primaryEnvironmentId",
-          "primaryEnvironmentName",
-          "sdkConfig",
-          "serviceId",
-          "slug",
-          "sourceDatasourceId",
-          "sourceConnectionId",
-          "sourceMappingId",
-          "sourceMappingLabel",
-          "sourceMappingUrl",
-          "sourceWorkingDirectory",
-          "type"
-        ],
-        "additionalProperties": false
-      },
-      "Query_surfaces_listResponse": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "createdAt": {
-              "type": "number"
-            },
-            "deletedAt": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "updatedAt": {
-              "type": "number"
-            },
-            "anonymousReplayPolicy": {
-              "type": "string"
-            },
-            "anonymousUserTracking": {
-              "type": "boolean"
-            },
-            "destinationConnectionId": {
-              "anyOf": [
-                {
-                  "anyOf": [
-                    {
-                      "type": "string",
-                      "format": "uuid"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "destinationMappingId": {
-              "anyOf": [
-                {
-                  "anyOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "destinationMappingLabel": {
-              "anyOf": [
-                {
-                  "anyOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "destinationMappingUrl": {
-              "anyOf": [
-                {
-                  "anyOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "environmentFiltering": {
-              "type": "boolean"
-            },
-            "explicitOnly": {
-              "type": "boolean"
-            },
-            "id": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "name": {
-              "type": "string"
-            },
-            "onboardedAt": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "organizationId": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "primaryEnvironmentId": {
-              "anyOf": [
-                {
-                  "anyOf": [
-                    {
-                      "type": "string",
-                      "format": "uuid"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "primaryEnvironmentName": {
-              "anyOf": [
-                {
-                  "anyOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "sdkConfig": {
-              "anyOf": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "plugins": {
-                      "type": "object",
-                      "properties": {
-                        "errors": {
-                          "type": "boolean"
-                        },
-                        "device": {
-                          "type": "boolean"
-                        },
-                        "pageEvents": {
-                          "type": "boolean"
-                        },
-                        "rageClick": {
-                          "type": "boolean"
-                        },
-                        "replay": {
-                          "type": "boolean"
-                        },
-                        "logs": {
-                          "type": "boolean"
-                        }
-                      }
-                    },
-                    "serverTracing": {
-                      "enum": [
-                        "full",
-                        "drain"
-                      ],
-                      "type": "string"
-                    },
-                    "logSourcing": {
-                      "enum": [
-                        "sdk",
-                        "drain"
-                      ],
-                      "type": "string"
-                    },
-                    "platform": {
-                      "enum": [
-                        "vercel",
-                        "cloudflare"
-                      ],
-                      "type": "string"
-                    }
-                  }
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "serviceId": {
-              "anyOf": [
-                {
-                  "anyOf": [
-                    {
-                      "type": "string",
-                      "format": "uuid"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "slug": {
-              "type": "string"
-            },
-            "sourceDatasourceId": {
-              "anyOf": [
-                {
-                  "anyOf": [
-                    {
-                      "type": "string",
-                      "format": "uuid"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "sourceConnectionId": {
-              "anyOf": [
-                {
-                  "anyOf": [
-                    {
-                      "type": "string",
-                      "format": "uuid"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "sourceMappingId": {
-              "anyOf": [
-                {
-                  "anyOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "sourceMappingLabel": {
-              "anyOf": [
-                {
-                  "anyOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "sourceMappingUrl": {
-              "anyOf": [
-                {
-                  "anyOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "sourceWorkingDirectory": {
-              "anyOf": [
-                {
-                  "anyOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "type": {
-              "enum": [
-                "nextjs",
-                "react",
-                "generic"
-              ],
-              "type": "string"
-            }
-          },
-          "required": [
-            "createdAt",
-            "deletedAt",
-            "updatedAt",
-            "anonymousReplayPolicy",
-            "anonymousUserTracking",
-            "destinationConnectionId",
-            "destinationMappingId",
-            "destinationMappingLabel",
-            "destinationMappingUrl",
-            "environmentFiltering",
-            "explicitOnly",
-            "id",
-            "name",
-            "onboardedAt",
-            "organizationId",
-            "primaryEnvironmentId",
-            "primaryEnvironmentName",
-            "sdkConfig",
-            "serviceId",
-            "slug",
-            "sourceDatasourceId",
-            "sourceConnectionId",
-            "sourceMappingId",
-            "sourceMappingLabel",
-            "sourceMappingUrl",
-            "sourceWorkingDirectory",
-            "type"
-          ],
-          "additionalProperties": false
-        }
-      },
       "Query_users_meResponse": {
         "anyOf": [
           {
@@ -56385,78 +56958,6 @@
         ]
       },
       "Mutation_surfaceEnvironments_setReportableResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "const": true,
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "success"
-        ]
-      },
-      "Mutation_surfaces_deleteResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "const": true,
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "success"
-        ]
-      },
-      "Mutation_surfaces_setAnonymousReplayPolicyResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "const": true,
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "success"
-        ]
-      },
-      "Mutation_surfaces_setAnonymousUserTrackingResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "const": true,
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "success"
-        ]
-      },
-      "Mutation_surfaces_setOnboardedResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "const": true,
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "success"
-        ]
-      },
-      "Mutation_surfaces_setSdkPluginResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "const": true,
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "success"
-        ]
-      },
-      "Mutation_surfaces_updateNameResponse": {
         "type": "object",
         "properties": {
           "success": {
@@ -58916,8 +59417,7 @@
           "platform",
           "sequence",
           "sessionId",
-          "sessionRecordId",
-          "surfaceId"
+          "sessionRecordId"
         ]
       },
       "SessionsListResponse": {
@@ -60451,6 +60951,49 @@
                             "pattern": "^[a-f0-9]{64}$"
                           },
                           "kind": {
+                            "const": "service-logs"
+                          },
+                          "limit": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 200
+                          },
+                          "minSeverity": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 24
+                          },
+                          "text": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 200
+                          },
+                          "windowEnd": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "windowStart": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        },
+                        "required": [
+                          "contentDigest",
+                          "kind",
+                          "limit",
+                          "windowEnd",
+                          "windowStart"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "contentDigest": {
+                            "type": "string",
+                            "pattern": "^[a-f0-9]{64}$"
+                          },
+                          "kind": {
                             "const": "service-versions"
                           },
                           "since": {
@@ -61371,7 +61914,6 @@
                 "sequence",
                 "sessionId",
                 "sessionRecordId",
-                "surfaceId",
                 "urls"
               ]
             }
@@ -61534,6 +62076,13 @@
               ]
             },
             "default": []
+          },
+          "retired": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         },
         "required": [
@@ -61630,190 +62179,6 @@
         },
         "required": [
           "success"
-        ]
-      },
-      "SurfaceActivityResponse": {
-        "type": "object",
-        "propertyNames": {
-          "type": "string"
-        },
-        "additionalProperties": {
-          "type": "object",
-          "properties": {
-            "hasRecentEvents": {
-              "type": "boolean"
-            },
-            "sparkline": {
-              "type": "array",
-              "minItems": 48,
-              "maxItems": 48,
-              "items": {
-                "type": "number",
-                "minimum": 0
-              }
-            },
-            "status": {
-              "enum": [
-                "down",
-                "receiving",
-                "stale",
-                "outdated",
-                "sdk-silent"
-              ],
-              "type": "string"
-            }
-          },
-          "required": [
-            "hasRecentEvents",
-            "sparkline",
-            "status"
-          ]
-        }
-      },
-      "SurfaceSdkStatusResponse": {
-        "type": "object",
-        "properties": {
-          "outdatedSurfaceIds": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          "unanalysedSurfaceIds": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        },
-        "required": [
-          "outdatedSurfaceIds",
-          "unanalysedSurfaceIds"
-        ]
-      },
-      "SurfaceEventsTimeseriesResponse": {
-        "type": "object",
-        "properties": {
-          "unavailableLinkedServiceSignals": {
-            "type": "array",
-            "items": {
-              "enum": [
-                "traces",
-                "logs",
-                "metrics"
-              ],
-              "type": "string"
-            }
-          },
-          "window": {
-            "enum": [
-              "4h",
-              "8h",
-              "12h",
-              "24h"
-            ],
-            "type": "string"
-          },
-          "bucketRows": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "logs": {
-                  "type": "number",
-                  "minimum": 0
-                },
-                "metrics": {
-                  "type": "number",
-                  "minimum": 0
-                },
-                "traces": {
-                  "type": "number",
-                  "minimum": 0
-                },
-                "start": {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                "end": {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                "index": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 9007199254740991
-                },
-                "isLatest": {
-                  "type": "boolean"
-                },
-                "isQuiet": {
-                  "type": "boolean"
-                },
-                "total": {
-                  "type": "number",
-                  "minimum": 0
-                }
-              },
-              "required": [
-                "logs",
-                "metrics",
-                "traces",
-                "start",
-                "end",
-                "index",
-                "isLatest",
-                "isQuiet",
-                "total"
-              ]
-            }
-          },
-          "buckets": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          "series": {
-            "type": "object",
-            "properties": {
-              "traces": {
-                "type": "array",
-                "items": {
-                  "type": "number",
-                  "minimum": 0
-                }
-              },
-              "logs": {
-                "type": "array",
-                "items": {
-                  "type": "number",
-                  "minimum": 0
-                }
-              },
-              "metrics": {
-                "type": "array",
-                "items": {
-                  "type": "number",
-                  "minimum": 0
-                }
-              }
-            },
-            "required": [
-              "traces",
-              "logs",
-              "metrics"
-            ]
-          }
-        },
-        "required": [
-          "window",
-          "bucketRows",
-          "buckets",
-          "series"
         ]
       },
       "RollSurfacePublicKeyResponse": {
@@ -66394,7 +66759,7 @@
       "post": {
         "operationId": "keys_private_listForSurface",
         "summary": "keys private listForSurface",
-        "description": "List private API-key metadata for an app (surface). Discover the app slug with surfaces.list; secret key material is not returned. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.",
+        "description": "List private API-key metadata for an app (surface) with a known slug; secret key material is not returned. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.",
         "tags": [
           "keys.private"
         ],
@@ -70849,11 +71214,11 @@
         ]
       }
     },
-    "/v3/workspaces/{workspaceSlug}/queries/releases.forSurface": {
+    "/v3/workspaces/{workspaceSlug}/queries/releases.forService": {
       "post": {
-        "operationId": "releases_listForSurface",
-        "summary": "releases listForSurface",
-        "description": "List releases for an app (surface) to correlate a problem with deployed versions. Obtain the app slug from surfaces.list. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.",
+        "operationId": "releases_forService",
+        "summary": "releases forService",
+        "description": "List releases for a service by its ID to correlate a problem with deployed versions. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.",
         "tags": [
           "releases"
         ],
@@ -70880,14 +71245,13 @@
                   "args": {
                     "type": "object",
                     "properties": {
-                      "surfaceSlug": {
+                      "serviceId": {
                         "type": "string",
-                        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-                        "description": "Surface URL slug, using lowercase letters, numbers, and hyphens."
+                        "format": "uuid"
                       }
                     },
                     "required": [
-                      "surfaceSlug"
+                      "serviceId"
                     ]
                   }
                 },
@@ -70904,7 +71268,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Query_releases_forSurfaceResponse"
+                  "$ref": "#/components/schemas/Query_releases_forServiceResponse"
                 }
               }
             }
@@ -70922,7 +71286,7 @@
             "$ref": "#/components/responses/ErrorResponse_a4a8a71ed4a33ddc602b7e2cf4dd0b51ef37c46db1b01870377abdbd6cbda1b5"
           }
         },
-        "x-fern-sdk-method-name": "list-for-surface",
+        "x-fern-sdk-method-name": "for-service",
         "x-cloudflare-labels": [
           "cf-api-endpoint"
         ],
@@ -70938,11 +71302,11 @@
         ]
       }
     },
-    "/v3/workspaces/{workspaceSlug}/queries/releases.latestBySurface": {
+    "/v3/workspaces/{workspaceSlug}/queries/releases.latestByService": {
       "post": {
-        "operationId": "releases_latestBySurface",
-        "summary": "releases latestBySurface",
-        "description": "Read the latest release for the selected app (surface) using the documented arguments. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.",
+        "operationId": "releases_latestByService",
+        "summary": "releases latestByService",
+        "description": "Read the latest release for the selected service using the documented arguments. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.",
         "tags": [
           "releases"
         ],
@@ -70969,10 +71333,9 @@
                   "args": {
                     "type": "object",
                     "properties": {
-                      "surfaceSlug": {
+                      "serviceId": {
                         "type": "string",
-                        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-                        "description": "Surface URL slug, using lowercase letters, numbers, and hyphens."
+                        "format": "uuid"
                       },
                       "primaryEnvironment": {
                         "anyOf": [
@@ -70986,7 +71349,7 @@
                       }
                     },
                     "required": [
-                      "surfaceSlug",
+                      "serviceId",
                       "primaryEnvironment"
                     ]
                   }
@@ -71004,7 +71367,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Query_releases_latestBySurfaceResponse"
+                  "$ref": "#/components/schemas/Query_releases_latestByServiceResponse"
                 }
               }
             }
@@ -71022,7 +71385,7 @@
             "$ref": "#/components/responses/ErrorResponse_a4a8a71ed4a33ddc602b7e2cf4dd0b51ef37c46db1b01870377abdbd6cbda1b5"
           }
         },
-        "x-fern-sdk-method-name": "latest-by-surface",
+        "x-fern-sdk-method-name": "latest-by-service",
         "x-cloudflare-labels": [
           "cf-api-endpoint"
         ],
@@ -71038,11 +71401,11 @@
         ]
       }
     },
-    "/v3/workspaces/{workspaceSlug}/queries/releases.recentBySurface": {
+    "/v3/workspaces/{workspaceSlug}/queries/releases.recentByService": {
       "post": {
-        "operationId": "releases_recentBySurface",
-        "summary": "releases recentBySurface",
-        "description": "Read recent releases for the selected app (surface) to compare deployment timing with a regression. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.",
+        "operationId": "releases_recentByService",
+        "summary": "releases recentByService",
+        "description": "Read recent releases for the selected service to compare deployment timing with a regression. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.",
         "tags": [
           "releases"
         ],
@@ -71069,17 +71432,16 @@
                   "args": {
                     "type": "object",
                     "properties": {
-                      "surfaceSlug": {
+                      "serviceId": {
                         "type": "string",
-                        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-                        "description": "Surface URL slug, using lowercase letters, numbers, and hyphens."
+                        "format": "uuid"
                       },
                       "limit": {
                         "type": "number"
                       }
                     },
                     "required": [
-                      "surfaceSlug",
+                      "serviceId",
                       "limit"
                     ]
                   }
@@ -71097,7 +71459,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Query_releases_recentBySurfaceResponse"
+                  "$ref": "#/components/schemas/Query_releases_recentByServiceResponse"
                 }
               }
             }
@@ -71115,7 +71477,7 @@
             "$ref": "#/components/responses/ErrorResponse_a4a8a71ed4a33ddc602b7e2cf4dd0b51ef37c46db1b01870377abdbd6cbda1b5"
           }
         },
-        "x-fern-sdk-method-name": "recent-by-surface",
+        "x-fern-sdk-method-name": "recent-by-service",
         "x-cloudflare-labels": [
           "cf-api-endpoint"
         ],
@@ -71978,263 +72340,6 @@
         "x-fern-sdk-group-name": [
           "surfaces",
           "environments"
-        ]
-      }
-    },
-    "/v3/workspaces/{workspaceSlug}/queries/surfaces.getBySlug": {
-      "post": {
-        "operationId": "surfaces_get",
-        "summary": "apps get",
-        "description": "Read one active app (surface) by its human-facing slug. Use surfaces.list to discover slugs and IDs; they are not interchangeable. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.",
-        "tags": [
-          "surfaces"
-        ],
-        "parameters": [
-          {
-            "name": "workspaceSlug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
-            },
-            "x-fern-parameter-name": "workspace"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "args": {
-                    "type": "object",
-                    "properties": {
-                      "surfaceSlug": {
-                        "type": "string",
-                        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-                        "description": "Surface URL slug, using lowercase letters, numbers, and hyphens."
-                      }
-                    },
-                    "required": [
-                      "surfaceSlug"
-                    ]
-                  }
-                },
-                "required": [
-                  "args"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Query_surfaces_getBySlugResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/RpcValidationError"
-          },
-          "401": {
-            "$ref": "#/components/responses/ErrorResponse_b32e7e47d27147b78e9ca9c8927315e0c48a5a54a03868590623df7e2ff7d2af"
-          },
-          "403": {
-            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
-          },
-          "503": {
-            "$ref": "#/components/responses/ErrorResponse_a4a8a71ed4a33ddc602b7e2cf4dd0b51ef37c46db1b01870377abdbd6cbda1b5"
-          }
-        },
-        "x-fern-sdk-method-name": "get",
-        "x-cloudflare-labels": [
-          "cf-api-endpoint"
-        ],
-        "security": [
-          {
-            "clerkSession": []
-          }
-        ],
-        "x-interfere-read-only": true,
-        "x-internal": false,
-        "x-fern-sdk-group-name": [
-          "surfaces"
-        ]
-      }
-    },
-    "/v3/workspaces/{workspaceSlug}/queries/surfaces.getBySlugIncludeDeleted": {
-      "post": {
-        "operationId": "surfaces_getBySlugIncludeDeleted",
-        "summary": "apps getBySlugIncludeDeleted",
-        "description": "Read an app (surface) by slug even if deleted. Use only when investigating historical references; prefer surfaces.get for active resources. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Requires org:surfaces:read; insufficient permission returns an access-denied error. An authorized read with no matching resource returns WORKSPACE_RESOURCE_NOT_FOUND (404). Only use pagination arguments declared in the schema.",
-        "tags": [
-          "surfaces"
-        ],
-        "parameters": [
-          {
-            "name": "workspaceSlug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
-            },
-            "x-fern-parameter-name": "workspace"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "args": {
-                    "type": "object",
-                    "properties": {
-                      "surfaceSlug": {
-                        "type": "string",
-                        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-                        "description": "Surface URL slug, using lowercase letters, numbers, and hyphens."
-                      }
-                    },
-                    "required": [
-                      "surfaceSlug"
-                    ]
-                  }
-                },
-                "required": [
-                  "args"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Query_surfaces_getBySlugIncludeDeletedResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/RpcValidationError"
-          },
-          "401": {
-            "$ref": "#/components/responses/ErrorResponse_b32e7e47d27147b78e9ca9c8927315e0c48a5a54a03868590623df7e2ff7d2af"
-          },
-          "403": {
-            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
-          },
-          "404": {
-            "$ref": "#/components/responses/ErrorResponse_826c4e9f6aac70078d2e1ac5a3cba4b915c34a2fb47c584bc2e06d7f62690109"
-          },
-          "503": {
-            "$ref": "#/components/responses/ErrorResponse_a4a8a71ed4a33ddc602b7e2cf4dd0b51ef37c46db1b01870377abdbd6cbda1b5"
-          }
-        },
-        "x-fern-sdk-method-name": "get-by-slug-include-deleted",
-        "x-cloudflare-labels": [
-          "cf-api-endpoint"
-        ],
-        "security": [
-          {
-            "clerkSession": []
-          }
-        ],
-        "x-interfere-read-only": true,
-        "x-internal": false,
-        "x-fern-sdk-group-name": [
-          "surfaces"
-        ]
-      }
-    },
-    "/v3/workspaces/{workspaceSlug}/queries/surfaces.list": {
-      "post": {
-        "operationId": "surfaces_list",
-        "summary": "apps list",
-        "description": "List active apps (surfaces) in the workspace. Start here to resolve an app name to its ID and slug before querying environments, releases or keys. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.",
-        "tags": [
-          "surfaces"
-        ],
-        "parameters": [
-          {
-            "name": "workspaceSlug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
-            },
-            "x-fern-parameter-name": "workspace"
-          }
-        ],
-        "requestBody": {
-          "required": false,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "args": {
-                    "type": "object"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Query_surfaces_listResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/RpcValidationError"
-          },
-          "401": {
-            "$ref": "#/components/responses/ErrorResponse_b32e7e47d27147b78e9ca9c8927315e0c48a5a54a03868590623df7e2ff7d2af"
-          },
-          "403": {
-            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
-          },
-          "503": {
-            "$ref": "#/components/responses/ErrorResponse_a4a8a71ed4a33ddc602b7e2cf4dd0b51ef37c46db1b01870377abdbd6cbda1b5"
-          }
-        },
-        "x-fern-sdk-method-name": "list",
-        "x-cloudflare-labels": [
-          "cf-api-endpoint"
-        ],
-        "security": [
-          {
-            "clerkSession": []
-          }
-        ],
-        "x-interfere-read-only": true,
-        "x-internal": false,
-        "x-fern-sdk-group-name": [
-          "surfaces"
         ]
       }
     },
@@ -74382,6 +74487,7 @@
                             "collab-mention",
                             "collab-reaction",
                             "problem-needs-attention",
+                            "problem-reopened",
                             "problem-routing",
                             "problems-digest",
                             "problems-opened",
@@ -75383,7 +75489,7 @@
       "post": {
         "operationId": "workspaces_updateDefaultSurface",
         "summary": "workspaces updateDefaultSurface",
-        "description": "Set the app that receives workspace-key telemetry without a service name. Resolve the app ID from surfaces.list first. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.",
+        "description": "Set the app that receives workspace-key telemetry without a service name, using its known ID. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.",
         "tags": [
           "workspaces"
         ],
@@ -76935,596 +77041,6 @@
         "x-fern-sdk-group-name": [
           "surfaces",
           "environments"
-        ],
-        "x-fern-retries": {
-          "disabled": true
-        }
-      }
-    },
-    "/v3/workspaces/{workspaceSlug}/actions/surfaces.delete": {
-      "post": {
-        "operationId": "surfaces_delete",
-        "summary": "apps delete",
-        "description": "Delete an app (surface). This is destructive; resolve its exact ID and slug with surfaces.list and verify the requested target. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.",
-        "tags": [
-          "surfaces"
-        ],
-        "parameters": [
-          {
-            "name": "workspaceSlug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
-            },
-            "x-fern-parameter-name": "workspace"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "args": {
-                    "type": "object",
-                    "properties": {
-                      "surfaceSlug": {
-                        "type": "string",
-                        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-                        "description": "Surface URL slug, using lowercase letters, numbers, and hyphens."
-                      }
-                    },
-                    "required": [
-                      "surfaceSlug"
-                    ]
-                  }
-                },
-                "required": [
-                  "args"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Mutation_surfaces_deleteResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/RpcValidationError"
-          },
-          "401": {
-            "$ref": "#/components/responses/ErrorResponse_b32e7e47d27147b78e9ca9c8927315e0c48a5a54a03868590623df7e2ff7d2af"
-          },
-          "403": {
-            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
-          },
-          "503": {
-            "$ref": "#/components/responses/ErrorResponse_a4a8a71ed4a33ddc602b7e2cf4dd0b51ef37c46db1b01870377abdbd6cbda1b5"
-          }
-        },
-        "x-fern-sdk-method-name": "delete",
-        "x-cloudflare-labels": [
-          "cf-api-endpoint"
-        ],
-        "security": [
-          {
-            "clerkSession": []
-          }
-        ],
-        "x-interfere-read-only": false,
-        "x-internal": false,
-        "x-fern-sdk-group-name": [
-          "surfaces"
-        ],
-        "x-fern-retries": {
-          "disabled": true
-        }
-      }
-    },
-    "/v3/workspaces/{workspaceSlug}/actions/surfaces.setAnonymousReplayPolicy": {
-      "post": {
-        "operationId": "surfaces_setAnonymousReplayPolicy",
-        "summary": "apps setAnonymousReplayPolicy",
-        "description": "Choose when an app (surface) records session replay for visitors that are not identified: always, on_error (only once an error occurs) or never. Identified users always record. Inspect its current setting first. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.",
-        "tags": [
-          "surfaces"
-        ],
-        "parameters": [
-          {
-            "name": "workspaceSlug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
-            },
-            "x-fern-parameter-name": "workspace"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "args": {
-                    "type": "object",
-                    "properties": {
-                      "surfaceSlug": {
-                        "type": "string",
-                        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-                        "description": "Surface URL slug, using lowercase letters, numbers, and hyphens."
-                      },
-                      "policy": {
-                        "enum": [
-                          "always",
-                          "on_error",
-                          "never"
-                        ],
-                        "type": "string",
-                        "description": "When sessions without an identified user record replay: always, only once an error occurs, or never."
-                      }
-                    },
-                    "required": [
-                      "surfaceSlug",
-                      "policy"
-                    ]
-                  }
-                },
-                "required": [
-                  "args"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Mutation_surfaces_setAnonymousReplayPolicyResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/RpcValidationError"
-          },
-          "401": {
-            "$ref": "#/components/responses/ErrorResponse_b32e7e47d27147b78e9ca9c8927315e0c48a5a54a03868590623df7e2ff7d2af"
-          },
-          "403": {
-            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
-          },
-          "503": {
-            "$ref": "#/components/responses/ErrorResponse_a4a8a71ed4a33ddc602b7e2cf4dd0b51ef37c46db1b01870377abdbd6cbda1b5"
-          }
-        },
-        "x-fern-sdk-method-name": "set-anonymous-replay-policy",
-        "x-cloudflare-labels": [
-          "cf-api-endpoint"
-        ],
-        "security": [
-          {
-            "clerkSession": []
-          }
-        ],
-        "x-interfere-read-only": false,
-        "x-internal": false,
-        "x-fern-sdk-group-name": [
-          "surfaces"
-        ],
-        "x-fern-retries": {
-          "disabled": true
-        }
-      }
-    },
-    "/v3/workspaces/{workspaceSlug}/actions/surfaces.setAnonymousUserTracking": {
-      "post": {
-        "operationId": "surfaces_setAnonymousUserTracking",
-        "summary": "apps setAnonymousUserTracking",
-        "description": "Enable or disable anonymous-user tracking for an app (surface). Inspect its current setting first. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.",
-        "tags": [
-          "surfaces"
-        ],
-        "parameters": [
-          {
-            "name": "workspaceSlug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
-            },
-            "x-fern-parameter-name": "workspace"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "args": {
-                    "type": "object",
-                    "properties": {
-                      "surfaceSlug": {
-                        "type": "string",
-                        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-                        "description": "Surface URL slug, using lowercase letters, numbers, and hyphens."
-                      },
-                      "enabled": {
-                        "type": "boolean"
-                      }
-                    },
-                    "required": [
-                      "surfaceSlug",
-                      "enabled"
-                    ]
-                  }
-                },
-                "required": [
-                  "args"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Mutation_surfaces_setAnonymousUserTrackingResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/RpcValidationError"
-          },
-          "401": {
-            "$ref": "#/components/responses/ErrorResponse_b32e7e47d27147b78e9ca9c8927315e0c48a5a54a03868590623df7e2ff7d2af"
-          },
-          "403": {
-            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
-          },
-          "503": {
-            "$ref": "#/components/responses/ErrorResponse_a4a8a71ed4a33ddc602b7e2cf4dd0b51ef37c46db1b01870377abdbd6cbda1b5"
-          }
-        },
-        "x-fern-sdk-method-name": "set-anonymous-user-tracking",
-        "x-cloudflare-labels": [
-          "cf-api-endpoint"
-        ],
-        "security": [
-          {
-            "clerkSession": []
-          }
-        ],
-        "x-interfere-read-only": false,
-        "x-internal": false,
-        "x-fern-sdk-group-name": [
-          "surfaces"
-        ],
-        "x-fern-retries": {
-          "disabled": true
-        }
-      }
-    },
-    "/v3/workspaces/{workspaceSlug}/actions/surfaces.setOnboarded": {
-      "post": {
-        "operationId": "surfaces_setOnboarded",
-        "summary": "apps setOnboarded",
-        "description": "Mark an app's (surface's) onboarding state after verifying the requested setup status. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.",
-        "tags": [
-          "surfaces"
-        ],
-        "parameters": [
-          {
-            "name": "workspaceSlug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
-            },
-            "x-fern-parameter-name": "workspace"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "args": {
-                    "type": "object",
-                    "properties": {
-                      "surfaceSlug": {
-                        "type": "string",
-                        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-                        "description": "Surface URL slug, using lowercase letters, numbers, and hyphens."
-                      },
-                      "onboarded": {
-                        "type": "boolean"
-                      }
-                    },
-                    "required": [
-                      "surfaceSlug",
-                      "onboarded"
-                    ]
-                  }
-                },
-                "required": [
-                  "args"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Mutation_surfaces_setOnboardedResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/RpcValidationError"
-          },
-          "401": {
-            "$ref": "#/components/responses/ErrorResponse_b32e7e47d27147b78e9ca9c8927315e0c48a5a54a03868590623df7e2ff7d2af"
-          },
-          "403": {
-            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
-          },
-          "503": {
-            "$ref": "#/components/responses/ErrorResponse_a4a8a71ed4a33ddc602b7e2cf4dd0b51ef37c46db1b01870377abdbd6cbda1b5"
-          }
-        },
-        "x-fern-sdk-method-name": "set-onboarded",
-        "x-cloudflare-labels": [
-          "cf-api-endpoint"
-        ],
-        "security": [
-          {
-            "clerkSession": []
-          }
-        ],
-        "x-interfere-read-only": false,
-        "x-internal": false,
-        "x-fern-sdk-group-name": [
-          "surfaces"
-        ],
-        "x-fern-retries": {
-          "disabled": true
-        }
-      }
-    },
-    "/v3/workspaces/{workspaceSlug}/actions/surfaces.setSdkPlugin": {
-      "post": {
-        "operationId": "surfaces_setSdkPlugin",
-        "summary": "apps setSdkPlugin",
-        "description": "Turn one browser SDK feature (replay, logs, pageEvents or rageClick) on or off for an app (surface). Other SDK settings are kept. Next.js and Vite apps bake this at build time, so it takes effect on their next build and deploy. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.",
-        "tags": [
-          "surfaces"
-        ],
-        "parameters": [
-          {
-            "name": "workspaceSlug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
-            },
-            "x-fern-parameter-name": "workspace"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "args": {
-                    "type": "object",
-                    "properties": {
-                      "surfaceSlug": {
-                        "type": "string",
-                        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-                        "description": "Surface URL slug, using lowercase letters, numbers, and hyphens."
-                      },
-                      "plugin": {
-                        "enum": [
-                          "replay",
-                          "logs",
-                          "pageEvents",
-                          "rageClick"
-                        ],
-                        "type": "string"
-                      },
-                      "enabled": {
-                        "type": "boolean"
-                      }
-                    },
-                    "required": [
-                      "surfaceSlug",
-                      "plugin",
-                      "enabled"
-                    ]
-                  }
-                },
-                "required": [
-                  "args"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Mutation_surfaces_setSdkPluginResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/RpcValidationError"
-          },
-          "401": {
-            "$ref": "#/components/responses/ErrorResponse_b32e7e47d27147b78e9ca9c8927315e0c48a5a54a03868590623df7e2ff7d2af"
-          },
-          "403": {
-            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
-          },
-          "503": {
-            "$ref": "#/components/responses/ErrorResponse_a4a8a71ed4a33ddc602b7e2cf4dd0b51ef37c46db1b01870377abdbd6cbda1b5"
-          }
-        },
-        "x-fern-sdk-method-name": "set-sdk-plugin",
-        "x-cloudflare-labels": [
-          "cf-api-endpoint"
-        ],
-        "security": [
-          {
-            "clerkSession": []
-          }
-        ],
-        "x-interfere-read-only": false,
-        "x-internal": false,
-        "x-fern-sdk-group-name": [
-          "surfaces"
-        ],
-        "x-fern-retries": {
-          "disabled": true
-        }
-      }
-    },
-    "/v3/workspaces/{workspaceSlug}/actions/surfaces.updateName": {
-      "post": {
-        "operationId": "surfaces_updateName",
-        "summary": "apps updateName",
-        "description": "Rename an app (surface). Resolve its ID with surfaces.list and preserve the rest of its settings. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.",
-        "tags": [
-          "surfaces"
-        ],
-        "parameters": [
-          {
-            "name": "workspaceSlug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
-            },
-            "x-fern-parameter-name": "workspace"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "args": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": "string",
-                        "minLength": 1,
-                        "maxLength": 48
-                      },
-                      "surfaceSlug": {
-                        "type": "string",
-                        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-                        "description": "Surface URL slug, using lowercase letters, numbers, and hyphens."
-                      }
-                    },
-                    "required": [
-                      "name",
-                      "surfaceSlug"
-                    ]
-                  }
-                },
-                "required": [
-                  "args"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Mutation_surfaces_updateNameResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/RpcValidationError"
-          },
-          "401": {
-            "$ref": "#/components/responses/ErrorResponse_b32e7e47d27147b78e9ca9c8927315e0c48a5a54a03868590623df7e2ff7d2af"
-          },
-          "403": {
-            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
-          },
-          "503": {
-            "$ref": "#/components/responses/ErrorResponse_a4a8a71ed4a33ddc602b7e2cf4dd0b51ef37c46db1b01870377abdbd6cbda1b5"
-          }
-        },
-        "x-fern-sdk-method-name": "update-name",
-        "x-cloudflare-labels": [
-          "cf-api-endpoint"
-        ],
-        "security": [
-          {
-            "clerkSession": []
-          }
-        ],
-        "x-interfere-read-only": false,
-        "x-internal": false,
-        "x-fern-sdk-group-name": [
-          "surfaces"
         ],
         "x-fern-retries": {
           "disabled": true
@@ -85899,283 +85415,6 @@
         }
       }
     },
-    "/v3/workspaces/{workspaceSlug}/surfaces/activity": {
-      "get": {
-        "operationId": "surfaceActivity",
-        "summary": "Get app activity",
-        "description": "Returns activity for apps (surfaces) in the workspace.",
-        "tags": [
-          "Surfaces"
-        ],
-        "parameters": [
-          {
-            "name": "workspaceSlug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
-            },
-            "x-fern-parameter-name": "workspace"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SurfaceActivityResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/RpcValidationError"
-          },
-          "401": {
-            "$ref": "#/components/responses/ErrorResponse_d7174de43f943d10193d5f31cc4615acb6d01e6a15ef9a1a861235cb9792319b"
-          },
-          "403": {
-            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
-          },
-          "404": {
-            "$ref": "#/components/responses/ErrorResponse_aacd31107d1b82f7d854a3aa7c98c401a41a182720fd213babe309171722e17c"
-          },
-          "503": {
-            "$ref": "#/components/responses/ErrorResponse_b7d254f6bd68a887b2398a1b58fb8fe3913110d7236a6e4540d7d2aa990fb12b"
-          }
-        },
-        "x-cloudflare-labels": [
-          "cf-api-endpoint"
-        ],
-        "security": [
-          {
-            "clerkSession": []
-          }
-        ],
-        "x-interfere-read-only": true
-      }
-    },
-    "/v3/workspaces/{workspaceSlug}/surfaces/activity/sdk-status": {
-      "get": {
-        "operationId": "surfaceSdkStatus",
-        "summary": "Get app SDK status",
-        "description": "Returns apps (surfaces) with outdated SDKs in the workspace, and those whose SDK is too old for problem and finding generation.",
-        "tags": [
-          "Surfaces"
-        ],
-        "parameters": [
-          {
-            "name": "workspaceSlug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
-            },
-            "x-fern-parameter-name": "workspace"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SurfaceSdkStatusResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/RpcValidationError"
-          },
-          "401": {
-            "$ref": "#/components/responses/ErrorResponse_d7174de43f943d10193d5f31cc4615acb6d01e6a15ef9a1a861235cb9792319b"
-          },
-          "403": {
-            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
-          },
-          "404": {
-            "$ref": "#/components/responses/ErrorResponse_aacd31107d1b82f7d854a3aa7c98c401a41a182720fd213babe309171722e17c"
-          },
-          "503": {
-            "$ref": "#/components/responses/ErrorResponse_b7d254f6bd68a887b2398a1b58fb8fe3913110d7236a6e4540d7d2aa990fb12b"
-          }
-        },
-        "x-cloudflare-labels": [
-          "cf-api-endpoint"
-        ],
-        "security": [
-          {
-            "clerkSession": []
-          }
-        ],
-        "x-interfere-read-only": false,
-        "x-fern-retries": {
-          "disabled": true
-        }
-      }
-    },
-    "/v3/workspaces/{workspaceSlug}/surfaces/{surfaceSlug}/events/timeseries": {
-      "get": {
-        "operationId": "surfaceEventsTimeseries",
-        "summary": "Get app event time series",
-        "description": "Returns event counts grouped into time buckets for the app (surface).",
-        "tags": [
-          "Surfaces"
-        ],
-        "parameters": [
-          {
-            "name": "workspaceSlug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
-            },
-            "x-fern-parameter-name": "workspace"
-          },
-          {
-            "name": "surfaceSlug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-              "description": "Surface URL slug, using lowercase letters, numbers, and hyphens."
-            }
-          },
-          {
-            "name": "environment",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "default": ""
-            },
-            "allowEmptyValue": true,
-            "allowReserved": true
-          },
-          {
-            "name": "window",
-            "in": "query",
-            "schema": {
-              "enum": [
-                "4h",
-                "8h",
-                "12h",
-                "24h"
-              ],
-              "type": "string",
-              "default": "8h"
-            },
-            "allowEmptyValue": true,
-            "allowReserved": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SurfaceEventsTimeseriesResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/RpcValidationError"
-          },
-          "401": {
-            "$ref": "#/components/responses/ErrorResponse_d7174de43f943d10193d5f31cc4615acb6d01e6a15ef9a1a861235cb9792319b"
-          },
-          "403": {
-            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
-          },
-          "404": {
-            "description": "Resource not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "defined": {
-                          "const": true
-                        },
-                        "code": {
-                          "const": "SURFACE_NOT_FOUND"
-                        },
-                        "status": {
-                          "const": 404
-                        },
-                        "message": {
-                          "type": "string",
-                          "default": "Surface not found."
-                        },
-                        "data": {}
-                      },
-                      "required": [
-                        "defined",
-                        "code",
-                        "status",
-                        "message"
-                      ]
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "defined": {
-                          "const": true
-                        },
-                        "code": {
-                          "const": "WORKSPACE_NOT_FOUND"
-                        },
-                        "status": {
-                          "const": 404
-                        },
-                        "message": {
-                          "type": "string",
-                          "default": "Workspace not found."
-                        },
-                        "data": {}
-                      },
-                      "required": [
-                        "defined",
-                        "code",
-                        "status",
-                        "message"
-                      ]
-                    },
-                    {
-                      "$ref": "#/components/schemas/RpcUnexpectedError"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "503": {
-            "$ref": "#/components/responses/ErrorResponse_b7d254f6bd68a887b2398a1b58fb8fe3913110d7236a6e4540d7d2aa990fb12b"
-          }
-        },
-        "x-cloudflare-labels": [
-          "cf-api-endpoint"
-        ],
-        "security": [
-          {
-            "clerkSession": []
-          }
-        ],
-        "x-interfere-read-only": true
-      }
-    },
     "/v3/workspaces/{workspaceSlug}/surfaces/{surfaceSlug}/publicKeys/{publicKeyId}/roll": {
       "post": {
         "operationId": "keys_public_rotate",
@@ -86389,7 +85628,7 @@
       "get": {
         "operationId": "keys_public_get",
         "summary": "keys public get",
-        "description": "Reads a publishable key's identity, current value and revocation status. Requires app read permission. Revoked keys and keys belonging to deleted apps report revoked: true.",
+        "description": "Reads a publishable key's identity, current value and revocation status. Requires app read permission. Revoked keys report revoked: true, and so do keys of a deleted app unless the key is still mapped to a service and keeps ingesting.",
         "tags": [
           "keys.public"
         ],

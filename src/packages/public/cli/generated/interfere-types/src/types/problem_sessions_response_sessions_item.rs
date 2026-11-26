@@ -2,7 +2,7 @@ pub use crate::prelude::*;
 #[allow(unused_imports)]
 use super::*;
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct ProblemSessionsResponseSessionsItem {
     #[serde(rename = "anonymousNumber")]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -65,7 +65,8 @@ pub struct ProblemSessionsResponseSessionsItem {
     #[serde(default)]
     pub session_record_id: String,
     #[serde(rename = "surfaceId")]
-    pub surface_id: ProblemSessionsResponseSessionsItemSurfaceId,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub surface_id: Option<ProblemSessionsResponseSessionsItemSurfaceId>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub urls: Option<Vec<String>>,
 }
@@ -195,7 +196,6 @@ impl ProblemSessionsResponseSessionsItemBuilder {
     /// - [`first_occurrence_at`](ProblemSessionsResponseSessionsItemBuilder::first_occurrence_at)
     /// - [`session_id`](ProblemSessionsResponseSessionsItemBuilder::session_id)
     /// - [`session_record_id`](ProblemSessionsResponseSessionsItemBuilder::session_record_id)
-    /// - [`surface_id`](ProblemSessionsResponseSessionsItemBuilder::surface_id)
     pub fn build(self) -> Result<ProblemSessionsResponseSessionsItem, BuildError> {
         Ok(ProblemSessionsResponseSessionsItem {
             anonymous_number: self.anonymous_number,
@@ -214,7 +214,7 @@ impl ProblemSessionsResponseSessionsItemBuilder {
             sequence: self.sequence,
             session_id: self.session_id.ok_or_else(|| BuildError::missing_field("session_id"))?,
             session_record_id: self.session_record_id.ok_or_else(|| BuildError::missing_field("session_record_id"))?,
-            surface_id: self.surface_id.ok_or_else(|| BuildError::missing_field("surface_id"))?,
+            surface_id: self.surface_id,
             urls: self.urls,
         })
     }

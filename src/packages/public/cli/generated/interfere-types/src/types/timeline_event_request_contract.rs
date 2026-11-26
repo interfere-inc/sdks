@@ -6,6 +6,9 @@ use super::*;
 pub struct TimelineEventRequestContract {
     #[serde(default)]
     pub version: String,
+    #[serde(rename = "askedBy")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub asked_by: Option<TimelineEventRequestContractAskedBy>,
     #[serde(rename = "requiredEvidence")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub required_evidence: Option<RequiredEvidence>,
@@ -25,6 +28,7 @@ impl TimelineEventRequestContract {
 #[non_exhaustive]
 pub struct TimelineEventRequestContractBuilder {
     version: Option<String>,
+    asked_by: Option<TimelineEventRequestContractAskedBy>,
     required_evidence: Option<RequiredEvidence>,
     scope: Option<TimelineEventRequestContractScope>,
     completion: Option<TimelineEventRequestContractCompletion>,
@@ -34,6 +38,11 @@ pub struct TimelineEventRequestContractBuilder {
 impl TimelineEventRequestContractBuilder {
     pub fn version(mut self, value: impl Into<String>) -> Self {
         self.version = Some(value.into());
+        self
+    }
+
+    pub fn asked_by(mut self, value: TimelineEventRequestContractAskedBy) -> Self {
+        self.asked_by = Some(value);
         self
     }
 
@@ -66,6 +75,7 @@ impl TimelineEventRequestContractBuilder {
     pub fn build(self) -> Result<TimelineEventRequestContract, BuildError> {
         Ok(TimelineEventRequestContract {
             version: self.version.ok_or_else(|| BuildError::missing_field("version"))?,
+            asked_by: self.asked_by,
             required_evidence: self.required_evidence,
             scope: self.scope.ok_or_else(|| BuildError::missing_field("scope"))?,
             completion: self.completion.ok_or_else(|| BuildError::missing_field("completion"))?,

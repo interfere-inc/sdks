@@ -1,0 +1,165 @@
+pub use crate::prelude::*;
+#[allow(unused_imports)]
+use super::*;
+
+/// Choose the affected capability: payment for checkout, sign-in for login, search for search, playback for media, layout for misplaced, overlapping or clipped page elements, network for connectivity. A browser exception or failed page render alone does not establish a layout defect. Prefer the specific affected capability over the page containing it. A programming error does not imply bug. Use bug only when the evidence identifies no more specific capability; use unknown when the affected capability is unknown. Never choose by browser, runtime or vendor.
+#[non_exhaustive]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTenConfirmationIdMetadataIcon {
+    Bug,
+    Network,
+    Globe,
+    Timeout,
+    Performance,
+    Regression,
+    Traffic,
+    SignIn,
+    Permissions,
+    Security,
+    Identity,
+    Signup,
+    Database,
+    Server,
+    DataIntegrity,
+    Layout,
+    Interaction,
+    Styling,
+    Copy,
+    Search,
+    Payment,
+    Email,
+    Notification,
+    Chat,
+    Playback,
+    Config,
+    Build,
+    VersionControl,
+    Integration,
+    Device,
+    Schedule,
+    Unknown,
+    /// This variant is used for forward compatibility.
+    /// If the server sends a value not recognized by the current SDK version,
+    /// it will be captured here with the raw string value.
+    __Unknown(String),
+}
+impl Serialize for QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTenConfirmationIdMetadataIcon {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        match self {
+            Self::Bug => serializer.serialize_str("bug"),
+            Self::Network => serializer.serialize_str("network"),
+            Self::Globe => serializer.serialize_str("globe"),
+            Self::Timeout => serializer.serialize_str("timeout"),
+            Self::Performance => serializer.serialize_str("performance"),
+            Self::Regression => serializer.serialize_str("regression"),
+            Self::Traffic => serializer.serialize_str("traffic"),
+            Self::SignIn => serializer.serialize_str("sign-in"),
+            Self::Permissions => serializer.serialize_str("permissions"),
+            Self::Security => serializer.serialize_str("security"),
+            Self::Identity => serializer.serialize_str("identity"),
+            Self::Signup => serializer.serialize_str("signup"),
+            Self::Database => serializer.serialize_str("database"),
+            Self::Server => serializer.serialize_str("server"),
+            Self::DataIntegrity => serializer.serialize_str("data-integrity"),
+            Self::Layout => serializer.serialize_str("layout"),
+            Self::Interaction => serializer.serialize_str("interaction"),
+            Self::Styling => serializer.serialize_str("styling"),
+            Self::Copy => serializer.serialize_str("copy"),
+            Self::Search => serializer.serialize_str("search"),
+            Self::Payment => serializer.serialize_str("payment"),
+            Self::Email => serializer.serialize_str("email"),
+            Self::Notification => serializer.serialize_str("notification"),
+            Self::Chat => serializer.serialize_str("chat"),
+            Self::Playback => serializer.serialize_str("playback"),
+            Self::Config => serializer.serialize_str("config"),
+            Self::Build => serializer.serialize_str("build"),
+            Self::VersionControl => serializer.serialize_str("version-control"),
+            Self::Integration => serializer.serialize_str("integration"),
+            Self::Device => serializer.serialize_str("device"),
+            Self::Schedule => serializer.serialize_str("schedule"),
+            Self::Unknown => serializer.serialize_str("unknown"),
+            Self::__Unknown(val) => serializer.serialize_str(val),
+        }
+    }
+}
+
+impl<'de> Deserialize<'de> for QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTenConfirmationIdMetadataIcon {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let value = String::deserialize(deserializer)?;
+        match value.as_str() {
+            "bug" => Ok(Self::Bug),
+            "network" => Ok(Self::Network),
+            "globe" => Ok(Self::Globe),
+            "timeout" => Ok(Self::Timeout),
+            "performance" => Ok(Self::Performance),
+            "regression" => Ok(Self::Regression),
+            "traffic" => Ok(Self::Traffic),
+            "sign-in" => Ok(Self::SignIn),
+            "permissions" => Ok(Self::Permissions),
+            "security" => Ok(Self::Security),
+            "identity" => Ok(Self::Identity),
+            "signup" => Ok(Self::Signup),
+            "database" => Ok(Self::Database),
+            "server" => Ok(Self::Server),
+            "data-integrity" => Ok(Self::DataIntegrity),
+            "layout" => Ok(Self::Layout),
+            "interaction" => Ok(Self::Interaction),
+            "styling" => Ok(Self::Styling),
+            "copy" => Ok(Self::Copy),
+            "search" => Ok(Self::Search),
+            "payment" => Ok(Self::Payment),
+            "email" => Ok(Self::Email),
+            "notification" => Ok(Self::Notification),
+            "chat" => Ok(Self::Chat),
+            "playback" => Ok(Self::Playback),
+            "config" => Ok(Self::Config),
+            "build" => Ok(Self::Build),
+            "version-control" => Ok(Self::VersionControl),
+            "integration" => Ok(Self::Integration),
+            "device" => Ok(Self::Device),
+            "schedule" => Ok(Self::Schedule),
+            "unknown" => Ok(Self::Unknown),
+            _ => Ok(Self::__Unknown(value)),
+        }
+    }
+}
+
+impl fmt::Display for QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentTenConfirmationIdMetadataIcon {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Bug => write!(f, "bug"),
+            Self::Network => write!(f, "network"),
+            Self::Globe => write!(f, "globe"),
+            Self::Timeout => write!(f, "timeout"),
+            Self::Performance => write!(f, "performance"),
+            Self::Regression => write!(f, "regression"),
+            Self::Traffic => write!(f, "traffic"),
+            Self::SignIn => write!(f, "sign-in"),
+            Self::Permissions => write!(f, "permissions"),
+            Self::Security => write!(f, "security"),
+            Self::Identity => write!(f, "identity"),
+            Self::Signup => write!(f, "signup"),
+            Self::Database => write!(f, "database"),
+            Self::Server => write!(f, "server"),
+            Self::DataIntegrity => write!(f, "data-integrity"),
+            Self::Layout => write!(f, "layout"),
+            Self::Interaction => write!(f, "interaction"),
+            Self::Styling => write!(f, "styling"),
+            Self::Copy => write!(f, "copy"),
+            Self::Search => write!(f, "search"),
+            Self::Payment => write!(f, "payment"),
+            Self::Email => write!(f, "email"),
+            Self::Notification => write!(f, "notification"),
+            Self::Chat => write!(f, "chat"),
+            Self::Playback => write!(f, "playback"),
+            Self::Config => write!(f, "config"),
+            Self::Build => write!(f, "build"),
+            Self::VersionControl => write!(f, "version-control"),
+            Self::Integration => write!(f, "integration"),
+            Self::Device => write!(f, "device"),
+            Self::Schedule => write!(f, "schedule"),
+            Self::Unknown => write!(f, "unknown"),
+            Self::__Unknown(val) => write!(f, "{}", val),
+        }
+    }
+}

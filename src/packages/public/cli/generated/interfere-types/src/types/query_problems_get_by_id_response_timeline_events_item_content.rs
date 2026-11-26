@@ -17,17 +17,19 @@ pub enum QueryProblemsGetByIdResponseTimelineEventsItemContent {
 
         QueryProblemsGetByIdResponseTimelineEventsItemContentDescription(QueryProblemsGetByIdResponseTimelineEventsItemContentDescription),
 
-        QueryProblemsGetByIdResponseTimelineEventsItemContentSix(QueryProblemsGetByIdResponseTimelineEventsItemContentSix),
+        QueryProblemsGetByIdResponseTimelineEventsItemContentCorrection(QueryProblemsGetByIdResponseTimelineEventsItemContentCorrection),
+
+        QueryProblemsGetByIdResponseTimelineEventsItemContentAction(QueryProblemsGetByIdResponseTimelineEventsItemContentAction),
 
         QueryProblemsGetByIdResponseTimelineEventsItemContentChart(QueryProblemsGetByIdResponseTimelineEventsItemContentChart),
 
-        QueryProblemsGetByIdResponseTimelineEventsItemContentBasis(QueryProblemsGetByIdResponseTimelineEventsItemContentBasis),
+        QueryProblemsGetByIdResponseTimelineEventsItemContentPriority(QueryProblemsGetByIdResponseTimelineEventsItemContentPriority),
 
-        QueryProblemsGetByIdResponseTimelineEventsItemContentNine(QueryProblemsGetByIdResponseTimelineEventsItemContentNine),
-
-        QueryProblemsGetByIdResponseTimelineEventsItemContentCosineScore(QueryProblemsGetByIdResponseTimelineEventsItemContentCosineScore),
+        QueryProblemsGetByIdResponseTimelineEventsItemContentTen(QueryProblemsGetByIdResponseTimelineEventsItemContentTen),
 
         QueryProblemsGetByIdResponseTimelineEventsItemContentEleven(QueryProblemsGetByIdResponseTimelineEventsItemContentEleven),
+
+        QueryProblemsGetByIdResponseTimelineEventsItemContentTwelve(QueryProblemsGetByIdResponseTimelineEventsItemContentTwelve),
 
         QueryProblemsGetByIdResponseTimelineEventsItemContentRelease(QueryProblemsGetByIdResponseTimelineEventsItemContentRelease),
 
@@ -61,28 +63,32 @@ impl QueryProblemsGetByIdResponseTimelineEventsItemContent {
         matches!(self, Self::QueryProblemsGetByIdResponseTimelineEventsItemContentDescription(_))
     }
 
-    pub fn is_query_problems_get_by_id_response_timeline_events_item_content_six(&self) -> bool {
-        matches!(self, Self::QueryProblemsGetByIdResponseTimelineEventsItemContentSix(_))
+    pub fn is_query_problems_get_by_id_response_timeline_events_item_content_correction(&self) -> bool {
+        matches!(self, Self::QueryProblemsGetByIdResponseTimelineEventsItemContentCorrection(_))
+    }
+
+    pub fn is_query_problems_get_by_id_response_timeline_events_item_content_action(&self) -> bool {
+        matches!(self, Self::QueryProblemsGetByIdResponseTimelineEventsItemContentAction(_))
     }
 
     pub fn is_query_problems_get_by_id_response_timeline_events_item_content_chart(&self) -> bool {
         matches!(self, Self::QueryProblemsGetByIdResponseTimelineEventsItemContentChart(_))
     }
 
-    pub fn is_query_problems_get_by_id_response_timeline_events_item_content_basis(&self) -> bool {
-        matches!(self, Self::QueryProblemsGetByIdResponseTimelineEventsItemContentBasis(_))
+    pub fn is_query_problems_get_by_id_response_timeline_events_item_content_priority(&self) -> bool {
+        matches!(self, Self::QueryProblemsGetByIdResponseTimelineEventsItemContentPriority(_))
     }
 
-    pub fn is_query_problems_get_by_id_response_timeline_events_item_content_nine(&self) -> bool {
-        matches!(self, Self::QueryProblemsGetByIdResponseTimelineEventsItemContentNine(_))
-    }
-
-    pub fn is_query_problems_get_by_id_response_timeline_events_item_content_cosine_score(&self) -> bool {
-        matches!(self, Self::QueryProblemsGetByIdResponseTimelineEventsItemContentCosineScore(_))
+    pub fn is_query_problems_get_by_id_response_timeline_events_item_content_ten(&self) -> bool {
+        matches!(self, Self::QueryProblemsGetByIdResponseTimelineEventsItemContentTen(_))
     }
 
     pub fn is_query_problems_get_by_id_response_timeline_events_item_content_eleven(&self) -> bool {
         matches!(self, Self::QueryProblemsGetByIdResponseTimelineEventsItemContentEleven(_))
+    }
+
+    pub fn is_query_problems_get_by_id_response_timeline_events_item_content_twelve(&self) -> bool {
+        matches!(self, Self::QueryProblemsGetByIdResponseTimelineEventsItemContentTwelve(_))
     }
 
     pub fn is_query_problems_get_by_id_response_timeline_events_item_content_release(&self) -> bool {
@@ -182,16 +188,30 @@ impl QueryProblemsGetByIdResponseTimelineEventsItemContent {
                 }
     }
 
-    pub fn as_query_problems_get_by_id_response_timeline_events_item_content_six(&self) -> Option<&QueryProblemsGetByIdResponseTimelineEventsItemContentSix> {
+    pub fn as_query_problems_get_by_id_response_timeline_events_item_content_correction(&self) -> Option<&QueryProblemsGetByIdResponseTimelineEventsItemContentCorrection> {
         match self {
-                    Self::QueryProblemsGetByIdResponseTimelineEventsItemContentSix(value) => Some(value),
+                    Self::QueryProblemsGetByIdResponseTimelineEventsItemContentCorrection(value) => Some(value),
                     _ => None,
                 }
     }
 
-    pub fn into_query_problems_get_by_id_response_timeline_events_item_content_six(self) -> Option<QueryProblemsGetByIdResponseTimelineEventsItemContentSix> {
+    pub fn into_query_problems_get_by_id_response_timeline_events_item_content_correction(self) -> Option<QueryProblemsGetByIdResponseTimelineEventsItemContentCorrection> {
         match self {
-                    Self::QueryProblemsGetByIdResponseTimelineEventsItemContentSix(value) => Some(value),
+                    Self::QueryProblemsGetByIdResponseTimelineEventsItemContentCorrection(value) => Some(value),
+                    _ => None,
+                }
+    }
+
+    pub fn as_query_problems_get_by_id_response_timeline_events_item_content_action(&self) -> Option<&QueryProblemsGetByIdResponseTimelineEventsItemContentAction> {
+        match self {
+                    Self::QueryProblemsGetByIdResponseTimelineEventsItemContentAction(value) => Some(value),
+                    _ => None,
+                }
+    }
+
+    pub fn into_query_problems_get_by_id_response_timeline_events_item_content_action(self) -> Option<QueryProblemsGetByIdResponseTimelineEventsItemContentAction> {
+        match self {
+                    Self::QueryProblemsGetByIdResponseTimelineEventsItemContentAction(value) => Some(value),
                     _ => None,
                 }
     }
@@ -210,44 +230,30 @@ impl QueryProblemsGetByIdResponseTimelineEventsItemContent {
                 }
     }
 
-    pub fn as_query_problems_get_by_id_response_timeline_events_item_content_basis(&self) -> Option<&QueryProblemsGetByIdResponseTimelineEventsItemContentBasis> {
+    pub fn as_query_problems_get_by_id_response_timeline_events_item_content_priority(&self) -> Option<&QueryProblemsGetByIdResponseTimelineEventsItemContentPriority> {
         match self {
-                    Self::QueryProblemsGetByIdResponseTimelineEventsItemContentBasis(value) => Some(value),
+                    Self::QueryProblemsGetByIdResponseTimelineEventsItemContentPriority(value) => Some(value),
                     _ => None,
                 }
     }
 
-    pub fn into_query_problems_get_by_id_response_timeline_events_item_content_basis(self) -> Option<QueryProblemsGetByIdResponseTimelineEventsItemContentBasis> {
+    pub fn into_query_problems_get_by_id_response_timeline_events_item_content_priority(self) -> Option<QueryProblemsGetByIdResponseTimelineEventsItemContentPriority> {
         match self {
-                    Self::QueryProblemsGetByIdResponseTimelineEventsItemContentBasis(value) => Some(value),
+                    Self::QueryProblemsGetByIdResponseTimelineEventsItemContentPriority(value) => Some(value),
                     _ => None,
                 }
     }
 
-    pub fn as_query_problems_get_by_id_response_timeline_events_item_content_nine(&self) -> Option<&QueryProblemsGetByIdResponseTimelineEventsItemContentNine> {
+    pub fn as_query_problems_get_by_id_response_timeline_events_item_content_ten(&self) -> Option<&QueryProblemsGetByIdResponseTimelineEventsItemContentTen> {
         match self {
-                    Self::QueryProblemsGetByIdResponseTimelineEventsItemContentNine(value) => Some(value),
+                    Self::QueryProblemsGetByIdResponseTimelineEventsItemContentTen(value) => Some(value),
                     _ => None,
                 }
     }
 
-    pub fn into_query_problems_get_by_id_response_timeline_events_item_content_nine(self) -> Option<QueryProblemsGetByIdResponseTimelineEventsItemContentNine> {
+    pub fn into_query_problems_get_by_id_response_timeline_events_item_content_ten(self) -> Option<QueryProblemsGetByIdResponseTimelineEventsItemContentTen> {
         match self {
-                    Self::QueryProblemsGetByIdResponseTimelineEventsItemContentNine(value) => Some(value),
-                    _ => None,
-                }
-    }
-
-    pub fn as_query_problems_get_by_id_response_timeline_events_item_content_cosine_score(&self) -> Option<&QueryProblemsGetByIdResponseTimelineEventsItemContentCosineScore> {
-        match self {
-                    Self::QueryProblemsGetByIdResponseTimelineEventsItemContentCosineScore(value) => Some(value),
-                    _ => None,
-                }
-    }
-
-    pub fn into_query_problems_get_by_id_response_timeline_events_item_content_cosine_score(self) -> Option<QueryProblemsGetByIdResponseTimelineEventsItemContentCosineScore> {
-        match self {
-                    Self::QueryProblemsGetByIdResponseTimelineEventsItemContentCosineScore(value) => Some(value),
+                    Self::QueryProblemsGetByIdResponseTimelineEventsItemContentTen(value) => Some(value),
                     _ => None,
                 }
     }
@@ -262,6 +268,20 @@ impl QueryProblemsGetByIdResponseTimelineEventsItemContent {
     pub fn into_query_problems_get_by_id_response_timeline_events_item_content_eleven(self) -> Option<QueryProblemsGetByIdResponseTimelineEventsItemContentEleven> {
         match self {
                     Self::QueryProblemsGetByIdResponseTimelineEventsItemContentEleven(value) => Some(value),
+                    _ => None,
+                }
+    }
+
+    pub fn as_query_problems_get_by_id_response_timeline_events_item_content_twelve(&self) -> Option<&QueryProblemsGetByIdResponseTimelineEventsItemContentTwelve> {
+        match self {
+                    Self::QueryProblemsGetByIdResponseTimelineEventsItemContentTwelve(value) => Some(value),
+                    _ => None,
+                }
+    }
+
+    pub fn into_query_problems_get_by_id_response_timeline_events_item_content_twelve(self) -> Option<QueryProblemsGetByIdResponseTimelineEventsItemContentTwelve> {
+        match self {
+                    Self::QueryProblemsGetByIdResponseTimelineEventsItemContentTwelve(value) => Some(value),
                     _ => None,
                 }
     }
@@ -318,12 +338,13 @@ impl fmt::Display for QueryProblemsGetByIdResponseTimelineEventsItemContent {
             Self::QueryProblemsGetByIdResponseTimelineEventsItemContentCategory(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsGetByIdResponseTimelineEventsItemContentFour(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsGetByIdResponseTimelineEventsItemContentDescription(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
-            Self::QueryProblemsGetByIdResponseTimelineEventsItemContentSix(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::QueryProblemsGetByIdResponseTimelineEventsItemContentCorrection(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::QueryProblemsGetByIdResponseTimelineEventsItemContentAction(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsGetByIdResponseTimelineEventsItemContentChart(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
-            Self::QueryProblemsGetByIdResponseTimelineEventsItemContentBasis(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
-            Self::QueryProblemsGetByIdResponseTimelineEventsItemContentNine(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
-            Self::QueryProblemsGetByIdResponseTimelineEventsItemContentCosineScore(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::QueryProblemsGetByIdResponseTimelineEventsItemContentPriority(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::QueryProblemsGetByIdResponseTimelineEventsItemContentTen(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsGetByIdResponseTimelineEventsItemContentEleven(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::QueryProblemsGetByIdResponseTimelineEventsItemContentTwelve(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsGetByIdResponseTimelineEventsItemContentRelease(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsGetByIdResponseTimelineEventsItemContentDismissal(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::QueryProblemsGetByIdResponseTimelineEventsItemContentTitle(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),

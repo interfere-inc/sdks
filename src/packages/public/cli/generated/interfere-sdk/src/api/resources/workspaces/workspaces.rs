@@ -808,7 +808,7 @@ impl WorkspacesClient {
             .await
     }
 
-    /// Set the app that receives workspace-key telemetry without a service name. Resolve the app ID from surfaces.list first. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
+    /// Set the app that receives workspace-key telemetry without a service name, using its known ID. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
     ///
     /// # Arguments
     ///

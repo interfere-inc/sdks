@@ -2,13 +2,15 @@ pub use crate::prelude::*;
 #[allow(unused_imports)]
 use super::*;
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissal {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub dismissal: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissalDismissal>,
     #[serde(rename = "recoveryEvidence")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recovery_evidence: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissalRecoveryEvidence>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub recurrence: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissalRecurrence>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub retry: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissalRetry>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -28,6 +30,7 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissal
 pub struct QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissalBuilder {
     dismissal: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissalDismissal>,
     recovery_evidence: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissalRecoveryEvidence>,
+    recurrence: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissalRecurrence>,
     retry: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissalRetry>,
     status: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissalStatus>,
     previous_status: Option<QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissalPreviousStatus>,
@@ -41,6 +44,11 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissal
 
     pub fn recovery_evidence(mut self, value: QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissalRecoveryEvidence) -> Self {
         self.recovery_evidence = Some(value);
+        self
+    }
+
+    pub fn recurrence(mut self, value: QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissalRecurrence) -> Self {
+        self.recurrence = Some(value);
         self
     }
 
@@ -66,6 +74,7 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissal
         Ok(QueryProblemsPreviousAccountsResponseItemTimelineEventsItemContentDismissal {
             dismissal: self.dismissal,
             recovery_evidence: self.recovery_evidence,
+            recurrence: self.recurrence,
             retry: self.retry,
             status: self.status,
             previous_status: self.previous_status.ok_or_else(|| BuildError::missing_field("previous_status"))?,

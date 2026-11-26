@@ -77,7 +77,7 @@ impl PrivateClient {
             .await
     }
 
-    /// List private API-key metadata for an app (surface). Discover the app slug with surfaces.list; secret key material is not returned. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
+    /// List private API-key metadata for an app (surface) with a known slug; secret key material is not returned. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
     ///
     /// # Arguments
     ///

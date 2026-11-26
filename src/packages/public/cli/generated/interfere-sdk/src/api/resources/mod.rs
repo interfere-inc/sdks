@@ -19,7 +19,6 @@
 //! - **Integrations**
 //! - **Manage workspace members, invitations, and your profile**
 //! - **Problems**
-//! - **Surfaces**
 //! - **Billing**
 //! - **Manage the tiers that label companies**
 //! - **Replay**
@@ -30,6 +29,7 @@
 //! - **Scim**
 //! - **Sso**
 //! - **Support**
+//! - **Surfaces**
 
 use crate::{ApiError, ClientConfig};
 
@@ -80,7 +80,6 @@ pub struct ApiClient {
     pub integrations: IntegrationsClient,
     pub users: UsersClient,
     pub problems: ProblemsClient,
-    pub surfaces: SurfacesClient,
     pub billing: BillingClient,
     pub tiers: TiersClient,
     pub replay: ReplayClient,
@@ -91,6 +90,7 @@ pub struct ApiClient {
     pub scim: ScimClient,
     pub sso: SsoClient,
     pub support: SupportClient,
+    pub surfaces: SurfacesClient,
 }
 
 impl ApiClient {
@@ -114,7 +114,6 @@ impl ApiClient {
             integrations: IntegrationsClient::new(config.clone())?,
             users: UsersClient::new(config.clone())?,
             problems: ProblemsClient::new(config.clone())?,
-            surfaces: SurfacesClient::new(config.clone())?,
             billing: BillingClient::new(config.clone())?,
             tiers: TiersClient::new(config.clone())?,
             replay: ReplayClient::new(config.clone())?,
@@ -125,6 +124,7 @@ impl ApiClient {
             scim: ScimClient::new(config.clone())?,
             sso: SsoClient::new(config.clone())?,
             support: SupportClient::new(config.clone())?,
+            surfaces: SurfacesClient::new(config.clone())?,
         })
     }
 }

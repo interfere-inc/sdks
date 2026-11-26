@@ -17,17 +17,19 @@ pub enum TimelineEventContent {
 
         TimelineEventContentDescription(TimelineEventContentDescription),
 
-        TimelineEventContentSix(TimelineEventContentSix),
+        TimelineEventContentCorrection(TimelineEventContentCorrection),
+
+        TimelineEventContentAction(TimelineEventContentAction),
 
         TimelineEventContentChart(TimelineEventContentChart),
 
-        TimelineEventContentBasis(TimelineEventContentBasis),
+        TimelineEventContentPriority(TimelineEventContentPriority),
 
-        TimelineEventContentNine(TimelineEventContentNine),
-
-        TimelineEventContentCosineScore(TimelineEventContentCosineScore),
+        TimelineEventContentTen(TimelineEventContentTen),
 
         TimelineEventContentEleven(TimelineEventContentEleven),
+
+        TimelineEventContentTwelve(TimelineEventContentTwelve),
 
         TimelineEventContentRelease(TimelineEventContentRelease),
 
@@ -61,28 +63,32 @@ impl TimelineEventContent {
         matches!(self, Self::TimelineEventContentDescription(_))
     }
 
-    pub fn is_timeline_event_content_six(&self) -> bool {
-        matches!(self, Self::TimelineEventContentSix(_))
+    pub fn is_timeline_event_content_correction(&self) -> bool {
+        matches!(self, Self::TimelineEventContentCorrection(_))
+    }
+
+    pub fn is_timeline_event_content_action(&self) -> bool {
+        matches!(self, Self::TimelineEventContentAction(_))
     }
 
     pub fn is_timeline_event_content_chart(&self) -> bool {
         matches!(self, Self::TimelineEventContentChart(_))
     }
 
-    pub fn is_timeline_event_content_basis(&self) -> bool {
-        matches!(self, Self::TimelineEventContentBasis(_))
+    pub fn is_timeline_event_content_priority(&self) -> bool {
+        matches!(self, Self::TimelineEventContentPriority(_))
     }
 
-    pub fn is_timeline_event_content_nine(&self) -> bool {
-        matches!(self, Self::TimelineEventContentNine(_))
-    }
-
-    pub fn is_timeline_event_content_cosine_score(&self) -> bool {
-        matches!(self, Self::TimelineEventContentCosineScore(_))
+    pub fn is_timeline_event_content_ten(&self) -> bool {
+        matches!(self, Self::TimelineEventContentTen(_))
     }
 
     pub fn is_timeline_event_content_eleven(&self) -> bool {
         matches!(self, Self::TimelineEventContentEleven(_))
+    }
+
+    pub fn is_timeline_event_content_twelve(&self) -> bool {
+        matches!(self, Self::TimelineEventContentTwelve(_))
     }
 
     pub fn is_timeline_event_content_release(&self) -> bool {
@@ -182,16 +188,30 @@ impl TimelineEventContent {
                 }
     }
 
-    pub fn as_timeline_event_content_six(&self) -> Option<&TimelineEventContentSix> {
+    pub fn as_timeline_event_content_correction(&self) -> Option<&TimelineEventContentCorrection> {
         match self {
-                    Self::TimelineEventContentSix(value) => Some(value),
+                    Self::TimelineEventContentCorrection(value) => Some(value),
                     _ => None,
                 }
     }
 
-    pub fn into_timeline_event_content_six(self) -> Option<TimelineEventContentSix> {
+    pub fn into_timeline_event_content_correction(self) -> Option<TimelineEventContentCorrection> {
         match self {
-                    Self::TimelineEventContentSix(value) => Some(value),
+                    Self::TimelineEventContentCorrection(value) => Some(value),
+                    _ => None,
+                }
+    }
+
+    pub fn as_timeline_event_content_action(&self) -> Option<&TimelineEventContentAction> {
+        match self {
+                    Self::TimelineEventContentAction(value) => Some(value),
+                    _ => None,
+                }
+    }
+
+    pub fn into_timeline_event_content_action(self) -> Option<TimelineEventContentAction> {
+        match self {
+                    Self::TimelineEventContentAction(value) => Some(value),
                     _ => None,
                 }
     }
@@ -210,44 +230,30 @@ impl TimelineEventContent {
                 }
     }
 
-    pub fn as_timeline_event_content_basis(&self) -> Option<&TimelineEventContentBasis> {
+    pub fn as_timeline_event_content_priority(&self) -> Option<&TimelineEventContentPriority> {
         match self {
-                    Self::TimelineEventContentBasis(value) => Some(value),
+                    Self::TimelineEventContentPriority(value) => Some(value),
                     _ => None,
                 }
     }
 
-    pub fn into_timeline_event_content_basis(self) -> Option<TimelineEventContentBasis> {
+    pub fn into_timeline_event_content_priority(self) -> Option<TimelineEventContentPriority> {
         match self {
-                    Self::TimelineEventContentBasis(value) => Some(value),
+                    Self::TimelineEventContentPriority(value) => Some(value),
                     _ => None,
                 }
     }
 
-    pub fn as_timeline_event_content_nine(&self) -> Option<&TimelineEventContentNine> {
+    pub fn as_timeline_event_content_ten(&self) -> Option<&TimelineEventContentTen> {
         match self {
-                    Self::TimelineEventContentNine(value) => Some(value),
+                    Self::TimelineEventContentTen(value) => Some(value),
                     _ => None,
                 }
     }
 
-    pub fn into_timeline_event_content_nine(self) -> Option<TimelineEventContentNine> {
+    pub fn into_timeline_event_content_ten(self) -> Option<TimelineEventContentTen> {
         match self {
-                    Self::TimelineEventContentNine(value) => Some(value),
-                    _ => None,
-                }
-    }
-
-    pub fn as_timeline_event_content_cosine_score(&self) -> Option<&TimelineEventContentCosineScore> {
-        match self {
-                    Self::TimelineEventContentCosineScore(value) => Some(value),
-                    _ => None,
-                }
-    }
-
-    pub fn into_timeline_event_content_cosine_score(self) -> Option<TimelineEventContentCosineScore> {
-        match self {
-                    Self::TimelineEventContentCosineScore(value) => Some(value),
+                    Self::TimelineEventContentTen(value) => Some(value),
                     _ => None,
                 }
     }
@@ -262,6 +268,20 @@ impl TimelineEventContent {
     pub fn into_timeline_event_content_eleven(self) -> Option<TimelineEventContentEleven> {
         match self {
                     Self::TimelineEventContentEleven(value) => Some(value),
+                    _ => None,
+                }
+    }
+
+    pub fn as_timeline_event_content_twelve(&self) -> Option<&TimelineEventContentTwelve> {
+        match self {
+                    Self::TimelineEventContentTwelve(value) => Some(value),
+                    _ => None,
+                }
+    }
+
+    pub fn into_timeline_event_content_twelve(self) -> Option<TimelineEventContentTwelve> {
+        match self {
+                    Self::TimelineEventContentTwelve(value) => Some(value),
                     _ => None,
                 }
     }
@@ -318,12 +338,13 @@ impl fmt::Display for TimelineEventContent {
             Self::TimelineEventContentCategory(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::TimelineEventContentFour(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::TimelineEventContentDescription(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
-            Self::TimelineEventContentSix(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::TimelineEventContentCorrection(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::TimelineEventContentAction(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::TimelineEventContentChart(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
-            Self::TimelineEventContentBasis(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
-            Self::TimelineEventContentNine(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
-            Self::TimelineEventContentCosineScore(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::TimelineEventContentPriority(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::TimelineEventContentTen(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::TimelineEventContentEleven(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
+            Self::TimelineEventContentTwelve(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::TimelineEventContentRelease(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::TimelineEventContentDismissal(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),
             Self::TimelineEventContentTitle(value) => write!(f, "{}", serde_json::to_string(value).unwrap_or_else(|_| format!("{:?}", value))),

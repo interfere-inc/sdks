@@ -34,7 +34,6 @@ Full command reference for `interfere`.
 - [`interfere support messages`](#interfere-support-messages)
 - [`interfere support threads`](#interfere-support-threads)
 - [`interfere surface-keys`](#interfere-surface-keys)
-- [`interfere surfaces`](#interfere-surfaces)
 - [`interfere surfaces environments`](#interfere-surfaces-environments)
 - [`interfere tenants`](#interfere-tenants)
 - [`interfere tenants tiers`](#interfere-tenants-tiers)
@@ -837,7 +836,7 @@ List private API-key metadata across the workspace. This does not recover secret
 
 #### `interfere keys private list-for-surface`
 
-List private API-key metadata for an app (surface). Discover the app slug with surfaces.list; secret key material is not returned. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
+List private API-key metadata for an app (surface) with a known slug; secret key material is not returned. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
 
 `POST /v3/workspaces/{workspaceSlug}/queries/apiKeys.forSurface`
 
@@ -897,7 +896,7 @@ List workspace-scoped publishable key records (surfaceId null). Every app in the
 
 #### `interfere keys public get`
 
-Reads a publishable key's identity, current value and revocation status. Requires app read permission. Revoked keys and keys belonging to deleted apps report revoked: true.
+Reads a publishable key's identity, current value and revocation status. Requires app read permission. Revoked keys report revoked: true, and so do keys of a deleted app unless the key is still mapped to a service and keeps ingesting.
 
 `GET /v3/workspaces/{workspaceSlug}/surfaces/{surfaceSlug}/publicKeys/{publicKeyId}`
 
@@ -1357,6 +1356,17 @@ Durably accepts all signed files and their verified manifest. R2 publication ret
 | `--environment` | `string` | No | Deploy environment of the build. Each environment of a release has its own source maps; omit it to use the source maps of the release. |
 | `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
 
+#### `interfere releases for-service`
+
+List releases for a service by its ID to correlate a problem with deployed versions. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
+
+`POST /v3/workspaces/{workspaceSlug}/queries/releases.forService`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
+
 #### `interfere releases get-releases-config`
 
 Resolves the surface and organization a build-time key belongs to.
@@ -1374,33 +1384,22 @@ Reads the exact environment upload session and verifies its published manifest w
 | `--release-slug` | `string` | Yes |  |
 | `--environment` | `string` | No | Deploy environment of the build. Each environment of a release has its own source maps; omit it to use the source maps of the release. |
 
-#### `interfere releases latest-by-surface`
+#### `interfere releases latest-by-service`
 
-Read the latest release for the selected app (surface) using the documented arguments. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
+Read the latest release for the selected service using the documented arguments. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
 
-`POST /v3/workspaces/{workspaceSlug}/queries/releases.latestBySurface`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
-
-#### `interfere releases list-for-surface`
-
-List releases for an app (surface) to correlate a problem with deployed versions. Obtain the app slug from surfaces.list. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
-
-`POST /v3/workspaces/{workspaceSlug}/queries/releases.forSurface`
+`POST /v3/workspaces/{workspaceSlug}/queries/releases.latestByService`
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
 | `--workspace-slug` | `string` | Yes |  |
 | `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
 
-#### `interfere releases recent-by-surface`
+#### `interfere releases recent-by-service`
 
-Read recent releases for the selected app (surface) to compare deployment timing with a regression. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
+Read recent releases for the selected service to compare deployment timing with a regression. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
 
-`POST /v3/workspaces/{workspaceSlug}/queries/releases.recentBySurface`
+`POST /v3/workspaces/{workspaceSlug}/queries/releases.recentByService`
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
@@ -1782,142 +1781,6 @@ List workspace support conversations and their state. Reading does not contact s
 Do not assume a found Interfere key works. Call this for every public or secret key found in environment variables, .env files, Worker secrets or CI secrets before reusing it. The key is checked live against the same authentication the SDKs and build plugins use and compared with this workspace; it is never stored, logged or returned. Act on outcome and nextStep: only `valid` means the key can be reused here.
 
 `POST /v3/workspaces/{workspaceSlug}/keys/validate`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
-
----
-
-### `interfere surfaces`
-
-#### `interfere surfaces delete`
-
-Delete an app (surface). This is destructive; resolve its exact ID and slug with surfaces.list and verify the requested target. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
-
-`POST /v3/workspaces/{workspaceSlug}/actions/surfaces.delete`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
-
-#### `interfere surfaces get`
-
-Read one active app (surface) by its human-facing slug. Use surfaces.list to discover slugs and IDs; they are not interchangeable. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
-
-`POST /v3/workspaces/{workspaceSlug}/queries/surfaces.getBySlug`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
-
-#### `interfere surfaces get-by-slug-include-deleted`
-
-Read an app (surface) by slug even if deleted. Use only when investigating historical references; prefer surfaces.get for active resources. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Requires org:surfaces:read; insufficient permission returns an access-denied error. An authorized read with no matching resource returns WORKSPACE_RESOURCE_NOT_FOUND (404). Only use pagination arguments declared in the schema.
-
-`POST /v3/workspaces/{workspaceSlug}/queries/surfaces.getBySlugIncludeDeleted`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
-
-#### `interfere surfaces list`
-
-List active apps (surfaces) in the workspace. Start here to resolve an app name to its ID and slug before querying environments, releases or keys. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
-
-`POST /v3/workspaces/{workspaceSlug}/queries/surfaces.list`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-| `--json` | `JSON` | No | Request body as JSON (or use individual body-field flags) |
-
-#### `interfere surfaces set-anonymous-replay-policy`
-
-Choose when an app (surface) records session replay for visitors that are not identified: always, on_error (only once an error occurs) or never. Identified users always record. Inspect its current setting first. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
-
-`POST /v3/workspaces/{workspaceSlug}/actions/surfaces.setAnonymousReplayPolicy`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
-
-#### `interfere surfaces set-anonymous-user-tracking`
-
-Enable or disable anonymous-user tracking for an app (surface). Inspect its current setting first. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
-
-`POST /v3/workspaces/{workspaceSlug}/actions/surfaces.setAnonymousUserTracking`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
-
-#### `interfere surfaces set-onboarded`
-
-Mark an app's (surface's) onboarding state after verifying the requested setup status. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
-
-`POST /v3/workspaces/{workspaceSlug}/actions/surfaces.setOnboarded`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
-
-#### `interfere surfaces set-sdk-plugin`
-
-Turn one browser SDK feature (replay, logs, pageEvents or rageClick) on or off for an app (surface). Other SDK settings are kept. Next.js and Vite apps bake this at build time, so it takes effect on their next build and deploy. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
-
-`POST /v3/workspaces/{workspaceSlug}/actions/surfaces.setSdkPlugin`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
-
-#### `interfere surfaces surface-activity`
-
-Returns activity for apps (surfaces) in the workspace.
-
-`GET /v3/workspaces/{workspaceSlug}/surfaces/activity`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-
-#### `interfere surfaces surface-events-timeseries`
-
-Returns event counts grouped into time buckets for the app (surface).
-
-`GET /v3/workspaces/{workspaceSlug}/surfaces/{surfaceSlug}/events/timeseries`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-| `--surface-slug` | `string` | Yes |  |
-| `--environment` | `string` | No |  |
-| `--window` | `4h | 8h | 12h | 24h` | No |  |
-
-#### `interfere surfaces surface-sdk-status`
-
-Returns apps (surfaces) with outdated SDKs in the workspace, and those whose SDK is too old for problem and finding generation.
-
-`GET /v3/workspaces/{workspaceSlug}/surfaces/activity/sdk-status`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-
-#### `interfere surfaces update-name`
-
-Rename an app (surface). Resolve its ID with surfaces.list and preserve the rest of its settings. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
-
-`POST /v3/workspaces/{workspaceSlug}/actions/surfaces.updateName`
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
@@ -2719,7 +2582,7 @@ Update workspace name or other basic settings described by the input schema. Rea
 
 #### `interfere workspaces update-default-surface`
 
-Set the app that receives workspace-key telemetry without a service name. Resolve the app ID from surfaces.list first. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
+Set the app that receives workspace-key telemetry without a service name, using its known ID. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
 
 `POST /v3/workspaces/{workspaceSlug}/actions/workspaces.updateDefaultSurface`
 

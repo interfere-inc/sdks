@@ -535,7 +535,7 @@ impl ReleasesClient {
             .await
     }
 
-    /// List releases for an app (surface) to correlate a problem with deployed versions. Obtain the app slug from surfaces.list. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
+    /// List releases for a service by its ID to correlate a problem with deployed versions. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
     ///
     /// # Arguments
     ///
@@ -560,11 +560,11 @@ impl ReleasesClient {
     ///     let client = InterfereClient::new(config).expect("Failed to build client");
     ///     client
     ///         .releases
-    ///         .list_for_surface(
+    ///         .for_service(
     ///             &"workspaceSlug".to_string(),
-    ///             &ListForSurfaceReleasesRequest {
-    ///                 args: ListForSurfaceReleasesRequestArgs {
-    ///                     surface_slug: "surfaceSlug".to_string(),
+    ///             &ForServiceReleasesRequest {
+    ///                 args: ForServiceReleasesRequestArgs {
+    ///                     service_id: "serviceId".to_string(),
     ///                     ..Default::default()
     ///                 },
     ///             },
@@ -573,12 +573,12 @@ impl ReleasesClient {
     ///         .await;
     /// }
     /// ```
-    pub async fn list_for_surface(
+    pub async fn for_service(
         &self,
         workspace: &str,
-        request: &ListForSurfaceReleasesRequest,
+        request: &ForServiceReleasesRequest,
         options: Option<RequestOptions>,
-    ) -> Result<QueryReleasesForSurfaceResponse, ApiError> {
+    ) -> Result<QueryReleasesForServiceResponse, ApiError> {
         let endpoint_auth_headers = self
             .http_client
             .resolve_endpoint_auth_headers(&options, &[&["clerkSession"] as &[&str]])
@@ -593,7 +593,7 @@ impl ReleasesClient {
         self.http_client
             .execute_request(
                 Method::POST,
-                &format!("v3/workspaces/{}/queries/releases.forSurface", workspace),
+                &format!("v3/workspaces/{}/queries/releases.forService", workspace),
                 Some(serde_json::to_value(request).map_err(ApiError::Serialization)?),
                 None,
                 options,
@@ -601,7 +601,7 @@ impl ReleasesClient {
             .await
     }
 
-    /// Read the latest release for the selected app (surface) using the documented arguments. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
+    /// Read the latest release for the selected service using the documented arguments. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
     ///
     /// # Arguments
     ///
@@ -626,11 +626,11 @@ impl ReleasesClient {
     ///     let client = InterfereClient::new(config).expect("Failed to build client");
     ///     client
     ///         .releases
-    ///         .latest_by_surface(
+    ///         .latest_by_service(
     ///             &"workspaceSlug".to_string(),
-    ///             &LatestBySurfaceReleasesRequest {
-    ///                 args: LatestBySurfaceReleasesRequestArgs {
-    ///                     surface_slug: "surfaceSlug".to_string(),
+    ///             &LatestByServiceReleasesRequest {
+    ///                 args: LatestByServiceReleasesRequestArgs {
+    ///                     service_id: "serviceId".to_string(),
     ///                     primary_environment: None,
     ///                     ..Default::default()
     ///                 },
@@ -640,12 +640,12 @@ impl ReleasesClient {
     ///         .await;
     /// }
     /// ```
-    pub async fn latest_by_surface(
+    pub async fn latest_by_service(
         &self,
         workspace: &str,
-        request: &LatestBySurfaceReleasesRequest,
+        request: &LatestByServiceReleasesRequest,
         options: Option<RequestOptions>,
-    ) -> Result<Option<QueryReleasesLatestBySurfaceResponse>, ApiError> {
+    ) -> Result<Option<QueryReleasesLatestByServiceResponse>, ApiError> {
         let endpoint_auth_headers = self
             .http_client
             .resolve_endpoint_auth_headers(&options, &[&["clerkSession"] as &[&str]])
@@ -661,7 +661,7 @@ impl ReleasesClient {
             .execute_request(
                 Method::POST,
                 &format!(
-                    "v3/workspaces/{}/queries/releases.latestBySurface",
+                    "v3/workspaces/{}/queries/releases.latestByService",
                     workspace
                 ),
                 Some(serde_json::to_value(request).map_err(ApiError::Serialization)?),
@@ -671,7 +671,7 @@ impl ReleasesClient {
             .await
     }
 
-    /// Read recent releases for the selected app (surface) to compare deployment timing with a regression. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
+    /// Read recent releases for the selected service to compare deployment timing with a regression. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
     ///
     /// # Arguments
     ///
@@ -696,11 +696,11 @@ impl ReleasesClient {
     ///     let client = InterfereClient::new(config).expect("Failed to build client");
     ///     client
     ///         .releases
-    ///         .recent_by_surface(
+    ///         .recent_by_service(
     ///             &"workspaceSlug".to_string(),
-    ///             &RecentBySurfaceReleasesRequest {
-    ///                 args: RecentBySurfaceReleasesRequestArgs {
-    ///                     surface_slug: "surfaceSlug".to_string(),
+    ///             &RecentByServiceReleasesRequest {
+    ///                 args: RecentByServiceReleasesRequestArgs {
+    ///                     service_id: "serviceId".to_string(),
     ///                     limit: 1.1,
     ///                     ..Default::default()
     ///                 },
@@ -710,12 +710,12 @@ impl ReleasesClient {
     ///         .await;
     /// }
     /// ```
-    pub async fn recent_by_surface(
+    pub async fn recent_by_service(
         &self,
         workspace: &str,
-        request: &RecentBySurfaceReleasesRequest,
+        request: &RecentByServiceReleasesRequest,
         options: Option<RequestOptions>,
-    ) -> Result<QueryReleasesRecentBySurfaceResponse, ApiError> {
+    ) -> Result<QueryReleasesRecentByServiceResponse, ApiError> {
         let endpoint_auth_headers = self
             .http_client
             .resolve_endpoint_auth_headers(&options, &[&["clerkSession"] as &[&str]])
@@ -731,7 +731,7 @@ impl ReleasesClient {
             .execute_request(
                 Method::POST,
                 &format!(
-                    "v3/workspaces/{}/queries/releases.recentBySurface",
+                    "v3/workspaces/{}/queries/releases.recentByService",
                     workspace
                 ),
                 Some(serde_json::to_value(request).map_err(ApiError::Serialization)?),

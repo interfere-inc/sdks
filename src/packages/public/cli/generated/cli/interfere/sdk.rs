@@ -95,10 +95,6 @@ pub fn client(ctx: &AppContext) -> interfere_sdk::api::ApiClient {
             http_client: http_client.clone(),
             timeline: interfere_sdk::api::resources::problems::TimelineClient { http_client: http_client.clone() },
         },
-        surfaces: interfere_sdk::api::SurfacesClient {
-            http_client: http_client.clone(),
-            environments: interfere_sdk::api::resources::surfaces::EnvironmentsClient2 { http_client: http_client.clone() },
-        },
         billing: interfere_sdk::api::BillingClient {
             http_client: http_client.clone(),
             invoices: interfere_sdk::api::resources::billing::InvoicesClient { http_client: http_client.clone() },
@@ -129,6 +125,10 @@ pub fn client(ctx: &AppContext) -> interfere_sdk::api::ApiClient {
             http_client: http_client.clone(),
             messages: interfere_sdk::api::resources::support::MessagesClient { http_client: http_client.clone() },
             threads: interfere_sdk::api::resources::support::ThreadsClient { http_client: http_client.clone() },
+        },
+        surfaces: interfere_sdk::api::SurfacesClient {
+            http_client: http_client.clone(),
+            environments: interfere_sdk::api::resources::surfaces::EnvironmentsClient2 { http_client: http_client.clone() },
         },
     }
 }
