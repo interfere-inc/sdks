@@ -5,7 +5,7 @@
 //!
 //! ## Type Categories
 //!
-//! - **Request/Response Types**: 2277 types for API operations
+//! - **Request/Response Types**: 2274 types for API operations
 //! - **Model Types**: 668 types for data representation
 
 pub mod drain_drain_otlp_export_request_signal;
@@ -26,7 +26,6 @@ pub mod workspaces_set_enterprise_connection_active_workspaces_request_args;
 pub mod workspaces_update_auto_assign_problems_workspaces_request_args;
 pub mod workspaces_update_auto_create_apps_workspaces_request_args;
 pub mod workspaces_update_basics_workspaces_request_args;
-pub mod workspaces_update_default_surface_workspaces_request_args;
 pub mod workspaces_update_enterprise_connection_workspaces_request_args;
 pub mod workspaces_save_network_rules_request_rules_item;
 pub mod network_asn_network_request_args;
@@ -2452,7 +2451,6 @@ pub mod mutation_workspaces_set_scim_directory_enabled_response;
 pub mod mutation_workspaces_update_auto_assign_problems_response;
 pub mod mutation_workspaces_update_auto_create_apps_response;
 pub mod mutation_workspaces_update_basics_response;
-pub mod mutation_workspaces_update_default_surface_response;
 pub mod mutation_workspaces_update_enterprise_connection_response;
 pub mod mutation_problems_dismiss_response;
 pub mod mutation_problems_restore_response;
@@ -2777,7 +2775,6 @@ pub mod set_enterprise_connection_active_workspaces_request;
 pub mod update_auto_assign_problems_workspaces_request;
 pub mod update_auto_create_apps_workspaces_request;
 pub mod update_basics_workspaces_request;
-pub mod update_default_surface_workspaces_request;
 pub mod update_enterprise_connection_workspaces_request;
 pub mod create_workspace_public_key_request;
 pub mod roll_workspace_public_key_request;
@@ -2972,7 +2969,6 @@ pub use workspaces_set_enterprise_connection_active_workspaces_request_args::Set
 pub use workspaces_update_auto_assign_problems_workspaces_request_args::UpdateAutoAssignProblemsWorkspacesRequestArgs;
 pub use workspaces_update_auto_create_apps_workspaces_request_args::UpdateAutoCreateAppsWorkspacesRequestArgs;
 pub use workspaces_update_basics_workspaces_request_args::UpdateBasicsWorkspacesRequestArgs;
-pub use workspaces_update_default_surface_workspaces_request_args::UpdateDefaultSurfaceWorkspacesRequestArgs;
 pub use workspaces_update_enterprise_connection_workspaces_request_args::UpdateEnterpriseConnectionWorkspacesRequestArgs;
 pub use workspaces_save_network_rules_request_rules_item::SaveNetworkRulesRequestRulesItem;
 pub use network_asn_network_request_args::AsnNetworkRequestArgs;
@@ -5398,7 +5394,6 @@ pub use mutation_workspaces_set_scim_directory_enabled_response::MutationWorkspa
 pub use mutation_workspaces_update_auto_assign_problems_response::MutationWorkspacesUpdateAutoAssignProblemsResponse;
 pub use mutation_workspaces_update_auto_create_apps_response::MutationWorkspacesUpdateAutoCreateAppsResponse;
 pub use mutation_workspaces_update_basics_response::MutationWorkspacesUpdateBasicsResponse;
-pub use mutation_workspaces_update_default_surface_response::MutationWorkspacesUpdateDefaultSurfaceResponse;
 pub use mutation_workspaces_update_enterprise_connection_response::MutationWorkspacesUpdateEnterpriseConnectionResponse;
 pub use mutation_problems_dismiss_response::MutationProblemsDismissResponse;
 pub use mutation_problems_restore_response::MutationProblemsRestoreResponse;
@@ -5723,7 +5718,6 @@ pub use set_enterprise_connection_active_workspaces_request::SetEnterpriseConnec
 pub use update_auto_assign_problems_workspaces_request::UpdateAutoAssignProblemsWorkspacesRequest;
 pub use update_auto_create_apps_workspaces_request::UpdateAutoCreateAppsWorkspacesRequest;
 pub use update_basics_workspaces_request::UpdateBasicsWorkspacesRequest;
-pub use update_default_surface_workspaces_request::UpdateDefaultSurfaceWorkspacesRequest;
 pub use update_enterprise_connection_workspaces_request::UpdateEnterpriseConnectionWorkspacesRequest;
 pub use create_workspace_public_key_request::CreateWorkspacePublicKeyRequest;
 pub use roll_workspace_public_key_request::RollWorkspacePublicKeyRequest;

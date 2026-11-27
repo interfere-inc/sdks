@@ -1251,11 +1251,6 @@ async fn wire_update_basics() {
 }
 
 #[tokio::test]
-async fn wire_update_default_surface() {
-    run_case("update_default_surface").await;
-}
-
-#[tokio::test]
 async fn wire_update_enterprise_connection() {
     run_case("update_enterprise_connection").await;
 }
@@ -2398,11 +2393,6 @@ async fn wire_update_auto_create_apps_error() {
 #[tokio::test]
 async fn wire_update_basics_error() {
     run_case("update_basics_error").await;
-}
-
-#[tokio::test]
-async fn wire_update_default_surface_error() {
-    run_case("update_default_surface_error").await;
 }
 
 #[tokio::test]

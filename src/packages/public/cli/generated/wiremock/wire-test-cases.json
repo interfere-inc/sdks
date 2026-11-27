@@ -848,26 +848,6 @@
       }
     },
     {
-      "id": "update_default_surface",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/actions/workspaces.updateDefaultSurface",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "args": {
-          "surfaceId": null
-        }
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "{\n  \"success\": true\n}"
-      }
-    },
-    {
       "id": "update_enterprise_connection",
       "method": "POST",
       "path": "/v3/workspaces/{workspace}/actions/workspaces.updateEnterpriseConnection",
@@ -5374,27 +5354,6 @@
       },
       "body": {
         "args": {}
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
-      "id": "update_default_surface_error",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/actions/workspaces.updateDefaultSurface",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "args": {
-          "surfaceId": null
-        }
       },
       "queryMatchers": [],
       "headerMatchers": [],
