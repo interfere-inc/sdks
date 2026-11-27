@@ -4,26 +4,10 @@ import {
   API_URL_GLOBAL,
   FORCE_ENABLE_GLOBAL,
   INGEST_URL_GLOBAL,
-  PUBLIC_KEY_GLOBAL,
 } from "@interfere/types/sdk/injected-globals";
 import { RELEASE_TOKEN_GLOBAL } from "@interfere/types/sdk/release/token";
 
 import { getGlobal, getStringGlobal, setGlobal } from "../../util/global.js";
-
-function resolvePublicKey() {
-  const injected = getStringGlobal(PUBLIC_KEY_GLOBAL);
-
-  if (injected) {
-    return injected;
-  }
-
-  if (typeof process !== "undefined") {
-    // oxlint-disable-next-line node/no-process-env
-    return process.env["INTERFERE_PUBLIC_KEY"] ?? undefined;
-  }
-
-  return;
-}
 
 function resolveReleaseToken() {
   return getStringGlobal(RELEASE_TOKEN_GLOBAL) || undefined;
@@ -31,10 +15,10 @@ function resolveReleaseToken() {
 
 /**
  * Every ingest route rejects requests without a credential, so a kernel with
- * neither a public key nor a release token cannot deliver anything.
+ * no release token cannot deliver anything.
  */
 export function hasIngestCredential() {
-  return Boolean(resolvePublicKey() || resolveReleaseToken());
+  return Boolean(resolveReleaseToken());
 }
 
 /**
@@ -73,7 +57,6 @@ export function resolveTargets(
     serviceNamespace?: string | undefined;
   },
 ) {
-  const publicKey = resolvePublicKey();
   const releaseToken = resolveReleaseToken();
   const headers: Record<string, string> = {};
 
@@ -103,9 +86,7 @@ export function resolveTargets(
 
   const options = omitUndefined({
     headers,
-    publicKeyHeader: publicKey ? { apiKey: publicKey } : undefined,
-    releaseTokenHeader:
-      releaseToken && !publicKey ? { apiKey: releaseToken } : undefined,
+    releaseTokenHeader: releaseToken ? { apiKey: releaseToken } : undefined,
     timeoutInSeconds: 10,
     maxRetries: 0,
   });

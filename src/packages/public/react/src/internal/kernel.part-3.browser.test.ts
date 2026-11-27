@@ -164,7 +164,7 @@ describe(createKernel, () => {
   ])(
     "uses local plugin defaults when remote config %s",
     async (_case, response) => {
-      setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", "test-key");
+      setInjectedConfiguration("__INTERFERE_RELEASE_TOKEN__", "test-key");
 
       const configRequests = serveConfig(response());
 

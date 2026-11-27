@@ -1,7 +1,7 @@
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { HttpResponse, http } from "msw";
-import { PHASE_DEVELOPMENT_SERVER } from "next/constants";
+import { PHASE_PRODUCTION_SERVER } from "next/constants";
 
 import {
   RELEASE_RESPONSE,
@@ -82,9 +82,7 @@ test("reports no_maps through the production compile hook", async () => {
       ),
     );
 
-    vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test_123");
-
-    const config = await withInterfere()(PHASE_DEVELOPMENT_SERVER);
+    const config = await withInterfere()(PHASE_PRODUCTION_SERVER);
 
     const compile = config.compiler?.runAfterProductionCompile;
 
@@ -214,9 +212,7 @@ test("reports cleanup_failed through the production compile hook", async () => {
       );
     }
 
-    vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test_123");
-
-    const config = await withInterfere()(PHASE_DEVELOPMENT_SERVER);
+    const config = await withInterfere()(PHASE_PRODUCTION_SERVER);
 
     const compile = config.compiler?.runAfterProductionCompile;
 
@@ -309,9 +305,7 @@ test("links the services page when the release has no app", async () => {
       ),
     );
 
-    vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test_123");
-
-    const config = await withInterfere()(PHASE_DEVELOPMENT_SERVER);
+    const config = await withInterfere()(PHASE_PRODUCTION_SERVER);
 
     await config.compiler?.runAfterProductionCompile?.({
       distDir: ".next",

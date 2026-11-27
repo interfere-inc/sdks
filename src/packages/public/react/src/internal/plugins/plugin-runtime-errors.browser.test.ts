@@ -35,7 +35,7 @@ beforeEach(() => {
     new SessionTracker({
       target: {
         baseUrl: "https://plugins.invalid",
-        publicKeyHeader: { apiKey: "test-key" },
+        releaseTokenHeader: { apiKey: "test-key" },
       },
     }),
   );
@@ -55,7 +55,7 @@ beforeEach(() => {
     getSessionId: () => kernel.session.getId(),
     clientOptions: {
       baseUrl: "https://plugins.invalid",
-      publicKeyHeader: { apiKey: "test-key" },
+      releaseTokenHeader: { apiKey: "test-key" },
     },
     sdkStack: [],
   });

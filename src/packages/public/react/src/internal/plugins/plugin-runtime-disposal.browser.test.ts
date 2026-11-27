@@ -8,8 +8,8 @@ import { setInjectedConfiguration } from "@interfere/test-config/injected-config
 import {
   API_URL_GLOBAL,
   INGEST_URL_GLOBAL,
-  PUBLIC_KEY_GLOBAL,
 } from "@interfere/types/sdk/injected-globals";
+import { RELEASE_TOKEN_GLOBAL } from "@interfere/types/sdk/release/token";
 import { record } from "rrweb";
 
 import { DISABLE_ALL_PLUGINS } from "../../../test/fixtures/disable-all-plugins.js";
@@ -36,10 +36,10 @@ function createRuntime(consent?: "required", remote?: RemotePluginConfig) {
 
   setInjectedConfiguration(INGEST_URL_GLOBAL, ORIGIN);
 
-  setInjectedConfiguration(PUBLIC_KEY_GLOBAL, "interfere_pk_test");
+  setInjectedConfiguration(RELEASE_TOKEN_GLOBAL, "interfere_pk_test");
 
   const tracker = new SessionTracker({
-    target: { baseUrl: ORIGIN, publicKeyHeader: { apiKey: "test-key" } },
+    target: { baseUrl: ORIGIN, releaseTokenHeader: { apiKey: "test-key" } },
   });
 
   const kernel = new Kernel(tracker);
@@ -50,7 +50,10 @@ function createRuntime(consent?: "required", remote?: RemotePluginConfig) {
   const exporter = new InMemorySpanExporter();
 
   const otel = buildOtelProvider({
-    clientOptions: { baseUrl: ORIGIN, publicKeyHeader: { apiKey: "test-key" } },
+    clientOptions: {
+      baseUrl: ORIGIN,
+      releaseTokenHeader: { apiKey: "test-key" },
+    },
     getDeviceId: () => kernel.device.getDeviceId(),
     getSessionId: () => kernel.session.getId(),
     sdkStack: [],

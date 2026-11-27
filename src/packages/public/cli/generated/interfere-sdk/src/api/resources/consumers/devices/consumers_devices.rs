@@ -13,7 +13,7 @@ impl DevicesClient {
         })
     }
 
-    /// List devices associated with an application user, with each device's app (surface) even when that app was deleted (check surface.deletedAt). Resolve the user ID with consumers.list first. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
+    /// List devices associated with an application user, including devices first seen by an app that was later deleted. Resolve the user ID with consumers.list first. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
     ///
     /// # Arguments
     ///

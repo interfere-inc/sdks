@@ -41,12 +41,10 @@ import { resolveReleaseSlug } from "./internal/release-slug.js";
 import {
   readNextMajorVersion,
   supportsProductionCompileHook,
-  warnIfPublicKeyDeprecated,
   warnIfServerInstrumentationMissing,
 } from "./internal/setup-warnings.js";
 
 const DIAGNOSTIC_CONTEXT: ReleaseDiagnosticContext = {
-  publicKeyEnvVar: "INTERFERE_PUBLIC_KEY",
   docsUrl: "https://interfere.com/docs/sdk/next-js",
 };
 
@@ -108,7 +106,6 @@ export interface ResolvedBuildConfig {
    * `development` even when this is unset.
    */
   readonly environment: string | null;
-  readonly publicKey: string | null;
   /**
    * The release a production build registered during preflight, or the shared local-development release the dev server minted. Its token is
    * stamped into the bundle as `__INTERFERE_RELEASE_TOKEN__` and the build
@@ -328,10 +325,7 @@ function buildResolvedInterfereConfig(
     },
   });
 
-  warnIfPublicKeyDeprecated(config.publicKey);
-
-  const browserCredential =
-    config.publicKey !== null || Boolean(config.registeredRelease?.token);
+  const browserCredential = Boolean(config.registeredRelease?.token);
 
   if (browserCredential && !build.clientInstrumentationApplies) {
     log.warn("Missing instrumentation client", [
@@ -379,7 +373,7 @@ function buildResolvedInterfereConfig(
 }
 
 function resolveBuildConfig(settings: NextPluginConfig, phase: string) {
-  const { apiKey, apiUrl, publicKey } = readInterfereEnv();
+  const { apiKey, apiUrl } = readInterfereEnv();
   const { commitSha, slug } = resolveReleaseSlug(runGitCommand);
   const isProductionBuild = phase === PHASE_PRODUCTION_BUILD;
 
@@ -393,7 +387,6 @@ function resolveBuildConfig(settings: NextPluginConfig, phase: string) {
     apiUrl,
     buildId: commitSha,
     environment,
-    publicKey: publicKey ?? null,
     serviceName: resolveBuildServiceName({
       root: process.cwd(),
       option: settings.serviceName,

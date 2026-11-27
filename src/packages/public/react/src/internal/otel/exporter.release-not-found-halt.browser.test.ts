@@ -45,7 +45,7 @@ function collector(respond: HttpResponseResolver) {
 
 const CLIENT_OPTIONS = {
   baseUrl: "https://in.example.com",
-  publicKeyHeader: { apiKey: "test-key" },
+  releaseTokenHeader: { apiKey: "test-key" },
 };
 
 function exporterUnderTest() {
@@ -94,9 +94,6 @@ const releaseNotFound = () =>
     },
     { status: 422 },
   );
-
-const authInvalid = () =>
-  HttpResponse.json({ code: "AUTH_PK_INVALID" }, { status: 401 });
 
 async function exportOnce(exporter: ReturnType<typeof exporterUnderTest>) {
   const callback = exportSpan(exporter);
@@ -240,62 +237,5 @@ describe("release-not-found halt", () => {
     expect(vi.mocked(console.warn).mock.calls[0]?.[0]).not.toContain(
       "undefined",
     );
-  });
-
-  test("tolerates auth-invalid rejections below the threshold", async () => {
-    worker.use(collector(authInvalid));
-
-    const exporter = exporterUnderTest();
-
-    await exportOnce(exporter);
-
-    await exportOnce(exporter);
-
-    expect(isIngestHalted()).toBe(false);
-    expect(requests).toHaveLength(2);
-  });
-
-  test("halts after three consecutive auth-invalid rejections", async () => {
-    worker.use(collector(authInvalid));
-
-    const exporter = exporterUnderTest();
-
-    await exportOnce(exporter);
-
-    await exportOnce(exporter);
-
-    await exportOnce(exporter);
-
-    expect(isIngestHalted()).toBe(true);
-
-    expect(console.warn).toHaveBeenCalledWith(
-      expect.stringContaining("INTERFERE_API_KEY"),
-    );
-
-    exporter.export([makeSpan()], vi.fn());
-
-    expect(requests).toHaveLength(3);
-  });
-
-  test("names the public key, not the release, while auth-halted", async () => {
-    worker.use(collector(authInvalid));
-
-    const exporter = exporterUnderTest();
-
-    await exportOnce(exporter);
-
-    await exportOnce(exporter);
-
-    await exportOnce(exporter);
-
-    const halted = exportSpan(exporter);
-
-    await halted.called;
-
-    expect(halted.mock.calls[0]?.[0].error?.message).toBe(
-      "ingest paused: the ingest endpoint rejected this page's public key",
-    );
-
-    expect(requests).toHaveLength(3);
   });
 });

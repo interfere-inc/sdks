@@ -50,8 +50,6 @@ test.each([
 
     onTestFinished(async () => rm(root, { recursive: true, force: true }));
 
-    vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "interfere_pk_test");
-
     vi.stubEnv("INTERFERE_API_KEY", "interfere_ak_test");
 
     vi.stubEnv("INTERFERE_API_URL", RELEASE_API);

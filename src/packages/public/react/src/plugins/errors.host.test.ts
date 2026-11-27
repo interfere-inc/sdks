@@ -9,7 +9,7 @@ test("sets up and cleans up in native Node without browser event registration", 
     new SessionTracker({
       target: {
         baseUrl: "https://errors.invalid",
-        publicKeyHeader: { apiKey: "test" },
+        releaseTokenHeader: { apiKey: "test" },
       },
     }),
   );

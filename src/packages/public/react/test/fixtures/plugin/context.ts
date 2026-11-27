@@ -12,7 +12,7 @@ import { addBaselineHandlers } from "../../msw.js";
 
 const target = {
   baseUrl: "https://plugin-context.invalid",
-  publicKeyHeader: { apiKey: "test-key" },
+  releaseTokenHeader: { apiKey: "test-key" },
 };
 
 addBaselineHandlers(

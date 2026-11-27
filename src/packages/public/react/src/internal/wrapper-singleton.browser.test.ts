@@ -25,7 +25,7 @@ function createWrapper() {
 }
 
 beforeEach(() => {
-  setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", undefined);
+  setInjectedConfiguration("__INTERFERE_RELEASE_TOKEN__", undefined);
 
   setInjectedConfiguration("__INTERFERE_FORCE_ENABLE__", true);
 
@@ -55,9 +55,9 @@ describe(createWrapperSingleton, () => {
   });
 
   test.each([undefined, ""])(
-    "sends nothing without a public key (%j)",
+    "sends nothing without a release token (%j)",
     async (key) => {
-      setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", key);
+      setInjectedConfiguration("__INTERFERE_RELEASE_TOKEN__", key);
 
       const wrapper = createWrapper();
 
@@ -71,8 +71,11 @@ describe(createWrapperSingleton, () => {
     },
   );
 
-  test("authenticates every request with an injected public key", async () => {
-    setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", "interfere_pk_test");
+  test("authenticates every request with an injected release token", async () => {
+    setInjectedConfiguration(
+      "__INTERFERE_RELEASE_TOKEN__",
+      "interfere_pk_test",
+    );
 
     const wrapper = createWrapper();
 
@@ -85,7 +88,7 @@ describe(createWrapperSingleton, () => {
 
       expect(
         requests.map((request) =>
-          request.headers.get("x-interfere-public-key"),
+          request.headers.get("x-interfere-release-token"),
         ),
       ).toStrictEqual(requests.map(() => "interfere_pk_test"));
     } finally {
@@ -99,7 +102,10 @@ describe(createWrapperSingleton, () => {
   ])(
     "closes pending initialization without publishing it, with restart $restart",
     async ({ restart, configRequests, publications }) => {
-      setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", "interfere_pk_test");
+      setInjectedConfiguration(
+        "__INTERFERE_RELEASE_TOKEN__",
+        "interfere_pk_test",
+      );
 
       const requested = Promise.withResolvers<undefined>();
       const response = Promise.withResolvers<undefined>();
@@ -168,7 +174,10 @@ describe(createWrapperSingleton, () => {
   );
 
   test("failed initialization releases capture and navigation before a fresh start", async () => {
-    setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", "interfere_pk_test");
+    setInjectedConfiguration(
+      "__INTERFERE_RELEASE_TOKEN__",
+      "interfere_pk_test",
+    );
 
     setInjectedConfiguration("__INTERFERE_RELEASE_SLUG__", "invalid");
 
@@ -216,7 +225,10 @@ describe(createWrapperSingleton, () => {
   test.each(["before", "during"])(
     "preserves consent set %s initialization when the provider configures plugins",
     async (timing) => {
-      setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", "interfere_pk_test");
+      setInjectedConfiguration(
+        "__INTERFERE_RELEASE_TOKEN__",
+        "interfere_pk_test",
+      );
 
       const wrapper = createWrapper();
 

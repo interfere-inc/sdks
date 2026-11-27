@@ -1,5 +1,4 @@
 import { preflightReleaseBinding } from "@interfere/build/release-request";
-import { PUBLIC_KEY_HEADER } from "@interfere/constants/api";
 import type { Interfere } from "@interfere/javascript";
 import type { ReleaseDiagnosticContext } from "@interfere/types/sdk/build-diagnostics";
 import { InterfereClient } from "@interfere/javascript";
@@ -15,21 +14,18 @@ export function warnBuildPreflight(logger: Logger, fallback: boolean) {
 }
 
 export const DIAGNOSTIC_CONTEXT: ReleaseDiagnosticContext = {
-  publicKeyEnvVar: "VITE_INTERFERE_PUBLIC_KEY",
   docsUrl: "https://interfere.com/docs/sdk/vite",
 };
 
 export async function preflightViteBinding(input: {
   apiUrl: string;
   apiKey: string;
-  publicKey: string | undefined;
   serviceName?: string | undefined;
 }) {
   const client = new InterfereClient({
     baseUrl: input.apiUrl,
     apiKey: { token: input.apiKey },
     headers: {
-      [PUBLIC_KEY_HEADER]: input.publicKey,
       "x-interfere-producer-version": PRODUCER_VERSION,
       "x-interfere-service": input.serviceName,
     },

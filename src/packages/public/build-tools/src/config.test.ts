@@ -1,3 +1,4 @@
+import { RELEASE_TOKEN_HEADER } from "@interfere/types/sdk/release/token";
 import { setupServer } from "msw/node";
 import { HttpResponse, http } from "msw";
 
@@ -31,8 +32,8 @@ describe("build config", () => {
     const resolve = createBuildConfigResolver();
 
     const results = await Promise.all([
-      resolve(url, { publicKey: "first" }),
-      resolve(url, { publicKey: "first" }),
+      resolve(url, { releaseToken: "first" }),
+      resolve(url, { releaseToken: "first" }),
     ]);
 
     expect(results[0]).toStrictEqual({
@@ -46,15 +47,15 @@ describe("build config", () => {
     expect(results[1]).toStrictEqual(results[0]);
     expect(calls).toHaveLength(1);
 
-    await resolve(url, { publicKey: "second" });
+    await resolve(url, { releaseToken: "second" });
 
     expect(calls).toHaveLength(2);
 
-    await createBuildConfigResolver()(url, { publicKey: "first" });
+    await createBuildConfigResolver()(url, { releaseToken: "first" });
 
     expect(calls).toHaveLength(3);
 
-    await resolve(url, { publicKey: "first" }, "another-build");
+    await resolve(url, { releaseToken: "first" }, "another-build");
 
     expect(calls).toHaveLength(4);
   });
@@ -103,7 +104,7 @@ describe("build config", () => {
     );
 
     await expect(
-      createBuildConfigResolver()(url, { publicKey: "first" }),
+      createBuildConfigResolver()(url, { releaseToken: "first" }),
     ).resolves.toStrictEqual(expected);
   });
 
@@ -115,7 +116,7 @@ describe("build config", () => {
     );
 
     await expect(
-      createBuildConfigResolver()(url, { publicKey: "first" }),
+      createBuildConfigResolver()(url, { releaseToken: "first" }),
     ).resolves.toStrictEqual({});
 
     server.use(
@@ -123,7 +124,7 @@ describe("build config", () => {
     );
 
     await expect(
-      createBuildConfigResolver()(url, { publicKey: "first" }),
+      createBuildConfigResolver()(url, { releaseToken: "first" }),
     ).resolves.toStrictEqual({});
   });
 });
@@ -158,22 +159,22 @@ test("isolates workspace config by service name and namespace", async () => {
   const resolve = createBuildConfigResolver();
 
   const [web, api] = await Promise.all([
-    resolve(url, { publicKey: "workspace" }, "build", {
+    resolve(url, { releaseToken: "workspace" }, "build", {
       serviceName: "web",
       serviceNamespace: "shop",
     }),
-    resolve(url, { publicKey: "workspace" }, "build", {
+    resolve(url, { releaseToken: "workspace" }, "build", {
       serviceName: "api",
       serviceNamespace: "shop",
     }),
   ]);
 
-  await resolve(url, { publicKey: "workspace" }, "build", {
+  await resolve(url, { releaseToken: "workspace" }, "build", {
     serviceName: "web",
     serviceNamespace: "shop",
   });
 
-  await resolve(url, { publicKey: "workspace" }, "build", {
+  await resolve(url, { releaseToken: "workspace" }, "build", {
     serviceName: "web",
     serviceNamespace: "admin",
   });
@@ -183,7 +184,7 @@ test("isolates workspace config by service name and namespace", async () => {
 
   expect(
     calls.map((request) => [
-      request.headers.get("x-interfere-public-key"),
+      request.headers.get(RELEASE_TOKEN_HEADER),
       request.headers.get("x-interfere-service"),
       request.headers.get("x-interfere-service-namespace"),
     ]),
@@ -194,7 +195,7 @@ test("isolates workspace config by service name and namespace", async () => {
   ]);
 });
 
-test("authenticates with a release token when the build has no public key", async () => {
+test("authenticates with the release token header", async () => {
   const calls: Request[] = [];
 
   server.use(
@@ -211,17 +212,12 @@ test("authenticates with a release token when the build has no public key", asyn
     resolve(url, { releaseToken: "token" }, "build", { serviceName: "web" }),
   ).resolves.toStrictEqual({ platform: null, plugins: { errors: false } });
 
-  await resolve(url, { publicKey: "token" }, "build", { serviceName: "web" });
-
   expect(
     calls.map((request) => [
-      request.headers.get("x-interfere-release-token"),
+      request.headers.get(RELEASE_TOKEN_HEADER),
       request.headers.get("x-interfere-public-key"),
       new URL(request.url).searchParams.get("public_key"),
       request.headers.get("x-interfere-service"),
     ]),
-  ).toStrictEqual([
-    ["token", null, null, "web"],
-    [null, "token", null, "web"],
-  ]);
+  ).toStrictEqual([["token", null, null, "web"]]);
 });

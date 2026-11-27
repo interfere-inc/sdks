@@ -8,7 +8,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import type { MockInstance } from "vitest";
 
 const TARGET = {
-  publicKeyHeader: { apiKey: "test-key" },
+  releaseTokenHeader: { apiKey: "test-key" },
   baseUrl: "https://in.test.com",
 };
 

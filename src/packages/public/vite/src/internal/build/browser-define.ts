@@ -15,7 +15,6 @@ export interface BrowserConfig {
   apiHost: string | undefined;
   commitSha: string | null;
   environment: string | null;
-  publicKey: string | undefined;
   releaseSlug: ReleaseSlug | null;
   serviceName: string | undefined;
 }
@@ -64,7 +63,6 @@ export function resolveBrowserConfig(
         ? // oxlint-disable-next-line node/no-process-env
           resolveDeployEnvironment({ ...env, ...process.env })
         : null,
-    publicKey: env["VITE_INTERFERE_PUBLIC_KEY"],
     serviceName: resolveBuildServiceName({
       option: options.serviceName,
       env,

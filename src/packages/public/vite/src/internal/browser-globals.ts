@@ -10,7 +10,6 @@ import {
   API_URL_GLOBAL,
   ENVIRONMENT_GLOBAL,
   INGEST_URL_GLOBAL,
-  PUBLIC_KEY_GLOBAL,
   RELEASE_SLUG_GLOBAL,
 } from "@interfere/types/sdk/injected-globals";
 import { RELEASE_TOKEN_GLOBAL } from "@interfere/types/sdk/release/token";
@@ -26,10 +25,6 @@ type MutableGlobal = Record<string, unknown>;
 // WARNING: Aliasing import.meta.env prevents Vite from replacing VITE_INTERFERE_* values in the bundle.
 export function applyBrowserGlobals() {
   const g = globalThis as MutableGlobal;
-
-  if (import.meta.env.VITE_INTERFERE_PUBLIC_KEY) {
-    g[PUBLIC_KEY_GLOBAL] ??= import.meta.env.VITE_INTERFERE_PUBLIC_KEY;
-  }
 
   if (import.meta.env.VITE_INTERFERE_API_HOST) {
     g[API_URL_GLOBAL] ??= import.meta.env.VITE_INTERFERE_API_HOST;

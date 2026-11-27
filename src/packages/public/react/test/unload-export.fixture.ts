@@ -15,7 +15,7 @@ addEventListener("pagehide", () => {
 const exporter = createTraceExporter({
   clientOptions: {
     baseUrl: location.origin,
-    publicKeyHeader: { apiKey: "unload-test-key" },
+    releaseTokenHeader: { apiKey: "unload-test-key" },
   },
 });
 

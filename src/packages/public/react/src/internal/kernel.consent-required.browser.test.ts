@@ -99,7 +99,7 @@ beforeEach(() => {
 
   baggageHeaders.length = 0;
 
-  setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", "interfere_pk_test");
+  setInjectedConfiguration("__INTERFERE_RELEASE_TOKEN__", "interfere_pk_test");
 
   setInjectedConfiguration("__INTERFERE_PLUGINS__", {
     ...DISABLE_ALL_PLUGINS,

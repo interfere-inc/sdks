@@ -79,8 +79,6 @@ describe("release binding preflight", () => {
     await withTempProject("next-dev-bad-key-", async (projectDir) => {
       prepareBuildProject(projectDir, "cli", "not-an-interfere-key");
 
-      vi.stubEnv("INTERFERE_PUBLIC_KEY", undefined);
-
       createReleaseFixture(projectDir);
 
       const warn = vi.spyOn(log, "warn");
@@ -105,8 +103,6 @@ describe("release binding preflight", () => {
 
     await withTempProject("next-dev-mint-failure-", async (projectDir) => {
       prepareBuildProject(projectDir, "cli", "interfere_ak_test_123");
-
-      vi.stubEnv("INTERFERE_PUBLIC_KEY", undefined);
 
       createReleaseFixture(projectDir, { failure: "register" });
 
@@ -139,8 +135,6 @@ describe("release binding preflight", () => {
       async (projectDir) => {
         prepareBuildProject(projectDir, "cli", "interfere_ak_test_123");
 
-        vi.stubEnv("INTERFERE_PUBLIC_KEY", undefined);
-
         rmSync(path.join(projectDir, "instrumentation-client.ts"));
 
         createReleaseFixture(projectDir, { releaseToken: "irt_next_build" });
@@ -165,15 +159,12 @@ describe("release binding preflight", () => {
     await withTempProject("next-binding-outage-", async (projectDir) => {
       prepareBuildProject(projectDir, "vercel", "interfere_secret_us_test_123");
 
-      vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_next");
-
       createReleaseFixture(projectDir, { failure: "config" });
 
       const config = await withInterfere()(PHASE_PRODUCTION_BUILD);
 
       const baked = JSON.stringify(config.turbopack);
 
-      expect(baked).toContain("__INTERFERE_PUBLIC_KEY__");
       expect(baked).toContain("__INTERFERE_RELEASE_SLUG__");
       expect(baked).not.toContain("__INTERFERE_DISABLED__");
       expect(baked).not.toContain("interfere_secret_us_test_123");

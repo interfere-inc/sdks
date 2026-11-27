@@ -51,14 +51,7 @@ interface ExporterCommon {
   canPersistExports?: (() => boolean) | undefined;
 }
 
-const AUTH_INVALID_HALT_THRESHOLD = 3;
-
-const AUTH_INVALID_HALT_COOLDOWN_MS = 5 * 60 * 1000;
-
-type IngestHaltReason =
-  | "environment_filtered"
-  | "release_not_found"
-  | "public_key_rejected";
+type IngestHaltReason = "environment_filtered" | "release_not_found";
 
 const RPC_PERMISSION_DENIED = 7;
 
@@ -67,32 +60,16 @@ const HALT_MESSAGES: Record<IngestHaltReason, string> = {
     "ingest halted: the ingest endpoint filters this page's environment",
   release_not_found:
     "ingest halted: the ingest endpoint does not recognize this build's release",
-  public_key_rejected:
-    "ingest paused: the ingest endpoint rejected this page's public key",
 };
 
 let haltReason: IngestHaltReason | null = null;
 
-let authHaltExpiresAt = 0;
-
-let consecutiveAuthRejections = 0;
-
 /** Test-only reset of the ingest halt state. */
 export function resetIngestHalt() {
   haltReason = null;
-
-  authHaltExpiresAt = 0;
-
-  consecutiveAuthRejections = 0;
 }
 
 function currentHaltReason() {
-  if (haltReason === "public_key_rejected" && Date.now() >= authHaltExpiresAt) {
-    haltReason = null;
-
-    consecutiveAuthRejections = AUTH_INVALID_HALT_THRESHOLD - 1;
-  }
-
   return haltReason;
 }
 
@@ -103,9 +80,7 @@ export function isIngestHalted() {
 function detectUnacceptableExport(error: InterfereError) {
   if (
     currentHaltReason() !== null ||
-    (error.statusCode !== 422 &&
-      error.statusCode !== 401 &&
-      error.statusCode !== 403)
+    (error.statusCode !== 422 && error.statusCode !== 403)
   ) {
     return;
   }
@@ -141,22 +116,6 @@ function detectUnacceptableExport(error: InterfereError) {
     );
 
     return;
-  }
-
-  if (error.statusCode === 401 && body.code === "AUTH_PK_INVALID") {
-    consecutiveAuthRejections += 1;
-
-    if (consecutiveAuthRejections < AUTH_INVALID_HALT_THRESHOLD) {
-      return;
-    }
-
-    haltReason = "public_key_rejected";
-
-    authHaltExpiresAt = Date.now() + AUTH_INVALID_HALT_COOLDOWN_MS;
-
-    console.warn(
-      `[interfere] the ingest endpoint rejected this page's public key ${consecutiveAuthRejections} times in a row — telemetry export is paused for ${AUTH_INVALID_HALT_COOLDOWN_MS / 60_000} minutes, then retried once. A revoked key stays rejected until the page is rebuilt; build with INTERFERE_API_KEY set so the build plugin bakes in a current release token.`,
-    );
   }
 }
 
@@ -303,8 +262,6 @@ function makeSender(input: ExporterCommon, signal: OtlpSignal) {
           },
         );
 
-        consecutiveAuthRejections = 0;
-
         resultCallback({ code: ExportResultCode.SUCCESS });
       } catch (error) {
         if (error instanceof InterfereError) {
@@ -324,20 +281,20 @@ function makeSender(input: ExporterCommon, signal: OtlpSignal) {
   }) satisfies SignalSender;
 
   const { baseUrl } = input.clientOptions;
-  const publicKey = input.clientOptions.publicKeyHeader?.apiKey;
+  const releaseToken = input.clientOptions.releaseTokenHeader?.apiKey;
 
   if (
     // oxlint-disable-next-line anti-slop/no-runtime-typeof -- Supplier options are not persistable resolved destinations.
     typeof baseUrl !== "string" ||
-    // oxlint-disable-next-line anti-slop/no-runtime-typeof -- Supplier options are not persistable public keys.
-    typeof publicKey !== "string" ||
+    // oxlint-disable-next-line anti-slop/no-runtime-typeof -- Supplier options are not persistable release tokens.
+    typeof releaseToken !== "string" ||
     input.clientOptions.auth !== undefined
   ) {
     return send;
   }
 
   const carryover = withExportCarryover(
-    JSON.stringify([baseUrl, publicKey, signal]),
+    JSON.stringify([baseUrl, releaseToken, signal]),
     send,
     input.canPersistExports ?? (() => true),
   );

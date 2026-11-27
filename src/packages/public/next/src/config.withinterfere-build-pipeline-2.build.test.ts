@@ -1,6 +1,6 @@
 import { writeFileSync } from "node:fs";
 import path from "node:path";
-import { PHASE_DEVELOPMENT_SERVER } from "next/constants";
+import { PHASE_PRODUCTION_SERVER } from "next/constants";
 
 import {
   createReleaseFixture,
@@ -69,9 +69,7 @@ function prepareBuildProject(
 }
 
 function compileHookPhase() {
-  vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test_123");
-
-  return PHASE_DEVELOPMENT_SERVER;
+  return PHASE_PRODUCTION_SERVER;
 }
 
 describe("withInterfere build pipeline", () => {

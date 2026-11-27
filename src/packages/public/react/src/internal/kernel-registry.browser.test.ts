@@ -15,7 +15,7 @@ function createKernel() {
     new SessionTracker({
       target: {
         baseUrl: "https://in.example.com",
-        publicKeyHeader: { apiKey: "test-key" },
+        releaseTokenHeader: { apiKey: "test-key" },
       },
     }),
   );

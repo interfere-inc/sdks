@@ -109,8 +109,6 @@ async function resolvePluginConfig(
   } = {},
 ) {
   if (input.env) {
-    vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", undefined);
-
     for (const [name, value] of Object.entries(input.env)) {
       vi.stubEnv(name, value);
     }

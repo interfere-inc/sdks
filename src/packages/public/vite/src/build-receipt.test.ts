@@ -30,8 +30,6 @@ beforeEach(async () => {
 
   vi.stubEnv("VITEST_WORKER_ID", "");
 
-  vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "interfere_pk_test");
-
   vi.stubEnv("INTERFERE_ENVIRONMENT", "preview");
 
   vi.stubEnv("PRIVATE_DEPLOYMENT_SECRET", "never-in-receipt");
@@ -42,7 +40,31 @@ beforeEach(async () => {
 
   server.use(
     http.get("https://release.test/v3/releases/config", () =>
-      HttpResponse.json({ message: "offline" }, { status: 400 }),
+      HttpResponse.json({
+        org: { id: "org_1", slug: "acme" },
+        surface: {
+          destinationProvider: null,
+          environmentFiltering: false,
+          sdkConfig: null,
+          id: "surface_1",
+          slug: "vite",
+          sourceProvider: null,
+        },
+      }),
+    ),
+    http.post("https://release.test/v3/releases", () =>
+      HttpResponse.json({
+        build: { hash: "a".repeat(40) },
+        destination: {
+          environment: "preview",
+          id: "release_1",
+          slug: "rel_aaaaaaaaaaaaaaaa",
+        },
+        org: { id: "org_1", slug: "acme" },
+        source: { id: "source_1" },
+        surface: { id: "surface_1", slug: "vite" },
+        token: "irt_receipt_test",
+      }),
     ),
   );
 

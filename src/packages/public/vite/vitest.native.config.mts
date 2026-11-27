@@ -36,7 +36,7 @@ export default defineConfig({
   test: {
     fsModuleCache: false,
     name: "@interfere/vite/native",
-    env: { VITE_INTERFERE_PUBLIC_KEY: "interfere_pub_us_test_123" },
+    env: { VITE_INTERFERE_RELEASE_TOKEN: "irt_native_test" },
     include: ["src/**/*.native.test.ts"],
     deps: {
       optimizer: {

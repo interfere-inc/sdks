@@ -84,8 +84,6 @@ describe("side-effect entry evaluated before the loader-prepended build marker",
   });
 
   test("warns and stays inactive when no build ran and no env credentials exist", async () => {
-    vi.stubEnv("INTERFERE_PUBLIC_KEY", "");
-
     vi.stubEnv("NEXT_PUBLIC_INTERFERE_FORCE_ENABLE", "");
 
     const warn = vi.spyOn(console, "warn");

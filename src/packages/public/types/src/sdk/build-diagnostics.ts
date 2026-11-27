@@ -24,7 +24,6 @@ const BUILD_CONTINUES =
   "The build continues, but this release has no source maps in Interfere.";
 
 export interface ReleaseDiagnosticContext {
-  readonly publicKeyEnvVar: string;
   readonly docsUrl: string;
 }
 
@@ -36,10 +35,6 @@ export function formatApiKeyPreview(apiKey: string) {
 
 export function isInterfereApiKey(apiKey: string) {
   return API_KEY_PREFIXES.some((prefix) => apiKey.startsWith(prefix));
-}
-
-function publicKeyHint(ctx: ReleaseDiagnosticContext) {
-  return `If you set a public key (\`interfere_public_us_*\`, \`interfere_public_eu_*\`, or legacy \`interfere_pub_*\`/\`interfere_pk_*\`), put it in \`${ctx.publicKeyEnvVar}\` instead.`;
 }
 
 export function checkReleaseConfig(
@@ -70,7 +65,6 @@ export function checkReleaseConfig(
       title: "INTERFERE_API_KEY has wrong prefix",
       details: [
         `Expected a key starting with ${API_KEY_PREFIX_HINT} but got \`${formatApiKeyPreview(apiKey)}\`.`,
-        publicKeyHint(ctx),
         `Generate a new secret key at ${DASHBOARD_KEYS_URL}.`,
       ],
     };
@@ -142,24 +136,23 @@ const CATALOG: Record<
       BUILD_CONTINUES,
     ],
   }),
-  API_KEY_SURFACE_REQUIRED: (ctx) => ({
+  API_KEY_SURFACE_REQUIRED: () => ({
     code: "API_KEY_SURFACE_REQUIRED",
     severity: "error",
     title: "Service needed for a workspace secret key",
     details: [
       "INTERFERE_API_KEY is a workspace secret key, so the build must name the service it publishes for, and register that service's release before uploading source maps.",
-      `Set \`serviceName\` (or \`OTEL_SERVICE_NAME\`) to that service, or set \`${ctx.publicKeyEnvVar}\` on the build machine.`,
+      `Set \`serviceName\` (or \`OTEL_SERVICE_NAME\`) to that service.`,
       BUILD_CONTINUES,
     ],
   }),
-  API_KEY_UNREADABLE: (ctx) => ({
+  API_KEY_UNREADABLE: () => ({
     code: "API_KEY_UNREADABLE",
     severity: "error",
     title: "Secret key could not be read",
     details: [
       "INTERFERE_API_KEY was sent but the server could not read it.",
       `Expected a key starting with ${API_KEY_PREFIX_HINT}.`,
-      publicKeyHint(ctx),
       `Generate a new secret key at ${DASHBOARD_KEYS_URL}.`,
       BUILD_CONTINUES,
     ],

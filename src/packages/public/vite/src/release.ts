@@ -2,7 +2,7 @@ import { cleanupSourceMaps } from "@interfere/build/cleanup-source-maps";
 import { resolveReleaseRequest } from "@interfere/build/release-request";
 import { sourceMapUploadFetch } from "@interfere/build/source-map-upload-fetch";
 import { InterfereClient, InterfereError } from "@interfere/javascript";
-import { API_URL, PUBLIC_KEY_HEADER } from "@interfere/constants/api";
+import { API_URL } from "@interfere/constants/api";
 import { createReleaseResponse } from "@interfere/types/releases/definition";
 import { releaseSlugSchema } from "@interfere/types/releases/slug";
 import { resolveDeployEnvironment } from "@interfere/types/sdk/deploy-environment";
@@ -47,8 +47,6 @@ export interface ReleaseBuildOutputOptions {
   logger?: ReleaseLogger | undefined;
   /** Project root the build ran in; defaults to the working directory. */
   projectDir?: string | undefined;
-  /** Public workspace or App key sent with the release requests. */
-  publicKey?: string | undefined;
   /** The private build receipt the plugin wrote (`interfere({ buildReceipt })`). */
   receipt: string;
 }
@@ -151,7 +149,6 @@ export async function releaseBuildOutput(options: ReleaseBuildOutputOptions) {
     fetch: sourceMapUploadFetch,
     headers: {
       "user-agent": PRODUCER_VERSION,
-      [PUBLIC_KEY_HEADER]: options.publicKey,
       "x-interfere-service": build.serviceName,
     },
     ...RELEASE_CLIENT_RETRY,

@@ -261,7 +261,7 @@ Set the same name in `interfere({ serviceName: "storefront" })`, browser `init({
 | `OTEL_SERVICE_NAME` | No                         | Service name when the build's `serviceName` option is absent; defaults to the unscoped package name.                                                                      |
 | `INTERFERE_API_URL` | No                         | Build and server API origin. Defaults to `https://api.interfere.com`.                                                                                                     |
 
-`VITE_INTERFERE_PUBLIC_KEY` is deprecated legacy configuration; it is not required for builds that bake a release token. A build without a token cannot authenticate browser telemetry by workspace slug alone.
+A build without a release token cannot authenticate browser telemetry by workspace slug alone.
 
 ## Plugin Options
 
@@ -292,7 +292,7 @@ Set `serviceName` explicitly in `interfere()`, browser `init()` and server `regi
 
 Upgrade all `@interfere/*` SDK packages together. Set `INTERFERE_API_KEY` to a workspace secret, keep the service name stable, and rebuild so the browser receives a release token.
 
-`VITE_INTERFERE_PUBLIC_KEY` and older per-App keys are deprecated legacy configuration. Keep them only for older deployments that still need them while you migrate; new setup uses the workspace secret and service name. Advanced `sourceMaps` options remain available, with automatic upload enabled by default.
+Per-App keys are no longer read; new setup uses the workspace secret and service name. Advanced `sourceMaps` options remain available, with automatic upload enabled by default.
 
 ## Identity Management
 
@@ -336,6 +336,9 @@ function useInterfereIdentity() {
 | `avatar`     | No       | Avatar URL                                                                                                                          |
 | `company`    | No       | Company tier: `{ tier: "Enterprise" }` (trimmed, 1–100 characters).                                                                 |
 | `traits`     | No       | Arbitrary key-value metadata (`Record<string, unknown>`)                                                                            |
+| `signature`  | No       | Hex HMAC-SHA256 of `identifier` keyed with your identify secret, computed on your server. Marks the user as verified.               |
+
+A `signature` that does not match is refused with `IDENTITY_SIGNATURE_INVALID`; an identify without one stays unverified. The Vercel integration sets the secret as `INTERFERE_IDENTITY_SECRET`; never expose it under a `VITE_` name.
 
 ### API
 

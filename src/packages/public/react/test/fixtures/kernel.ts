@@ -35,7 +35,7 @@ export function buildKernel(input: BuildKernelInput = {}) {
     device: new DeviceManager(),
     target: {
       baseUrl: "https://test.local",
-      publicKeyHeader: { apiKey: "test-key" },
+      releaseTokenHeader: { apiKey: "test-key" },
     },
   });
 

@@ -25,14 +25,12 @@ export function mirrorKeysForDevServer(
     return;
   }
 
-  for (const name of ["VITE_INTERFERE_PUBLIC_KEY", "INTERFERE_API_KEY"]) {
-    const value = env[name];
+  const value = env["INTERFERE_API_KEY"];
 
+  // oxlint-disable-next-line node/no-process-env
+  if (value && !process.env["INTERFERE_API_KEY"]) {
     // oxlint-disable-next-line node/no-process-env
-    if (value && !process.env[name]) {
-      // oxlint-disable-next-line node/no-process-env
-      process.env[name] = value;
-    }
+    process.env["INTERFERE_API_KEY"] = value;
   }
 }
 

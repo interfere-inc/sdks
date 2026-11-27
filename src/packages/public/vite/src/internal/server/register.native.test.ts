@@ -52,7 +52,7 @@ test("workerd sends server traces through its fetch transport", async () => {
     name: "workerd-test",
     version: "1",
     apiUrl: "https://collector.test",
-    credential: { publicKey: "test-key" },
+    credential: { releaseToken: "test-key" },
     resourceAttributes: {},
     options: { consoleBridge: false, tracing: "application" },
     drain: false,

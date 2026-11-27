@@ -4,9 +4,7 @@ import type { WrapperSingleton } from "@interfere/react/internal/wrapper-singlet
 
 import {
   buildIntegrationRan,
-  hasEnvCredentials,
   interfereDisabled,
-  warnBuildIntegrationDegraded,
   warnBuildIntegrationMissing,
 } from "./internal/build-marker-guard.js";
 import { PRODUCER_VERSION } from "./internal/version.js";
@@ -67,12 +65,6 @@ async function initAfterHoistedImports(opts?: KernelOptions) {
 
   if (buildIntegrationRan()) {
     return initKernel(opts);
-  }
-
-  if (hasEnvCredentials()) {
-    warnBuildIntegrationDegraded();
-
-    return wrapper.init(opts);
   }
 
   warnBuildIntegrationMissing();

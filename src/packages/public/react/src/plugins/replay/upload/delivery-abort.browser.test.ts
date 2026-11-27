@@ -11,7 +11,7 @@ async function deliver(signal: AbortSignal) {
   return deliverChunk({
     target: {
       baseUrl: "https://collector.test",
-      publicKeyHeader: { apiKey: "test-key" },
+      releaseTokenHeader: { apiKey: "test-key" },
       maxRetries: 0,
       timeoutInSeconds: 10,
       headers: {},

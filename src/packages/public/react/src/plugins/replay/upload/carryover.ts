@@ -44,7 +44,7 @@ export function createReplayCarryover(
   const pendingResponses = new Map<string, PendingUpload>();
 
   const carryover = withExportCarryover(
-    `replay:${JSON.stringify([target.baseUrl, target.publicKeyHeader?.apiKey])}`,
+    `replay:${JSON.stringify([target.baseUrl, target.releaseTokenHeader?.apiKey])}`,
     (payload, callback, signal, retained) => {
       async function upload() {
         if (!allowed()) {

@@ -68,10 +68,7 @@ afterEach(async () => {
 
       assert.equal(request.headers.get("x-api-key"), "interfere_pk_test");
 
-      assert.equal(
-        request.headers.get("x-interfere-public-key"),
-        process.env["INTERFERE_PUBLIC_KEY"] || null,
-      );
+      assert.equal(request.headers.get("x-interfere-public-key"), null);
     }
   } finally {
     trace.disable();
@@ -102,9 +99,7 @@ test("leaves the global tracer non-recording without a workspace API key", async
   expect(console.warn).not.toHaveBeenCalled();
 });
 
-test("sends the public key alongside the workspace API key when both are configured", async () => {
-  vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_public_us_edge");
-
+test("sends the workspace API key without a public key header", async () => {
   const { register } = await import("./instrumentation.edge.js");
 
   const { flushServerTelemetry } =
@@ -112,9 +107,9 @@ test("sends the public key alongside the workspace API key when both are configu
 
   await register();
 
-  const span = trace.getTracer("edge-test").startSpan("both-keys");
+  const span = trace.getTracer("edge-test").startSpan("api-key-only");
 
-  span.addEvent("exception", { "exception.message": "both keys" });
+  span.addEvent("exception", { "exception.message": "api key only" });
 
   span.end();
 
@@ -127,7 +122,7 @@ test("sends the public key alongside the workspace API key when both are configu
       request.headers.get("x-api-key"),
       request.headers.get("x-interfere-public-key"),
     ]),
-  ).toStrictEqual([["interfere_pk_test", "interfere_public_us_edge"]]);
+  ).toStrictEqual([["interfere_pk_test", null]]);
 });
 
 test("keeps one registered provider and the original service across repeated calls", async () => {

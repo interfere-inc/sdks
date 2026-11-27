@@ -37,8 +37,6 @@ pub struct QueryConsumerDevicesByEndUserResponseItem {
     #[serde(default)]
     #[serde(with = "crate::core::number_serializers")]
     pub updated_at: f64,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub surface: Option<QueryConsumerDevicesByEndUserResponseItemSurface>,
 }
 
 impl QueryConsumerDevicesByEndUserResponseItem {
@@ -59,7 +57,6 @@ pub struct QueryConsumerDevicesByEndUserResponseItemBuilder {
     organization_id: Option<String>,
     surface_id: Option<String>,
     updated_at: Option<f64>,
-    surface: Option<QueryConsumerDevicesByEndUserResponseItemSurface>,
 }
 
 impl QueryConsumerDevicesByEndUserResponseItemBuilder {
@@ -108,11 +105,6 @@ impl QueryConsumerDevicesByEndUserResponseItemBuilder {
         self
     }
 
-    pub fn surface(mut self, value: QueryConsumerDevicesByEndUserResponseItemSurface) -> Self {
-        self.surface = Some(value);
-        self
-    }
-
     /// Consumes the builder and constructs a [`QueryConsumerDevicesByEndUserResponseItem`].
     /// This method will fail if any of the following fields are not set:
     /// - [`created_at`](QueryConsumerDevicesByEndUserResponseItemBuilder::created_at)
@@ -130,7 +122,6 @@ impl QueryConsumerDevicesByEndUserResponseItemBuilder {
             organization_id: self.organization_id.ok_or_else(|| BuildError::missing_field("organization_id"))?,
             surface_id: self.surface_id,
             updated_at: self.updated_at.ok_or_else(|| BuildError::missing_field("updated_at"))?,
-            surface: self.surface,
         })
     }
 }

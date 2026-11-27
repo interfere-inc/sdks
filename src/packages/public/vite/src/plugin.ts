@@ -259,7 +259,6 @@ export function interfere(options: InterfereViteOptions = {}) {
         releaseConfig = await preflightViteBinding({
           apiUrl,
           apiKey: release.apiKey,
-          publicKey: browser.publicKey,
           serviceName: browser.serviceName,
         });
       }
@@ -267,7 +266,6 @@ export function interfere(options: InterfereViteOptions = {}) {
       const mintsLocalDevRelease =
         command === "serve" &&
         !isPreview &&
-        !browser.publicKey &&
         apiKey !== undefined &&
         !isTestEnv();
 
@@ -288,14 +286,10 @@ export function interfere(options: InterfereViteOptions = {}) {
       }
 
       registeredRelease ??=
-        registersRelease &&
-        (releaseConfig || !browser.publicKey) &&
-        browser.commitSha &&
-        browser.releaseSlug
+        registersRelease && browser.commitSha && browser.releaseSlug
           ? await registerBuildRelease({
               apiUrl,
               apiKey: release.apiKey,
-              publicKey: browser.publicKey,
               serviceName: browser.serviceName,
               commitSha: browser.commitSha,
               environment: browser.environment,
@@ -318,10 +312,7 @@ export function interfere(options: InterfereViteOptions = {}) {
       forcesWorkerSourcemaps =
         forcesSourcemaps && hasCloudflarePlugin(userConfig.plugins);
 
-      const credential = buildConfigCredential(
-        browser.publicKey,
-        registeredRelease?.token,
-      );
+      const credential = buildConfigCredential(registeredRelease?.token);
 
       const baked =
         command === "build" && credential && !isTestEnv()
@@ -394,7 +385,6 @@ export function interfere(options: InterfereViteOptions = {}) {
           commitSha: browser.commitSha,
           releaseSlug: browser.releaseSlug,
           environment: browser.environment,
-          publicKey: browser.publicKey,
           apiOrigin: browser.apiHost ?? API_URL,
           producerVersion: PRODUCER_VERSION,
           serviceName: browser.serviceName,

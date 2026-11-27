@@ -17,6 +17,7 @@ import {
 } from "../test/journey-observations";
 import { application } from "@interfere/test-utils/vitest/packed-application";
 import { receiver } from "@interfere/test-utils/vitest/telemetry-receiver";
+import { acceptanceRelease } from "./acceptance-release.test-utils";
 import {
   attribute,
   exceptions,
@@ -32,7 +33,7 @@ let page: Page;
 const cleanups: (() => Promise<void>)[] = [];
 
 beforeAll(async () => {
-  collector = await receiver();
+  collector = await receiver({ respond: acceptanceRelease });
 
   cleanups.push(async () => collector.close());
 
@@ -55,7 +56,8 @@ beforeAll(async () => {
   await app.copyFixture("journeys");
 
   await app.build({
-    VITE_INTERFERE_PUBLIC_KEY: "interfere_public_us_journeys",
+    INTERFERE_API_KEY: "interfere_ak_acceptance",
+    INTERFERE_API_URL: collector.url,
     ACCEPTANCE_INGEST_URL: collector.url,
     INTERFERE_ENVIRONMENT: "preview",
     INTERFERE_SOURCE_ID: "0123456789abcdef0123456789abcdef01234567",

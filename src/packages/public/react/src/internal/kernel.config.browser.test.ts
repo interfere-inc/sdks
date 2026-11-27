@@ -57,7 +57,7 @@ function holdConfig() {
 
   setInjectedConfiguration(INGEST_URL_GLOBAL, undefined);
 
-  setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", "test-key");
+  setInjectedConfiguration("__INTERFERE_RELEASE_TOKEN__", "test-key");
 
   const held = Promise.withResolvers<Response>();
   const requested = Promise.withResolvers<Request>();
@@ -237,7 +237,7 @@ test.each([
 
     setInjectedConfiguration("__INTERFERE_PLUGINS__", undefined);
 
-    setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", "test-key");
+    setInjectedConfiguration("__INTERFERE_RELEASE_TOKEN__", "test-key");
 
     setMeta("traceparent", `00-${SSR_TRACE_ID}-b7ad6b7169203331-${flags}`);
 

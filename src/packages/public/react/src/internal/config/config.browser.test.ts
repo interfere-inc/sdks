@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(resolveTargets, () => {
   beforeEach(() => {
-    setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", undefined);
+    setInjectedConfiguration("__INTERFERE_RELEASE_TOKEN__", undefined);
 
     setInjectedConfiguration("__INTERFERE_FORCE_ENABLE__", undefined);
 
@@ -17,7 +17,7 @@ describe(resolveTargets, () => {
     vi.unstubAllGlobals();
   });
 
-  test("resolves the default endpoint when no public key is set", () => {
+  test("resolves the default endpoint when no release token is set", () => {
     const targets = resolveTargets();
 
     expect(targets.ingest.baseUrl).toBe("https://api.interfere.com");
@@ -27,7 +27,7 @@ describe(resolveTargets, () => {
 
   test("keeps credentials out of base URLs", () => {
     setInjectedConfiguration(
-      "__INTERFERE_PUBLIC_KEY__",
+      "__INTERFERE_RELEASE_TOKEN__",
       "interfere_pk_test_123",
     );
 
@@ -40,26 +40,9 @@ describe(resolveTargets, () => {
     expect(targets.config.baseUrl).toBe("https://api.interfere.com");
   });
 
-  test("passes public keys to native generated authentication", () => {
+  test("uses globalThis.__INTERFERE_RELEASE_TOKEN__ when process.env is unavailable", () => {
     setInjectedConfiguration(
-      "__INTERFERE_PUBLIC_KEY__",
-      "interfere_pk_test_456",
-    );
-
-    const targets = resolveTargets();
-
-    expect(targets.ingest.publicKeyHeader).toStrictEqual({
-      apiKey: "interfere_pk_test_456",
-    });
-
-    expect(targets.config.publicKeyHeader).toStrictEqual(
-      targets.ingest.publicKeyHeader,
-    );
-  });
-
-  test("uses globalThis.__INTERFERE_PUBLIC_KEY__ when process.env is unavailable", () => {
-    setInjectedConfiguration(
-      "__INTERFERE_PUBLIC_KEY__",
+      "__INTERFERE_RELEASE_TOKEN__",
       "interfere_pk_vite_abc",
     );
 
@@ -85,7 +68,7 @@ describe(resolveTargets, () => {
   });
 
   test("resolves targets from the configured apiHost origin", () => {
-    setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", "interfere_pk_sub");
+    setInjectedConfiguration("__INTERFERE_RELEASE_TOKEN__", "interfere_pk_sub");
 
     const targets = resolveTargets("https://in.example.com/ignored");
 
@@ -96,7 +79,7 @@ describe(resolveTargets, () => {
 
   test("reads apiHost from the __INTERFERE_API_URL__ global", () => {
     setInjectedConfiguration(
-      "__INTERFERE_PUBLIC_KEY__",
+      "__INTERFERE_RELEASE_TOKEN__",
       "interfere_pk_override",
     );
 
@@ -108,7 +91,7 @@ describe(resolveTargets, () => {
   });
 
   test("prefers an explicit apiHost over the __INTERFERE_API_URL__ global", () => {
-    setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", "interfere_pk_ov");
+    setInjectedConfiguration("__INTERFERE_RELEASE_TOKEN__", "interfere_pk_ov");
 
     setInjectedConfiguration("__INTERFERE_API_URL__", "http://localhost:4001");
 
@@ -118,7 +101,7 @@ describe(resolveTargets, () => {
   });
 
   test("falls back to the default endpoint when apiHost is not a valid URL", () => {
-    setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", "interfere_pk_bad");
+    setInjectedConfiguration("__INTERFERE_RELEASE_TOKEN__", "interfere_pk_bad");
 
     const targets = resolveTargets("not a url");
 
@@ -126,7 +109,10 @@ describe(resolveTargets, () => {
   });
 
   test("routes ingest to the ingestHost while config stays on the config host", () => {
-    setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", "interfere_pk_split");
+    setInjectedConfiguration(
+      "__INTERFERE_RELEASE_TOKEN__",
+      "interfere_pk_split",
+    );
 
     const targets = resolveTargets(
       "https://api.interfere.com",

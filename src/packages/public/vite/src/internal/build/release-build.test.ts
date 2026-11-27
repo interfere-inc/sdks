@@ -98,8 +98,6 @@ test("uploads source maps when the build has no public key to check the surface 
 
   stubReleaseEnv();
 
-  vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "");
-
   await buildWith(root, recordingLogger().logger);
 
   expect(finalized).toHaveLength(1);
@@ -124,8 +122,6 @@ test.each([
     const root = await project("vite-surface-unconfigured-");
 
     stubReleaseEnv();
-
-    vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "");
 
     serveSurfaceProviders(providers);
 

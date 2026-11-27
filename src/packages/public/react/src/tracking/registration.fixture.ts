@@ -30,7 +30,7 @@ export async function registration() {
 
   const client = new InterfereClient({
     baseUrl: "https://registration.invalid",
-    publicKeyHeader: { apiKey: "test" },
+    releaseTokenHeader: { apiKey: "test" },
   });
 
   // oxlint-disable-next-line typescript/no-unsafe-assignment
@@ -54,7 +54,7 @@ export async function registration() {
     device,
     target: {
       baseUrl: "https://registration.invalid",
-      publicKeyHeader: { apiKey: "test" },
+      releaseTokenHeader: { apiKey: "test" },
     },
   });
 

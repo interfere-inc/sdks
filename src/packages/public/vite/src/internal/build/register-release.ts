@@ -1,5 +1,4 @@
 import { resolveReleaseRequest } from "@interfere/build/release-request";
-import { PUBLIC_KEY_HEADER } from "@interfere/constants/api";
 import type { Interfere } from "@interfere/javascript";
 import { InterfereClient } from "@interfere/javascript";
 import { createReleaseResponse } from "@interfere/types/releases/definition";
@@ -15,7 +14,6 @@ import {
 interface ReleaseCredentials {
   apiUrl: string;
   apiKey: string;
-  publicKey: string | undefined;
   serviceName: string | undefined;
 }
 
@@ -28,7 +26,6 @@ async function createRelease(
     baseUrl: input.apiUrl,
     apiKey: { token: input.apiKey },
     headers: {
-      [PUBLIC_KEY_HEADER]: input.publicKey,
       "x-interfere-producer-version": PRODUCER_VERSION,
       "x-interfere-service": input.serviceName,
     },
@@ -69,11 +66,9 @@ export async function registerBuildRelease(
   );
 }
 
-export async function registerLocalDevRelease(
-  input: Omit<ReleaseCredentials, "publicKey">,
-) {
+export async function registerLocalDevRelease(input: ReleaseCredentials) {
   return createRelease(
-    { ...input, publicKey: undefined },
+    input,
     localDevReleaseRequest({
       producerVersion: PRODUCER_VERSION,
       service: input.serviceName ? { name: input.serviceName } : undefined,

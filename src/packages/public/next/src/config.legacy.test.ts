@@ -21,10 +21,6 @@ test("next 15 preserves customer hooks and publishes from the client compiler wi
 
   vi.stubEnv("INTERFERE_API_KEY", undefined);
 
-  vi.stubEnv("INTERFERE_PUBLIC_KEY", undefined);
-
-  vi.stubEnv("NEXT_PUBLIC_INTERFERE_PUBLIC_KEY", undefined);
-
   await withTempProject("next15-compile-", async (projectDir) => {
     process.chdir(projectDir);
 
@@ -91,10 +87,6 @@ test("next 15.4 and later publish from the production compile hook so Turbopack 
   expect.hasAssertions();
 
   vi.stubEnv("INTERFERE_API_KEY", undefined);
-
-  vi.stubEnv("INTERFERE_PUBLIC_KEY", undefined);
-
-  vi.stubEnv("NEXT_PUBLIC_INTERFERE_PUBLIC_KEY", undefined);
 
   await withTempProject("next15-turbopack-compile-", async (projectDir) => {
     process.chdir(projectDir);

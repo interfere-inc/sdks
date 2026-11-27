@@ -170,7 +170,10 @@ export function ownershipHarness() {
 
     setInjectedConfiguration("__INTERFERE_PLUGINS__", undefined);
 
-    setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", "interfere_pk_test");
+    setInjectedConfiguration(
+      "__INTERFERE_RELEASE_TOKEN__",
+      "interfere_pk_test",
+    );
 
     trace.disable();
 

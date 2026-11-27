@@ -45,7 +45,7 @@ function collector(respond: HttpResponseResolver) {
 
 const CLIENT_OPTIONS = {
   baseUrl: "https://in.example.com",
-  publicKeyHeader: { apiKey: "test-key" },
+  releaseTokenHeader: { apiKey: "test-key" },
 };
 
 function exporterUnderTest() {
@@ -95,9 +95,6 @@ const releaseNotFound = () =>
     { status: 422 },
   );
 
-const authInvalid = () =>
-  HttpResponse.json({ code: "AUTH_PK_INVALID" }, { status: 401 });
-
 async function exportOnce(exporter: ReturnType<typeof exporterUnderTest>) {
   const callback = exportSpan(exporter);
 
@@ -106,16 +103,6 @@ async function exportOnce(exporter: ReturnType<typeof exporterUnderTest>) {
   expect(callback).toHaveBeenCalledWith(
     expect.objectContaining({ code: expect.any(Number) }),
   );
-}
-
-async function haltOnAuth(exporter: ReturnType<typeof exporterUnderTest>) {
-  await exportOnce(exporter);
-
-  await exportOnce(exporter);
-
-  await exportOnce(exporter);
-
-  expect(isIngestHalted()).toBe(true);
 }
 
 describe("release-not-found halt", () => {
@@ -133,79 +120,13 @@ describe("release-not-found halt", () => {
     vi.restoreAllMocks();
   });
 
-  describe("auth-halt cool-down", () => {
+  describe("page lifetime", () => {
     beforeEach(() => {
       vi.useFakeTimers({ toFake: ["Date"] });
     });
 
     afterEach(() => {
       vi.useRealTimers();
-    });
-
-    test("stays halted until five minutes pass", async () => {
-      worker.use(collector(authInvalid));
-
-      const warn = vi.spyOn(console, "warn");
-      const exporter = exporterUnderTest();
-
-      await haltOnAuth(exporter);
-
-      const rejections = warn.mock.calls
-        .map(([message]) => String(message))
-        .filter((message) => message.includes("rejected this page"));
-
-      expect(rejections).toHaveLength(1);
-      expect(rejections[0]).not.toMatch(/\bsurface\b|\bApps?\b/u);
-
-      vi.advanceTimersByTime(5 * 60 * 1000 - 1);
-
-      expect(isIngestHalted()).toBe(true);
-
-      await exportOnce(exporter);
-
-      expect(requests).toHaveLength(3);
-    });
-
-    test("re-halts after a single rejected probe once the cool-down ends", async () => {
-      worker.use(collector(authInvalid));
-
-      const exporter = exporterUnderTest();
-
-      await haltOnAuth(exporter);
-
-      vi.advanceTimersByTime(5 * 60 * 1000);
-
-      expect(isIngestHalted()).toBe(false);
-
-      await exportOnce(exporter);
-
-      expect(requests).toHaveLength(4);
-      expect(isIngestHalted()).toBe(true);
-
-      await exportOnce(exporter);
-
-      expect(requests).toHaveLength(4);
-    });
-
-    test("resumes export when the probe after the cool-down succeeds", async () => {
-      worker.use(
-        collector(() =>
-          requests.length >= 4 ? new HttpResponse(null) : authInvalid(),
-        ),
-      );
-
-      const exporter = exporterUnderTest();
-
-      await haltOnAuth(exporter);
-
-      vi.advanceTimersByTime(5 * 60 * 1000);
-
-      await exportOnce(exporter);
-
-      await exportOnce(exporter);
-
-      expect(isIngestHalted()).toBe(false);
-      expect(requests).toHaveLength(5);
     });
 
     test("keeps a release-not-found halt for the page lifetime", async () => {
@@ -221,30 +142,7 @@ describe("release-not-found halt", () => {
     });
   });
 
-  test("resets the auth-rejection count on a successful export", async () => {
-    worker.use(
-      collector(() =>
-        requests.length === 3 ? new HttpResponse(null) : authInvalid(),
-      ),
-    );
-
-    const exporter = exporterUnderTest();
-
-    await exportOnce(exporter);
-
-    await exportOnce(exporter);
-
-    await exportOnce(exporter);
-
-    await exportOnce(exporter);
-
-    await exportOnce(exporter);
-
-    expect(isIngestHalted()).toBe(false);
-    expect(requests).toHaveLength(5);
-  });
-
-  test("does not halt on a 401 with a different code", async () => {
+  test("does not halt on a 401", async () => {
     worker.use(
       collector(() =>
         HttpResponse.json({ code: "AUTH_MISSING" }, { status: 401 }),

@@ -15,8 +15,6 @@ import { interfere } from "./plugin";
 let root: string;
 
 beforeEach(async () => {
-  vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "interfere_pk_test");
-
   root = await mkdtemp(path.join(tmpdir(), "vite-receipt-privacy-"));
 
   await writeFile(path.join(root, "entry.js"), "export const value = 1;");

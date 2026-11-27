@@ -127,7 +127,7 @@ export function makeTracker(device: DeviceManager = readyDevice()) {
 
       return globalThis.fetch(input, init);
     },
-    target: { baseUrl: BASE_URL, publicKeyHeader: { apiKey: "test-key" } },
+    target: { baseUrl: BASE_URL, releaseTokenHeader: { apiKey: "test-key" } },
   });
 
   trackers.push(tracker);

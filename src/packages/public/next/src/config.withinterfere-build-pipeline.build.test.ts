@@ -1,8 +1,8 @@
 import { existsSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import {
-  PHASE_DEVELOPMENT_SERVER,
   PHASE_PRODUCTION_BUILD,
+  PHASE_PRODUCTION_SERVER,
 } from "next/constants";
 
 import {
@@ -76,9 +76,7 @@ function prepareBuildProject(
 }
 
 function compileHookPhase() {
-  vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test_123");
-
-  return PHASE_DEVELOPMENT_SERVER;
+  return PHASE_PRODUCTION_SERVER;
 }
 
 describe("withInterfere build pipeline", () => {
@@ -307,8 +305,6 @@ describe("withInterfere build pipeline", () => {
       async (projectDir) => {
         prepareBuildProject(projectDir, "cloudflare", "interfere_ak_test_123");
 
-        vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_next");
-
         createReleaseFixture(projectDir, {
           destinationProvider: "cloudflare",
         });
@@ -336,13 +332,11 @@ describe("withInterfere build pipeline", () => {
     );
   });
 
-  test("names the app with its public key and service on every release request", async () => {
+  test("names the service on every release request", async () => {
     expect.assertions(4);
 
     await withTempProject("next-config-build-selector-", async (projectDir) => {
       prepareBuildProject(projectDir, "vercel", "interfere_secret_us_test_123");
-
-      vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_next");
 
       createReleaseFixture(projectDir, { destinationProvider: "vercel" });
 
@@ -364,10 +358,10 @@ describe("withInterfere build pipeline", () => {
       expect(requests.length).toBeGreaterThanOrEqual(5);
 
       expect(
-        requests.map((request) =>
-          request.headers.get("x-interfere-public-key"),
+        requests.every(
+          (request) => !request.headers.has("x-interfere-public-key"),
         ),
-      ).toStrictEqual(Array.from(requests, () => "interfere_pk_next"));
+      ).toBe(true);
 
       expect(
         requests.map((request) =>

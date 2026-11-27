@@ -60,9 +60,8 @@ beforeAll(async () => {
   await build({
     configFile: false,
     define: {
-      "import.meta.env.VITE_INTERFERE_PUBLIC_KEY": JSON.stringify(
-        "interfere_pub_us_test_123",
-      ),
+      "import.meta.env.VITE_INTERFERE_RELEASE_TOKEN":
+        JSON.stringify("irt_workerd_test"),
     },
     logLevel: "silent",
     plugins: [

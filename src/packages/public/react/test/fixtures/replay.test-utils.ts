@@ -3,8 +3,8 @@ import type { AnonymousReplayPolicy } from "@interfere/types/sdk/remote-config/a
 import {
   API_URL_GLOBAL,
   INGEST_URL_GLOBAL,
-  PUBLIC_KEY_GLOBAL,
 } from "@interfere/types/sdk/injected-globals";
+import { RELEASE_TOKEN_GLOBAL } from "@interfere/types/sdk/release/token";
 
 import { Kernel } from "../../src/internal/kernel.js";
 import { PluginRuntime } from "../../src/internal/plugins/plugin-runtime.js";
@@ -84,14 +84,14 @@ export function createReplayHarness({
 
   setInjectedConfiguration(INGEST_URL_GLOBAL, "https://replay.invalid");
 
-  setInjectedConfiguration(PUBLIC_KEY_GLOBAL, "interfere_pk_test");
+  setInjectedConfiguration(RELEASE_TOKEN_GLOBAL, "interfere_pk_test");
 
   replayUploads.reset();
 
   const tracker = new SessionTracker({
     target: {
       baseUrl: "https://replay.invalid",
-      publicKeyHeader: { apiKey: "test-key" },
+      releaseTokenHeader: { apiKey: "test-key" },
     },
   });
 

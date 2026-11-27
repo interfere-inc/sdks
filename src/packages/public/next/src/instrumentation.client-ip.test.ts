@@ -17,7 +17,7 @@ test.each([
   async (clientIp, expectedIp) => {
     const collector = await receiver();
 
-    vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test");
+    vi.stubEnv("INTERFERE_API_KEY", "interfere_secret_us_test");
 
     vi.stubEnv("INTERFERE_API_URL", collector.url);
 

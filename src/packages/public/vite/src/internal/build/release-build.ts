@@ -3,7 +3,6 @@ import { cleanupSourceMaps } from "@interfere/build/cleanup-source-maps";
 import { sourceMapUploadFetch } from "@interfere/build/source-map-upload-fetch";
 import { InterfereClient } from "@interfere/javascript";
 import type { Interfere } from "@interfere/javascript";
-import { PUBLIC_KEY_HEADER } from "@interfere/constants/api";
 import type { ReleaseSlug } from "@interfere/types/releases/slug";
 import { diagnoseRelease } from "@interfere/types/sdk/build-diagnostics";
 import type { ReleaseDiagnostic } from "@interfere/types/sdk/build-diagnostics";
@@ -46,7 +45,6 @@ export interface PluginState {
   libraryBuild: boolean;
   logger: Logger;
   projectDir: string;
-  publicKey: string | undefined;
   releaseToken?: boolean;
   registeredRelease?: CreateReleaseResponse | undefined;
   serviceName: string | undefined;
@@ -245,7 +243,7 @@ async function publishRelease(
   state: UploadReadyPluginState,
   discovered: DiscoveryResult,
 ) {
-  const { apiKey, apiUrl, releaseSlug, commitSha, logger, publicKey } = state;
+  const { apiKey, apiUrl, releaseSlug, commitSha, logger } = state;
 
   const client = new InterfereClient({
     fetch: sourceMapUploadFetch,
@@ -253,7 +251,6 @@ async function publishRelease(
     apiKey: { token: apiKey },
     headers: {
       "user-agent": PRODUCER_VERSION,
-      [PUBLIC_KEY_HEADER]: publicKey,
       "x-interfere-service": state.serviceName,
     },
     ...RELEASE_CLIENT_RETRY,

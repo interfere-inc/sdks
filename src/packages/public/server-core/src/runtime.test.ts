@@ -1,6 +1,7 @@
 import { attribute, exportedSpans } from "@interfere/test-utils/vitest/otlp";
 import { receiver } from "@interfere/test-utils/vitest/telemetry-receiver";
 import { toException } from "@interfere/types/sdk/errors";
+import { RELEASE_TOKEN_HEADER } from "@interfere/types/sdk/release/token";
 import { context, logs, propagation, trace } from "@opentelemetry/api";
 import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
 import { W3CTraceContextPropagator } from "@opentelemetry/core";
@@ -186,9 +187,9 @@ test("trace and log exports carry the workspace API key as a bearer token and no
   ).toStrictEqual(["Bearer core-contract", "Bearer core-contract"]);
 });
 
-test("a public key alias travels in its header and never in the query", async () => {
+test("a release token travels in its header and never in the query", async () => {
   await runtime.register(async () =>
-    startNodeRuntime({ ...input, credential: { publicKey: "core-alias" } }),
+    startNodeRuntime({ ...input, credential: { releaseToken: "core-alias" } }),
   );
 
   runtime.recordException(new Error("alias capture"), {
@@ -203,7 +204,7 @@ test("a public key alias travels in its header and never in the query", async ()
   );
 
   expect(exported?.url).toBe("/drain/v1/traces");
-  expect(exported?.headers.get("x-interfere-public-key")).toBe("core-alias");
+  expect(exported?.headers.get(RELEASE_TOKEN_HEADER)).toBe("core-alias");
   expect(exported?.headers.has("authorization")).toBe(false);
 });
 

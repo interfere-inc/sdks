@@ -6,7 +6,7 @@ import { runInNewContext } from "node:vm";
 import { build } from "vite";
 import { beforeAll, expect, test } from "vitest";
 
-const PUBLIC_KEY = "interfere_pub_us_test_123";
+const RELEASE_TOKEN = "irt_workerd_test";
 
 const GLOBAL_NAME = "interfereServer";
 
@@ -16,7 +16,7 @@ interface ServerEntry {
   readInterfereServerEnv: () => {
     apiKey: string | null;
     nodeEnvironment: string;
-    publicKey: string | null;
+    releaseToken: string | null;
   };
   traceMeta: () => unknown[];
   withRequestSpan: <T>(request: Request, next: () => Promise<T>) => Promise<T>;
@@ -43,7 +43,8 @@ async function bundleWithProcessReads() {
     const output = await build({
       configFile: false,
       define: {
-        "import.meta.env.VITE_INTERFERE_PUBLIC_KEY": JSON.stringify(PUBLIC_KEY),
+        "import.meta.env.VITE_INTERFERE_RELEASE_TOKEN":
+          JSON.stringify(RELEASE_TOKEN),
       },
       logLevel: "silent",
       plugins: [
@@ -107,7 +108,7 @@ beforeAll(async () => {
 test("the bundled server entry runs on a runtime with no process global", async () => {
   expect(runInNewContext("typeof process", {})).toBe("undefined");
 
-  expect(server.readInterfereServerEnv().publicKey).toBe(PUBLIC_KEY);
+  expect(server.readInterfereServerEnv().releaseToken).toBe(RELEASE_TOKEN);
   expect(server.readInterfereServerEnv().apiKey).toBeNull();
   expect(server.readInterfereServerEnv().nodeEnvironment).toBe("production");
   expect(server.isEnabledOnServer()).toBe(true);

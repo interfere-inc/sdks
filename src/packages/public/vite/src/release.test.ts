@@ -224,7 +224,6 @@ test("releases the retained output per environment and deletes the maps", async 
       warn: vi.fn<(message: string) => void>(),
     },
     projectDir: root,
-    publicKey: "interfere_pk_test",
     receipt: ".cache/receipt.json",
   });
 
@@ -326,7 +325,6 @@ test("skips when the release already holds source maps from another build of the
       warn: vi.fn<(message: string) => void>(),
     },
     projectDir: root,
-    publicKey: "interfere_pk_test",
     receipt: ".cache/receipt.json",
   });
 
@@ -371,7 +369,6 @@ test("retries a bundle once when a release request fails transiently", async () 
       warn,
     },
     projectDir: root,
-    publicKey: "interfere_pk_test",
     receipt: ".cache/receipt.json",
   });
 

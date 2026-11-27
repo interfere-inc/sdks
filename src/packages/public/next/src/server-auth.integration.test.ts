@@ -10,7 +10,6 @@ let host: Awaited<ReturnType<typeof app.start>>;
 const cleanups: (() => Promise<void>)[] = [];
 
 const WORKSPACE_KEY = "interfere_secret_us_server_auth";
-const PUBLIC_KEY = "interfere_public_us_server_auth";
 
 const BUILD_ENV = {
   INTERFERE_SOURCE_ID: "0123456789abcdef0123456789abcdef01234567",
@@ -126,30 +125,4 @@ test("server runtimes on Node and Edge send telemetry with the workspace API key
         request.headers.has("x-interfere-public-key"),
     ),
   ).toStrictEqual([]);
-});
-
-test("with neither an API key nor a baked release token the Node and Edge server runtimes send the public key header", async () => {
-  expect.hasAssertions();
-
-  await host.close();
-
-  collector.reset();
-
-  host = await app.start("serve.ts", {
-    ...BUILD_ENV,
-    INTERFERE_API_URL: collector.url,
-    INTERFERE_PUBLIC_KEY: PUBLIC_KEY,
-    OTEL_BSP_SCHEDULE_DELAY: "250",
-  });
-
-  const { node, edge } = await failOnNodeAndEdge(host.url);
-
-  expect(
-    [...node, ...edge].map((request) => [
-      request.headers.get("x-interfere-public-key"),
-      request.headers.get("authorization"),
-      request.headers.get("x-api-key"),
-      request.headers.get("x-interfere-release-token"),
-    ]),
-  ).toStrictEqual([...node, ...edge].map(() => [PUBLIC_KEY, null, null, null]));
 });

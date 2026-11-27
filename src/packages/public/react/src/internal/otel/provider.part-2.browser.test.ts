@@ -60,7 +60,7 @@ function buildProvider(
   return buildOtelProvider({
     clientOptions: {
       baseUrl: "https://collector.test",
-      publicKeyHeader: { apiKey: "test-key" },
+      releaseTokenHeader: { apiKey: "test-key" },
     },
     getDeviceId: () => null,
     getSessionId: () => null,

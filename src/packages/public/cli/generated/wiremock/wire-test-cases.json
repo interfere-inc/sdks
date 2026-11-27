@@ -869,78 +869,6 @@
       }
     },
     {
-      "id": "createworkspacepublickey",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/publicKeys",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "idempotencyKey": "idempotencyKey",
-        "name": "name"
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "{\n  \"content\": \"content\",\n  \"name\": \"name\"\n}"
-      }
-    },
-    {
-      "id": "readworkspacepublickey",
-      "method": "GET",
-      "path": "/v3/workspaces/{workspace}/publicKeys/{publicKeyId}",
-      "params": {
-        "workspace": "workspaceSlug",
-        "publicKeyId": "publicKeyId"
-      },
-      "body": null,
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "{\n  \"content\": \"content\",\n  \"name\": \"name\",\n  \"id\": \"id\",\n  \"revoked\": true\n}"
-      }
-    },
-    {
-      "id": "revokeworkspacepublickey",
-      "method": "DELETE",
-      "path": "/v3/workspaces/{workspace}/publicKeys/{publicKeyId}",
-      "params": {
-        "workspace": "workspaceSlug",
-        "publicKeyId": "publicKeyId"
-      },
-      "body": null,
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "{\n  \"success\": true\n}"
-      }
-    },
-    {
-      "id": "rollworkspacepublickey",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/publicKeys/{publicKeyId}/roll",
-      "params": {
-        "workspace": "workspaceSlug",
-        "publicKeyId": "publicKeyId"
-      },
-      "body": {
-        "expectedUpdatedAt": 1
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "{\n  \"content\": \"content\",\n  \"name\": \"name\"\n}"
-      }
-    },
-    {
       "id": "revokeworkspaceidentitysecret",
       "method": "DELETE",
       "path": "/v3/workspaces/{workspace}/identity-secret",
@@ -3585,7 +3513,7 @@
       "requiresAuth": true,
       "response": {
         "status": 200,
-        "body": "[\n  {\n    \"anonymousNumber\": 1,\n    \"createdAt\": 1.1,\n    \"deviceId\": \"deviceId\",\n    \"endUserId\": \"endUserId\",\n    \"firstSeenAt\": 1.1,\n    \"lastSeenAt\": 1.1,\n    \"organizationId\": \"organizationId\",\n    \"surfaceId\": \"surfaceId\",\n    \"updatedAt\": 1.1,\n    \"surface\": {\n      \"createdAt\": 1.1,\n      \"deletedAt\": 1.1,\n      \"updatedAt\": 1.1,\n      \"anonymousReplayPolicy\": \"anonymousReplayPolicy\",\n      \"anonymousUserTracking\": true,\n      \"destinationConnectionId\": \"destinationConnectionId\",\n      \"destinationMappingId\": \"destinationMappingId\",\n      \"destinationMappingLabel\": \"destinationMappingLabel\",\n      \"destinationMappingUrl\": \"destinationMappingUrl\",\n      \"environmentFiltering\": true,\n      \"explicitOnly\": true,\n      \"id\": \"id\",\n      \"name\": \"name\",\n      \"onboardedAt\": 1.1,\n      \"organizationId\": \"organizationId\",\n      \"primaryEnvironmentId\": \"primaryEnvironmentId\",\n      \"primaryEnvironmentName\": \"primaryEnvironmentName\",\n      \"sdkConfig\": {},\n      \"serviceId\": \"serviceId\",\n      \"slug\": \"slug\",\n      \"sourceDatasourceId\": \"sourceDatasourceId\",\n      \"sourceConnectionId\": \"sourceConnectionId\",\n      \"sourceMappingId\": \"sourceMappingId\",\n      \"sourceMappingLabel\": \"sourceMappingLabel\",\n      \"sourceMappingUrl\": \"sourceMappingUrl\",\n      \"sourceWorkingDirectory\": \"sourceWorkingDirectory\",\n      \"type\": \"nextjs\"\n    }\n  }\n]"
+        "body": "[\n  {\n    \"anonymousNumber\": 1,\n    \"createdAt\": 1.1,\n    \"deviceId\": \"deviceId\",\n    \"endUserId\": \"endUserId\",\n    \"firstSeenAt\": 1.1,\n    \"lastSeenAt\": 1.1,\n    \"organizationId\": \"organizationId\",\n    \"surfaceId\": \"surfaceId\",\n    \"updatedAt\": 1.1\n  }\n]"
       }
     },
     {
@@ -3736,26 +3664,6 @@
       "body": {
         "args": {
           "surfaceSlug": "surfaceSlug"
-        }
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 200,
-        "body": "[\n  {\n    \"createdAt\": 1.1,\n    \"deletedAt\": 1.1,\n    \"updatedAt\": 1.1,\n    \"content\": \"content\",\n    \"id\": \"id\",\n    \"lastUsedAt\": 1.1,\n    \"name\": \"name\",\n    \"organizationId\": \"organizationId\",\n    \"surfaceId\": \"surfaceId\"\n  }\n]"
-      }
-    },
-    {
-      "id": "for_workspace_1",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/queries/publicKeys.forWorkspace",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "args": {
-          "key": "value"
         }
       },
       "queryMatchers": [],
@@ -5376,82 +5284,6 @@
           "disableAdditionalIdentifications": true,
           "id": "id"
         }
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
-      "id": "createworkspacepublickey_error",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/publicKeys",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "idempotencyKey": "idempotencyKey",
-        "name": "name"
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
-      "id": "readworkspacepublickey_error",
-      "method": "GET",
-      "path": "/v3/workspaces/{workspace}/publicKeys/{publicKeyId}",
-      "params": {
-        "workspace": "workspaceSlug",
-        "publicKeyId": "publicKeyId"
-      },
-      "body": null,
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
-      "id": "revokeworkspacepublickey_error",
-      "method": "DELETE",
-      "path": "/v3/workspaces/{workspace}/publicKeys/{publicKeyId}",
-      "params": {
-        "workspace": "workspaceSlug",
-        "publicKeyId": "publicKeyId"
-      },
-      "body": null,
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
-      "id": "rollworkspacepublickey_error",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/publicKeys/{publicKeyId}/roll",
-      "params": {
-        "workspace": "workspaceSlug",
-        "publicKeyId": "publicKeyId"
-      },
-      "body": {
-        "expectedUpdatedAt": 1
       },
       "queryMatchers": [],
       "headerMatchers": [],
@@ -8405,27 +8237,6 @@
       "body": {
         "args": {
           "surfaceSlug": "surfaceSlug"
-        }
-      },
-      "queryMatchers": [],
-      "headerMatchers": [],
-      "requiresAuth": true,
-      "response": {
-        "status": 422,
-        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
-      },
-      "expectError": true
-    },
-    {
-      "id": "for_workspace_1_error",
-      "method": "POST",
-      "path": "/v3/workspaces/{workspace}/queries/publicKeys.forWorkspace",
-      "params": {
-        "workspace": "workspaceSlug"
-      },
-      "body": {
-        "args": {
-          "key": "value"
         }
       },
       "queryMatchers": [],

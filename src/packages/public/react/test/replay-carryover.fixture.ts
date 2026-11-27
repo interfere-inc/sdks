@@ -14,7 +14,7 @@ let allowed = query.get("allowed") !== "false";
 
 const target = {
   baseUrl: query.get("destination") ?? location.origin,
-  publicKeyHeader: { apiKey: query.get("key") ?? "replay-public-key" },
+  releaseTokenHeader: { apiKey: query.get("key") ?? "replay-public-key" },
   headers: {},
   timeoutInSeconds: 30,
   maxRetries: 0,

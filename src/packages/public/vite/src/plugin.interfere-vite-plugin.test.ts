@@ -94,8 +94,6 @@ async function resolvePluginConfig(
   } = {},
 ) {
   if (input.env) {
-    vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", undefined);
-
     for (const [name, value] of Object.entries(input.env)) {
       vi.stubEnv(name, value);
     }
@@ -260,7 +258,7 @@ describe("interfere vite plugin", () => {
       const capture = captureLogger();
 
       const config = {
-        env: { VITE_INTERFERE_PUBLIC_KEY: "interfere_pk_dev" },
+        env: {},
         logger: capture.logger,
         plugins: [{ name: "vite:react" }],
       };

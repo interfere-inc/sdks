@@ -145,7 +145,7 @@ describe("Kernel", () => {
             getSessionId: () => tracker.sessionId(),
             clientOptions: {
               baseUrl: "https://in.example.com",
-              publicKeyHeader: { apiKey: "test-key" },
+              releaseTokenHeader: { apiKey: "test-key" },
             },
             sdkStack: [],
           }),

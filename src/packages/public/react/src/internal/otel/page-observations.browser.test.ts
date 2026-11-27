@@ -48,7 +48,7 @@ test("a native click emits a user action, stamps synchronous work with its actio
     additionalSpanProcessors: [new SimpleSpanProcessor({ exporter: spans })],
     clientOptions: {
       baseUrl: "https://sdk.invalid",
-      publicKeyHeader: { apiKey: "test-key" },
+      releaseTokenHeader: { apiKey: "test-key" },
     },
     getActionId: () => views.actionId(),
     getDeviceId: () => null,

@@ -118,8 +118,6 @@ describe(withInterfere, () => {
 
       vi.stubEnv("INTERFERE_ENVIRONMENT", "staging");
 
-      vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_next");
-
       vi.stubEnv("VERCEL_ENV", "preview");
 
       process.chdir(projectDir);
@@ -154,8 +152,6 @@ describe(withInterfere, () => {
 
       vi.stubEnv("INTERFERE_ENVIRONMENT", undefined);
 
-      vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_next");
-
       vi.stubEnv("VERCEL_ENV", "preview");
 
       process.chdir(projectDir);
@@ -185,8 +181,6 @@ describe(withInterfere, () => {
     expect.assertions(1);
 
     await withTempProject("next-config-", async (projectDir) => {
-      vi.stubEnv("INTERFERE_PUBLIC_KEY", undefined);
-
       vi.stubEnv("INTERFERE_API_KEY", undefined);
 
       process.chdir(projectDir);

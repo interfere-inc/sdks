@@ -10,12 +10,10 @@ import {
 import { describe, expect, test } from "vitest";
 
 const NEXT_CONTEXT = {
-  publicKeyEnvVar: "INTERFERE_PUBLIC_KEY",
   docsUrl: "https://interfere.com/docs/sdk/next-js",
 } as const;
 
 const VITE_CONTEXT = {
-  publicKeyEnvVar: "VITE_INTERFERE_PUBLIC_KEY",
   docsUrl: "https://interfere.com/docs/sdk/vite",
 } as const;
 
@@ -123,7 +121,6 @@ describe(checkReleaseConfig, () => {
     expect(details).toContain("`interfere_secret_us_`");
     expect(details).toContain("`interfere_secret_eu_`");
     expect(details).toContain("`interfere_pk...`");
-    expect(details).toContain("`INTERFERE_PUBLIC_KEY`");
     expect(details).not.toContain("super_secret_value");
   });
 
@@ -156,15 +153,6 @@ describe(diagnoseRelease, () => {
       "The build continues, but this release has no source maps in Interfere.",
     );
   });
-
-  test.each(["AUTH_MISSING", "AUTH_AK_SURFACE_REQUIRED"])(
-    "renders the host public-key env var into %s diagnostics",
-    (code) => {
-      expect(
-        diagnoseRelease(VITE_CONTEXT, { body: { code } }).details,
-      ).toContainEqual(expect.stringContaining("`VITE_INTERFERE_PUBLIC_KEY`"));
-    },
-  );
 
   test.each([
     "AUTH_MISSING",

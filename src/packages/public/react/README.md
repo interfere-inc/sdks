@@ -45,7 +45,7 @@ npm install @interfere/vite
 
 Set `INTERFERE_API_KEY` in the build environment to a workspace secret with `release:write`, from **Settings → Developer**. Keep it out of browser code and `VITE_` variables. The Vite plugin registers a release, bakes the release token into the browser bundle and handles source maps automatically. The service name defaults to the unscoped `package.json` name; set `serviceName` in the build plugin to choose another stable name.
 
-`VITE_INTERFERE_PUBLIC_KEY` and `INTERFERE_PUBLIC_KEY` are deprecated legacy configuration. New setup uses the build-minted release token. Then:
+New setup uses the build-minted release token. Then:
 
 **1. Add the Vite plugin.**
 
@@ -128,6 +128,9 @@ export function IdentifyUser({ user }: { user: User | null }) {
 | `avatar`               | No       | An image URL.                                                                             |
 | `company`              | No       | `{ tier: "Enterprise" }` sets the company's tier in Interfere.                            |
 | `traits`               | No       | Any other key-value data.                                                                 |
+| `signature`            | No       | Hex HMAC-SHA256 of `identifier` keyed with your identify secret. Compute it on a server.  |
+
+A matching `signature` marks the user as verified; one that does not match is refused with `IDENTITY_SIGNATURE_INVALID`, and an identify without one stays unverified. The Vercel integration sets the secret as `INTERFERE_IDENTITY_SECRET`; never ship it to the browser.
 
 `identity.clear()` forgets the user and starts a new session. Call it on sign-out. `session.getId()` returns the current session id; `useSession()` is a shortcut.
 

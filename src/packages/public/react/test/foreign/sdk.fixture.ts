@@ -170,7 +170,7 @@ function installInterfere(options: InterfereOptions = {}) {
 
   const target = {
     baseUrl: `${globalThis.location.origin}/ingest`,
-    publicKeyHeader: { apiKey: "fixture" },
+    releaseTokenHeader: { apiKey: "fixture" },
   };
 
   const provider = buildOtelProvider({

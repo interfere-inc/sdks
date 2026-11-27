@@ -51,7 +51,7 @@ async function countKeyedNameDeopts(mode: FixtureMode) {
   const handlers = [
     http.get(`${ORIGIN}/`, () =>
       HttpResponse.html(
-        `<!doctype html><html><head><script>window.__INTERFERE_PUBLIC_KEY__="pk_fixture";window.__INTERFERE_API_URL__="${ORIGIN}";window.__INTERFERE_FORCE_ENABLE__=true;</script></head><body><div id="root"></div><script type="module" src="/app.js"></script></body></html>`,
+        `<!doctype html><html><head><script>window.__INTERFERE_RELEASE_TOKEN__="pk_fixture";window.__INTERFERE_API_URL__="${ORIGIN}";window.__INTERFERE_FORCE_ENABLE__=true;</script></head><body><div id="root"></div><script type="module" src="/app.js"></script></body></html>`,
       ),
     ),
     http.get(

@@ -5,7 +5,6 @@ import {
   preflightReleaseBinding,
   resolveReleaseRequest,
 } from "@interfere/build/release-request";
-import { PUBLIC_KEY_HEADER } from "@interfere/constants/api";
 import { omitUndefined } from "@interfere/helpers/omit-undefined";
 import { InterfereClient } from "@interfere/javascript";
 import type { Interfere } from "@interfere/javascript";
@@ -45,9 +44,7 @@ export function preflightMode(phase: string, config: ResolvedBuildConfig) {
     return "build" satisfies PreflightMode;
   }
 
-  return phase === PHASE_DEVELOPMENT_SERVER &&
-    config.apiKey &&
-    !config.publicKey
+  return phase === PHASE_DEVELOPMENT_SERVER && config.apiKey
     ? ("development" satisfies PreflightMode)
     : null;
 }
@@ -103,7 +100,6 @@ function releaseClient(config: ResolvedBuildConfig) {
     baseUrl: config.apiUrl,
     apiKey: { token: config.apiKey },
     headers: {
-      [PUBLIC_KEY_HEADER]: config.publicKey ?? undefined,
       "x-interfere-producer-version": PRODUCER_VERSION,
       "x-interfere-service": config.serviceName,
     },
@@ -206,39 +202,28 @@ async function mintLocalDevelopmentRelease(config: ResolvedBuildConfig) {
 function preflightBuild(config: ResolvedBuildConfig) {
   const client = releaseClient(config);
 
-  if (!client && !config.publicKey) {
+  if (!client) {
     return null;
   }
 
-  return Promise.all([
-    client && preflightReleaseBinding(client),
-    config.publicKey
-      ? resolveSurfaceConfig(
-          config.apiUrl,
-          { publicKey: config.publicKey },
-          crypto.randomUUID(),
-          { serviceName: config.serviceName },
-        )
-      : undefined,
-  ]).then(async ([releaseConfig, publicKeyConfig]) => {
-    const registeredRelease =
-      client && (releaseConfig || !config.publicKey)
-        ? await registerRelease(client, config, releaseConfig ?? null)
-        : undefined;
+  return preflightReleaseBinding(client).then(async (releaseConfig) => {
+    const registeredRelease = await registerRelease(
+      client,
+      config,
+      releaseConfig ?? null,
+    );
 
     return {
       releaseConfig: releaseConfig ?? undefined,
       registeredRelease,
-      surfaceConfig:
-        publicKeyConfig ??
-        (registeredRelease?.token
-          ? await resolveSurfaceConfig(
-              config.apiUrl,
-              { releaseToken: registeredRelease.token },
-              crypto.randomUUID(),
-              { serviceName: config.serviceName },
-            )
-          : undefined),
+      surfaceConfig: registeredRelease?.token
+        ? await resolveSurfaceConfig(
+            config.apiUrl,
+            { releaseToken: registeredRelease.token },
+            crypto.randomUUID(),
+            { serviceName: config.serviceName },
+          )
+        : undefined,
     } satisfies BuildPreflight;
   });
 }

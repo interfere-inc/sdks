@@ -107,8 +107,6 @@ async function resolvePluginConfig(
   } = {},
 ) {
   if (input.env) {
-    vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", undefined);
-
     for (const [name, value] of Object.entries(input.env)) {
       vi.stubEnv(name, value);
     }
@@ -194,8 +192,6 @@ describe("interfere vite plugin", () => {
 
       vi.stubEnv("VITEST_WORKER_ID", "");
 
-      vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", undefined);
-
       const capture = captureLogger();
 
       await resolvePluginConfig(interfere(), {
@@ -214,8 +210,6 @@ describe("interfere vite plugin", () => {
       vi.stubEnv("VITEST", "");
 
       vi.stubEnv("VITEST_WORKER_ID", "");
-
-      vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", undefined);
 
       const plugin = interfere();
 
@@ -246,8 +240,6 @@ describe("interfere vite plugin", () => {
       vi.stubEnv("VITEST", "");
 
       vi.stubEnv("VITEST_WORKER_ID", "");
-
-      vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", undefined);
 
       server.use(
         http.post(`${RELEASE_API}/v3/releases`, () =>

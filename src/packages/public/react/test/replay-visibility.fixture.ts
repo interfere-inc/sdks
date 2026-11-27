@@ -1,8 +1,8 @@
 import {
   API_URL_GLOBAL,
   INGEST_URL_GLOBAL,
-  PUBLIC_KEY_GLOBAL,
 } from "@interfere/types/sdk/injected-globals";
+import { RELEASE_TOKEN_GLOBAL } from "@interfere/types/sdk/release/token";
 import { record } from "rrweb";
 import { Kernel } from "../src/internal/kernel.js";
 import { PluginRuntime } from "../src/internal/plugins/plugin-runtime.js";
@@ -13,13 +13,13 @@ import { DISABLE_ALL_PLUGINS } from "./fixtures/disable-all-plugins.js";
 Object.assign(globalThis, {
   [API_URL_GLOBAL]: location.origin,
   [INGEST_URL_GLOBAL]: location.origin,
-  [PUBLIC_KEY_GLOBAL]: "interfere_pk_visibility",
+  [RELEASE_TOKEN_GLOBAL]: "interfere_pk_visibility",
 });
 
 const tracker = new SessionTracker({
   target: {
     baseUrl: location.origin,
-    publicKeyHeader: { apiKey: "test-key" },
+    releaseTokenHeader: { apiKey: "test-key" },
   },
 });
 

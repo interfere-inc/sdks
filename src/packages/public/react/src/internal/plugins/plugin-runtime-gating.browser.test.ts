@@ -23,7 +23,7 @@ test("keeps analytics dark until provider configuration settles, then activates 
     device: new DeviceManager(),
     target: {
       baseUrl: "https://plugins.invalid",
-      publicKeyHeader: { apiKey: "test-key" },
+      releaseTokenHeader: { apiKey: "test-key" },
     },
   });
 

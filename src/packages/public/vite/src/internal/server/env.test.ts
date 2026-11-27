@@ -15,27 +15,22 @@ describe("server env", () => {
     expect(readInterfereServerEnv().apiKey).toBe("interfere_secret_us_test");
   });
 
-  test("falls back to the public key alias in development without a workspace API key", () => {
+  test("stays off in development without a workspace API key or a baked release token", () => {
     vi.stubEnv("NODE_ENV", "development");
 
     vi.stubEnv("INTERFERE_API_KEY", "");
 
-    vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "interfere_pub_us_test");
-
-    expect(isEnabledOnServer()).toBe(true);
+    expect(isEnabledOnServer()).toBe(false);
   });
 
-  test("stays off in production with a public key when the build disabled Interfere", () => {
+  test("stays off in production with a workspace API key when the build disabled Interfere", () => {
     vi.stubEnv("NODE_ENV", "production");
 
     vi.stubEnv("INTERFERE_API_KEY", "interfere_secret_us_test");
 
-    vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "interfere_pub_us_test");
-
     vi.stubEnv("VITE_INTERFERE_DISABLED", "true");
 
     expect(isEnabledOnServer()).toBe(false);
-    expect(readInterfereServerEnv().publicKey).toBeNull();
     expect(readInterfereServerEnv().apiKey).toBeNull();
   });
 

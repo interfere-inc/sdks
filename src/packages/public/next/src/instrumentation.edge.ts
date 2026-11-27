@@ -34,9 +34,6 @@ import {
   resolveTracingMode,
 } from "@interfere/server-core/ownership";
 import { PRODUCER_VERSION } from "./internal/version.js";
-import { serverCredential } from "@interfere/server-core/credential";
-import type { ServerCredential } from "@interfere/server-core/credential";
-import { PUBLIC_KEY_HEADER } from "@interfere/constants/api";
 
 export { onRequestError } from "./internal/server/capture/capture.js";
 
@@ -46,16 +43,17 @@ export type { ServerInstrumentationOptions } from "./internal/server/instrumenta
 
 let registered = false;
 
-function edgeExportCredential(credential: ServerCredential) {
-  if ("apiKey" in credential) {
-    return { workspaceTelemetryKeyHeader: { apiKey: credential.apiKey } };
+function edgeExportCredential(env: {
+  readonly apiKey: string | null;
+  readonly releaseToken: string | null;
+}) {
+  if (env.apiKey) {
+    return { workspaceTelemetryKeyHeader: { apiKey: env.apiKey } };
   }
 
-  if ("releaseToken" in credential) {
-    return { releaseTokenHeader: { apiKey: credential.releaseToken } };
-  }
-
-  return { publicKeyHeader: { apiKey: credential.publicKey } };
+  return env.releaseToken
+    ? { releaseTokenHeader: { apiKey: env.releaseToken } }
+    : null;
 }
 
 /**
@@ -89,11 +87,7 @@ function start(opts: ServerInstrumentationOptions) {
 
   const env = readInterfereEnv();
 
-  const credential = serverCredential(
-    env.apiKey,
-    env.releaseToken,
-    env.publicKey,
-  );
+  const credential = edgeExportCredential(env);
 
   if (!credential) {
     return;
@@ -145,14 +139,10 @@ function start(opts: ServerInstrumentationOptions) {
         new SimpleSpanProcessor({
           exporter: new FetchTraceExporter({
             baseUrl: env.apiUrl,
-            ...edgeExportCredential(credential),
-            headers: omitUndefined({
+            ...credential,
+            headers: {
               "x-interfere-producer-version": PRODUCER_VERSION,
-              [PUBLIC_KEY_HEADER]:
-                "apiKey" in credential || "releaseToken" in credential
-                  ? credential.publicKey
-                  : undefined,
-            }),
+            },
           }),
         }),
       ],

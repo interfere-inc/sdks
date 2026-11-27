@@ -35,8 +35,6 @@ export function installVitePluginCase(input: {
     vi.stubEnv(key, undefined);
   }
 
-  vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "interfere_pk_test_fake");
-
   vi.stubEnv("INTERFERE_API_KEY", "interfere_ak_test");
 
   vi.stubEnv("NEXT_PUBLIC_INTERFERE_BUILD_ID", undefined);

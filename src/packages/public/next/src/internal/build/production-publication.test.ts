@@ -13,7 +13,6 @@ const config = {
   apiUrl: "https://in.example.com",
   buildId: "a".repeat(40),
   environment: "preview",
-  publicKey: null,
   purgeSourceMaps: true,
   releaseSlug: releaseSlugSchema.parse("rel_aaaaaaaaaaaaaaaa"),
   uploadSourceMaps: true,

@@ -3,8 +3,8 @@ import { omitUndefined } from "@interfere/helpers/omit-undefined";
 import {
   API_URL_GLOBAL,
   INGEST_URL_GLOBAL,
-  PUBLIC_KEY_GLOBAL,
 } from "@interfere/types/sdk/injected-globals";
+import { RELEASE_TOKEN_GLOBAL } from "@interfere/types/sdk/release/token";
 
 import { context, propagation } from "@opentelemetry/api";
 import {
@@ -34,7 +34,7 @@ export async function startRecordingPluginRuntime(options: {
 
   setInjectedConfiguration(INGEST_URL_GLOBAL, "https://plugin-runtime.invalid");
 
-  setInjectedConfiguration(PUBLIC_KEY_GLOBAL, "interfere_pk_test");
+  setInjectedConfiguration(RELEASE_TOKEN_GLOBAL, "interfere_pk_test");
 
   pluginTransport.clearUploads();
 
@@ -43,7 +43,7 @@ export async function startRecordingPluginRuntime(options: {
       device: options.device,
       target: {
         baseUrl: "https://plugin-runtime.invalid",
-        publicKeyHeader: { apiKey: "test-key" },
+        releaseTokenHeader: { apiKey: "test-key" },
       },
     }),
   );
@@ -59,7 +59,7 @@ export async function startRecordingPluginRuntime(options: {
   const otel = buildOtelProvider({
     clientOptions: {
       baseUrl: "https://plugin-runtime.invalid",
-      publicKeyHeader: { apiKey: "test-key" },
+      releaseTokenHeader: { apiKey: "test-key" },
     },
     getDeviceId: () => kernel.device.getDeviceId(),
     getSessionId: () => kernel.session.getId(),

@@ -46,7 +46,7 @@ test.each([408, 429, 500, 502, 504])(
     expect(second?.body).toStrictEqual(first?.body);
     expect(second?.path).toBe("/v3/replay/upload/original-session");
 
-    expect(second?.headers.get("x-interfere-public-key")).toBe(
+    expect(second?.headers.get("x-interfere-release-token")).toBe(
       "replay-public-key",
     );
 

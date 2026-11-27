@@ -37,7 +37,7 @@ beforeEach(async () => {
 
   setInjectedConfiguration("__INTERFERE_FORCE_ENABLE__", true);
 
-  setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", "interfere_pk_test");
+  setInjectedConfiguration("__INTERFERE_RELEASE_TOKEN__", "irt_provider_test");
 });
 
 afterEach(async () => {

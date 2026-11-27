@@ -32,7 +32,6 @@ export function createBuildReceipt(filename: string) {
     commitSha: string | null;
     releaseSlug: ReleaseSlug | null;
     environment: string | null;
-    publicKey: string | undefined;
     apiOrigin: string;
     producerVersion: string;
     serviceName?: string | undefined;

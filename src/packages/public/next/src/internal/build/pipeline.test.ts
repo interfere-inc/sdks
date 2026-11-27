@@ -16,7 +16,6 @@ const metadata = {
   apiUrl: "https://in.example.com",
   buildId: "abc123def4567890abc123def4567890abc123de",
   environment: "staging",
-  publicKey: null,
   purgeSourceMaps: true,
   releaseSlug: releaseSlugSchema.parse(RELEASE_SLUG),
   uploadSourceMaps: true,

@@ -1256,26 +1256,6 @@ async fn wire_update_enterprise_connection() {
 }
 
 #[tokio::test]
-async fn wire_createworkspacepublickey() {
-    run_case("createworkspacepublickey").await;
-}
-
-#[tokio::test]
-async fn wire_readworkspacepublickey() {
-    run_case("readworkspacepublickey").await;
-}
-
-#[tokio::test]
-async fn wire_revokeworkspacepublickey() {
-    run_case("revokeworkspacepublickey").await;
-}
-
-#[tokio::test]
-async fn wire_rollworkspacepublickey() {
-    run_case("rollworkspacepublickey").await;
-}
-
-#[tokio::test]
 async fn wire_revokeworkspaceidentitysecret() {
     run_case("revokeworkspaceidentitysecret").await;
 }
@@ -2016,11 +1996,6 @@ async fn wire_list_for_surface_1() {
 }
 
 #[tokio::test]
-async fn wire_for_workspace_1() {
-    run_case("for_workspace_1").await;
-}
-
-#[tokio::test]
 async fn wire_revoke_1() {
     run_case("revoke_1").await;
 }
@@ -2398,26 +2373,6 @@ async fn wire_update_basics_error() {
 #[tokio::test]
 async fn wire_update_enterprise_connection_error() {
     run_case("update_enterprise_connection_error").await;
-}
-
-#[tokio::test]
-async fn wire_createworkspacepublickey_error() {
-    run_case("createworkspacepublickey_error").await;
-}
-
-#[tokio::test]
-async fn wire_readworkspacepublickey_error() {
-    run_case("readworkspacepublickey_error").await;
-}
-
-#[tokio::test]
-async fn wire_revokeworkspacepublickey_error() {
-    run_case("revokeworkspacepublickey_error").await;
-}
-
-#[tokio::test]
-async fn wire_rollworkspacepublickey_error() {
-    run_case("rollworkspacepublickey_error").await;
 }
 
 #[tokio::test]
@@ -3158,11 +3113,6 @@ async fn wire_delete_2_error() {
 #[tokio::test]
 async fn wire_list_for_surface_1_error() {
     run_case("list_for_surface_1_error").await;
-}
-
-#[tokio::test]
-async fn wire_for_workspace_1_error() {
-    run_case("for_workspace_1_error").await;
 }
 
 #[tokio::test]

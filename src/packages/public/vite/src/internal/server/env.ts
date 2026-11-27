@@ -11,7 +11,6 @@ interface InterfereServerEnv {
   readonly apiKey: string | null;
   readonly apiUrl: string;
   readonly nodeEnvironment: string;
-  readonly publicKey: string | null;
   readonly releaseToken: string | null;
 }
 
@@ -20,7 +19,7 @@ interface InterfereServerEnv {
  * tracing and the OTel register path. Server telemetry authenticates with the
  * workspace API key (`INTERFERE_API_KEY`, `org:telemetry:write`), read from the
  * runtime environment and never baked into a bundle, else with the release token
- * the build baked into the bundle, else with the public key alias. Collector ingress remains the authority on whether local / unknown /
+ * the build baked into the bundle. Collector ingress remains the authority on whether local / unknown /
  * production events are allowed.
  */
 export function isEnabledOnServer() {
@@ -32,11 +31,7 @@ export function isEnabledOnServer() {
     return true;
   }
 
-  return (
-    readApiKey() !== null ||
-    readReleaseToken() !== null ||
-    readPublicKey() !== null
-  );
+  return readApiKey() !== null || readReleaseToken() !== null;
 }
 
 export function readInterfereServerEnv() {
@@ -52,7 +47,6 @@ export function readInterfereServerEnv() {
     apiKey: disabled ? null : readApiKey(),
     apiUrl: parseEnvValue(readProcessEnv()?.["INTERFERE_API_URL"]) ?? API_URL,
     nodeEnvironment,
-    publicKey: disabled ? null : readPublicKey(),
     releaseToken: disabled ? null : readReleaseToken(),
   } satisfies InterfereServerEnv;
 }
@@ -63,11 +57,4 @@ function readApiKey() {
 
 function readReleaseToken() {
   return bakedReleaseToken() || null;
-}
-
-function readPublicKey() {
-  return (
-    parseEnvValue(readProcessEnv()?.["VITE_INTERFERE_PUBLIC_KEY"]) ??
-    parseEnvValue(import.meta.env.VITE_INTERFERE_PUBLIC_KEY)
-  );
 }

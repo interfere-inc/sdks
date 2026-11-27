@@ -46,7 +46,7 @@ describe("api", () => {
       new SessionTracker({
         target: {
           baseUrl: "https://sdk.invalid",
-          publicKeyHeader: { apiKey: "test-key" },
+          releaseTokenHeader: { apiKey: "test-key" },
         },
       }),
     );
@@ -98,7 +98,7 @@ describe("api", () => {
         getSessionId: () => kernel.session.getId(),
         clientOptions: {
           baseUrl: "https://sdk.invalid",
-          publicKeyHeader: { apiKey: "test-key" },
+          releaseTokenHeader: { apiKey: "test-key" },
         },
         sdkStack: [],
       });
@@ -136,7 +136,7 @@ describe("api", () => {
         new SessionTracker({
           target: {
             baseUrl: "https://sdk.invalid",
-            publicKeyHeader: { apiKey: "test-key" },
+            releaseTokenHeader: { apiKey: "test-key" },
           },
         }),
       );

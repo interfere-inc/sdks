@@ -57,7 +57,7 @@ async function startKernel(opts: KernelOptions = {}) {
 }
 
 beforeEach(() => {
-  setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", "test-key");
+  setInjectedConfiguration("__INTERFERE_RELEASE_TOKEN__", "test-key");
 
   setInjectedConfiguration("__INTERFERE_PLUGINS__", undefined);
 

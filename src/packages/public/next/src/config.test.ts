@@ -1,4 +1,4 @@
-/* oxlint-disable typescript/no-unsafe-assignment, typescript/no-unsafe-return, typescript/require-await */
+/* oxlint-disable typescript/no-unsafe-assignment, typescript/no-unsafe-return */
 import { releaseSourceIdEnvKeys } from "@interfere/types/integrations";
 import { SERVICE_NAME_GLOBAL } from "@interfere/types/sdk/service-name";
 
@@ -12,7 +12,11 @@ import {
 } from "next/constants";
 
 import { HttpResponse, http } from "msw";
-import { releaseNetwork, withTempProject } from "../test/fixtures/build.js";
+import {
+  RELEASE_RESPONSE,
+  releaseNetwork,
+  withTempProject,
+} from "../test/fixtures/build.js";
 import { webpackContext } from "../test/fixtures/webpack.js";
 import { withInterfere } from "./config.js";
 import { log } from "./internal/logger.js";
@@ -105,16 +109,8 @@ afterEach(() => {
   vi.unstubAllEnvs();
 });
 
-function stubProductionPreflightEnv(
-  projectDir: string,
-  credentials: "release" | "public-key-only" = "release",
-) {
-  vi.stubEnv(
-    "INTERFERE_API_KEY",
-    credentials === "release" ? "interfere_ak_test_xxx" : undefined,
-  );
-
-  vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_next");
+function stubProductionPreflightEnv(projectDir: string) {
+  vi.stubEnv("INTERFERE_API_KEY", "interfere_ak_test_xxx");
 
   vi.stubEnv("INTERFERE_API_URL", "https://in.example.com");
 
@@ -190,8 +186,6 @@ describe(withInterfere, () => {
     await withTempProject("next-service-name-", async (projectDir) => {
       process.chdir(projectDir);
 
-      vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_next");
-
       writeFileSync(
         path.join(projectDir, "package.json"),
         JSON.stringify({ name: "@acme/platform" }),
@@ -260,35 +254,37 @@ describe(withInterfere, () => {
     await withTempProject("next-config-", async (projectDir) => {
       vi.stubEnv("INTERFERE_API_KEY", "interfere_ak_test_xxx");
 
-      vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test_xxx");
-
       process.chdir(projectDir);
 
       writeFileSync(path.join(projectDir, "instrumentation-client.ts"), "");
 
-      expect(() => {
-        void withInterfere({ interfere: { buildId: "build_123" } as never })(
+      await expect(
+        withInterfere({ interfere: { buildId: "build_123" } as never })(
           PHASE_DEVELOPMENT_SERVER,
-        );
-      }).toThrow(REMOVED_BUILD_ID_RE);
+        ),
+      ).rejects.toThrow(REMOVED_BUILD_ID_RE);
     });
   });
 
-  test("warns instead of failing when a public key is set but no instrumentation client exists", async () => {
+  test("warns instead of failing when a release token is baked but no instrumentation client exists", async () => {
     expect.assertions(2);
 
     await withTempProject("next-config-", async (projectDir) => {
       vi.stubEnv("INTERFERE_API_KEY", "interfere_ak_test_xxx");
 
-      vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_next");
+      releaseNetwork.use(
+        http.post("*/v3/releases", () =>
+          HttpResponse.json({ ...RELEASE_RESPONSE, token: "irt_next_dev" }),
+        ),
+      );
 
       process.chdir(projectDir);
 
       const warn = vi.spyOn(log, "warn");
 
-      expect(() => {
-        void withInterfere()(PHASE_DEVELOPMENT_SERVER);
-      }).not.toThrow();
+      await expect(
+        withInterfere()(PHASE_DEVELOPMENT_SERVER),
+      ).resolves.toBeDefined();
 
       expect(warn).toHaveBeenCalledWith(
         "Missing instrumentation client",

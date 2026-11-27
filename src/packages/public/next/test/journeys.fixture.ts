@@ -39,7 +39,6 @@ beforeAll(async () => {
   await app.copyFixture("journeys");
 
   const env = {
-    INTERFERE_PUBLIC_KEY: "interfere_public_us_journeys",
     INTERFERE_API_KEY: secret,
     INTERFERE_API_URL: collector.url,
     INTERFERE_SOURCE_ID: "0123456789abcdef0123456789abcdef01234567",

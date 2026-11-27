@@ -23,9 +23,9 @@ export function interfereCompilerConfig(
         await existingHook(context);
       }
 
-      if (config.publicKey === null && !config.registeredRelease?.token) {
+      if (!config.registeredRelease?.token) {
         log.warn("No browser credential", [
-          "This build has no release token and no INTERFERE_PUBLIC_KEY, so it sends no browser events.",
+          "This build has no release token, so it sends no browser events.",
           "Set INTERFERE_API_KEY on builds that you deploy and withInterfere() bakes in a release token.",
         ]);
       }

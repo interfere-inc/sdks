@@ -3,8 +3,6 @@ import { BUILD_MARKER_GLOBAL } from "@interfere/types/sdk/injected-globals";
 
 import {
   buildIntegrationRan,
-  hasEnvCredentials,
-  warnBuildIntegrationDegraded,
   warnBuildIntegrationMissing,
 } from "./build-marker-guard.js";
 import { afterEach, describe, expect, test, vi } from "vitest";
@@ -48,30 +46,6 @@ describe(buildIntegrationRan, () => {
   });
 });
 
-describe(hasEnvCredentials, () => {
-  test("returns false when neither credential env var is set", () => {
-    vi.stubEnv("INTERFERE_PUBLIC_KEY", "");
-
-    vi.stubEnv("NEXT_PUBLIC_INTERFERE_FORCE_ENABLE", "");
-
-    expect(hasEnvCredentials()).toBe(false);
-  });
-
-  test("returns true when INTERFERE_PUBLIC_KEY is set", () => {
-    vi.stubEnv("INTERFERE_PUBLIC_KEY", "pk_test_123");
-
-    expect(hasEnvCredentials()).toBe(true);
-  });
-
-  test("ignores the removed NEXT_PUBLIC_INTERFERE_FORCE_ENABLE setting", () => {
-    vi.stubEnv("INTERFERE_PUBLIC_KEY", "");
-
-    vi.stubEnv("NEXT_PUBLIC_INTERFERE_FORCE_ENABLE", "1");
-
-    expect(hasEnvCredentials()).toBe(false);
-  });
-});
-
 describe(warnBuildIntegrationMissing, () => {
   test("warns once naming withInterfere", () => {
     const warn = vi.spyOn(console, "warn");
@@ -80,17 +54,5 @@ describe(warnBuildIntegrationMissing, () => {
 
     expect(warn).toHaveBeenCalledTimes(1);
     expect(String(warn.mock.calls[0]?.[0])).toContain("withInterfere");
-  });
-});
-
-describe(warnBuildIntegrationDegraded, () => {
-  test("warns once naming withInterfere and the missing capabilities", () => {
-    const warn = vi.spyOn(console, "warn");
-
-    warnBuildIntegrationDegraded();
-
-    expect(warn).toHaveBeenCalledTimes(1);
-    expect(String(warn.mock.calls[0]?.[0])).toContain("withInterfere");
-    expect(String(warn.mock.calls[0]?.[0])).toContain("sourcemaps");
   });
 });

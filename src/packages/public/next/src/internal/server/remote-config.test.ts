@@ -52,9 +52,9 @@ beforeEach(() => {
 
   vi.stubEnv("INTERFERE_API_KEY", "interfere_secret_us_test");
 
-  vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test");
-
   setInjectedConfiguration(PLUGINS_GLOBAL, undefined);
+
+  setInjectedConfiguration(RELEASE_TOKEN_GLOBAL, "release-token");
 });
 
 afterEach(() => {
@@ -108,7 +108,7 @@ describe("N-RC-03 the fetched config is cached and a remote false disables on th
     expect(requests).toHaveLength(1);
 
     expect([...(requests[0]?.headers.values() ?? [])]).toContain(
-      "interfere_pk_test",
+      "release-token",
     );
 
     expect(isPluginEnabled("logs")).toBe(false);
@@ -149,7 +149,7 @@ describe("N-RC-04 a failed server fetch keeps defaults", () => {
   });
 });
 
-describe("N-RC-05 the server fetches in development with a public key", () => {
+describe("N-RC-05 the server fetches in development with a baked release token", () => {
   test.each([
     { force: undefined, expected: 1 },
     { force: "1", expected: 1 },
@@ -171,9 +171,9 @@ describe("N-RC-05 the server fetches in development with a public key", () => {
   );
 });
 
-describe("N-RC-06 without a public key the server fetches with the baked release token", () => {
-  test("no INTERFERE_PUBLIC_KEY and no baked token means no request", async () => {
-    vi.stubEnv("INTERFERE_PUBLIC_KEY", undefined);
+describe("N-RC-06 the server fetches with the baked release token", () => {
+  test("no baked token means no request", async () => {
+    setInjectedConfiguration(RELEASE_TOKEN_GLOBAL, undefined);
 
     serve(() => HttpResponse.json({ plugins: {} }));
 
@@ -185,8 +185,6 @@ describe("N-RC-06 without a public key the server fetches with the baked release
   });
 
   test("a baked release token authenticates the fetch and a remote false still applies", async () => {
-    vi.stubEnv("INTERFERE_PUBLIC_KEY", undefined);
-
     setInjectedConfiguration(RELEASE_TOKEN_GLOBAL, "release-token");
 
     serve(() => HttpResponse.json({ plugins: { logs: false } }));
@@ -204,22 +202,6 @@ describe("N-RC-06 without a public key the server fetches with the baked release
     expect(requests[0]?.headers.get("x-interfere-public-key")).toBeNull();
 
     expect(isPluginEnabled("logs")).toBe(false);
-  });
-
-  test("a public key keeps the fetch on the public key when a token is baked too", async () => {
-    setInjectedConfiguration(RELEASE_TOKEN_GLOBAL, "release-token");
-
-    serve(() => HttpResponse.json({ plugins: {} }));
-
-    const { fetchAndCacheRemoteConfig } = await load();
-
-    await fetchAndCacheRemoteConfig();
-
-    expect(requests[0]?.headers.get("x-interfere-public-key")).toBe(
-      "interfere_pk_test",
-    );
-
-    expect(requests[0]?.headers.get("x-interfere-release-token")).toBeNull();
   });
 });
 

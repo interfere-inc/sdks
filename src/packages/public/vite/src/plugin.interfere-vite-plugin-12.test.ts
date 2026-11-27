@@ -93,8 +93,6 @@ async function resolvePluginConfig(
   } = {},
 ) {
   if (input.env) {
-    vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", undefined);
-
     for (const [name, value] of Object.entries(input.env)) {
       vi.stubEnv(name, value);
     }
@@ -153,7 +151,6 @@ describe("interfere vite plugin", () => {
 
   describe("dev-server key mirror", () => {
     let envDir: string;
-    const KEY = "VITE_INTERFERE_PUBLIC_KEY";
 
     async function callConfig(command: "build" | "serve") {
       await resolvePluginConfig(interfere(), {
@@ -166,54 +163,41 @@ describe("interfere vite plugin", () => {
     beforeEach(() => {
       envDir = mkdtempSync(path.join(tmpdir(), "interfere-vite-mirror-"));
 
-      delete process.env["VITE_INTERFERE_PUBLIC_KEY"];
-
       delete process.env["INTERFERE_API_KEY"];
     });
 
     afterEach(() => {
       rmSync(envDir, { force: true, recursive: true });
 
-      delete process.env["VITE_INTERFERE_PUBLIC_KEY"];
-
       delete process.env["INTERFERE_API_KEY"];
 
       vi.unstubAllEnvs();
     });
 
-    test("mirrors the .env public key into process.env for the dev server", async () => {
-      writeFileSync(
-        path.join(envDir, ".env.local"),
-        `${KEY}=interfere_pub_us_dev\n`,
-      );
-
-      await callConfig("serve");
-
-      expect(process.env[KEY]).toBe("interfere_pub_us_dev");
-    });
-
     test("does not mirror during a production build", async () => {
       writeFileSync(
         path.join(envDir, ".env.local"),
-        `${KEY}=interfere_pub_us_dev\n`,
+        "INTERFERE_API_KEY=interfere_secret_us_dev\n",
       );
 
       await callConfig("build");
 
-      expect(process.env[KEY]).toBeUndefined();
+      expect(process.env["INTERFERE_API_KEY"]).toBeUndefined();
     });
 
     test("does not overwrite a value already set in the shell", async () => {
       writeFileSync(
         path.join(envDir, ".env.local"),
-        `${KEY}=interfere_pub_us_dev\n`,
+        "INTERFERE_API_KEY=interfere_secret_us_dev\n",
       );
 
-      process.env[KEY] = "interfere_pub_us_shell";
+      process.env["INTERFERE_API_KEY"] = "interfere_secret_us_shell";
 
       await callConfig("serve");
 
-      expect(process.env[KEY]).toBe("interfere_pub_us_shell");
+      expect(process.env["INTERFERE_API_KEY"]).toBe(
+        "interfere_secret_us_shell",
+      );
     });
 
     test("mirrors the .env workspace API key for server telemetry in the dev server", async () => {

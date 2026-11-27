@@ -51,7 +51,6 @@ beforeAll(async () => {
   await app.copyFixture("application-otlp");
 
   const env = {
-    INTERFERE_PUBLIC_KEY: "interfere_public_us_acceptance",
     INTERFERE_API_KEY: "interfere_secret_us_acceptance",
     INTERFERE_API_URL: collector.url,
     INTERFERE_SOURCE_ID: "0123456789abcdef0123456789abcdef01234567",
@@ -157,7 +156,5 @@ test("a host provider exporting over standard OTLP keeps every OpenTelemetry glo
 
   expect(host.output()).not.toContain("overrides the");
 
-  expect(
-    host.output().replaceAll("INTERFERE_PUBLIC_KEY is deprecated", ""),
-  ).not.toContain("is deprecated");
+  expect(host.output()).not.toContain("is deprecated");
 });

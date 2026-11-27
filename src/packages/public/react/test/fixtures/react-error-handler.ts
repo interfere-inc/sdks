@@ -14,7 +14,7 @@ import { addBaselineHandlers } from "../msw.js";
 
 const TARGET = {
   baseUrl: "https://sdk.invalid",
-  publicKeyHeader: { apiKey: "test-key" },
+  releaseTokenHeader: { apiKey: "test-key" },
 };
 
 addBaselineHandlers(

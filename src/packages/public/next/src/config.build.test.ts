@@ -5,6 +5,7 @@ import path from "node:path";
 import {
   PHASE_DEVELOPMENT_SERVER,
   PHASE_PRODUCTION_BUILD,
+  PHASE_PRODUCTION_SERVER,
 } from "next/constants";
 
 import {
@@ -76,9 +77,7 @@ function prepareBuildProject(
 }
 
 function compileHookPhase() {
-  vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test_123");
-
-  return PHASE_DEVELOPMENT_SERVER;
+  return PHASE_PRODUCTION_SERVER;
 }
 
 describe("withInterfere build pipeline", () => {

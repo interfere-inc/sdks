@@ -23,7 +23,7 @@ function hasServerInstrumentation(projectDir: string) {
 }
 
 /**
- * Best-effort warning when the customer set `INTERFERE_PUBLIC_KEY` but never
+ * Best-effort warning when the customer set `INTERFERE_API_KEY` but never
  * created `instrumentation.ts`. Server-side tracing then silently does
  * nothing — that's surprising and there's no other place we get to tell
  * them. Never blocks the build: some customers genuinely don't want
@@ -91,15 +91,4 @@ function readNextVersion(projectDir: string) {
   } catch {
     return null;
   }
-}
-
-export function warnIfPublicKeyDeprecated(publicKey: string | null) {
-  if (publicKey === null) {
-    return;
-  }
-
-  log.warn("INTERFERE_PUBLIC_KEY is deprecated", [
-    "It will be removed in 14.0. INTERFERE_API_KEY alone sets up a build.",
-    "Remove INTERFERE_PUBLIC_KEY from your environment.",
-  ]);
 }

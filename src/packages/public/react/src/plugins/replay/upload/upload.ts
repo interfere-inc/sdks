@@ -1,3 +1,4 @@
+import { RELEASE_TOKEN_HEADER } from "@interfere/types/sdk/release/token";
 import type { resolveTargets } from "../../../internal/config/config.js";
 import { stampSentAt } from "../../../internal/ingest-backoff/ingest-backoff.js";
 
@@ -17,8 +18,8 @@ export async function uploadReplayChunk(
 ) {
   const requestHeaders = new Headers(target.headers);
 
-  if (target.publicKeyHeader) {
-    requestHeaders.set("x-interfere-public-key", target.publicKeyHeader.apiKey);
+  if (target.releaseTokenHeader) {
+    requestHeaders.set(RELEASE_TOKEN_HEADER, target.releaseTokenHeader.apiKey);
   }
 
   for (const [name, value] of Object.entries(headers)) {

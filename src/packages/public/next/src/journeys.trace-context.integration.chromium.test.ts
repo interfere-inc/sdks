@@ -13,7 +13,6 @@ let unsampled: Awaited<ReturnType<typeof journey.app.start>>;
 
 beforeAll(async () => {
   unsampled = await journey.app.start("serve.ts", {
-    INTERFERE_PUBLIC_KEY: "interfere_public_us_journeys",
     INTERFERE_API_KEY: journey.secret,
     INTERFERE_API_URL: journey.collector.url,
     INTERFERE_SOURCE_ID: "0123456789abcdef0123456789abcdef01234567",

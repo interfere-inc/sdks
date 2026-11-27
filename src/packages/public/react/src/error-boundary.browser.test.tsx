@@ -71,7 +71,7 @@ describe(ErrorBoundary, () => {
     const tracker = new SessionTracker({
       target: {
         baseUrl: "https://sdk.invalid",
-        publicKeyHeader: { apiKey: "test-key" },
+        releaseTokenHeader: { apiKey: "test-key" },
       },
     });
 

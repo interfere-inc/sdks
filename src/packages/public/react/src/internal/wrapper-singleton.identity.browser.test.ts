@@ -39,7 +39,7 @@ beforeEach(() => {
 
   signal.identify = Promise.withResolvers<undefined>();
 
-  setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", "interfere_pk_test");
+  setInjectedConfiguration("__INTERFERE_RELEASE_TOKEN__", "interfere_pk_test");
 
   setInjectedConfiguration("__INTERFERE_FORCE_ENABLE__", true);
 
@@ -61,7 +61,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", undefined);
+  setInjectedConfiguration("__INTERFERE_RELEASE_TOKEN__", undefined);
 
   setInjectedConfiguration("__INTERFERE_FORCE_ENABLE__", undefined);
 });

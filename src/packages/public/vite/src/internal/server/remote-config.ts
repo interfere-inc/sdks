@@ -17,17 +17,6 @@ let settled = false;
 
 let attempt: { done: Promise<void>; strandedAt: number } | null = null;
 
-function serverCredential(
-  publicKey: string | null,
-  releaseToken: string | null,
-) {
-  if (publicKey) {
-    return { publicKeyHeader: { apiKey: publicKey } };
-  }
-
-  return releaseToken ? { releaseTokenHeader: { apiKey: releaseToken } } : null;
-}
-
 async function fetchAndCacheRemoteConfig(service?: {
   serviceName?: string | undefined;
   serviceNamespace?: string | undefined;
@@ -42,16 +31,14 @@ async function fetchAndCacheRemoteConfig(service?: {
 
   const env = readInterfereServerEnv();
 
-  const credential = serverCredential(env.publicKey, env.releaseToken);
-
-  if (credential === null) {
+  if (env.releaseToken === null) {
     return;
   }
 
   try {
     const client = new InterfereClient({
       baseUrl: env.apiUrl,
-      ...credential,
+      releaseTokenHeader: { apiKey: env.releaseToken },
       headers: {
         "x-interfere-service":
           service?.serviceName ||

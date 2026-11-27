@@ -20,7 +20,7 @@ beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 afterAll(() => server.close());
 
 test("carries service identity and authentication on replay uploads", async () => {
-  setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", "workspace");
+  setInjectedConfiguration("__INTERFERE_RELEASE_TOKEN__", "workspace");
 
   const target = resolveTargets(undefined, "https://replay.test", {
     serviceName: "web",
@@ -31,7 +31,10 @@ test("carries service identity and authentication on replay uploads", async () =
     "x-interfere-sequence": "1",
   });
 
-  expect(requests[0]?.headers.get("x-interfere-public-key")).toBe("workspace");
+  expect(requests[0]?.headers.get("x-interfere-release-token")).toBe(
+    "workspace",
+  );
+
   expect(requests[0]?.headers.get("x-interfere-service")).toBe("web");
 
   expect(requests[0]?.headers.get("x-interfere-service-namespace")).toBe(

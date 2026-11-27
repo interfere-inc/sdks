@@ -41,7 +41,7 @@ function collector(respond: HttpResponseResolver) {
 
 const CLIENT_OPTIONS = {
   baseUrl: "https://in.example.com",
-  publicKeyHeader: { apiKey: "test-key" },
+  releaseTokenHeader: { apiKey: "test-key" },
 };
 
 function exporterUnderTest() {

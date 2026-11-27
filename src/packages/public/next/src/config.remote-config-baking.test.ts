@@ -10,7 +10,11 @@ import {
 } from "next/constants";
 
 import { HttpResponse, http } from "msw";
-import { releaseNetwork, withTempProject } from "../test/fixtures/build.js";
+import {
+  RELEASE_RESPONSE,
+  releaseNetwork,
+  withTempProject,
+} from "../test/fixtures/build.js";
 import { withInterfere } from "./config.js";
 import {
   afterEach,
@@ -85,13 +89,16 @@ function instrumentationOptions(output: NextConfig, resourceGlob: string) {
 function stubProductionRemoteConfigEnv(projectDir: string) {
   vi.stubEnv("INTERFERE_API_KEY", "interfere_ak_test_xxx");
 
-  vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_next");
-
   vi.stubEnv("INTERFERE_API_URL", "https://in.example.com");
 
   vi.stubEnv("INTERFERE_ENVIRONMENT", "production");
 
   clearReleaseMetadataEnv();
+
+  vi.stubEnv(
+    "VERCEL_GIT_COMMIT_SHA",
+    "abc0123456789def0123456789abcdef01234567",
+  );
 
   process.chdir(projectDir);
 
@@ -105,8 +112,6 @@ function stubProductionRemoteConfigEnv(projectDir: string) {
 
 function stubProdRemoteConfigEnv(projectDir: string) {
   vi.stubEnv("INTERFERE_API_KEY", "interfere_ak_test_xxx");
-
-  vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_next");
 
   vi.stubEnv("INTERFERE_API_URL", "https://in.example.com");
 
@@ -132,6 +137,9 @@ describe("remote-config baking", () => {
       stubProductionRemoteConfigEnv(projectDir);
 
       releaseNetwork.use(
+        http.post("*/v3/releases", () =>
+          HttpResponse.json({ ...RELEASE_RESPONSE, token: "irt_next_build" }),
+        ),
         http.get("*/v3/config", () =>
           HttpResponse.json({
             backendHosts: ["api.customer.test"],

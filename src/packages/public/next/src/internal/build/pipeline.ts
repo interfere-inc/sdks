@@ -2,7 +2,6 @@ import { omitUndefined } from "@interfere/helpers/omit-undefined";
 import { sourceMapUploadFetch } from "@interfere/build/source-map-upload-fetch";
 import { uploadSourceMapChunks } from "@interfere/build/upload-source-map-chunks";
 import { preflightReleaseBinding } from "@interfere/build/release-request";
-import { PUBLIC_KEY_HEADER } from "@interfere/constants/api";
 import { InterfereClient } from "@interfere/javascript";
 import type { Interfere } from "@interfere/javascript";
 import { completeSourceMapsResponse } from "@interfere/types/data/source-maps";
@@ -42,7 +41,6 @@ export async function runBuildPipeline(
     baseUrl: metadata.apiUrl,
     apiKey: { token: metadata.apiKey },
     headers: {
-      [PUBLIC_KEY_HEADER]: metadata.publicKey,
       "x-interfere-producer-version": PRODUCER_VERSION,
       "x-interfere-service": metadata.serviceName,
     },

@@ -2,18 +2,11 @@ import { InterfereClient } from "@interfere/javascript";
 import { buildConfigSchema } from "@interfere/types/sdk/build-config";
 import { remoteConfigInputSchema } from "@interfere/types/sdk/remote-config";
 
-export type BuildConfigCredential =
-  | { readonly publicKey: string }
-  | { readonly releaseToken: string };
+export interface BuildConfigCredential {
+  readonly releaseToken: string;
+}
 
-export function buildConfigCredential(
-  publicKey: string | null | undefined,
-  releaseToken: string | null | undefined,
-) {
-  if (publicKey) {
-    return { publicKey } satisfies BuildConfigCredential;
-  }
-
+export function buildConfigCredential(releaseToken: string | null | undefined) {
   return releaseToken
     ? ({ releaseToken } satisfies BuildConfigCredential)
     : null;
@@ -36,10 +29,7 @@ export function createBuildConfigResolver(
     const key = JSON.stringify([
       buildScope,
       apiUrl,
-      "publicKey" in credential ? "publicKey" : "releaseToken",
-      "publicKey" in credential
-        ? credential.publicKey
-        : credential.releaseToken,
+      credential.releaseToken,
       service?.serviceName ?? "",
       service?.serviceNamespace ?? "",
     ]);
@@ -71,9 +61,7 @@ async function fetchBuildConfig(
   try {
     const client = new InterfereClient({
       baseUrl: apiUrl,
-      ...("publicKey" in credential
-        ? { publicKeyHeader: { apiKey: credential.publicKey } }
-        : { releaseTokenHeader: { apiKey: credential.releaseToken } }),
+      releaseTokenHeader: { apiKey: credential.releaseToken },
       headers: {
         "x-interfere-service": service?.serviceName || undefined,
         "x-interfere-service-namespace": service?.serviceName

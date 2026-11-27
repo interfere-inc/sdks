@@ -51,7 +51,7 @@ describe("span() async semantics", () => {
       new SessionTracker({
         target: {
           baseUrl: "https://sdk.invalid",
-          publicKeyHeader: { apiKey: "test-key" },
+          releaseTokenHeader: { apiKey: "test-key" },
         },
       }),
     );
@@ -65,7 +65,7 @@ describe("span() async semantics", () => {
       getViewId: () => kernel.views.viewId(),
       clientOptions: {
         baseUrl: "https://sdk.invalid",
-        publicKeyHeader: { apiKey: "test-key" },
+        releaseTokenHeader: { apiKey: "test-key" },
       },
       sdkStack: [],
     });

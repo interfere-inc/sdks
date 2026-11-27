@@ -11,6 +11,7 @@ import {
 } from "vitest";
 import { application } from "@interfere/test-utils/vitest/packed-application";
 import { receiver } from "@interfere/test-utils/vitest/telemetry-receiver";
+import { acceptanceRelease } from "./acceptance-release.test-utils";
 
 let app: Awaited<ReturnType<typeof application>>;
 let collector: Awaited<ReturnType<typeof receiver>>;
@@ -22,7 +23,7 @@ let pageEvents: string[];
 let pendingRequests: Set<string>;
 
 beforeAll(async () => {
-  collector = await receiver();
+  collector = await receiver({ respond: acceptanceRelease });
 
   website = await receiver();
 
@@ -37,7 +38,8 @@ beforeAll(async () => {
   await app.copyFixture("acceptance");
 
   await app.build({
-    VITE_INTERFERE_PUBLIC_KEY: "interfere_public_us_acceptance",
+    INTERFERE_API_KEY: "interfere_ak_acceptance",
+    INTERFERE_API_URL: collector.url,
     ACCEPTANCE_INGEST_URL: collector.url,
     INTERFERE_ENVIRONMENT: "preview",
     INTERFERE_SOURCE_ID: "0123456789abcdef0123456789abcdef01234567",

@@ -43,7 +43,7 @@ async function startKernel(filters: KernelOptions) {
 
   setInjectedConfiguration(INGEST_URL_GLOBAL, undefined);
 
-  setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", "test-key");
+  setInjectedConfiguration("__INTERFERE_RELEASE_TOKEN__", "test-key");
 
   worker.use(
     http.get("https://kernel.invalid/v3/config", () =>

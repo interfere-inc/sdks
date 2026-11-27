@@ -1,8 +1,6 @@
 /* oxlint-disable eslint/no-console -- The foreign stand-in wraps console.error the way a vendor breadcrumb patch does. */
-import {
-  FORCE_ENABLE_GLOBAL,
-  PUBLIC_KEY_GLOBAL,
-} from "@interfere/types/sdk/injected-globals";
+import { FORCE_ENABLE_GLOBAL } from "@interfere/types/sdk/injected-globals";
+import { RELEASE_TOKEN_GLOBAL } from "@interfere/types/sdk/release/token";
 import { PLUGINS_GLOBAL } from "@interfere/types/sdk/remote-config/plugins";
 import { propagation } from "@opentelemetry/api";
 import type {
@@ -27,7 +25,7 @@ import { createWrapperSingleton } from "../../src/internal/wrapper-singleton.js"
 
 Object.assign(globalThis, {
   [FORCE_ENABLE_GLOBAL]: true,
-  [PUBLIC_KEY_GLOBAL]: "interfere_public_us_native",
+  [RELEASE_TOKEN_GLOBAL]: "interfere_public_us_native",
   [PLUGINS_GLOBAL]: {
     device: false,
     logs: false,

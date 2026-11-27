@@ -2,7 +2,7 @@ import { setInjectedConfiguration } from "@interfere/test-config/injected-config
 import { ANONYMOUS_REPLAY_GLOBAL } from "@interfere/types/sdk/remote-config/anonymous-replay";
 import type { remoteConfigInputSchema } from "@interfere/types/sdk/remote-config";
 import type { z } from "zod";
-import { PUBLIC_KEY_GLOBAL } from "@interfere/types/sdk/injected-globals";
+import { RELEASE_TOKEN_GLOBAL } from "@interfere/types/sdk/release/token";
 import { afterEach, beforeEach, expect, test } from "vitest";
 
 import { resolveRemoteConfig } from "./remote-config";
@@ -14,11 +14,11 @@ function serveConfig(body: z.input<typeof remoteConfigInputSchema>) {
 }
 
 beforeEach(() => {
-  setInjectedConfiguration(PUBLIC_KEY_GLOBAL, "interfere_pk_test");
+  setInjectedConfiguration(RELEASE_TOKEN_GLOBAL, "interfere_pk_test");
 });
 
 afterEach(() => {
-  setInjectedConfiguration(PUBLIC_KEY_GLOBAL, undefined);
+  setInjectedConfiguration(RELEASE_TOKEN_GLOBAL, undefined);
 
   setInjectedConfiguration(ANONYMOUS_REPLAY_GLOBAL, undefined);
 });

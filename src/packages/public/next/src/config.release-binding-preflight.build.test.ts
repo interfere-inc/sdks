@@ -137,8 +137,6 @@ describe("release binding preflight", () => {
           "interfere_secret_us_test_123",
         );
 
-        vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_next");
-
         vi.stubEnv("OTEL_SERVICE_NAME", env);
 
         writeFileSync(
@@ -184,8 +182,6 @@ describe("release binding preflight", () => {
           "interfere_secret_us_test_123",
         );
 
-        vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_next");
-
         createReleaseFixture(projectDir, { [provider]: null });
 
         const config = await withInterfere()(PHASE_PRODUCTION_BUILD);
@@ -193,7 +189,6 @@ describe("release binding preflight", () => {
         const baked = JSON.stringify(config.turbopack);
 
         expect(baked).not.toContain("__INTERFERE_DISABLED__");
-        expect(baked).toContain("__INTERFERE_PUBLIC_KEY__");
         expect(baked).toContain("__INTERFERE_RELEASE_SLUG__");
         expect(baked).not.toContain("interfere_secret_us_test_123");
 
@@ -211,8 +206,6 @@ describe("release binding preflight", () => {
 
     await withTempProject("next-keyless-", async (projectDir) => {
       prepareBuildProject(projectDir, "cli", "interfere_secret_us_test_123");
-
-      vi.stubEnv("INTERFERE_PUBLIC_KEY", undefined);
 
       createReleaseFixture(projectDir, {
         failure: "config",
@@ -256,8 +249,6 @@ describe("release binding preflight", () => {
     await withTempProject("next-release-token-", async (projectDir) => {
       prepareBuildProject(projectDir, "cli", "interfere_ak_test_123");
 
-      vi.stubEnv("INTERFERE_PUBLIC_KEY", undefined);
-
       createReleaseFixture(projectDir, { releaseToken: "irt_next_build" });
 
       const nextConfig = withInterfere();
@@ -276,7 +267,6 @@ describe("release binding preflight", () => {
         String.raw`\"__INTERFERE_API_URL__\":\"https://in.example.com\"`,
       );
 
-      expect(baked).not.toContain("__INTERFERE_PUBLIC_KEY__");
       expect(baked).not.toContain("__INTERFERE_DISABLED__");
       expect(config.experimental?.clientTraceMetadata).toContain("traceparent");
 
@@ -306,8 +296,6 @@ describe("release binding preflight", () => {
     await withTempProject("next-dev-release-token-", async (projectDir) => {
       prepareBuildProject(projectDir, "cli", "interfere_ak_test_123");
 
-      vi.stubEnv("INTERFERE_PUBLIC_KEY", undefined);
-
       createReleaseFixture(projectDir, { releaseToken: "irt_next_dev" });
 
       const nextConfig = withInterfere();
@@ -326,8 +314,6 @@ describe("release binding preflight", () => {
         String.raw`\"__INTERFERE_RELEASE_SLUG__\":\"${LOCAL_DEV_RELEASE_SLUG}\"`,
       );
 
-      expect(baked).not.toContain("__INTERFERE_PUBLIC_KEY__");
-
       const registrations = releaseRequests.filter(
         (request) =>
           request.method === "POST" &&
@@ -343,28 +329,6 @@ describe("release binding preflight", () => {
       expect(
         createReleaseRequest.parse(await registrations[0]?.clone().json()),
       ).toMatchObject({ destination: null, slug: LOCAL_DEV_RELEASE_SLUG });
-    });
-  });
-
-  test("the dev server mints no release when a public key is set", async () => {
-    expect.hasAssertions();
-
-    await withTempProject("next-dev-public-key-", async (projectDir) => {
-      prepareBuildProject(projectDir, "cli", "interfere_ak_test_123");
-
-      vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_test_123");
-
-      createReleaseFixture(projectDir, { releaseToken: "irt_next_dev" });
-
-      const config = await withInterfere()(PHASE_DEVELOPMENT_SERVER);
-
-      expect(JSON.stringify(config.turbopack)).not.toContain(
-        "__INTERFERE_RELEASE_TOKEN__",
-      );
-
-      expect(
-        releaseRequests.filter((request) => request.method === "POST"),
-      ).toHaveLength(0);
     });
   });
 });

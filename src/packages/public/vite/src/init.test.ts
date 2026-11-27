@@ -46,8 +46,6 @@ describe("init (Vite entrypoint)", () => {
 
     vi.stubEnv("VITE_INTERFERE_FORCE_ENABLE", "1");
 
-    vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "interfere_public_us_test");
-
     vi.stubEnv("VITE_INTERFERE_DISABLED", "true");
 
     await expect(init()).resolves.toBeNull();

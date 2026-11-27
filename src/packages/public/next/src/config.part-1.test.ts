@@ -10,6 +10,7 @@ import {
 
 import { HttpResponse, http } from "msw";
 import {
+  RELEASE_RESPONSE,
   releaseNetwork,
   sdkConfigRequests,
   withTempProject,
@@ -55,16 +56,18 @@ afterEach(() => {
   vi.unstubAllEnvs();
 });
 
-function stubProductionPreflightEnv(
-  projectDir: string,
-  credentials: "release" | "public-key-only" = "release",
-) {
-  vi.stubEnv(
-    "INTERFERE_API_KEY",
-    credentials === "release" ? "interfere_ak_test_xxx" : undefined,
+function registerReleaseWithToken() {
+  releaseNetwork.use(
+    http.post("*/v3/releases", () =>
+      HttpResponse.json({ ...RELEASE_RESPONSE, token: "irt_next_build" }),
+    ),
   );
+}
 
-  vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_next");
+function stubProductionPreflightEnv(projectDir: string) {
+  registerReleaseWithToken();
+
+  vi.stubEnv("INTERFERE_API_KEY", "interfere_ak_test_xxx");
 
   vi.stubEnv("INTERFERE_API_URL", "https://in.example.com");
 
@@ -113,11 +116,11 @@ describe(withInterfere, () => {
     await withTempProject("next-config-", async (projectDir) => {
       vi.stubEnv("INTERFERE_API_KEY", "interfere_ak_test_xxx");
 
-      vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_next");
-
       process.chdir(projectDir);
 
       writeFileSync(path.join(projectDir, "instrumentation-client.ts"), "");
+
+      registerReleaseWithToken();
 
       const output = await withInterfere({
         experimental: {
@@ -141,38 +144,35 @@ describe(withInterfere, () => {
     "baggage",
   ];
 
-  test.each(["release", "public-key-only"] as const)(
-    "a production build with %s credentials adds the Interfere client trace metadata keys whatever the surface stores",
-    async (credentials) => {
-      expect.assertions(2);
+  test("a production build adds the Interfere client trace metadata keys whatever the surface stores", async () => {
+    expect.assertions(2);
 
-      await withTempProject("next-config-owner-", async (projectDir) => {
-        stubProductionPreflightEnv(projectDir, credentials);
+    await withTempProject("next-config-owner-", async (projectDir) => {
+      stubProductionPreflightEnv(projectDir);
 
-        releaseNetwork.use(
-          http.get("*/v3/config", () =>
-            HttpResponse.json({ tracingOwnership: "application" }),
-          ),
-        );
+      releaseNetwork.use(
+        http.get("*/v3/config", () =>
+          HttpResponse.json({ tracingOwnership: "application" }),
+        ),
+      );
 
-        const output = await withInterfere({
-          experimental: { clientTraceMetadata: ["custom-trace-key"] },
-        })(PHASE_PRODUCTION_BUILD);
+      const output = await withInterfere({
+        experimental: { clientTraceMetadata: ["custom-trace-key"] },
+      })(PHASE_PRODUCTION_BUILD);
 
-        expect(output.experimental?.clientTraceMetadata).toStrictEqual(
-          WITH_INTERFERE_KEYS,
-        );
+      expect(output.experimental?.clientTraceMetadata).toStrictEqual(
+        WITH_INTERFERE_KEYS,
+      );
 
-        expect(sdkConfigRequests).toHaveLength(1);
-      });
-    },
-  );
+      expect(sdkConfigRequests).toHaveLength(1);
+    });
+  });
 
   test("bakes the server globals from one surface snapshot", async () => {
     expect.assertions(4);
 
     await withTempProject("next-config-snapshot-", async (projectDir) => {
-      stubProductionPreflightEnv(projectDir, "public-key-only");
+      stubProductionPreflightEnv(projectDir);
 
       writeFileSync(
         path.join(projectDir, "instrumentation.ts"),

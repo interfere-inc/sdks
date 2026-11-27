@@ -19,8 +19,6 @@ interface ImportMetaEnv {
   readonly VITE_INTERFERE_PLUGINS?: string | null;
   /** Build-injected anonymous session replay policy from the surface configuration. */
   readonly VITE_INTERFERE_ANONYMOUS_REPLAY?: string | null;
-  /** Deprecated legacy public key; builds that bake a release token don't need it. */
-  readonly VITE_INTERFERE_PUBLIC_KEY?: string;
   /** Build-injected release slug derived from the commit SHA. */
   readonly VITE_INTERFERE_RELEASE_SLUG?: string | null;
   readonly VITE_INTERFERE_RELEASE_TOKEN?: string | null;

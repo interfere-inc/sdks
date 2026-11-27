@@ -87,7 +87,7 @@ function initializeVendor(vendor: Options["vendor"]) {
 
 async function install(options: Options) {
   Object.assign(globalThis, {
-    __INTERFERE_PUBLIC_KEY__: "interfere_pk_test",
+    __INTERFERE_RELEASE_TOKEN__: "interfere_pk_test",
     __INTERFERE_FORCE_ENABLE__: true,
   });
 

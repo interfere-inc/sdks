@@ -93,8 +93,6 @@ async function resolvePluginConfig(
   } = {},
 ) {
   if (input.env) {
-    vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", undefined);
-
     for (const [name, value] of Object.entries(input.env)) {
       vi.stubEnv(name, value);
     }
@@ -177,7 +175,7 @@ describe("interfere vite plugin", () => {
   });
 
   describe("public key requirement", () => {
-    test("warns without failing when a production build has no public key", async () => {
+    test("warns without failing when a production build has no release token", async () => {
       const capture = captureLogger();
       const plugin = interfere();
 
@@ -192,9 +190,7 @@ describe("interfere vite plugin", () => {
       (plugin.buildStart as () => void)();
 
       expect(capture.warns).toContainEqual(
-        expect.stringContaining(
-          "no release token and no VITE_INTERFERE_PUBLIC_KEY",
-        ),
+        expect.stringContaining("no release token"),
       );
     });
 

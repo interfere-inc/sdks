@@ -28,7 +28,7 @@ function input(overrides: Partial<DeliverInput> = {}) {
   return {
     target: {
       baseUrl: "https://collector.test",
-      publicKeyHeader: { apiKey: "test-key" },
+      releaseTokenHeader: { apiKey: "test-key" },
       maxRetries: 0,
       timeoutInSeconds: 10,
       headers: {},
@@ -178,7 +178,7 @@ describe("plugins/replay/delivery", () => {
           input({
             target: {
               baseUrl: "https://collector.test",
-              publicKeyHeader: { apiKey: "test-key" },
+              releaseTokenHeader: { apiKey: "test-key" },
               headers: {
                 "x-customer-token": "token",
                 "content-encoding": "identity",

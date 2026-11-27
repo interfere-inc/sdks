@@ -108,8 +108,6 @@ async function resolvePluginConfig(
   } = {},
 ) {
   if (input.env) {
-    vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", undefined);
-
     for (const [name, value] of Object.entries(input.env)) {
       vi.stubEnv(name, value);
     }
@@ -236,8 +234,6 @@ describe("interfere vite plugin", () => {
     });
 
     test("bakes the release token from the build's single release registration without a public key", async () => {
-      vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", undefined);
-
       server.use(
         http.post(`${RELEASE_API}/v3/releases`, ({ request }) => {
           releaseRequests.push(request.clone());
@@ -325,14 +321,14 @@ describe("interfere vite plugin", () => {
       expect(releaseRequests).toHaveLength(0);
     });
 
-    test("registers no release during vite serve when a public key is set", async () => {
+    test("mints one local dev release during vite serve when an API key is set", async () => {
       vi.stubEnv("VITEST", "");
 
       vi.stubEnv("VITEST_WORKER_ID", "");
 
       await resolvePluginConfig(interfere(), { command: "serve" });
 
-      expect(releaseRequests).toHaveLength(0);
+      expect(releaseRequests).toHaveLength(1);
     });
   });
 });

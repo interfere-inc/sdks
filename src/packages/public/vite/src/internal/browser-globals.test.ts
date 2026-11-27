@@ -3,7 +3,6 @@ import { applyBrowserGlobals } from "./browser-globals";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const GLOBAL_KEYS = [
-  "__INTERFERE_PUBLIC_KEY__",
   "__INTERFERE_API_URL__",
   "__INTERFERE_ENVIRONMENT__",
   "__INTERFERE_RELEASE_SLUG__",
@@ -33,27 +32,30 @@ describe(applyBrowserGlobals, () => {
   test.each([false, 0, "", {}, []])(
     "preserves existing non-nullish host value %j",
     (value) => {
-      setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", value);
+      setInjectedConfiguration("__INTERFERE_API_URL__", value);
 
-      vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "from_env");
+      vi.stubEnv("VITE_INTERFERE_API_HOST", "https://from-env.example.com");
 
       applyBrowserGlobals();
 
       expect(
-        Object.getOwnPropertyDescriptor(globalThis, "__INTERFERE_PUBLIC_KEY__")
+        Object.getOwnPropertyDescriptor(globalThis, "__INTERFERE_API_URL__")
           ?.value,
       ).toBe(value);
     },
   );
 
   test("replaces a null host value", () => {
-    setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", null);
+    setInjectedConfiguration("__INTERFERE_API_URL__", null);
 
-    vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "from_env");
+    vi.stubEnv("VITE_INTERFERE_API_HOST", "https://from-env.example.com");
 
     applyBrowserGlobals();
 
-    expect(globalThis).toHaveProperty("__INTERFERE_PUBLIC_KEY__", "from_env");
+    expect(globalThis).toHaveProperty(
+      "__INTERFERE_API_URL__",
+      "https://from-env.example.com",
+    );
   });
 
   test.each(["null", "true", "42", '"plugins"', "[]"])(
@@ -68,8 +70,6 @@ describe(applyBrowserGlobals, () => {
   );
 
   test("bridges inlined env onto the kernel globals", () => {
-    vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "interfere_pub_us_bridge");
-
     vi.stubEnv("VITE_INTERFERE_API_HOST", "https://in.example.com");
 
     vi.stubEnv("VITE_INTERFERE_ENVIRONMENT", "production");
@@ -79,11 +79,6 @@ describe(applyBrowserGlobals, () => {
     vi.stubEnv("VITE_INTERFERE_RELEASE_TOKEN", "irt_bridge");
 
     applyBrowserGlobals();
-
-    expect(globalThis).toHaveProperty(
-      "__INTERFERE_PUBLIC_KEY__",
-      "interfere_pub_us_bridge",
-    );
 
     expect(globalThis).toHaveProperty(
       "__INTERFERE_API_URL__",
@@ -107,21 +102,19 @@ describe(applyBrowserGlobals, () => {
   });
 
   test("does not overwrite a value an HTML stamp or manual set already applied", () => {
-    setInjectedConfiguration("__INTERFERE_PUBLIC_KEY__", "already_set");
+    setInjectedConfiguration("__INTERFERE_API_URL__", "https://already.set");
 
-    vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "from_env");
+    vi.stubEnv("VITE_INTERFERE_API_HOST", "https://from-env.example.com");
 
     applyBrowserGlobals();
 
     expect(globalThis).toHaveProperty(
-      "__INTERFERE_PUBLIC_KEY__",
-      "already_set",
+      "__INTERFERE_API_URL__",
+      "https://already.set",
     );
   });
 
   test("leaves the api-url global unset when the env is absent", () => {
-    vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", "interfere_pub_us_x");
-
     applyBrowserGlobals();
 
     expect(globalThis).toHaveProperty("__INTERFERE_API_URL__", undefined);

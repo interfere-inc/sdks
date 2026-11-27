@@ -18,6 +18,7 @@ import {
 } from "vitest";
 import { application } from "@interfere/test-utils/vitest/packed-application";
 import { receiver } from "@interfere/test-utils/vitest/telemetry-receiver";
+import { acceptanceRelease } from "./acceptance-release.test-utils";
 import { exceptions } from "@interfere/test-utils/vitest/otlp";
 
 let app: Awaited<ReturnType<typeof application>>;
@@ -30,7 +31,7 @@ let pageEvents: string[];
 let pendingRequests: Set<string>;
 
 beforeAll(async () => {
-  collector = await receiver();
+  collector = await receiver({ respond: acceptanceRelease });
 
   website = await receiver();
 
@@ -45,7 +46,8 @@ beforeAll(async () => {
   await app.copyFixture("acceptance");
 
   await app.build({
-    VITE_INTERFERE_PUBLIC_KEY: "interfere_public_us_acceptance",
+    INTERFERE_API_KEY: "interfere_ak_acceptance",
+    INTERFERE_API_URL: collector.url,
     ACCEPTANCE_INGEST_URL: collector.url,
     INTERFERE_ENVIRONMENT: "preview",
     INTERFERE_SOURCE_ID: "0123456789abcdef0123456789abcdef01234567",
@@ -286,32 +288,30 @@ test("offline capture is delivered after a native background sync", async () => 
   await replayCapture(cdp, registrationId, 1);
 });
 
-test("invalid public keys halt export without a retry storm or breaking the host", async () => {
+test("an unknown release halts export without a retry storm or breaking the host", async () => {
   await open();
 
   collector.fail(
     "/drain/",
-    401,
+    422,
     100,
-    JSON.stringify({ code: "AUTH_PK_INVALID" }),
+    JSON.stringify({ code: "RELEASE_NOT_FOUND" }),
   );
-
-  await click("Span result");
-
-  await click("Span result");
 
   await click("Span result");
 
   await expect
     .poll(
       () =>
-        collector.requests.filter((request) => request.status === 401).length,
+        collector.requests.filter((request) => request.status === 422).length,
     )
-    .toBeGreaterThanOrEqual(3);
+    .toBeGreaterThanOrEqual(1);
 
   const rejected = collector.requests.filter(
-    (request) => request.status === 401,
+    (request) => request.status === 422,
   ).length;
+
+  await click("Span result");
 
   await click("Capture");
 
@@ -322,7 +322,7 @@ test("invalid public keys halt export without a retry storm or breaking the host
     .toBe("closed");
 
   expect(
-    collector.requests.filter((request) => request.status === 401),
+    collector.requests.filter((request) => request.status === 422),
   ).toHaveLength(rejected);
 
   await click("Count 0");

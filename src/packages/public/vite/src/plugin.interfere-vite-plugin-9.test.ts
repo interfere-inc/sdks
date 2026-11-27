@@ -110,8 +110,6 @@ async function resolvePluginConfig(
   } = {},
 ) {
   if (input.env) {
-    vi.stubEnv("VITE_INTERFERE_PUBLIC_KEY", undefined);
-
     for (const [name, value] of Object.entries(input.env)) {
       vi.stubEnv(name, value);
     }
@@ -261,10 +259,10 @@ describe("interfere vite plugin", () => {
       expect(requests).toHaveLength(3);
 
       expect(
-        requests.map((request) =>
-          request.headers.get("x-interfere-public-key"),
+        requests.every(
+          (request) => !request.headers.has("x-interfere-public-key"),
         ),
-      ).toStrictEqual(Array.from(requests, () => "interfere_pk_test_fake"));
+      ).toBe(true);
 
       expect(
         requests.map((request) => request.headers.get("x-interfere-service")),

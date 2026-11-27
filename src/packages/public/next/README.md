@@ -161,7 +161,23 @@ export function IdentifyUser({ user }: { user: User | null }) {
 }
 ```
 
-`identifier` and `source` are required. `source.type` is `"clerk"`, `"auth0"`, `"workos"` or `"custom"`. A Clerk `identifier` must be the Clerk user id, which starts with `user_`. Optional fields are `name`, `email`, `avatar`, `company: { tier }` and `traits`.
+`identifier` and `source` are required. `source.type` is `"clerk"`, `"auth0"`, `"workos"` or `"custom"`. A Clerk `identifier` must be the Clerk user id, which starts with `user_`. Optional fields are `name`, `email`, `avatar`, `company: { tier }`, `traits` and `signature`.
+
+To mark the user as verified, compute `signature` on the server and pass it to the component. It is the hex HMAC-SHA256 of `identifier`, keyed with your workspace identify secret. The Vercel integration sets that secret as `INTERFERE_IDENTITY_SECRET` for production and preview; keep it server-only, never under a `NEXT_PUBLIC_` name.
+
+```ts
+import { createHmac } from "node:crypto";
+
+export function identitySignature(identifier: string) {
+  const secret = process.env.INTERFERE_IDENTITY_SECRET;
+
+  return secret
+    ? createHmac("sha256", secret).update(identifier).digest("hex")
+    : undefined;
+}
+```
+
+An identify without a signature works as before and stays unverified. One whose signature does not match is refused with `IDENTITY_SIGNATURE_INVALID`.
 
 ## Report errors yourself
 
@@ -392,8 +408,6 @@ Your app's own origin always receives trace headers, as do the backend hosts lis
 | `OTEL_SERVICE_NAME`     | No                         | Service name when `serviceName` is not set in the build config; otherwise defaults to the unscoped package name.                                                                   |
 | `INTERFERE_ENVIRONMENT` | No                         | Labels the deployment, such as `staging` or `production`. Defaults to `VERCEL_ENV` on Vercel.                                                                                      |
 | `INTERFERE_SOURCE_ID`   | No                         | The commit SHA, if your CI doesn't expose one (`VERCEL_GIT_COMMIT_SHA`, `GITHUB_SHA`) and the build has no git checkout.                                                           |
-
-`INTERFERE_PUBLIC_KEY` is deprecated legacy configuration. New builds use the release token baked by `withInterfere()`; no public key or workspace-slug fallback is part of setup.
 
 ## Troubleshooting
 

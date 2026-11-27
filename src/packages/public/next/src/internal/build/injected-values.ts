@@ -3,7 +3,6 @@ import {
   API_URL_GLOBAL,
   BUILD_MARKER_GLOBAL,
   ENVIRONMENT_GLOBAL,
-  PUBLIC_KEY_GLOBAL,
   RELEASE_SLUG_GLOBAL,
 } from "@interfere/types/sdk/injected-globals";
 import { RELEASE_TOKEN_GLOBAL } from "@interfere/types/sdk/release/token";
@@ -22,9 +21,7 @@ export function interfereInjectedValues(
     [RELEASE_SLUG_GLOBAL]: config.releaseSlug,
     [RELEASE_TOKEN_GLOBAL]: releaseToken,
     [BUILD_MARKER_GLOBAL]: true,
-    [PUBLIC_KEY_GLOBAL]: config.publicKey || undefined,
-    [API_URL_GLOBAL]:
-      (config.publicKey || releaseToken) && apiHost ? apiHost : undefined,
+    [API_URL_GLOBAL]: releaseToken && apiHost ? apiHost : undefined,
     [ENVIRONMENT_GLOBAL]: config.environment || undefined,
   });
 }

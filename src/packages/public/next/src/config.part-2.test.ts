@@ -132,8 +132,6 @@ describe(withInterfere, () => {
     await withTempProject("next-config-", async (projectDir) => {
       vi.stubEnv("INTERFERE_API_KEY", "interfere_ak_test_xxx");
 
-      vi.stubEnv("INTERFERE_PUBLIC_KEY", "interfere_pk_next");
-
       vi.stubEnv("INTERFERE_ENVIRONMENT", undefined);
 
       vi.stubEnv("VERCEL_ENV", undefined);
@@ -167,9 +165,8 @@ describe(withInterfere, () => {
         "abc0123456789def0123456789abcdef01234567",
       );
 
-      await expect(injectedValues(injectedRule)).resolves.toStrictEqual({
+      await expect(injectedValues(injectedRule)).resolves.toMatchObject({
         __INTERFERE_BUILD__: true,
-        __INTERFERE_PUBLIC_KEY__: "interfere_pk_next",
         __INTERFERE_RELEASE_SLUG__: expectedSlug,
       });
 
@@ -178,21 +175,18 @@ describe(withInterfere, () => {
         "**/instrumentation-client.ts",
       );
 
-      expect(JSON.parse(turbopackOptions.serializedValues)).toStrictEqual({
+      expect(JSON.parse(turbopackOptions.serializedValues)).toMatchObject({
         __INTERFERE_BUILD__: true,
-        __INTERFERE_PUBLIC_KEY__: "interfere_pk_next",
         __INTERFERE_RELEASE_SLUG__: expectedSlug,
       });
     });
   });
 
-  test("bakes __INTERFERE_BUILD__ and applies value injection even without a public key", async () => {
-    expect.assertions(4);
+  test("bakes __INTERFERE_BUILD__ and applies value injection with only a workspace API key", async () => {
+    expect.assertions(3);
 
     await withTempProject("next-config-no-key-", async (projectDir) => {
       vi.stubEnv("INTERFERE_API_KEY", "interfere_ak_test_xxx");
-
-      vi.stubEnv("INTERFERE_PUBLIC_KEY", undefined);
 
       clearReleaseMetadataEnv();
 
@@ -217,7 +211,6 @@ describe(withInterfere, () => {
       const values = await injectedValues(injectedRule);
 
       expect(values).toMatchObject({ __INTERFERE_BUILD__: true });
-      expect(values).not.toHaveProperty("__INTERFERE_PUBLIC_KEY__");
     });
   });
 

@@ -221,7 +221,7 @@ Read a page of tracked application users using the documented pagination and fil
 
 #### `interfere consumers devices by-end-user`
 
-List devices associated with an application user, with each device's app (surface) even when that app was deleted (check surface.deletedAt). Resolve the user ID with consumers.list first. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
+List devices associated with an application user, including devices first seen by an app that was later deleted. Resolve the user ID with consumers.list first. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
 
 `POST /v3/workspaces/{workspaceSlug}/queries/consumerDevices.byEndUser`
 
@@ -881,17 +881,6 @@ Revokes a publishable key and all its rotation grace-period values. Requires app
 | `--workspace-slug` | `string` | Yes |  |
 | `--surface-slug` | `string` | Yes |  |
 | `--public-key-id` | `string (uuid)` | Yes |  |
-
-#### `interfere keys public for-workspace`
-
-List workspace-scoped publishable key records (surfaceId null). Every app in the workspace can ship a workspace key; these are separate from app keys and from private build API keys. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Permission-filtered queries may return an empty result; do not assume that proves the resource does not exist. Only use pagination arguments declared in the schema.
-
-`POST /v3/workspaces/{workspaceSlug}/queries/publicKeys.forWorkspace`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
 
 #### `interfere keys public get`
 
@@ -2514,17 +2503,6 @@ Record that a workspace domain's DNS ownership is verified, after the sign-in se
 | `--workspace-slug` | `string` | Yes |  |
 | `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
 
-#### `interfere workspaces create-workspace-public-key`
-
-Creates a publishable key for the whole workspace. Every app in the workspace can ship it; the gateway resolves the app from the telemetry. Requires workspace authentication write permission. Reuse the same idempotency key and request after an uncertain response.
-
-`POST /v3/workspaces/{workspaceSlug}/publicKeys`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
-
 #### `interfere workspaces current`
 
 Read the authenticated workspace's current details and settings. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation is read-only despite using POST. Requires org:workspace_basics:read; insufficient permission returns an access-denied error. An authorized read with no matching resource returns WORKSPACE_RESOURCE_NOT_FOUND (404). Only use pagination arguments declared in the schema.
@@ -2588,17 +2566,6 @@ Returns the networks allowed to reach the workspace dashboard and API. An empty 
 |------|------|----------|-------------|
 | `--workspace-slug` | `string` | Yes |  |
 
-#### `interfere workspaces read-workspace-public-key`
-
-Reads a workspace publishable key's identity, current value and revocation status. Requires workspace authentication read or app read permission.
-
-`GET /v3/workspaces/{workspaceSlug}/publicKeys/{publicKeyId}`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-| `--public-key-id` | `string (uuid)` | Yes |  |
-
 #### `interfere workspaces remove-proxy-domain`
 
 Remove a tracking proxy domain. This can affect telemetry sent through that hostname. Pass the workspace slug in the URL and operation arguments inside the JSON body as { args: ... }. Inspect the request schema for required fields and exact identifier formats. This operation writes data under the caller's existing permissions and records its audit event. Do not automatically retry after a timeout; read the affected resource to determine whether the write completed.
@@ -2631,17 +2598,6 @@ Deletes the workspace identify secret and its rotation grace value. Signed ident
 |------|------|----------|-------------|
 | `--workspace-slug` | `string` | Yes |  |
 
-#### `interfere workspaces revoke-workspace-public-key`
-
-Revokes a workspace publishable key and all its rotation grace-period values. Every app shipping this key stops authenticating, so confirm with the user before revoking the last live workspace key. Requires workspace authentication write permission. Repeating revocation of an existing key succeeds without changing its revocation time.
-
-`DELETE /v3/workspaces/{workspaceSlug}/publicKeys/{publicKeyId}`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-| `--public-key-id` | `string (uuid)` | Yes |  |
-
 #### `interfere workspaces roll-workspace-identity-secret`
 
 Creates or rotates the workspace identify secret and returns it once. Your server signs each identify with hex HMAC-SHA256(secret, identifier); signed identifies mark the user verified and mismatched ones are rejected. The previous secret keeps verifying for retireAfterSeconds. Requires workspace authentication write permission.
@@ -2652,18 +2608,6 @@ Creates or rotates the workspace identify secret and returns it once. Your serve
 |------|------|----------|-------------|
 | `--workspace-slug` | `string` | Yes |  |
 | `--json` | `JSON` | No | Request body as JSON (or use individual body-field flags) |
-
-#### `interfere workspaces roll-workspace-public-key`
-
-Rotates a workspace publishable key. The previous value keeps authenticating for retireAfterSeconds (seven days by default) so every app can ship the new value. Requires workspace authentication write permission.
-
-`POST /v3/workspaces/{workspaceSlug}/publicKeys/{publicKeyId}/roll`
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--workspace-slug` | `string` | Yes |  |
-| `--public-key-id` | `string (uuid)` | Yes |  |
-| `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
 
 #### `interfere workspaces save-network-rules`
 

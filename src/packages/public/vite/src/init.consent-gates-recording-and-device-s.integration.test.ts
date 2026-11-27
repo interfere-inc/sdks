@@ -14,6 +14,7 @@ import {
 } from "vitest";
 import { application } from "@interfere/test-utils/vitest/packed-application";
 import { receiver } from "@interfere/test-utils/vitest/telemetry-receiver";
+import { acceptanceRelease } from "./acceptance-release.test-utils";
 import { attribute, exceptions } from "@interfere/test-utils/vitest/otlp";
 
 let app: Awaited<ReturnType<typeof application>>;
@@ -26,7 +27,7 @@ let pageEvents: string[];
 let pendingRequests: Set<string>;
 
 beforeAll(async () => {
-  collector = await receiver();
+  collector = await receiver({ respond: acceptanceRelease });
 
   website = await receiver();
 
@@ -41,7 +42,8 @@ beforeAll(async () => {
   await app.copyFixture("acceptance");
 
   await app.build({
-    VITE_INTERFERE_PUBLIC_KEY: "interfere_public_us_acceptance",
+    INTERFERE_API_KEY: "interfere_ak_acceptance",
+    INTERFERE_API_URL: collector.url,
     ACCEPTANCE_INGEST_URL: collector.url,
     INTERFERE_ENVIRONMENT: "preview",
     INTERFERE_SOURCE_ID: "0123456789abcdef0123456789abcdef01234567",
@@ -265,7 +267,10 @@ test("a minified captured stack resolves to the customer source and carries rele
   const file = new URL(groups["file"]);
 
   const map = new TraceMap(
-    await readFile(join(app.root, "dist", `${file.pathname}.map`), "utf8"),
+    await readFile(
+      join(app.root, "maps", `${file.pathname.replace(/^\//u, "")}.map`),
+      "utf8",
+    ),
   );
 
   const original = originalPositionFor(map, {

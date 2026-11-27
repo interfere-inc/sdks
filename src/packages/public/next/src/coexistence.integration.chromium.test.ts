@@ -39,7 +39,6 @@ beforeAll(async () => {
   await app.copyFixture("coexistence");
 
   const env = {
-    INTERFERE_PUBLIC_KEY: "interfere_public_us_acceptance",
     INTERFERE_API_KEY: "interfere_secret_us_acceptance",
     INTERFERE_API_URL: collector.url,
     INTERFERE_SOURCE_ID: "0123456789abcdef0123456789abcdef01234567",

@@ -54,7 +54,7 @@ beforeEach(() => {
     device: new DeviceManager(),
     target: {
       baseUrl: "https://plugins.invalid",
-      publicKeyHeader: { apiKey: "test-key" },
+      releaseTokenHeader: { apiKey: "test-key" },
     },
   });
 
@@ -72,7 +72,7 @@ beforeEach(() => {
     getViewId: () => kernel.views.viewId(),
     clientOptions: {
       baseUrl: "https://plugins.invalid",
-      publicKeyHeader: { apiKey: "test-key" },
+      releaseTokenHeader: { apiKey: "test-key" },
     },
     sdkStack: [],
   });

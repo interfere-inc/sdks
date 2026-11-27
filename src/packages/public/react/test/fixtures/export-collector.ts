@@ -20,7 +20,7 @@ export const INGEST = "https://in.example.com";
 
 export const CLIENT_OPTIONS = {
   baseUrl: INGEST,
-  publicKeyHeader: { apiKey: "test-key" },
+  releaseTokenHeader: { apiKey: "test-key" },
 };
 
 export interface Sent {
