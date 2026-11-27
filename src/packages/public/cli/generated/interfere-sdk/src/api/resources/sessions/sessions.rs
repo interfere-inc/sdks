@@ -125,6 +125,7 @@ impl SessionsClient {
     ///                 avatar: None,
     ///                 company: None,
     ///                 name: None,
+    ///                 signature: None,
     ///                 traits: None,
     ///                 country: None,
     ///             },

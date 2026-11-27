@@ -1207,6 +1207,127 @@ impl WorkspacesClient {
             .await
     }
 
+    /// Deletes the workspace identify secret and its rotation grace value. Signed identifies are rejected until a new secret is created; unsigned identifies are unaffected. Requires workspace authentication write permission. Repeating it succeeds.
+    ///
+    /// # Arguments
+    ///
+    /// * `workspace` - Workspace URL slug, using lowercase letters, numbers, and hyphens.
+    /// * `options` - Additional request options such as headers, timeout, etc.
+    ///
+    /// # Returns
+    ///
+    /// JSON response from the API
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use interfere_sdk::prelude::*;
+    ///
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     let config = ClientConfig {
+    ///         api_key: Some("<value>".to_string()),
+    ///         ..Default::default()
+    ///     };
+    ///     let client = InterfereClient::new(config).expect("Failed to build client");
+    ///     client
+    ///         .workspaces
+    ///         .revoke_workspace_identity_secret(&"workspaceSlug".to_string(), None)
+    ///         .await;
+    /// }
+    /// ```
+    pub async fn revoke_workspace_identity_secret(
+        &self,
+        workspace: &str,
+        options: Option<RequestOptions>,
+    ) -> Result<RevokeWorkspaceIdentitySecretResponse, ApiError> {
+        let endpoint_auth_headers = self
+            .http_client
+            .resolve_endpoint_auth_headers(&options, &[&["clerkSession"] as &[&str]])
+            .await?;
+        let options = {
+            let mut o = options.unwrap_or_default();
+            for (header_key, header_value) in endpoint_auth_headers {
+                o.additional_headers.insert(header_key, header_value);
+            }
+            o.max_retries = Some(0);
+            Some(o)
+        };
+        self.http_client
+            .execute_request(
+                Method::DELETE,
+                &format!("v3/workspaces/{}/identity-secret", workspace),
+                None,
+                None,
+                options,
+            )
+            .await
+    }
+
+    /// Creates or rotates the workspace identify secret and returns it once. Your server signs each identify with hex HMAC-SHA256(secret, identifier); signed identifies mark the user verified and mismatched ones are rejected. The previous secret keeps verifying for retireAfterSeconds. Requires workspace authentication write permission.
+    ///
+    /// # Arguments
+    ///
+    /// * `workspace` - Workspace URL slug, using lowercase letters, numbers, and hyphens.
+    /// * `options` - Additional request options such as headers, timeout, etc.
+    ///
+    /// # Returns
+    ///
+    /// JSON response from the API
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use interfere_sdk::prelude::*;
+    ///
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     let config = ClientConfig {
+    ///         api_key: Some("<value>".to_string()),
+    ///         ..Default::default()
+    ///     };
+    ///     let client = InterfereClient::new(config).expect("Failed to build client");
+    ///     client
+    ///         .workspaces
+    ///         .roll_workspace_identity_secret(
+    ///             &"workspaceSlug".to_string(),
+    ///             &RollWorkspaceIdentitySecretRequest {
+    ///                 ..Default::default()
+    ///             },
+    ///             None,
+    ///         )
+    ///         .await;
+    /// }
+    /// ```
+    pub async fn roll_workspace_identity_secret(
+        &self,
+        workspace: &str,
+        request: &RollWorkspaceIdentitySecretRequest,
+        options: Option<RequestOptions>,
+    ) -> Result<RollWorkspaceIdentitySecretResponse, ApiError> {
+        let endpoint_auth_headers = self
+            .http_client
+            .resolve_endpoint_auth_headers(&options, &[&["clerkSession"] as &[&str]])
+            .await?;
+        let options = {
+            let mut o = options.unwrap_or_default();
+            for (header_key, header_value) in endpoint_auth_headers {
+                o.additional_headers.insert(header_key, header_value);
+            }
+            o.max_retries = Some(0);
+            Some(o)
+        };
+        self.http_client
+            .execute_request(
+                Method::POST,
+                &format!("v3/workspaces/{}/identity-secret/roll", workspace),
+                Some(serde_json::to_value(request).map_err(ApiError::Serialization)?),
+                None,
+                options,
+            )
+            .await
+    }
+
     /// Returns the trusted connection metadata after enforcing the dashboard network policy.
     ///
     /// # Arguments

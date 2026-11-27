@@ -111,6 +111,7 @@ export class SessionsClient {
      * @param {SessionsClient.RequestOptions} requestOptions - Request-specific configuration.
      *
      * @throws {@link Interfere.UnauthorizedError}
+     * @throws {@link Interfere.ForbiddenError}
      * @throws {@link Interfere.ServiceUnavailableError}
      * @throws {@link errors.InterfereError}
      * @throws {@link errors.InterfereTimeoutError}
@@ -175,6 +176,8 @@ export class SessionsClient {
             switch (_response.error.statusCode) {
                 case 401:
                     throw new Interfere.UnauthorizedError(_response.error.body as unknown, _response.rawResponse);
+                case 403:
+                    throw new Interfere.ForbiddenError(_response.error.body as unknown, _response.rawResponse);
                 case 503:
                     throw new Interfere.ServiceUnavailableError(_response.error.body as unknown, _response.rawResponse);
                 default:

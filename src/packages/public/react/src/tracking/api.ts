@@ -282,6 +282,7 @@ export class SessionTracker {
       params.source.type,
       params.source.name,
       params.company?.tier,
+      params.signature,
     ]);
 
     if (this.identifiedKey === key) {

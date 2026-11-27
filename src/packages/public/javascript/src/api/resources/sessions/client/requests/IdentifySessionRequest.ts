@@ -24,6 +24,7 @@ export interface IdentifySessionRequest {
     email?: string | undefined;
     identifier: string;
     name?: string | undefined;
+    signature?: Interfere.IdentitySignature | undefined;
     source: Interfere.IdentifySource;
     traits?: Interfere.IdentifyTraits | undefined;
     country?: string | undefined;

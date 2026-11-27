@@ -1281,6 +1281,16 @@ async fn wire_rollworkspacepublickey() {
 }
 
 #[tokio::test]
+async fn wire_revokeworkspaceidentitysecret() {
+    run_case("revokeworkspaceidentitysecret").await;
+}
+
+#[tokio::test]
+async fn wire_rollworkspaceidentitysecret() {
+    run_case("rollworkspaceidentitysecret").await;
+}
+
+#[tokio::test]
 async fn wire_networkaccess() {
     run_case("networkaccess").await;
 }
@@ -2418,6 +2428,16 @@ async fn wire_revokeworkspacepublickey_error() {
 #[tokio::test]
 async fn wire_rollworkspacepublickey_error() {
     run_case("rollworkspacepublickey_error").await;
+}
+
+#[tokio::test]
+async fn wire_revokeworkspaceidentitysecret_error() {
+    run_case("revokeworkspaceidentitysecret_error").await;
+}
+
+#[tokio::test]
+async fn wire_rollworkspaceidentitysecret_error() {
+    run_case("rollworkspaceidentitysecret_error").await;
 }
 
 #[tokio::test]

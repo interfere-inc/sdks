@@ -3098,6 +3098,27 @@
         ],
         "description": "Request body for creating a session."
       },
+      "IdentifySessionProblem": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "IDENTITY_SIGNATURE_INVALID",
+              "INGEST_INFRA_UNAVAILABLE"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "service": {
+            "$ref": "#/components/schemas/ErrorService"
+          }
+        },
+        "required": [
+          "code"
+        ]
+      },
       "IdentifySessionRequest": {
         "type": "object",
         "properties": {
@@ -3141,6 +3162,9 @@
           "name": {
             "type": "string"
           },
+          "signature": {
+            "$ref": "#/components/schemas/IdentitySignature"
+          },
           "source": {
             "$ref": "#/components/schemas/IdentifySource"
           },
@@ -3157,7 +3181,7 @@
           "identifier",
           "source"
         ],
-        "description": "Request body for identifying the consumer associated with a session."
+        "description": "Identify request body."
       },
       "IdentifyCompany": {
         "type": "object",
@@ -3172,7 +3196,12 @@
           "tier"
         ],
         "additionalProperties": false,
-        "description": "Company attributes attached when identifying a session. The tier is a workspace-managed label (1 to 100 characters, trimmed); unknown tiers are created on first use."
+        "description": "Company attributes; tier is a 1-100 character label, created on first use."
+      },
+      "IdentitySignature": {
+        "type": "string",
+        "pattern": "^[0-9a-fA-F]{64}$",
+        "description": "Hex HMAC-SHA256 of identifier keyed with your identify secret."
       },
       "IdentifySource": {
         "oneOf": [
@@ -3288,7 +3317,7 @@
       "IdentifyTraits": {
         "type": "object",
         "additionalProperties": {},
-        "description": "Free-form key/value bag of user attributes attached when identifying a session."
+        "description": "Free-form user attributes."
       },
       "TiptapDocument": {
         "type": "object",
@@ -58304,6 +58333,30 @@
           "success"
         ]
       },
+      "RevokeWorkspaceIdentitySecretResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success"
+        ]
+      },
+      "RollWorkspaceIdentitySecretResponse": {
+        "type": "object",
+        "properties": {
+          "secret": {
+            "type": "string",
+            "pattern": "^interfere_identity_[0-9a-f]{64}$",
+            "description": "Identify signing secret. Returned only by this call: store it on your server and never ship it to a browser."
+          }
+        },
+        "required": [
+          "secret"
+        ]
+      },
       "NetworkAccessResponse": {
         "type": "object",
         "properties": {
@@ -63595,26 +63648,6 @@
           }
         }
       },
-      "ErrorResponse_0eed1a7e6dcd6bac08b17a97ef563e74657f7bb568a03e9dde22620e2ced221d": {
-        "description": "A dependency failed while accepting the request; retry with backoff after the Retry-After delay",
-        "headers": {
-          "Retry-After": {
-            "schema": {
-              "type": "string",
-              "description": "Seconds to wait before retrying"
-            },
-            "required": true,
-            "description": "Seconds to wait before retrying"
-          }
-        },
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/SessionUnavailableProblem"
-            }
-          }
-        }
-      },
       "ErrorResponse_76881059743a58986796cac9880b43da5f14c962ef82b02a8f835239011830a9": {
         "description": "Service temporarily unavailable; retry after the indicated delay",
         "content": {
@@ -67007,7 +67040,24 @@
             "$ref": "#/components/responses/ErrorResponse_4a0d528a3573489e9a22ac1c780c829b618500dc52add404ec7e21988bfb37de"
           },
           "503": {
-            "$ref": "#/components/responses/ErrorResponse_0eed1a7e6dcd6bac08b17a97ef563e74657f7bb568a03e9dde22620e2ced221d"
+            "description": "A dependency failed while accepting the request; retry with backoff after the Retry-After delay",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string",
+                  "description": "Seconds to wait before retrying"
+                },
+                "required": true,
+                "description": "Seconds to wait before retrying"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionUnavailableProblem"
+                }
+              }
+            }
           }
         },
         "x-interfere-read-only": false,
@@ -67072,8 +67122,35 @@
           "401": {
             "$ref": "#/components/responses/ErrorResponse_4a0d528a3573489e9a22ac1c780c829b618500dc52add404ec7e21988bfb37de"
           },
+          "403": {
+            "description": "Signature does not match identifier",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentifySessionProblem"
+                }
+              }
+            }
+          },
           "503": {
-            "$ref": "#/components/responses/ErrorResponse_0eed1a7e6dcd6bac08b17a97ef563e74657f7bb568a03e9dde22620e2ced221d"
+            "description": "Dependency failed; retry after Retry-After",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "string",
+                  "description": "Seconds to wait before retrying"
+                },
+                "required": true,
+                "description": "Seconds to wait before retrying"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentifySessionProblem"
+                }
+              }
+            }
           }
         },
         "x-interfere-read-only": false,
@@ -80682,6 +80759,157 @@
           },
           "409": {
             "$ref": "#/components/responses/ErrorResponse_088cb09282d303295e75879da2c16585de0b7b9e07c53fe74d377c3985f2792c"
+          },
+          "503": {
+            "$ref": "#/components/responses/ErrorResponse_b7d254f6bd68a887b2398a1b58fb8fe3913110d7236a6e4540d7d2aa990fb12b"
+          }
+        },
+        "x-cloudflare-labels": [
+          "cf-api-endpoint"
+        ],
+        "security": [
+          {
+            "clerkSession": []
+          }
+        ],
+        "x-interfere-read-only": false,
+        "x-fern-retries": {
+          "disabled": true
+        }
+      }
+    },
+    "/v3/workspaces/{workspaceSlug}/identity-secret": {
+      "delete": {
+        "operationId": "revokeWorkspaceIdentitySecret",
+        "summary": "Revoke workspace identify secret",
+        "description": "Deletes the workspace identify secret and its rotation grace value. Signed identifies are rejected until a new secret is created; unsigned identifies are unaffected. Requires workspace authentication write permission. Repeating it succeeds.",
+        "tags": [
+          "Workspaces"
+        ],
+        "parameters": [
+          {
+            "name": "workspaceSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
+            },
+            "x-fern-parameter-name": "workspace"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevokeWorkspaceIdentitySecretResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/RpcValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse_b32e7e47d27147b78e9ca9c8927315e0c48a5a54a03868590623df7e2ff7d2af"
+          },
+          "403": {
+            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse_aacd31107d1b82f7d854a3aa7c98c401a41a182720fd213babe309171722e17c"
+          },
+          "503": {
+            "$ref": "#/components/responses/ErrorResponse_b7d254f6bd68a887b2398a1b58fb8fe3913110d7236a6e4540d7d2aa990fb12b"
+          }
+        },
+        "x-cloudflare-labels": [
+          "cf-api-endpoint"
+        ],
+        "security": [
+          {
+            "clerkSession": []
+          }
+        ],
+        "x-interfere-read-only": false,
+        "x-fern-retries": {
+          "disabled": true
+        }
+      }
+    },
+    "/v3/workspaces/{workspaceSlug}/identity-secret/roll": {
+      "post": {
+        "operationId": "rollWorkspaceIdentitySecret",
+        "summary": "Rotate workspace identify secret",
+        "description": "Creates or rotates the workspace identify secret and returns it once. Your server signs each identify with hex HMAC-SHA256(secret, identifier); signed identifies mark the user verified and mismatched ones are rejected. The previous secret keeps verifying for retireAfterSeconds. Requires workspace authentication write permission.",
+        "tags": [
+          "Workspaces"
+        ],
+        "parameters": [
+          {
+            "name": "workspaceSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "description": "Workspace URL slug, using lowercase letters, numbers, and hyphens."
+            },
+            "x-fern-parameter-name": "workspace"
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "retireAfterSeconds": {
+                    "anyOf": [
+                      {
+                        "const": 0
+                      },
+                      {
+                        "const": 3600
+                      },
+                      {
+                        "const": 86400
+                      }
+                    ],
+                    "default": 86400,
+                    "description": "Seconds the previous secret keeps verifying signatures after rotation, so servers can deploy the new value. Defaults to one day; ignored when the workspace has no secret yet."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RollWorkspaceIdentitySecretResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/RpcValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse_b32e7e47d27147b78e9ca9c8927315e0c48a5a54a03868590623df7e2ff7d2af"
+          },
+          "403": {
+            "$ref": "#/components/responses/ErrorResponse_10ef468de4a2f3d5e1e4a4bcd9c19369a4c535898d4ecea2b48444857aece895"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse_aacd31107d1b82f7d854a3aa7c98c401a41a182720fd213babe309171722e17c"
           },
           "503": {
             "$ref": "#/components/responses/ErrorResponse_b7d254f6bd68a887b2398a1b58fb8fe3913110d7236a6e4540d7d2aa990fb12b"

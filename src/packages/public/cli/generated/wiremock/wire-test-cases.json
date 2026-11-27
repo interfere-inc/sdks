@@ -961,6 +961,38 @@
       }
     },
     {
+      "id": "revokeworkspaceidentitysecret",
+      "method": "DELETE",
+      "path": "/v3/workspaces/{workspace}/identity-secret",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": null,
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true\n}"
+      }
+    },
+    {
+      "id": "rollworkspaceidentitysecret",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/identity-secret/roll",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {},
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 200,
+        "body": "{\n  \"secret\": \"secret\"\n}"
+      }
+    },
+    {
       "id": "networkaccess",
       "method": "GET",
       "path": "/v3/workspaces/{workspace}/network/access",
@@ -5462,6 +5494,40 @@
       "body": {
         "expectedUpdatedAt": 1
       },
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "revokeworkspaceidentitysecret_error",
+      "method": "DELETE",
+      "path": "/v3/workspaces/{workspace}/identity-secret",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": null,
+      "queryMatchers": [],
+      "headerMatchers": [],
+      "requiresAuth": true,
+      "response": {
+        "status": 422,
+        "body": "{\"error\":{\"code\":422,\"message\":\"wire-test forced error response\"}}"
+      },
+      "expectError": true
+    },
+    {
+      "id": "rollworkspaceidentitysecret_error",
+      "method": "POST",
+      "path": "/v3/workspaces/{workspace}/identity-secret/roll",
+      "params": {
+        "workspace": "workspaceSlug"
+      },
+      "body": {},
       "queryMatchers": [],
       "headerMatchers": [],
       "requiresAuth": true,

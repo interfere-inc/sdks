@@ -26,6 +26,8 @@ pub struct IdentifySessionRequest {
     pub identifier: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub signature: Option<IdentitySignature>,
     pub source: IdentifySource,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub traits: Option<IdentifyTraits>,
@@ -51,6 +53,7 @@ pub struct IdentifySessionRequestBuilder {
     email: Option<String>,
     identifier: Option<String>,
     name: Option<String>,
+    signature: Option<IdentitySignature>,
     source: Option<IdentifySource>,
     traits: Option<IdentifyTraits>,
     country: Option<String>,
@@ -102,6 +105,11 @@ impl IdentifySessionRequestBuilder {
         self
     }
 
+    pub fn signature(mut self, value: IdentitySignature) -> Self {
+        self.signature = Some(value);
+        self
+    }
+
     pub fn source(mut self, value: IdentifySource) -> Self {
         self.source = Some(value);
         self
@@ -133,6 +141,7 @@ impl IdentifySessionRequestBuilder {
             email: self.email,
             identifier: self.identifier.ok_or_else(|| BuildError::missing_field("identifier"))?,
             name: self.name,
+            signature: self.signature,
             source: self.source.ok_or_else(|| BuildError::missing_field("source"))?,
             traits: self.traits,
             country: self.country,

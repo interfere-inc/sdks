@@ -2,7 +2,7 @@ pub use crate::prelude::*;
 #[allow(unused_imports)]
 use super::*;
 
-/// Company attributes attached when identifying a session. The tier is a workspace-managed label (1 to 100 characters, trimmed); unknown tiers are created on first use.
+/// Company attributes; tier is a 1-100 character label, created on first use.
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq, Eq, Hash)]
 pub struct IdentifyCompany {
     #[serde(default)]

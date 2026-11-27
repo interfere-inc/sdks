@@ -29,14 +29,23 @@ const companySchema = z
   })
   .meta({
     description:
-      "Company attributes attached when identifying a session. The tier is a workspace-managed label (1 to 100 characters, trimmed); unknown tiers are created on first use.",
+      "Company attributes; tier is a 1-100 character label, created on first use.",
     id: "IdentifyCompany",
     title: "IdentifyCompany",
   });
 
+export const identitySignatureSchema = z
+  .string()
+  .regex(/^[0-9a-fA-F]{64}$/u)
+  .meta({
+    description:
+      "Hex HMAC-SHA256 of identifier keyed with your identify secret.",
+    id: "IdentitySignature",
+    title: "IdentitySignature",
+  });
+
 const traitsSchema = z.record(z.string(), z.unknown()).meta({
-  description:
-    "Free-form key/value bag of user attributes attached when identifying a session.",
+  description: "Free-form user attributes.",
   id: "IdentifyTraits",
   title: "IdentifyTraits",
 });
@@ -48,6 +57,7 @@ export const identifyParamsSchema = z
     email: z.email().optional(),
     identifier: z.string(),
     name: z.string().optional(),
+    signature: identitySignatureSchema.optional(),
     source: identifySourceSchema,
     traits: traitsSchema.optional(),
   })

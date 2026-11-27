@@ -2621,6 +2621,16 @@ Resets a demo workspace. Reuse the same request identity when retrying an interr
 | `--workspace-slug` | `string` | Yes |  |
 | `--json` | `JSON` | Yes | Request body as JSON (or use individual body-field flags) |
 
+#### `interfere workspaces revoke-workspace-identity-secret`
+
+Deletes the workspace identify secret and its rotation grace value. Signed identifies are rejected until a new secret is created; unsigned identifies are unaffected. Requires workspace authentication write permission. Repeating it succeeds.
+
+`DELETE /v3/workspaces/{workspaceSlug}/identity-secret`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+
 #### `interfere workspaces revoke-workspace-public-key`
 
 Revokes a workspace publishable key and all its rotation grace-period values. Every app shipping this key stops authenticating, so confirm with the user before revoking the last live workspace key. Requires workspace authentication write permission. Repeating revocation of an existing key succeeds without changing its revocation time.
@@ -2631,6 +2641,17 @@ Revokes a workspace publishable key and all its rotation grace-period values. Ev
 |------|------|----------|-------------|
 | `--workspace-slug` | `string` | Yes |  |
 | `--public-key-id` | `string (uuid)` | Yes |  |
+
+#### `interfere workspaces roll-workspace-identity-secret`
+
+Creates or rotates the workspace identify secret and returns it once. Your server signs each identify with hex HMAC-SHA256(secret, identifier); signed identifies mark the user verified and mismatched ones are rejected. The previous secret keeps verifying for retireAfterSeconds. Requires workspace authentication write permission.
+
+`POST /v3/workspaces/{workspaceSlug}/identity-secret/roll`
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--workspace-slug` | `string` | Yes |  |
+| `--json` | `JSON` | No | Request body as JSON (or use individual body-field flags) |
 
 #### `interfere workspaces roll-workspace-public-key`
 

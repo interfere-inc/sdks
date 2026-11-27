@@ -5,8 +5,8 @@
 //!
 //! ## Type Categories
 //!
-//! - **Request/Response Types**: 2274 types for API operations
-//! - **Model Types**: 665 types for data representation
+//! - **Request/Response Types**: 2277 types for API operations
+//! - **Model Types**: 668 types for data representation
 
 pub mod drain_drain_otlp_export_request_signal;
 pub mod traces_trace_activity_request_occurred_at;
@@ -354,7 +354,10 @@ pub mod release_build_result;
 pub mod session_response;
 pub mod session_unavailable_problem_code;
 pub mod session_unavailable_problem;
+pub mod identify_session_problem_code;
+pub mod identify_session_problem;
 pub mod identify_company;
+pub mod identity_signature;
 pub mod identify_source;
 pub mod clerk_identify_source_name;
 pub mod auth_0_identify_source_name;
@@ -2489,6 +2492,8 @@ pub mod revoke_workspace_api_key_response;
 pub mod create_workspace_public_key_response;
 pub mod read_workspace_public_key_response;
 pub mod revoke_workspace_public_key_response;
+pub mod revoke_workspace_identity_secret_response;
+pub mod roll_workspace_identity_secret_response;
 pub mod network_access_response;
 pub mod read_network_rules_response_rules_item;
 pub mod read_network_rules_response;
@@ -2776,6 +2781,7 @@ pub mod update_default_surface_workspaces_request;
 pub mod update_enterprise_connection_workspaces_request;
 pub mod create_workspace_public_key_request;
 pub mod roll_workspace_public_key_request;
+pub mod roll_workspace_identity_secret_request;
 pub mod save_network_rules_request;
 pub mod lookup_network_asn_request;
 pub mod reset_demo_workspace_request;
@@ -3294,7 +3300,10 @@ pub use release_build_result::ReleaseBuildResult;
 pub use session_response::SessionResponse;
 pub use session_unavailable_problem_code::SessionUnavailableProblemCode;
 pub use session_unavailable_problem::SessionUnavailableProblem;
+pub use identify_session_problem_code::IdentifySessionProblemCode;
+pub use identify_session_problem::IdentifySessionProblem;
 pub use identify_company::IdentifyCompany;
+pub use identity_signature::IdentitySignature;
 pub use identify_source::IdentifySource;
 pub use clerk_identify_source_name::ClerkIdentifySourceName;
 pub use auth_0_identify_source_name::Auth0IdentifySourceName;
@@ -5429,6 +5438,8 @@ pub use revoke_workspace_api_key_response::RevokeWorkspaceApiKeyResponse;
 pub use create_workspace_public_key_response::CreateWorkspacePublicKeyResponse;
 pub use read_workspace_public_key_response::ReadWorkspacePublicKeyResponse;
 pub use revoke_workspace_public_key_response::RevokeWorkspacePublicKeyResponse;
+pub use revoke_workspace_identity_secret_response::RevokeWorkspaceIdentitySecretResponse;
+pub use roll_workspace_identity_secret_response::RollWorkspaceIdentitySecretResponse;
 pub use network_access_response::NetworkAccessResponse;
 pub use read_network_rules_response_rules_item::ReadNetworkRulesResponseRulesItem;
 pub use read_network_rules_response::ReadNetworkRulesResponse;
@@ -5716,6 +5727,7 @@ pub use update_default_surface_workspaces_request::UpdateDefaultSurfaceWorkspace
 pub use update_enterprise_connection_workspaces_request::UpdateEnterpriseConnectionWorkspacesRequest;
 pub use create_workspace_public_key_request::CreateWorkspacePublicKeyRequest;
 pub use roll_workspace_public_key_request::RollWorkspacePublicKeyRequest;
+pub use roll_workspace_identity_secret_request::RollWorkspaceIdentitySecretRequest;
 pub use save_network_rules_request::SaveNetworkRulesRequest;
 pub use lookup_network_asn_request::LookupNetworkAsnRequest;
 pub use reset_demo_workspace_request::ResetDemoWorkspaceRequest;
