@@ -199,6 +199,24 @@ export async function receiver(
         );
       }
 
+      if (entry.method === "POST" && url.pathname === "/v3/releases") {
+        return HttpResponse.json(
+          {
+            build: { hash: "0123456789abcdef0123456789abcdef01234567" },
+            destination: {
+              environment: "preview",
+              id: "release_acceptance",
+              slug: "rel_0123456789abcdef",
+            },
+            org: { id: "org_acceptance", slug: "acceptance" },
+            source: { id: "source_acceptance" },
+            surface: { id: "surface_acceptance", slug: "web" },
+            token: "irt_receiver_acceptance",
+          },
+          { headers: responseHeaders },
+        );
+      }
+
       return HttpResponse.json(
         url.pathname.includes("config")
           ? {
