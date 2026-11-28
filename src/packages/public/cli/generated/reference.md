@@ -802,7 +802,7 @@ Creates a workspace secret API key with explicit scopes and expiration. One key 
 
 #### `interfere keys private delete`
 
-Revokes a workspace or app API key so it can no longer authorize API requests. Requires workspace authentication write permission for workspace keys or app write permission for app keys.
+Revokes a workspace or app API key so it can no longer authorize API requests. Requires workspace authentication write permission for workspace keys or app write permission for app keys. A key the Vercel integration manages cannot be revoked while Vercel is connected; roll it instead.
 
 `DELETE /v3/workspaces/{workspaceSlug}/api-keys/{apiKeyId}`
 

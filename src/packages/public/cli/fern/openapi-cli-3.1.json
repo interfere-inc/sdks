@@ -79597,7 +79597,7 @@
       "delete": {
         "operationId": "keys_private_delete",
         "summary": "keys private delete",
-        "description": "Revokes a workspace or app API key so it can no longer authorize API requests. Requires workspace authentication write permission for workspace keys or app write permission for app keys.",
+        "description": "Revokes a workspace or app API key so it can no longer authorize API requests. Requires workspace authentication write permission for workspace keys or app write permission for app keys. A key the Vercel integration manages cannot be revoked while Vercel is connected; roll it instead.",
         "tags": [
           "keys.private"
         ],
@@ -79642,6 +79642,45 @@
           },
           "403": {
             "$ref": "#/components/responses/ErrorResponse_10ef468d"
+          },
+          "409": {
+            "description": "Request conflicts with current state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "defined": {
+                          "const": true
+                        },
+                        "code": {
+                          "const": "MANAGED_API_KEY_DELETE_REFUSED"
+                        },
+                        "status": {
+                          "const": 409
+                        },
+                        "message": {
+                          "type": "string",
+                          "default": "This key is managed by the Vercel integration. Roll it, or disconnect Vercel to release it."
+                        },
+                        "data": {}
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message"
+                      ]
+                    },
+                    {
+                      "$ref": "#/components/schemas/RpcUnexpectedError"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "503": {
             "$ref": "#/components/responses/ErrorResponse_b7d254f6"

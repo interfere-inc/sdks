@@ -408,7 +408,7 @@ impl PrivateClient {
             .await
     }
 
-    /// Revokes a workspace or app API key so it can no longer authorize API requests. Requires workspace authentication write permission for workspace keys or app write permission for app keys.
+    /// Revokes a workspace or app API key so it can no longer authorize API requests. Requires workspace authentication write permission for workspace keys or app write permission for app keys. A key the Vercel integration manages cannot be revoked while Vercel is connected; roll it instead.
     ///
     /// # Arguments
     ///
