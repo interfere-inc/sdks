@@ -34349,24 +34349,6 @@
                       ],
                       "type": "string"
                     },
-                    "defaultSurfaceId": {
-                      "anyOf": [
-                        {
-                          "anyOf": [
-                            {
-                              "type": "string",
-                              "format": "uuid"
-                            },
-                            {
-                              "type": "null"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "defaultWebsiteSettings": {
                       "type": "object",
                       "properties": {
@@ -34560,7 +34542,6 @@
                     "clerkOrgId",
                     "clerkUpdatedAt",
                     "dataResidencyLocation",
-                    "defaultSurfaceId",
                     "defaultWebsiteSettings",
                     "demoResetAt",
                     "demoResetStatus",
@@ -34911,24 +34892,6 @@
                       ],
                       "type": "string"
                     },
-                    "defaultSurfaceId": {
-                      "anyOf": [
-                        {
-                          "anyOf": [
-                            {
-                              "type": "string",
-                              "format": "uuid"
-                            },
-                            {
-                              "type": "null"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "defaultWebsiteSettings": {
                       "type": "object",
                       "properties": {
@@ -35122,7 +35085,6 @@
                     "clerkOrgId",
                     "clerkUpdatedAt",
                     "dataResidencyLocation",
-                    "defaultSurfaceId",
                     "defaultWebsiteSettings",
                     "demoResetAt",
                     "demoResetStatus",
@@ -35623,24 +35585,6 @@
                       ],
                       "type": "string"
                     },
-                    "defaultSurfaceId": {
-                      "anyOf": [
-                        {
-                          "anyOf": [
-                            {
-                              "type": "string",
-                              "format": "uuid"
-                            },
-                            {
-                              "type": "null"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "defaultWebsiteSettings": {
                       "type": "object",
                       "properties": {
@@ -35834,7 +35778,6 @@
                     "clerkOrgId",
                     "clerkUpdatedAt",
                     "dataResidencyLocation",
-                    "defaultSurfaceId",
                     "defaultWebsiteSettings",
                     "demoResetAt",
                     "demoResetStatus",
@@ -36250,24 +36193,6 @@
             ],
             "type": "string"
           },
-          "defaultSurfaceId": {
-            "anyOf": [
-              {
-                "anyOf": [
-                  {
-                    "type": "string",
-                    "format": "uuid"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
           "defaultWebsiteSettings": {
             "type": "object",
             "properties": {
@@ -36461,7 +36386,6 @@
           "clerkOrgId",
           "clerkUpdatedAt",
           "dataResidencyLocation",
-          "defaultSurfaceId",
           "defaultWebsiteSettings",
           "demoResetAt",
           "demoResetStatus",
@@ -41280,24 +41204,6 @@
                                         "slug": {
                                           "type": "string"
                                         },
-                                        "surfaceId": {
-                                          "anyOf": [
-                                            {
-                                              "anyOf": [
-                                                {
-                                                  "type": "string",
-                                                  "format": "uuid"
-                                                },
-                                                {
-                                                  "type": "null"
-                                                }
-                                              ]
-                                            },
-                                            {
-                                              "type": "null"
-                                            }
-                                          ]
-                                        },
                                         "serviceId": {
                                           "type": "string",
                                           "format": "uuid"
@@ -41947,7 +41853,6 @@
                                       "required": [
                                         "id",
                                         "slug",
-                                        "surfaceId",
                                         "serviceId",
                                         "organizationId",
                                         "buildId",
@@ -47290,24 +47195,6 @@
                                           "slug": {
                                             "type": "string"
                                           },
-                                          "surfaceId": {
-                                            "anyOf": [
-                                              {
-                                                "anyOf": [
-                                                  {
-                                                    "type": "string",
-                                                    "format": "uuid"
-                                                  },
-                                                  {
-                                                    "type": "null"
-                                                  }
-                                                ]
-                                              },
-                                              {
-                                                "type": "null"
-                                              }
-                                            ]
-                                          },
                                           "serviceId": {
                                             "type": "string",
                                             "format": "uuid"
@@ -47957,7 +47844,6 @@
                                         "required": [
                                           "id",
                                           "slug",
-                                          "surfaceId",
                                           "serviceId",
                                           "organizationId",
                                           "buildId",
@@ -50801,24 +50687,6 @@
             "slug": {
               "type": "string"
             },
-            "surfaceId": {
-              "anyOf": [
-                {
-                  "anyOf": [
-                    {
-                      "type": "string",
-                      "format": "uuid"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
             "serviceId": {
               "type": "string",
               "format": "uuid"
@@ -51945,24 +51813,6 @@
                     "type": "string",
                     "format": "uuid"
                   },
-                  "surfaceId": {
-                    "anyOf": [
-                      {
-                        "anyOf": [
-                          {
-                            "type": "string",
-                            "format": "uuid"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
                   "releaseId": {
                     "type": "string",
                     "format": "uuid"
@@ -52046,7 +51896,6 @@
                 "required": [
                   "id",
                   "organizationId",
-                  "surfaceId",
                   "releaseId",
                   "environment",
                   "provider",
@@ -52064,7 +51913,6 @@
           "required": [
             "id",
             "slug",
-            "surfaceId",
             "serviceId",
             "organizationId",
             "buildId",
@@ -52098,24 +51946,6 @@
               },
               "slug": {
                 "type": "string"
-              },
-              "surfaceId": {
-                "anyOf": [
-                  {
-                    "anyOf": [
-                      {
-                        "type": "string",
-                        "format": "uuid"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
               },
               "serviceId": {
                 "type": "string",
@@ -53243,24 +53073,6 @@
                       "type": "string",
                       "format": "uuid"
                     },
-                    "surfaceId": {
-                      "anyOf": [
-                        {
-                          "anyOf": [
-                            {
-                              "type": "string",
-                              "format": "uuid"
-                            },
-                            {
-                              "type": "null"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
                     "releaseId": {
                       "type": "string",
                       "format": "uuid"
@@ -53344,7 +53156,6 @@
                   "required": [
                     "id",
                     "organizationId",
-                    "surfaceId",
                     "releaseId",
                     "environment",
                     "provider",
@@ -53362,7 +53173,6 @@
             "required": [
               "id",
               "slug",
-              "surfaceId",
               "serviceId",
               "organizationId",
               "buildId",
@@ -53400,24 +53210,6 @@
             },
             "slug": {
               "type": "string"
-            },
-            "surfaceId": {
-              "anyOf": [
-                {
-                  "anyOf": [
-                    {
-                      "type": "string",
-                      "format": "uuid"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
-                },
-                {
-                  "type": "null"
-                }
-              ]
             },
             "serviceId": {
               "type": "string",
@@ -54545,24 +54337,6 @@
                     "type": "string",
                     "format": "uuid"
                   },
-                  "surfaceId": {
-                    "anyOf": [
-                      {
-                        "anyOf": [
-                          {
-                            "type": "string",
-                            "format": "uuid"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
                   "releaseId": {
                     "type": "string",
                     "format": "uuid"
@@ -54646,7 +54420,6 @@
                 "required": [
                   "id",
                   "organizationId",
-                  "surfaceId",
                   "releaseId",
                   "environment",
                   "provider",
@@ -54664,7 +54437,6 @@
           "required": [
             "id",
             "slug",
-            "surfaceId",
             "serviceId",
             "organizationId",
             "buildId",

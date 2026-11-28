@@ -23,9 +23,6 @@ pub struct QueryMembershipsMineResponseItemOrganization {
     pub clerk_updated_at: Option<f64>,
     #[serde(rename = "dataResidencyLocation")]
     pub data_residency_location: QueryMembershipsMineResponseItemOrganizationDataResidencyLocation,
-    #[serde(rename = "defaultSurfaceId")]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub default_surface_id: Option<String>,
     #[serde(rename = "defaultWebsiteSettings")]
     pub default_website_settings: QueryMembershipsMineResponseItemOrganizationDefaultWebsiteSettings,
     #[serde(rename = "demoResetAt")]
@@ -102,7 +99,6 @@ pub struct QueryMembershipsMineResponseItemOrganizationBuilder {
     clerk_org_id: Option<String>,
     clerk_updated_at: Option<f64>,
     data_residency_location: Option<QueryMembershipsMineResponseItemOrganizationDataResidencyLocation>,
-    default_surface_id: Option<String>,
     default_website_settings: Option<QueryMembershipsMineResponseItemOrganizationDefaultWebsiteSettings>,
     demo_reset_at: Option<f64>,
     demo_reset_status: Option<QueryMembershipsMineResponseItemOrganizationDemoResetStatus>,
@@ -151,11 +147,6 @@ impl QueryMembershipsMineResponseItemOrganizationBuilder {
 
     pub fn data_residency_location(mut self, value: QueryMembershipsMineResponseItemOrganizationDataResidencyLocation) -> Self {
         self.data_residency_location = Some(value);
-        self
-    }
-
-    pub fn default_surface_id(mut self, value: impl Into<String>) -> Self {
-        self.default_surface_id = Some(value.into());
         self
     }
 
@@ -275,7 +266,6 @@ impl QueryMembershipsMineResponseItemOrganizationBuilder {
             clerk_org_id: self.clerk_org_id.ok_or_else(|| BuildError::missing_field("clerk_org_id"))?,
             clerk_updated_at: self.clerk_updated_at,
             data_residency_location: self.data_residency_location.ok_or_else(|| BuildError::missing_field("data_residency_location"))?,
-            default_surface_id: self.default_surface_id,
             default_website_settings: self.default_website_settings.ok_or_else(|| BuildError::missing_field("default_website_settings"))?,
             demo_reset_at: self.demo_reset_at,
             demo_reset_status: self.demo_reset_status,

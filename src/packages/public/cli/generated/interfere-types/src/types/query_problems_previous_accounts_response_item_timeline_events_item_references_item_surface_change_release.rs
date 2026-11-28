@@ -8,9 +8,6 @@ pub struct QueryProblemsPreviousAccountsResponseItemTimelineEventsItemReferences
     pub id: String,
     #[serde(default)]
     pub slug: String,
-    #[serde(rename = "surfaceId")]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub surface_id: Option<String>,
     #[serde(rename = "serviceId")]
     #[serde(default)]
     pub service_id: String,
@@ -80,7 +77,6 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemReferencesItemSu
 pub struct QueryProblemsPreviousAccountsResponseItemTimelineEventsItemReferencesItemSurfaceChangeReleaseBuilder {
     id: Option<String>,
     slug: Option<String>,
-    surface_id: Option<String>,
     service_id: Option<String>,
     organization_id: Option<String>,
     build_id: Option<String>,
@@ -108,11 +104,6 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemReferencesItemSu
 
     pub fn slug(mut self, value: impl Into<String>) -> Self {
         self.slug = Some(value.into());
-        self
-    }
-
-    pub fn surface_id(mut self, value: impl Into<String>) -> Self {
-        self.surface_id = Some(value.into());
         self
     }
 
@@ -214,7 +205,6 @@ impl QueryProblemsPreviousAccountsResponseItemTimelineEventsItemReferencesItemSu
         Ok(QueryProblemsPreviousAccountsResponseItemTimelineEventsItemReferencesItemSurfaceChangeRelease {
             id: self.id.ok_or_else(|| BuildError::missing_field("id"))?,
             slug: self.slug.ok_or_else(|| BuildError::missing_field("slug"))?,
-            surface_id: self.surface_id,
             service_id: self.service_id.ok_or_else(|| BuildError::missing_field("service_id"))?,
             organization_id: self.organization_id.ok_or_else(|| BuildError::missing_field("organization_id"))?,
             build_id: self.build_id,

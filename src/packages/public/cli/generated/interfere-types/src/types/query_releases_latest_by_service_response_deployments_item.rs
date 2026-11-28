@@ -9,9 +9,6 @@ pub struct QueryReleasesLatestByServiceResponseDeploymentsItem {
     #[serde(rename = "organizationId")]
     #[serde(default)]
     pub organization_id: String,
-    #[serde(rename = "surfaceId")]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub surface_id: Option<String>,
     #[serde(rename = "releaseId")]
     #[serde(default)]
     pub release_id: String,
@@ -54,7 +51,6 @@ impl QueryReleasesLatestByServiceResponseDeploymentsItem {
 pub struct QueryReleasesLatestByServiceResponseDeploymentsItemBuilder {
     id: Option<String>,
     organization_id: Option<String>,
-    surface_id: Option<String>,
     release_id: Option<String>,
     environment: Option<String>,
     provider: Option<String>,
@@ -74,11 +70,6 @@ impl QueryReleasesLatestByServiceResponseDeploymentsItemBuilder {
 
     pub fn organization_id(mut self, value: impl Into<String>) -> Self {
         self.organization_id = Some(value.into());
-        self
-    }
-
-    pub fn surface_id(mut self, value: impl Into<String>) -> Self {
-        self.surface_id = Some(value.into());
         self
     }
 
@@ -140,7 +131,6 @@ impl QueryReleasesLatestByServiceResponseDeploymentsItemBuilder {
         Ok(QueryReleasesLatestByServiceResponseDeploymentsItem {
             id: self.id.ok_or_else(|| BuildError::missing_field("id"))?,
             organization_id: self.organization_id.ok_or_else(|| BuildError::missing_field("organization_id"))?,
-            surface_id: self.surface_id,
             release_id: self.release_id.ok_or_else(|| BuildError::missing_field("release_id"))?,
             environment: self.environment,
             provider: self.provider.ok_or_else(|| BuildError::missing_field("provider"))?,
