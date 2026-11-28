@@ -1,5 +1,12 @@
 # @interfere/types
 
+## 11.3.0
+
+### Minor Changes
+
+- aea0bef: `identity.set()` and `identifySession` accept an optional `signature`, the hex HMAC-SHA256 of `identifier` keyed with your workspace identify secret and computed on your server, which marks the user verified when it matches and is rejected with `IDENTITY_SIGNATURE_INVALID` (403) when it does not, while identifies without one behave as before.
+- cc05042: Builds no longer stamp `__INTERFERE_PUBLIC_KEY__` into bundles and the build, server and release-diagnostic helpers no longer accept a public key, because the release token is the browser credential.
+
 ## 11.2.3
 
 ### Patch Changes

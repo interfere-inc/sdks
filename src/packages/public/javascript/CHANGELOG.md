@@ -1,5 +1,11 @@
 # @interfere/javascript
 
+## 0.7.0
+
+### Minor Changes
+
+- aea0bef: `identity.set()` and `identifySession` accept an optional `signature`, the hex HMAC-SHA256 of `identifier` keyed with your workspace identify secret and computed on your server, which marks the user verified when it matches and is rejected with `IDENTITY_SIGNATURE_INVALID` (403) when it does not, while identifies without one behave as before.
+
 ## 0.6.0
 
 ### Minor Changes

@@ -15,6 +15,7 @@ import {
   cancellationEvidence,
 } from "./cancellation.js";
 
+import { createLoadOutcomeReader } from "../../../capture/load-outcome.js";
 import { transportContextAttrs } from "../../../capture/transport-context.js";
 import { safeStringify } from "../../../../util/stringify.js";
 import {
@@ -48,16 +49,21 @@ export function createPageExitWatch() {
 
   document.addEventListener("visibilitychange", onVisibilityChange);
 
+  const loads = createLoadOutcomeReader();
+
   return {
     dispose: () => {
       globalThis.removeEventListener("pagehide", onPageHide);
 
       document.removeEventListener("visibilitychange", onVisibilityChange);
+
+      loads.dispose();
     },
     initiatorSince: (time: number) =>
       pageHiddenAt >= time ? "unload" : undefined,
     leftSince: (time: number) =>
       exitedAt >= time || document.visibilityState === "hidden",
+    loadOutcome: loads.read,
   } satisfies PageExitWatch;
 }
 
@@ -255,6 +261,8 @@ export async function settleFetchFailure(
         url,
         MECHANISM_TYPE.browser.fetchNetworkError,
         error,
+        undefined,
+        pageExit.loadOutcome?.(url),
       );
     }
   });
@@ -283,6 +291,8 @@ export async function settleXhrFailure(
         url,
         MECHANISM_TYPE.browser.xhrNetworkError,
         undefined,
+        undefined,
+        pageExit.loadOutcome?.(url),
       );
     }
   });

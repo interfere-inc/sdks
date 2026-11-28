@@ -1,5 +1,17 @@
 # @interfere/server-core
 
+## 0.3.0
+
+### Minor Changes
+
+- cc05042: Builds no longer stamp `__INTERFERE_PUBLIC_KEY__` into bundles and the build, server and release-diagnostic helpers no longer accept a public key, because the release token is the browser credential.
+
+### Patch Changes
+
+- Updated dependencies [aea0bef]
+- Updated dependencies [cc05042]
+  - @interfere/types@11.3.0
+
 ## 0.2.4
 
 ### Patch Changes

@@ -1,5 +1,20 @@
 # @interfere/react
 
+## 13.2.0
+
+### Minor Changes
+
+- cc05042: Browser telemetry export and session replay upload authenticate with the build-baked release token only, no longer send `x-interfere-public-key`, and halt the page on a rejected release token instead of a rejected public key.
+- cc05042: `@interfere/next` and `@interfere/react` no longer read `INTERFERE_PUBLIC_KEY`, so browser ingest uses the release token that `withInterfere()` bakes into the build when `INTERFERE_API_KEY` is set and you should remove `INTERFERE_PUBLIC_KEY` from your build and runtime environments.
+- aea0bef: `identity.set()` and `identifySession` accept an optional `signature`, the hex HMAC-SHA256 of `identifier` keyed with your workspace identify secret and computed on your server, which marks the user verified when it matches and is rejected with `IDENTITY_SIGNATURE_INVALID` (403) when it does not, while identifies without one behave as before.
+
+### Patch Changes
+
+- Updated dependencies [aea0bef]
+- Updated dependencies [cc05042]
+  - @interfere/types@11.3.0
+  - @interfere/javascript@0.7.0
+
 ## 13.1.6
 
 ### Patch Changes

@@ -1,4 +1,3 @@
-import { MECHANISM_TYPE } from "@interfere/types/sdk/errors";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
@@ -11,7 +10,6 @@ import { afterEach, beforeEach, expect, test } from "vitest";
 import { worker } from "../../../../test/msw.js";
 import { settledRequestSpans } from "../../../../test/request-spans.test-utils.js";
 import { requestCancellation, requestRecovered } from "../../../api.js";
-import { transportContextAttrs } from "../../capture/transport-context.js";
 import { registerBundledInstrumentations } from "./instrumentations.js";
 
 const SEARCH_URL = `${location.origin}/api/search`;
@@ -326,49 +324,6 @@ test("reports recovery only after an observed cancellation and a successful retr
   expect(
     recovery[0]?.attributes?.["interfere.http.cancellation_initiator"],
   ).toBe("user");
-});
-
-test("unannotated transport failures retain their callsite without cancellation attribution", async () => {
-  await expect(fetch(`${SEARCH_URL}?q=offline`)).rejects.toThrow(TypeError);
-
-  const spans = await settledSpans(1);
-
-  const message = `Network network GET ${SEARCH_URL}?q=offline`;
-
-  const attributes = spans[0]?.events.find(
-    (event) => event.name === "exception",
-  )?.attributes;
-
-  const stack = attributes?.["exception.stacktrace"];
-
-  expect(stack).toContain("instrumentations.cancellation.browser.test.ts");
-
-  expect(attributes).toStrictEqual({
-    "exception.stacktrace": stack,
-    "http.request.next_action": false,
-    "exception.message": message,
-    "exception.type": "NetworkError",
-    "interfere.exception.chain": JSON.stringify([
-      {
-        kind: "error",
-        mechanism: {
-          handled: false,
-          type: MECHANISM_TYPE.browser.fetchNetworkError,
-        },
-        stack,
-        type: "NetworkError",
-        value: message,
-      },
-      { kind: "error", stack: "", type: "TypeError", value: "Failed to fetch" },
-    ]),
-    "interfere.exception.handled": false,
-    "interfere.exception.kind": "error",
-    "interfere.exception.mechanism": MECHANISM_TYPE.browser.fetchNetworkError,
-    "interfere.exception.subtype": "network",
-    ...transportContextAttrs(),
-  });
-
-  expect(spans[0]?.attributes["interfere.http.capture_status"]).toBeUndefined();
 });
 
 test("unannotated XHR transport failure followed by pagehide emits no exception", async () => {

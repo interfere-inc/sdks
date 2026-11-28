@@ -1,6 +1,6 @@
 {
   "name": "@interfere/cli-win32-x64",
-  "version": "1.22.0",
+  "version": "1.23.0",
   "description": "Interfere CLI native binary for win32-x64.",
   "homepage": "https://interfere.com",
   "license": "MIT",

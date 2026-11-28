@@ -10,6 +10,7 @@ import type { ErrorMechanism } from "@interfere/types/sdk/plugins/payload/errors
 
 import { hasEventListenerPair } from "../internal/event-capabilities/event-capabilities.js";
 import { onConsoleCall } from "../internal/console-patch/console-patch.js";
+import { createLoadOutcomeReader } from "../internal/capture/load-outcome.js";
 import { hasServerDigest } from "../internal/server-digest/server-digest.js";
 import { THIRD_PARTY_IGNORE } from "../internal/third-party-hosts.js";
 import { createRepeatGate, exceptionKey } from "./lib/repeat-gate.js";
@@ -289,6 +290,7 @@ const errorsPlugin: Plugin = {
     };
 
     const resourceGate = createResourceGate();
+    const loads = createLoadOutcomeReader();
 
     const onWindowError = (event: Event) => {
       if (event instanceof ErrorEvent) {
@@ -326,7 +328,11 @@ const errorsPlugin: Plugin = {
       capture(ctx, {
         error: {
           kind: "non-error",
-          serialized: { url: resource.url },
+          serialized: {
+            url: resource.url,
+            "interfere.resource.tag": resource.tag,
+            ...loads.read(resource.url),
+          },
           type: "ResourceLoadError",
           value: `Failed to load ${resource.tag}: ${resource.url}`,
         },
@@ -401,6 +407,8 @@ const errorsPlugin: Plugin = {
       }
 
       unsubscribeConsole();
+
+      loads.dispose();
     };
   },
 };

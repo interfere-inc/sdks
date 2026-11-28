@@ -1,6 +1,6 @@
 {
   "name": "@interfere/javascript",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "JavaScript and TypeScript client for the Interfere API.",
   "homepage": "https://interfere.com",
   "license": "MIT",

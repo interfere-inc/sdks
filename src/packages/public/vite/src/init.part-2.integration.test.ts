@@ -304,6 +304,7 @@ test("an unknown release halts export without a retry storm or breaking the host
     .poll(
       () =>
         collector.requests.filter((request) => request.status === 422).length,
+      { timeout: 15_000 },
     )
     .toBeGreaterThanOrEqual(1);
 

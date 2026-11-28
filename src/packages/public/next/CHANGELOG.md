@@ -1,5 +1,25 @@
 # @interfere/next
 
+## 13.2.0
+
+### Minor Changes
+
+- cc05042: `@interfere/next` and `@interfere/react` no longer read `INTERFERE_PUBLIC_KEY`, so browser ingest uses the release token that `withInterfere()` bakes into the build when `INTERFERE_API_KEY` is set and you should remove `INTERFERE_PUBLIC_KEY` from your build and runtime environments.
+- cc05042: Builds no longer stamp `__INTERFERE_PUBLIC_KEY__` into bundles and the build, server and release-diagnostic helpers no longer accept a public key, because the release token is the browser credential.
+
+### Patch Changes
+
+- 89db37c: The Next.js build log links to **Data** in the dashboard instead of the old Services page, and the Next.js and Vite READMEs say to find a service name under **Data**.
+- Updated dependencies [cc05042]
+- Updated dependencies [cc05042]
+- Updated dependencies [aea0bef]
+- Updated dependencies [cc05042]
+  - @interfere/react@13.2.0
+  - @interfere/types@11.3.0
+  - @interfere/javascript@0.7.0
+  - @interfere/build@0.7.0
+  - @interfere/server-core@0.3.0
+
 ## 13.1.6
 
 ### Patch Changes
